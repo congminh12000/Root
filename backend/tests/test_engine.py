@@ -3,10 +3,10 @@ import random
 
 import pytest
 
-from grove.agents import HeuristicAgent, SearchAgent
-from grove.content import CARDS, FACTIONS
-from grove.engine import Action, Game
-from grove.storage import Store
+from root.agents import HeuristicAgent, SearchAgent
+from root.content import CARDS, FACTIONS
+from root.engine import Action, Game
+from root.storage import Store
 
 
 def empty_map(game):

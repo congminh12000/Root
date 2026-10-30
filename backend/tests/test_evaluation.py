@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from grove.runner import tournament, wilson
+from root.runner import tournament, wilson
 
 
 def test_tournament_resume_does_not_duplicate_games(tmp_path):

@@ -1,4 +1,4 @@
-# Bàn giao Grove Arena cho Claude
+# Bàn giao Root cho Claude
 
 ## Đọc trước
 
@@ -32,13 +32,13 @@
 
 ## Mã nguồn chính
 
-- `backend/grove/content.py`: dữ liệu bản đồ, thẻ, nhiệm vụ và thông số phe.
-- `backend/grove/engine.py`: luật chung; `observe`, `legal_actions`, `step`, `sample`, export/restore.
-- `backend/grove/agents.py`: heuristic và tìm kiếm có ngân sách thời gian.
-- `backend/grove/learning.py`: encoding, GRU policy/value, imitation, PPO, worker và checkpoint.
-- `backend/grove/runner.py`: chạy trận và giải đánh giá có thể tiếp tục.
-- `backend/grove/storage.py`: SQLite journal, snapshot public/omniscient, verify replay.
-- `backend/grove/server.py`, `cli.py`: FastAPI/WebSocket và CLI chủ máy.
+- `backend/root/content.py`: dữ liệu bản đồ, thẻ, nhiệm vụ và thông số phe.
+- `backend/root/engine.py`: luật chung; `observe`, `legal_actions`, `step`, `sample`, export/restore.
+- `backend/root/agents.py`: heuristic và tìm kiếm có ngân sách thời gian.
+- `backend/root/learning.py`: encoding, GRU policy/value, imitation, PPO, worker và checkpoint.
+- `backend/root/runner.py`: chạy trận và giải đánh giá có thể tiếp tục.
+- `backend/root/storage.py`: SQLite journal, snapshot public/omniscient, verify replay.
+- `backend/root/server.py`, `cli.py`: FastAPI/WebSocket và CLI chủ máy.
 - `web/src/Board.tsx`: cảnh PixiJS tự vẽ; `main.tsx`: giao diện khán giả.
 - `backend/tests` và `web/src/playback.test.ts`: các kiểm tra hiện có.
 
@@ -51,7 +51,7 @@ Không lặp lại bộ luật trong frontend. Không cho agent đọc authorita
 ./scripts/check.sh
 ```
 
-Cần Python 3.10–3.13 (khuyến nghị 3.12), Node 22.12+. Nếu terminal không giữ executable bit khi giải nén, dùng `bash scripts/setup.sh` và `bash scripts/check.sh`. Python và npm lockfiles đi kèm. Lần cài đầu cần Internet; runtime không cần API key hoặc CDN.
+Cần Python 3.11–3.13 (khuyến nghị 3.12), Node 22.12+. Nếu terminal không giữ executable bit khi giải nén, dùng `bash scripts/setup.sh` và `bash scripts/check.sh`. Python và npm lockfiles đi kèm. Lần cài đầu cần Internet; runtime không cần API key hoặc CDN.
 
 Chỉ khi người dùng yêu cầu chạy lại:
 
