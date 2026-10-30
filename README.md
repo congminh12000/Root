@@ -32,7 +32,7 @@ Dừng trận bằng `./scripts/run.sh stop` trong terminal khác. `Ctrl+C` tạ
 
 ## Cài mới
 
-Cần Python **3.10–3.13** (khuyến nghị 3.12) và Node **22.12+**; đã kiểm tra trên Python 3.12 và Node 24, Mac M1 Pro 16 GB.
+Cần Python **3.11–3.13** (khuyến nghị 3.12) và Node **22.12+**; đã kiểm tra trên Python 3.12 và Node 24, Mac M1 Pro 16 GB.
 
 ```bash
 ./scripts/setup.sh
@@ -41,7 +41,7 @@ Cần Python **3.10–3.13** (khuyến nghị 3.12) và Node **22.12+**; đã ki
 Nếu Python mặc định quá mới, chỉ định Python phù hợp:
 
 ```bash
-ROOT_PYTHON=/opt/homebrew/bin/python3.10 ./scripts/setup.sh
+ROOT_PYTHON=/opt/homebrew/bin/python3.12 ./scripts/setup.sh
 ```
 
 Lần đầu cần Internet để tải thư viện miễn phí. Sau khi cài và build, mọi asset, mô hình, cơ sở dữ liệu và quá trình chạy đều ở máy. Không cần tài khoản, API key, CDN, thuê máy chủ hay GPU đám mây. Tiền điện và phần cứng hiện có không nằm trong nghĩa “miễn phí phần mềm”.

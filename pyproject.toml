@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "root"
 version = "0.1.0"
 description = "A local, spectator-only asymmetric strategy AI laboratory"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = ["fastapi==0.115.12", "uvicorn==0.34.2", "websockets==15.0.1"]
 
 [project.optional-dependencies]
@@ -25,7 +25,7 @@ testpaths = ["backend/tests"]
 
 [tool.ruff]
 line-length = 110
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]

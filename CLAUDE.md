@@ -50,7 +50,7 @@ Không lặp lại bộ luật trong frontend. Không cho agent đọc authorita
 ./scripts/check.sh
 ```
 
-Cần Python 3.10–3.13 (khuyến nghị 3.12), Node 22.12+. Nếu terminal không giữ executable bit khi giải nén, dùng `bash scripts/setup.sh` và `bash scripts/check.sh`. Python và npm lockfiles đi kèm. Lần cài đầu cần Internet; runtime không cần API key hoặc CDN.
+Cần Python 3.11–3.13 (khuyến nghị 3.12), Node 22.12+. Nếu terminal không giữ executable bit khi giải nén, dùng `bash scripts/setup.sh` và `bash scripts/check.sh`. Python và npm lockfiles đi kèm. Lần cài đầu cần Internet; runtime không cần API key hoặc CDN.
 
 Chỉ khi người dùng yêu cầu chạy lại:
 
