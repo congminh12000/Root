@@ -20,4 +20,4 @@ Their own LICENSE / NOTICE files remain authoritative and are retained in instal
 
 Testing/lint/build packages are development tools; consult the npm and Python lockfiles for exact versions. The application uses only locally installed fonts (Georgia, Times New Roman, Courier New) and requires no font downloads.
 
-The board landscape, tree primitives, river paths and faction insignia are authored as code/SVG in this project. No images, sound, typefaces or text were extracted from Root Digital or Root Database. Root and its faction names are used only in research documentation to identify the reference rules. This project has no claimed affiliation or endorsement.
+The board background `web/src/assets/lowlands.webp` is map art supplied by the project owner; clearing positions and paths in `backend/root/content.py` are traced from it. Faction insignia are authored as code/SVG in this project. No images, sound, typefaces or text were extracted from Root Digital or Root Database. Root and its faction names are used only in research documentation to identify the reference rules. This project has no claimed affiliation or endorsement.

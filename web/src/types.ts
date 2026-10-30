@@ -27,4 +27,4 @@ export interface Match {
   meta: { agents: string[]; seating: string[]; ruleset: string };
   final: { winner: number | null; scores: number[]; turn: number } | null;
 }
-export interface Meta { name: string; ruleset: string; reference: string; cards: Card[]; differences: string[] }
+export interface Meta { name: string; ruleset: string; reference: string; cards: Card[]; forests: number[][]; differences: string[] }

@@ -75,7 +75,7 @@ def create_app(data_dir=None, auto_match=False, kind="search", budget=1., pace=.
     def meta():
         return dict(name="Root", ruleset=RULESET, reference=REFERENCE, cards=CARDS,
                     quests=QUESTS, forests=FORESTS, factions=FACTIONS,
-                    experimental=True, differences=["Original test-map topology, not verified Autumn",
+                    experimental=True, differences=["Map topology traced from the supplied forest art, not verified Autumn",
                     "Original 54-card recipes and quests, not the Root base deck",
                     "Single Wayfarer character; no allied-warrior movement/combat",
                     "Some timing and optional persistent-card effects differ; see docs/RULES.md"])

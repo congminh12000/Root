@@ -1,6 +1,6 @@
 # Phạm vi luật và khoảng cách với Root
 
-**Ruleset: `grove-experimental-0.1`. Bản dựng này chưa đáp ứng yêu cầu tương đương toàn bộ luật Root.** Bộ kiểm tra chứng minh tính ổn định của phần đã lập trình, không chứng minh tính tương đương với một bộ luật chưa đối chiếu hết.
+**Ruleset: `grove-experimental-0.2`. Bản dựng này chưa đáp ứng yêu cầu tương đương toàn bộ luật Root.** Bộ kiểm tra chứng minh tính ổn định của phần đã lập trình, không chứng minh tính tương đương với một bộ luật chưa đối chiếu hết.
 
 Nguồn khóa: *Law of Root*, 13 October 2025, trang 1–10, các mục 1–9, từ trang tài nguyên chính thức Leder Games. URL PDF và trang nguồn được ghi trong README. Không dùng luật Clockwork cho các player; chúng chơi theo observation và hành động của bộ mô phỏng.
 
@@ -9,7 +9,7 @@ Nguồn khóa: *Law of Root*, 13 October 2025, trang 1–10, các mục 1–9, t
 | 1–2: trạng thái, bài, rule | Thông tin ẩn, quân/công trình quyết định rule, ưu tiên Canopy khi hòa, bird wildcard, bài hết được xào lại | Lịch sử observation chưa biểu diễn đầy đủ thông tin từng thẻ đã được tiết lộ |
 | 3: chiến thắng | 30 điểm thắng ngay, dominance theo địa hình/góc, coalition của Wayfarer | Phân xử nhiều hiệu ứng đồng thời chưa đối chiếu toàn bộ tổ hợp |
 | 4.1: craft | Theo suit và số crafting pieces, giới hạn kích hoạt, vật phẩm hữu hạn, không trùng persistent effect | Bộ bài tự thiết kế; chưa có đầy đủ hiệu ứng bộ bài cơ bản chính thức |
-| 4.2: move | Đường nối, số quân tùy chọn, rule ở ít nhất một đầu, ngoại lệ pawn | Bản đồ đường đi/suit/slot là test map gốc, không phải Autumn đã xác minh |
+| 4.2: move | Đường nối, số quân tùy chọn, rule ở ít nhất một đầu, ngoại lệ pawn | Bản đồ đường đi/suit/slot dựng theo ảnh bản đồ người dùng cung cấp (`web/src/assets/lowlands.webp`): 12 làng = 12 vùng, đường mòn = đường nối, màu lá = suit (đỏ fox, vàng rabbit, cam mouse), 8 khu rừng = các mặt bị đường mòn bao quanh. Không phải Autumn đã xác minh |
 | 4.3: battle | D12 có kết quả 0–3, attacker cao/defender thấp, giới hạn theo quân/sword, defenseless, guerrilla | Ward/Brutal/Sappers của deck thử nghiệm dùng tự động; chưa có toàn bộ lựa chọn trước/sau roll của base deck |
 | 4.3: phản ứng | Ambush/foil do player chọn, chủ quân chọn công trình/token bị loại, lựa chọn damage item | Wipe nhiều vùng được giải tuần tự; chưa mô hình hóa mọi lựa chọn thứ tự hiệu ứng đồng thời |
 | 5: setup | Một phe mỗi ghế, ba bài ban đầu, garrison/roost/ủng hộ/items, bốn ruins, seed và seating | Vị trí khởi đầu và leader được cố định theo test map; CLI xoay ghế. Chưa có lựa chọn setup/nhân vật đầy đủ |
