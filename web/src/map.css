@@ -1,0 +1,37 @@
+.reference-map-view{background:#eee7d5;isolation:isolate}
+.map-controls{min-height:48px;padding:8px 15px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #c8bea3;background:#efe9da;color:#3a4435}
+.map-zoom-controls{display:flex;align-items:center;gap:3px;border:1px solid #cec4ad;border-radius:4px;background:#f7f0df}
+.map-zoom-controls button{min-width:34px;min-height:30px;font-size:19px;line-height:1}
+.map-zoom-controls .map-reset{min-width:53px;font:10px 'Courier New',monospace}
+.map-layer-controls{display:flex;align-items:center;gap:18px;font-size:11px}
+.map-layer-controls label{display:flex;align-items:center;gap:6px;cursor:pointer;min-height:30px}
+.map-layer-controls input{accent-color:#526744;width:13px;height:13px;margin:0}
+.map-layer-controls>button{border-bottom:1px solid #8e9678;padding:5px 0;font-size:10px}
+.map-viewport{overflow:auto;scrollbar-width:thin;scrollbar-color:#8e8967 #e2d7bd;overscroll-behavior:contain}
+.map-viewport.is-zoomed{max-height:78vh}
+.reference-map{position:relative;background:#c3b17e;max-width:none;line-height:0;overflow:hidden}
+.map-illustration{display:block;width:100%;height:auto;max-width:none;user-select:none}
+.map-piece-layer,.map-region-layer{position:absolute;inset:0;width:100%;height:100%}
+.map-piece-layer{pointer-events:none;overflow:hidden}
+.map-piece-layer canvas{display:block;width:100%!important;height:100%!important}
+.map-region-layer{pointer-events:none}
+.map-region{position:absolute;pointer-events:auto;width:9%;height:7%;min-width:32px;min-height:32px;transform:translate(-50%,-50%);border:1px solid transparent;border-radius:50%;padding:0;background:none}
+.map-region:hover,.map-region.is-selected{border-color:#ffefba;box-shadow:0 0 0 3px #fff4c52b,0 0 18px #ffd88b55;color:#f9f0d6;background:#fff2c90a}
+.map-region:focus-visible{outline:2px solid #fff2c5;outline-offset:3px;background:#fff2c91a}
+.map-region span{position:absolute;left:50%;top:100%;transform:translate(-50%,4px);opacity:0;pointer-events:none;white-space:nowrap;font:10px Georgia,'Times New Roman',serif;letter-spacing:.2px;line-height:1.2;padding:5px 8px;border:1px solid #b09b72;border-radius:3px;background:#25362bec;color:#fff0cd;box-shadow:0 2px 7px #17211a22}
+.map-region:hover span,.map-region:focus-visible span,.map-region.is-selected span,.map-region.show-name span{opacity:1}
+.map-region.label-above span{top:auto;bottom:100%;transform:translate(-50%,-5px)}
+.map-render-error{padding:12px 16px;font-size:12px;line-height:1.6;color:#795a30}
+.faction-card-bottom{min-height:43px}
+.map-preview-page{min-height:100vh;background:#18241d;color:#f1e7c9}
+.map-preview-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px max(24px,calc((100vw - 1311px)/2));border-bottom:1px solid #9eaa8c29}
+.map-preview-brand{font-size:33px;letter-spacing:-1px;text-decoration:none;display:flex;align-items:center;gap:20px}
+.map-preview-brand span{font:8px 'Courier New',monospace;letter-spacing:2px;color:#abb796}
+.map-preview-header nav{display:flex;gap:22px;align-items:center;font:10px 'Courier New',monospace;color:#c7cfb3}
+.map-preview-header nav a{text-decoration:none;line-height:2}
+.map-preview-header nav span{letter-spacing:1.4px;border-left:1px solid #9eaa8c40;padding-left:22px}
+.map-preview-main{max-width:1359px;padding:24px;margin:auto;position:relative}
+.map-preview-main .reference-map-view{border:1px solid #afac8966;border-radius:5px;overflow:hidden;box-shadow:0 15px 60px #07110b55}
+.map-preview-selection{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-size:13px;color:#c7cfb3}
+.map-preview-selection button{font-size:22px;min-width:36px;min-height:36px}
+@media(max-width:600px){.map-controls{padding:8px 10px;gap:8px;flex-wrap:wrap}.map-layer-controls{gap:12px;font-size:10px}.map-zoom-controls button{min-width:32px;min-height:32px}.map-zoom-controls .map-reset{min-width:40px}.map-preview-header{padding:17px 16px;gap:12px}.map-preview-brand{font-size:29px;gap:10px}.map-preview-brand span{display:none}.map-preview-header nav{font-size:9px;gap:13px}.map-preview-header nav span{padding-left:13px}.map-preview-main{padding:12px}.map-region span{font-size:9px;max-width:130px;white-space:normal;min-width:54px}.map-viewport.is-zoomed{max-height:70vh}}

@@ -14,6 +14,12 @@ Từ thư mục chứa README này:
 
 Mở **http://localhost:8787**. Máy khác cùng mạng LAN mở `http://<IP-LAN-của-Mac>:8787`. Máy Mac phải bật và cho phép kết nối LAN nếu macOS hỏi. Máy chủ chỉ mở API đọc và WebSocket đọc; không có API điều khiển quân. Dùng `--host 127.0.0.1` nếu chỉ xem tại máy này.
 
+### Bản đồ tham chiếu
+
+Nền bản đồ dùng nguyên ảnh người dùng cung cấp ngày 30/10/2026, giữ tỷ lệ 1311×1200; không vẽ lại, cắt ảnh hoặc thêm logo/thang điểm. Các thẻ phe cũng không còn hiện điểm và thanh tiến độ. Mặc định tên vùng và quân cờ được tắt để xem nguyên bản; bật chúng riêng trên thanh công cụ khi xem trận. Có phóng to 100–300%, cuộn và chọn 12 vùng.
+
+Địa chỉ `/map` chỉ hiển thị bản đồ, không gọi API trận đấu hay khởi động AI. Có thể xem riêng bằng `cd web && npm run dev`, rồi mở `http://localhost:5173/map`. Tọa độ lớp hiển thị được căn theo ảnh tại `web/src/map-layout.ts`; topology luật trong backend và dữ liệu replay/checkpoint không thay đổi theo ảnh nền.
+
 Mặc định: bốn bot tìm kiếm, tối đa 1 giây mỗi quyết định, một trận. Muốn nhiều trận liên tiếp:
 
 ```bash

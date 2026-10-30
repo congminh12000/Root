@@ -24,6 +24,7 @@
 - Có bot random, heuristic, tìm kiếm Monte Carlo và mô hình neural GRU nhỏ.
 - Có quy trình imitation → PPO, hai worker, checkpoint/resume và pool đối thủ cũ.
 - Web React/PixiJS có bàn chơi, live WebSocket, hồ sơ phe, toàn cảnh khán giả, replay và báo cáo.
+- Cập nhật 30/10/2026: nền bản đồ là đúng ảnh người dùng cung cấp trong `web/src/assets/woodland-reference.png`, không chỉnh pixel. `web/src/map-layout.ts` ánh xạ ID vùng sang tọa độ minh họa; không thay topology engine. `/map` xem độc lập, không gọi API/training. Điểm/thanh tiến độ trên thẻ phe đã bỏ; tên vùng/quân cờ chỉ hiện khi bật lớp tương ứng.
 - API của trình duyệt chỉ đọc. Chủ máy điều khiển trận qua CLI.
 - Bản đồ, 54 thẻ và 15 nhiệm vụ hiện là nội dung thử nghiệm tự thiết kế, **không tương đương Autumn/base deck chính thức**.
 - Chưa đủ các nhân vật cơ bản của Vagabond, allied-warrior movement/combat và mọi lựa chọn thời điểm/phân bổ. Danh sách cụ thể ở RULES.md.

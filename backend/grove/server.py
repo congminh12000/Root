@@ -141,6 +141,7 @@ def create_app(data_dir=None, auto_match=False, kind="search", budget=1., pace=.
         app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
 
     @app.get("/")
+    @app.get("/map")
     def index():
         if not (dist / "index.html").exists():
             raise HTTPException(503, "Build web first: cd web && npm ci && npm run build")

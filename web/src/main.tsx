@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Board } from './Board'
+import { MapPreview } from './MapPreview'
 import { appendFrames, nextIndex } from './playback'
 import type { Card, Match, Meta, Player, Snapshot } from './types'
 import './style.css'
+import './map.css'
 
 async function request<T>(url: string, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, { signal })
@@ -27,10 +29,8 @@ function FactionCard({ player: p, active, agent, onClick }: { player: Player; ac
   return <button className={`faction-card ${active ? 'active' : ''}`} style={{ '--faction': p.color } as React.CSSProperties} onClick={onClick}>
     <div className="faction-card-top"><span className="insignia"><Insignia faction={p.faction} /></span>
       <span className="faction-heading"><span className="micro">{PROFILE[agent.split(':')[1]] || agent}</span><strong>{p.name}</strong></span>
-      <span className="score">{p.dominance !== null ? '◇' : p.score}<small> / 30</small></span>
     </div>
     <div className="faction-card-bottom"><span>{FACTION_SUB[p.faction]}</span><span>{active ? '● THINKING' : 'VIEW FACTION ↗'}</span></div>
-    <div className="score-track"><i style={{ width: `${Math.min(100, p.score / 30 * 100)}%` }} /></div>
   </button>
 }
 
@@ -160,7 +160,7 @@ function App() {
 
   const state = mode === 'replay' ? frames[index] ?? live : live
   const activeMatch = matches.find(m => m.id === matchId)
-  const selectClearing = useCallback((id: number) => setSelected(id), [])
+  const selectClearing = useCallback((id: number) => setSelected(id < 0 ? null : id), [])
   const player = state?.players.find(p => p.id === playerId)
   const clearing = state?.clearings.find(c => c.id === selected)
   const chronicle = state ? [...state.events].filter(e => e.kind !== 'action' || !e.text.includes(': advance')).slice(-12).reverse() : []
@@ -195,7 +195,7 @@ function App() {
         <section className="board-shell" aria-label="Bàn chơi">
           <div className="board-toolbar"><div><span className={`status-pill ${mode === 'live' && state?.status === 'playing' ? 'is-live' : ''}`}><i />{mode === 'replay' ? 'REPLAY' : state?.status === 'playing' ? 'LIVE ARENA' : 'MATCH ARCHIVE'}</span><span className="match-label">{matchId ? `#${matchId.slice(0, 6).toUpperCase()}` : 'WAITING FOR MATCH'}</span></div>
             <label className="vision-toggle"><input type="checkbox" checked={omniscient} onChange={e => setOmniscient(e.target.checked)} /><span>Toàn cảnh</span><span title="Chỉ khán giả được xem thông tin ẩn. AI vẫn chỉ biết thông tin của mình.">ⓘ</span></label></div>
-          {state ? <Board state={state} selected={selected} onSelect={selectClearing} /> : <div className="empty-board"><span>❧</span><h2>Khu rừng đang chờ.</h2><p>Khởi động một trận từ máy chủ để các AI bắt đầu thi đấu.</p><code>./scripts/run.sh serve --host 0.0.0.0</code></div>}
+          <Board state={state} selected={selected} onSelect={selectClearing} />
           {state?.status === 'finished' && <div className="victory-strip"><span>✦</span><strong>{state.players[state.winner!].name}</strong> giành chiến thắng · {state.turn} lượt</div>}
           {state && state.status !== 'playing' && state.status !== 'finished' && <div className="victory-strip">Trận kết thúc: {state.status}. Không gán người thắng.</div>}
           <div className="playback-toolbar"><div className="view-mode"><button className={mode === 'live' ? 'selected' : ''} onClick={() => { setMode('live'); setPlaying(false) }}>Trực tiếp</button><button className={mode === 'replay' ? 'selected' : ''} onClick={() => { setMode('replay'); setPlaying(true) }}>Xem lại</button></div>
@@ -235,4 +235,4 @@ function App() {
   </>
 }
 
-createRoot(document.getElementById('root')!).render(<App />)
+createRoot(document.getElementById('root')!).render(location.pathname === '/map' ? <MapPreview /> : <App />)
