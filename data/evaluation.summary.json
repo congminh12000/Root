@@ -1,0 +1,63 @@
+{
+  "config": {
+    "seed": 320000,
+    "kind": "heuristic",
+    "budget": 1.0,
+    "max_turns": 240,
+    "checkpoint": null,
+    "candidate": null,
+    "checkpoint_sha256": null,
+    "candidate_sha256": null,
+    "ruleset": "grove-experimental-0.1"
+  },
+  "games": 1000,
+  "statuses": {
+    "finished": 1000
+  },
+  "factions": {
+    "guild": {
+      "wins": 555,
+      "games": 1000,
+      "win_rate": 0.555,
+      "ci95": [
+        0.5240461066241248,
+        0.5855329499424643
+      ]
+    },
+    "canopy": {
+      "wins": 49,
+      "games": 1000,
+      "win_rate": 0.049,
+      "ci95": [
+        0.037261034647360615,
+        0.06419070150661013
+      ]
+    },
+    "covenant": {
+      "wins": 354,
+      "games": 1000,
+      "win_rate": 0.354,
+      "ci95": [
+        0.32497103040683056,
+        0.38414638307095145
+      ]
+    },
+    "ranger": {
+      "wins": 42,
+      "games": 1000,
+      "win_rate": 0.042,
+      "ci95": [
+        0.031220885546165447,
+        0.056284425226603055
+      ]
+    }
+  },
+  "profiles": {
+    "tactician": 254,
+    "diplomat": 233,
+    "architect": 325,
+    "challenger": 188
+  },
+  "mean_decision_ms": 0.2485748701951328,
+  "note": "Experimental ruleset; faction/profile win rates are not a skill rating."
+}

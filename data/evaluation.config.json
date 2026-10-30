@@ -1,0 +1,11 @@
+{
+  "seed": 320000,
+  "kind": "heuristic",
+  "budget": 1.0,
+  "max_turns": 240,
+  "checkpoint": null,
+  "candidate": null,
+  "checkpoint_sha256": null,
+  "candidate_sha256": null,
+  "ruleset": "grove-experimental-0.1"
+}
