@@ -68,12 +68,12 @@ def create_app(data_dir=None, auto_match=False, kind="search", budget=1., pace=.
         current["viewers"] = 0
         lease()
 
-    app = FastAPI(title="Grove Arena", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(title="Root", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.state.store = store
 
     @app.get("/api/meta")
     def meta():
-        return dict(name="Grove Arena", ruleset=RULESET, reference=REFERENCE, cards=CARDS,
+        return dict(name="Root", ruleset=RULESET, reference=REFERENCE, cards=CARDS,
                     quests=QUESTS, forests=FORESTS, factions=FACTIONS,
                     experimental=True, differences=["Original test-map topology, not verified Autumn",
                     "Original 54-card recipes and quests, not the Root base deck",

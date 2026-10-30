@@ -1,11 +1,11 @@
 import torch
 
-from grove.engine import Game
-from grove.learning import (
+from root.engine import Game
+from root.learning import (
     ACT_SIZE, ENCODING, MEMORY_SIZE, OBS_SIZE, Policy, NeuralAgent,
     _trajectory, action_features, load_checkpoint, observation_features,
 )
-from grove.content import RULESET
+from root.content import RULESET
 
 
 def test_encoding_and_legal_policy(tmp_path):

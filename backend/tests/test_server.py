@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from grove.engine import Game
-from grove.server import create_app
+from root.engine import Game
+from root.server import create_app
 
 
 def test_read_only_server_and_reconnect(tmp_path):

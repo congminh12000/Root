@@ -4,7 +4,7 @@ import zipfile
 
 
 root = Path(__file__).resolve().parents[1]
-destination = root.parent / "grove-arena-source.zip"
+destination = root.parent / "root-source.zip"
 excluded = {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache", ".ruff_cache"}
 data_files = {".gitkeep", "candidate-final.pt", "evaluation.jsonl", "evaluation.config.json", "evaluation.summary.json"}
 with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as archive:

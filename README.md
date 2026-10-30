@@ -1,4 +1,4 @@
-# Grove Arena
+# Root
 
 Một phòng thí nghiệm web **AI đấu AI, chỉ dành cho khán giả**, chạy hoàn toàn trên máy của bạn. Python/FastAPI giữ luật và điều phối; React/TypeScript/PixiJS hiển thị bàn chơi; PyTorch huấn luyện mô hình nhỏ bằng CPU hoặc Apple GPU sau khi kiểm tra.
 
@@ -41,7 +41,7 @@ Cần Python **3.10–3.13** (khuyến nghị 3.12) và Node **22.12+**; đã ki
 Nếu Python mặc định quá mới, chỉ định Python phù hợp:
 
 ```bash
-GROVE_PYTHON=/opt/homebrew/bin/python3.10 ./scripts/setup.sh
+ROOT_PYTHON=/opt/homebrew/bin/python3.10 ./scripts/setup.sh
 ```
 
 Lần đầu cần Internet để tải thư viện miễn phí. Sau khi cài và build, mọi asset, mô hình, cơ sở dữ liệu và quá trình chạy đều ở máy. Không cần tài khoản, API key, CDN, thuê máy chủ hay GPU đám mây. Tiền điện và phần cứng hiện có không nằm trong nghĩa “miễn phí phần mềm”.
@@ -114,9 +114,9 @@ Chỉ đăng ký champion khi ít nhất 1.000 mẫu ghép cặp, không lỗi, 
 ./scripts/check.sh
 ```
 
-- `backend/grove/engine.py`: luật, quyết định, observation, tái hiện RNG.
-- `backend/grove/agents.py`, `learning.py`: bot chiến thuật, tìm kiếm, PyTorch/PPO.
-- `backend/grove/server.py`, `storage.py`, `runner.py`, `cli.py`: LAN, replay, giải đấu và CLI.
+- `backend/root/engine.py`: luật, quyết định, observation, tái hiện RNG.
+- `backend/root/agents.py`, `learning.py`: bot chiến thuật, tìm kiếm, PyTorch/PPO.
+- `backend/root/server.py`, `storage.py`, `runner.py`, `cli.py`: LAN, replay, giải đấu và CLI.
 - `web/src`: giao diện và bản đồ PixiJS; không lặp lại logic luật.
 - `docs/RULES.md`: đối chiếu luật, khác biệt và phần chưa triển khai.
 - `docs/VALIDATION.md`: kết quả kiểm tra tại thời điểm bàn giao.

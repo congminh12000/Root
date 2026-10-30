@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="grove")
+    parser = argparse.ArgumentParser(prog="root")
     parser.add_argument("--data", type=Path, default=ROOT / "data")
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("serve", "play", "evaluate"):
@@ -72,7 +72,7 @@ def main():
                 args.agent = "search"
         app = create_app(args.data, not args.no_match, args.agent, args.budget, args.pace,
                          args.seed, args.checkpoint, args.loop, args.max_turns)
-        print(f"Grove Arena → http://{args.host}:{args.port} · spectators only", flush=True)
+        print(f"Root → http://{args.host}:{args.port} · spectators only", flush=True)
         uvicorn.run(app, host=args.host, port=args.port)
         return
     if args.command == "play":
