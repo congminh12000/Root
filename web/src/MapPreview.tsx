@@ -5,7 +5,7 @@ export function MapPreview() {
   const [selected, setSelected] = useState<number | null>(null)
   return <div className="map-preview-page">
     <header className="map-preview-header">
-      <span className="map-preview-heading">Khu rừng</span>
+      <a className="map-preview-brand" href="/">grove<span>THE WOODLAND</span></a>
       <nav aria-label="Điều hướng bản đồ"><a href="/">← Đấu trường</a><span>BẢN ĐỒ</span></nav>
     </header>
     <main className="map-preview-main">
