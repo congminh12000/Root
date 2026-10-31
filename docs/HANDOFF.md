@@ -27,13 +27,13 @@ npm run typecheck && npm test && npm run audit:rules
 - Bot `search`: tìm kiếm Monte Carlo trên thông tin ẩn được đoán, chỉ dùng `PlayerView`.
 - Bàn chơi 3D bằng Three.js, bấm vào ô để lọc lựa chọn; vẫn giữ bản 2D.
 - Review toàn bộ điều khoản với p16: 140 điều `verified`. Sửa 2 lỗi: thời điểm xáo lại deck (§2.1) và Rest lật item ngửa (§9.6.1).
+- Golden scenario Walking Through Root (SRC-003): chơi lại ván mẫu 2 vòng, khớp sách từng bước. Xem `docs/06-qa/golden-scenarios/walking-through-root.md`.
 
 ## Còn lại
 
 | Việc | Ghi chú |
 |---|---|
 | §1.1.3 thứ tự hiệu ứng đồng thời | Người tới lượt phải được chọn thứ tự; engine đang dùng thứ tự cố định |
-| Golden scenario Walking Through Root | Chép lại ván mẫu trong SRC-003 thành test |
 | Bot chạy trong worker thread | Để bot `search` không chặn các trận khác |
 | Hoạt ảnh và xem chi tiết lá bài | |
 
