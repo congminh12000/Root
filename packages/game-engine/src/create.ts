@@ -2,6 +2,7 @@ import { BASE_DECK, DATA_VERSION, MAPS } from '@root/game-data'
 import { drawCards } from './board.ts'
 import { shuffle, type Rng } from './rng.ts'
 import { advanceSetup, factionMixAllowed, queueSetup } from './setup.ts'
+import { advanceTurn } from './turn.ts'
 import type { FactionId, GameState, Seat } from './state.ts'
 
 export const RULES_VERSION = 'rules-library-p16'
@@ -50,7 +51,7 @@ export function createGame(options: GameOptions, rng: Rng): GameState {
     questDeck: [], questsAvailable: [],
     factions: {},
     score: {}, // §5.1.2
-    craftingUsed: [],
+    craftingUsed: [], cardsUsed: [], reveals: [],
     pending: [],
     battle: null,
     winner: null,
@@ -62,5 +63,6 @@ export function createGame(options: GameOptions, rng: Rng): GameState {
   }
   queueSetup(state) // §5.1.7
   advanceSetup(state, rng)
+  advanceTurn(state, rng)
   return state
 }

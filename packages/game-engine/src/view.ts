@@ -30,6 +30,8 @@ export interface PlayerView {
   pending: GameState['pending']
   waitingOn: FactionId[]
   winner: GameState['winner']
+  /** Hands shown to this seat this turn (Codebreakers, Outrage §8.2.6). */
+  revealed: GameState['reveals']
 }
 
 export type VisibleSlot =
@@ -72,5 +74,6 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     pending: self ? state.pending.filter(p => p.player === self).map(p => ({ ...p })) : [],
     waitingOn: state.winner ? [] : top ? [top.player] : [state.seats[state.turn.seat]!.faction],
     winner: copy(state.winner),
+    revealed: self ? copy(state.reveals.filter(r => r.to === self)) : [],
   }
 }

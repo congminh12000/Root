@@ -1,9 +1,11 @@
 import type { Action } from './actions.ts'
-import { placeWarriors } from './board.ts'
+import { drawCards, placeWarriors } from './board.ts'
+import { addSupporter } from './factions/alliance.ts'
+import type { Rng } from './rng.ts'
 import { activeDominance, cardDef, discardCard, isBird, matchesSuit, suitOf, takeFromHand } from './rules.ts'
 import type { FactionId, GameState, Suit } from './state.ts'
 
-/** Decisions and actions every faction shares: Field Hospitals, discarding down, dominance (§3.3, §6.2.3). */
+/** Decisions and actions every faction shares: Field Hospitals, Outrage, discarding down, dominance (§3.3, §6.2.3, §8.2.6). */
 
 export function commonDecisionOptions(state: GameState): Action[] {
   const top = state.pending.at(-1)
@@ -15,10 +17,15 @@ export function commonDecisionOptions(state: GameState): Action[] {
     ]
   }
   if (top?.kind === 'discard-down') return state.hands[top.player]!.map((card): Action => ({ type: 'discard-card', payload: { card } }))
+  if (top?.kind === 'outrage') { // §8.2.6: a matching card (birds count, §2.1.1.I), else show the hand
+    const matching = state.hands[top.player]!.filter(c => matchesSuit(c, suitOf(state, top.clearing)))
+    return matching.length ? matching.map((card): Action => ({ type: 'outrage-give', payload: { card } })) : [{ type: 'outrage-reveal', payload: {} }]
+  }
+  if (top?.kind === 'discard-supporters') return state.factions.alliance!.supporters.map((card): Action => ({ type: 'discard-supporter', payload: { card } }))
   return []
 }
 
-export function performCommonDecision(state: GameState, action: Action) {
+export function performCommonDecision(state: GameState, action: Action, rng: Rng) {
   const top = state.pending.at(-1)!
   if (action.type === 'field-hospital' && top.kind === 'field-hospital') {
     state.pending.pop()
@@ -32,6 +39,19 @@ export function performCommonDecision(state: GameState, action: Action) {
     takeFromHand(state, top.player, action.payload.card)
     discardCard(state, action.payload.card)
     if (state.hands[top.player]!.length <= top.to) state.pending.pop()
+  } else if (action.type === 'outrage-give' && top.kind === 'outrage') {
+    state.pending.pop()
+    takeFromHand(state, top.player, action.payload.card)
+    addSupporter(state, action.payload.card)
+  } else if (action.type === 'outrage-reveal' && top.kind === 'outrage') {
+    state.pending.pop()
+    state.reveals.push({ to: 'alliance', of: top.player, cards: [...state.hands[top.player]!] })
+    for (const card of drawCards(state, 1, rng)) addSupporter(state, card)
+  } else if (action.type === 'discard-supporter' && top.kind === 'discard-supporters') {
+    const a = state.factions.alliance!
+    a.supporters.splice(a.supporters.indexOf(action.payload.card), 1)
+    discardCard(state, action.payload.card)
+    if (a.supporters.length <= top.to) state.pending.pop()
   }
 }
 
@@ -45,9 +65,16 @@ export function requireDiscardDown(state: GameState, f: FactionId, to = 5) {
 export function dominanceActions(state: GameState, f: FactionId): Action[] {
   const out: Action[] = []
   const hand = state.hands[f]!
-  // §3.3.1: at least 10 points, still scoring, no dominance active. The Vagabond's coalition comes with §9.2.8.
+  // §3.3.1: at least 10 points, still scoring, no dominance active.
   if (f !== 'vagabond' && (state.score[f] ?? -1) >= 10 && !activeDominance(state, f))
     for (const card of hand) if (cardDef(card).kind === 'dominance') out.push({ type: 'activate-dominance', payload: { card } })
+  // §9.2.8: the Vagabond activates one instead to join the player with the fewest points, in games of four or more.
+  if (f === 'vagabond' && state.seats.length >= 4 && (state.score.vagabond ?? -1) >= 10) {
+    const scoring = state.seats.map(s => s.faction).filter(x => x !== 'vagabond' && typeof state.score[x] === 'number')
+    const fewest = Math.min(...scoring.map(x => state.score[x] as number))
+    for (const card of hand) if (cardDef(card).kind === 'dominance')
+      for (const partner of scoring.filter(x => state.score[x] === fewest)) out.push({ type: 'vagabond-coalition', payload: { card, with: partner } })
+  }
   // §3.3.4: take an available dominance card by spending a matching card; a bird dominance needs a bird card.
   for (const dominance of state.availableDominance) {
     const suit = cardDef(dominance).suit
@@ -63,6 +90,13 @@ export function performDominance(state: GameState, f: FactionId, action: Action)
     takeFromHand(state, f, action.payload.card)
     state.playAreas[f]!.push(action.payload.card)
     state.score[f] = null // remove the score marker; no more points (§3.3.1)
+  } else if (action.type === 'vagabond-coalition') {
+    const v = state.factions.vagabond!
+    takeFromHand(state, f, action.payload.card)
+    state.playAreas[f]!.push(action.payload.card)
+    state.score.vagabond = null
+    v.coalition = action.payload.with
+    if (v.relationships[action.payload.with] === 'hostile') v.relationships[action.payload.with] = 0 // §9.2.9.III.d
   } else if (action.type === 'take-dominance') {
     takeFromHand(state, f, action.payload.spend)
     discardCard(state, action.payload.spend)

@@ -1,11 +1,12 @@
 import { sameJson, type Action } from './actions.ts'
 import { battleDecisionOptions, continueBattle, performBattleDecision } from './battle.ts'
 import type { CommandResult, GameCommand } from './command.ts'
-import { commonDecisionOptions, dominanceActions, performCommonDecision, performDominance } from './common.ts'
+import { commonDecisionOptions, performCommonDecision } from './common.ts'
 import type { Rng } from './rng.ts'
 import { checkVictory } from './rules.ts'
 import { advanceSetup, setupStep } from './setup.ts'
 import type { FactionId, GameState } from './state.ts'
+import { advanceTurn, performTurn, turnActions } from './turn.ts'
 
 const RECENT_ACTION_IDS = 64
 const BATTLE_DECISIONS = new Set(['ambush', 'battle-effects', 'take-hits'])
@@ -27,8 +28,8 @@ export function legalActions(state: GameState, faction: FactionId): Action[] {
   }
   if (top && BATTLE_DECISIONS.has(top.kind)) return battleDecisionOptions(state)
   if (top) return commonDecisionOptions(state)
-  // Turn actions: the factions' own (plan steps 3–6) plus dominance in Daylight (§3.3).
-  return state.turn.phase === 'daylight' ? dominanceActions(state, faction) : []
+  if (state.battle || state.stage !== 'play') return []
+  return turnActions(state, faction)
 }
 
 /**
@@ -54,21 +55,22 @@ export function applyCommand(state: GameState, command: GameCommand, rng: Rng): 
   return { state: next, result: { ok: true, revision: next.meta.revision } }
 }
 
-function perform(state: GameState, faction: FactionId, action: Action, rng: Rng) {
+export function perform(state: GameState, faction: FactionId, action: Action, rng: Rng) {
   const top = state.pending.at(-1)
   if (top?.kind === 'setup') {
     const step = setupStep(top.player, top.step)
     if (!('apply' in step)) throw new Error(`setup step ${top.step} takes no choice`)
     if (step.apply(state, action)) state.pending.pop()
     advanceSetup(state, rng)
+    advanceTurn(state, rng)
     return
   }
   if (top && BATTLE_DECISIONS.has(top.kind)) performBattleDecision(state, action)
-  else if (top) performCommonDecision(state, action)
-  else if (action.type === 'activate-dominance' || action.type === 'take-dominance') performDominance(state, faction, action)
-  else throw new Error(`no handler for ${action.type}`)
+  else if (top) performCommonDecision(state, action, rng)
+  else performTurn(state, faction, action, rng)
 
-  // A decision may have paused a battle; resume it, then check for a winner (§3.1).
+  // A decision may have paused a battle; resume it, check for a winner (§3.1), then run the turn on.
   if (state.battle) continueBattle(state, rng)
   if (!state.battle) checkVictory(state)
+  advanceTurn(state, rng)
 }

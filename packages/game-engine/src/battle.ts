@@ -18,12 +18,13 @@ export function battleTargets(state: GameState, attacker: FactionId, c: Clearing
   return state.seats.map(s => s.faction).filter(d => canBattle(state, attacker, d, c))
 }
 
-export function startBattle(state: GameState, attacker: FactionId, defender: FactionId, clearing: ClearingId, rng: Rng) {
+/** `ally`: the attacking Vagabond treats this Allied faction's warriors there as his own (§9.2.9.II.c). */
+export function startBattle(state: GameState, attacker: FactionId, defender: FactionId, clearing: ClearingId, rng: Rng, ally: FactionId | null = null) {
   if (!canBattle(state, attacker, defender, clearing)) throw new Error('illegal battle')
   state.battle = {
     clearing, attacker, defender, step: 'ambush', ambushCard: null,
     rolled: { attacker: 0, defender: 0 }, extra: { attacker: 0, defender: 0 }, ignoreRolled: { attacker: false, defender: false },
-    usedCards: [], despotScored: false,
+    usedCards: [], despotScored: false, ally, allyHits: 0, itemHits: 0,
   }
   continueBattle(state, rng)
 }
@@ -45,7 +46,10 @@ function effectCards(state: GameState, b: BattleState, side: BattleSide): CardId
 
 /** Rolled-hit cap (§4.3.3.I): warriors in the clearing; the Vagabond counts undamaged swords (§9.2.6). */
 function maxRolledHits(state: GameState, f: FactionId, c: ClearingId): number {
-  if (f === 'vagabond') return state.factions.vagabond!.satchel.filter(i => i.type === 'sword').length
+  if (f === 'vagabond') {
+    const ally = state.battle?.attacker === 'vagabond' ? state.battle.ally : null // §9.2.9.II.c
+    return state.factions.vagabond!.satchel.filter(i => i.type === 'sword').length + (ally ? warriorsAt(state, ally, c) : 0)
+  }
   return warriorsAt(state, f, c)
 }
 
@@ -124,6 +128,8 @@ export function continueBattle(state: GameState, rng: Rng) {
         dealHits(state, b.attacker, b.clearing, b.rolled.defender + b.extra.defender, { by: b.defender, inBattle: true })
         break
       case 'end':
+        // §9.2.9.II.d: more hits taken with Allied warriors than with items makes that faction Hostile.
+        if (b.ally && b.allyHits > b.itemHits) state.factions.vagabond!.relationships[b.ally] = 'hostile'
         state.battle = null
         checkVictory(state)
         return

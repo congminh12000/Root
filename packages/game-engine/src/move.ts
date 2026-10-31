@@ -1,5 +1,6 @@
 import { adjacent, mapOf } from './board.ts'
 import { pawnAt, rules, warriorsAt } from './rules.ts'
+import { outrage } from './removal.ts'
 import type { ClearingId, FactionId, GameState } from './state.ts'
 
 /**
@@ -23,11 +24,17 @@ export function moveOptions(state: GameState, f: FactionId): { from: ClearingId;
   })
 }
 
-/** Moves warriors (§4.2). Callers check canMove; Outrage (§8.2.6) hooks in with the Alliance. */
-export function moveWarriors(state: GameState, f: FactionId, from: ClearingId, to: ClearingId, n: number) {
+export const sympathetic = (state: GameState, c: ClearingId) => state.map.clearings[c]!.tokens.some(t => t.type === 'sympathy')
+
+/**
+ * Moves warriors (§4.2). Callers check canMove. Another player's warriors moving into a sympathetic clearing cause
+ * Outrage (§8.2.6), except Allied warriors forced along by the Vagabond (decisions/0004, OQ-16).
+ */
+export function moveWarriors(state: GameState, f: FactionId, from: ClearingId, to: ClearingId, n: number, opts: { forcedByVagabond?: boolean } = {}) {
   if (n < 1 || warriorsAt(state, f, from) < n) throw new Error(`cannot move ${n} ${f} warriors from ${from}`)
   const src = state.map.clearings[from]!.warriors, dst = state.map.clearings[to]!.warriors
   src[f] = src[f]! - n
   if (!src[f]) delete src[f]
   dst[f] = (dst[f] ?? 0) + n
+  if (f !== 'alliance' && !opts.forcedByVagabond && sympathetic(state, to)) outrage(state, f, to)
 }

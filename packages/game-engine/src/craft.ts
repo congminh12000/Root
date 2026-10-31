@@ -1,3 +1,4 @@
+import type { Action } from './actions.ts'
 import { mapOf } from './board.ts'
 import { dealHits, offerFieldHospital, removeAllEnemies } from './removal.ts'
 import { award, cardDef, discardCard, takeFromHand } from './rules.ts'
@@ -75,4 +76,38 @@ function favor(state: GameState, f: FactionId, suit: Suit) {
     offerFieldHospital(state, h.clearing, h.marquise)
     if (h.vagabond) dealHits(state, 'vagabond', h.clearing, 3, { by: null }) // §9.2.2.I
   }
+}
+
+/** Crafting pieces a faction may still activate this turn (§4.1.1, §6.2.1, §7.2.1, §8.2.1). */
+export function craftingPieces(state: GameState, f: FactionId): CraftingPiece[] {
+  const map = mapOf(state)
+  const out: CraftingPiece[] = []
+  for (const [c, clearing] of state.map.clearings.entries()) {
+    const suit = map.clearings[c]!.suit
+    const used = state.craftingUsed.filter(u => u === c).length // one entry per activated piece
+    const n = -used + (f === 'alliance'
+      ? clearing.tokens.filter(t => t.faction === 'alliance' && t.type === 'sympathy').length
+      : clearing.slots.filter(s => s?.kind === 'building' && s.faction === f && s.type === (f === 'marquise' ? 'workshop' : 'roost')).length)
+    for (let k = 0; k < n; k++) out.push({ id: c, suit })
+  }
+  return out
+}
+
+/** Every card in hand the faction can craft now with its crafting pieces. */
+export function craftActions(state: GameState, f: FactionId): Action[] {
+  const pieces = craftingPieces(state, f)
+  if (!pieces.length) return []
+  const seen = new Set<string>()
+  const out: Action[] = []
+  for (const card of state.hands[f] ?? []) {
+    const design = cardDef(card).id
+    if (seen.has(design) || !canCraft(state, f, card, pieces)) continue
+    seen.add(design) // two copies of one design craft the same way
+    out.push({ type: 'craft', payload: { card } })
+  }
+  return out
+}
+
+export function performCraft(state: GameState, f: FactionId, card: CardId) {
+  craft(state, f, card, craftingPieces(state, f))
 }

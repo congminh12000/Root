@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { AUTUMN, EYRIE, MARQUISE } from '@root/game-data'
 import { applyCommand, createGame, currentActor, legalActions, seededRng, type Action, type FactionId, type GameState, type Rng } from '../src/index.ts'
+import { goto } from '../src/turn.ts'
 
 export const ALL: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
 
@@ -24,12 +25,12 @@ export function scenario(factions: FactionId[] = ALL): GameState {
   if (s.factions.marquise) Object.assign(s.factions.marquise, { warriorSupply: MARQUISE.warriors, woodSupply: MARQUISE.wood, keep: null, buildingsOnTrack: { sawmill: 6, workshop: 6, recruiter: 6 } })
   if (s.factions.eyrie) Object.assign(s.factions.eyrie, { warriorSupply: EYRIE.warriors, roostsOnTrack: EYRIE.roosts })
   if (s.factions.alliance) Object.assign(s.factions.alliance, { warriorSupply: 10, supporters: [] })
-  s.turn = { seat: 0, phase: 'daylight', step: 'test', number: 1 }
+  s.turn = { seat: 0, phase: 'daylight', step: 'hold', number: 1 }
   return s
 }
 
 export function turnOf(s: GameState, f: FactionId, phase: GameState['turn']['phase'] = 'daylight') {
-  s.turn = { seat: s.seats.findIndex(x => x.faction === f), phase, step: 'test', number: 1 }
+  s.turn = { seat: s.seats.findIndex(x => x.faction === f), phase, step: 'hold', number: 1 }
 }
 
 export function warriors(s: GameState, c: number, w: Partial<Record<FactionId, number>>) {
@@ -68,3 +69,12 @@ export function answer(s: GameState, action: Action, rng: Rng = fixed([])): Game
 }
 
 export const types = (actions: Action[]) => actions.map(a => a.type)
+
+/** Puts the turn on `step` of faction `f` and runs the step's `enter`, as the turn machine would. */
+export function at(s: GameState, f: FactionId, step: string, rng: Rng = fixed([])): GameState {
+  s.turn = { seat: s.seats.findIndex(x => x.faction === f), phase: 'birdsong', step, number: 1 }
+  goto(s, step, rng)
+  return s
+}
+
+export const ofType = <T extends Action['type']>(actions: Action[], type: T) => actions.filter((a): a is Extract<Action, { type: T }> => a.type === type)

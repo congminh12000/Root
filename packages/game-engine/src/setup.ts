@@ -51,7 +51,7 @@ export function advanceSetup(state: GameState, rng: Rng) {
     const top = state.pending.at(-1)
     if (!top) {
       state.stage = 'play'
-      state.turn = { seat: 0, phase: 'birdsong', step: 'start', number: 1 }
+      state.turn = { seat: 0, phase: 'birdsong', step: 'birdsong-start', number: 1 }
       return
     }
     if (top.kind !== 'setup') throw new Error(`unexpected ${top.kind} during setup`)

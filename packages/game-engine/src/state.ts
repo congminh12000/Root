@@ -57,6 +57,10 @@ export interface MarquiseState extends FactionBase {
   keep: ClearingId | null // §6.2.2, cannot return once removed
   recruitedThisTurn: boolean // §6.5.3 once per turn
   actionsRemaining: number // §6.5 three plus one per bird spent
+  /** Moves left in the March being taken (§6.5.2); while above 0 the March is still in progress (§1.4.2). */
+  marching: number
+  /** Birdsong wood still to place when the supply cannot cover every sawmill (§6.4, §1.5.4). */
+  woodToPlace: number
 }
 
 export type EyrieLeader = EyrieLeaderId // §7.8
@@ -69,8 +73,12 @@ export interface EyrieState extends FactionBase {
   leader: EyrieLeader | null // null until chosen in setup (§7.3.3)
   leadersFaceUp: EyrieLeader[] // §7.7.3.I refills when empty
   decree: Record<DecreeColumn, DecreeCard[]>
-  /** Decree cards already resolved this Daylight, by column (§7.5.2 resolves left to right, any order inside a column). */
-  resolved: Record<DecreeColumn, number>
+  /** Indexes of Decree cards already resolved this Daylight, by column (§7.5.2: left to right, any order inside a column). */
+  resolved: Record<DecreeColumn, number[]>
+  /** Cards added to the Decree this Birdsong and whether one was a bird (§7.4.2). */
+  added: { count: number; bird: boolean }
+  /** Set by Turmoil until a new leader is chosen (§7.7.3). */
+  deposing: boolean
 }
 
 export interface AllianceState extends FactionBase {
@@ -79,6 +87,8 @@ export interface AllianceState extends FactionBase {
   sympathyOnTrack: number // §8.2.5, 10 total
   basesOnBoard: Record<Suit, ClearingId | null> // one base per suit (§8.3.2)
   officers: number // §8.5.3
+  /** Military Operations left this Evening (§8.6.1). */
+  operationsLeft: number
 }
 
 export type VagabondCharacter = VagabondCharacterId // §V.1–V.3
@@ -101,6 +111,8 @@ export interface VagabondState extends FactionBase {
   completedQuests: QuestId[]
   /** Faction the Vagabond formed a coalition with (§9.2.8), if any. */
   coalition: FactionId | null
+  /** Exhausted items still to flip in this Refresh when he must choose which (§9.4.1). */
+  refreshLeft: number
 }
 
 export interface FactionStates {
@@ -123,6 +135,7 @@ export type PendingDecision =
   | { kind: 'take-hits'; player: FactionId; clearing: ClearingId; hits: number; by: FactionId | null }
   | { kind: 'field-hospital'; player: 'marquise'; clearing: ClearingId; warriors: number } // §6.2.3
   | { kind: 'outrage'; player: FactionId; clearing: ClearingId } // §8.2.6 payer chooses the card
+  | { kind: 'discard-supporters'; player: 'alliance'; to: number } // §8.2.4 step 3
   | { kind: 'discard-down'; player: FactionId; to: number } // §6.6, §7.6.2, §8.6.2, §9.6.3
   /** One step of a faction's setup (§5.1.7). Steps without a choice run automatically when they reach the top. */
   | { kind: 'setup'; player: FactionId; step: string }
@@ -149,6 +162,11 @@ export interface BattleState {
   usedCards: CardId[]
   /** Despot's extra point is scored at most once per battle (decisions/0004, FAQ §7.8.4). */
   despotScored: boolean
+  /** Allied faction whose warriors the attacking Vagabond treats as his own (§9.2.9.II.c). */
+  ally: FactionId | null
+  /** Hits the Vagabond took by removing Allied warriors and by damaging items (§9.2.9.II.d). */
+  allyHits: number
+  itemHits: number
 }
 
 // ── Whole game ─────────────────────────────────────────────────────────────────
@@ -199,6 +217,10 @@ export interface GameState {
   score: Partial<Record<FactionId, number | null>>
   /** Crafting pieces already activated this turn (§4.1.1), as clearing ids or 'vagabond'. */
   craftingUsed: (ClearingId | 'vagabond')[]
+  /** Persistent cards whose "once" effect was used this turn (cards.md). */
+  cardsUsed: CardId[]
+  /** Hands shown to one player this turn (Codebreakers, Outrage §8.2.6). Cleared at the end of the turn. */
+  reveals: { to: FactionId; of: FactionId; cards: CardId[] }[]
 
   pending: PendingDecision[]
   battle: BattleState | null

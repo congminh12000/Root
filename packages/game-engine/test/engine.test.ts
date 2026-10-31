@@ -69,7 +69,9 @@ test('standard setup, four players: decks, hands and the setup order A–D (§5.
 
   s = finishSetup(s, rng, opts => opts.find(o => o.type === 'eyrie-place-roost' && o.payload.clearing !== 11) ?? opts[0]!)
   assert.equal(s.stage, 'play')
-  assert.deepEqual(s.turn, { seat: 0, phase: 'birdsong', step: 'start', number: 1 })
+  // Turn 1 starts with seat 0 (§5.1.1); steps without a choice have already run.
+  assert.equal(s.turn.seat, 0)
+  assert.equal(s.turn.number, 1)
   assert.deepEqual(s.pending, [])
 
   // Eyrie had to take the corner opposite the keep (§7.3.2).

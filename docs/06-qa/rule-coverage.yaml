@@ -112,28 +112,28 @@ rules:
     section: "1.4"
     page: 2
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/turn.ts, packages/game-engine/src/engine.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.4.1
     title: "Turn Structure"
     section: "1.4.1"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/turn.ts, packages/game-engine/src/engine.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.4.2
     title: "Interrupts"
     section: "1.4.2"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/turn.ts, packages/game-engine/src/engine.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.4.3
     title: "End of Turn"
@@ -490,10 +490,10 @@ rules:
     title: "No Movement Limits"
     section: "4.2.2"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/movement.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/move.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3
     title: "Battle"
@@ -664,10 +664,10 @@ rules:
     title: "Crafting"
     section: "6.2.1"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts, packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.2.2
     title: "The Keep"
@@ -746,74 +746,74 @@ rules:
     title: "Birdsong"
     section: "6.4"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5
     title: "Daylight"
     section: "6.5"
     page: 6
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5.1
     title: "Battle"
     section: "6.5.1"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5.2
     title: "March"
     section: "6.5.2"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5.3
     title: "Recruit"
     section: "6.5.3"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5.4
     title: "Build"
     section: "6.5.4"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.5.5
     title: "Overwork"
     section: "6.5.5"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.6
     title: "Evening"
     section: "6.6"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/turn.ts]
+    tests: [packages/game-engine/test/marquise.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.1
     title: "Overview"
