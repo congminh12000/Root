@@ -314,10 +314,10 @@ rules:
     title: "Adjacency"
     section: "2.4.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.5
     title: "Rule"
@@ -1336,10 +1336,10 @@ rules:
     title: "Crafting"
     section: "9.2.1"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.2
     title: "Lone Wanderer"
@@ -1354,10 +1354,10 @@ rules:
     title: "Nimble"
     section: "9.2.3"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.4
     title: "Defenseless"
@@ -1372,10 +1372,10 @@ rules:
     title: "Items"
     section: "9.2.5"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.6
     title: "Maximum Rolled Hits"
@@ -1399,28 +1399,28 @@ rules:
     title: "Dominance Cards and Coalitions"
     section: "9.2.8"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/common.ts, packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.9
     title: "Relationships"
     section: "9.2.9"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts, packages/game-engine/src/battle.ts, packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.10
     title: "Forest Movement"
     section: "9.2.10"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3
     title: "Faction Setup"
@@ -1491,165 +1491,165 @@ rules:
     section: "9.4"
     page: 10
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.4.1
     title: "Refresh"
     section: "9.4.1"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.4.2
     title: "Slip"
     section: "9.4.2"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5
     title: "Daylight"
     section: "9.5"
     page: 10
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.1
     title: "Move"
     section: "9.5.1"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.2
     title: "Battle"
     section: "9.5.2"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.3
     title: "Explore"
     section: "9.5.3"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.4
     title: "Aid"
     section: "9.5.4"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.5
     title: "Quest"
     section: "9.5.5"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.6
     title: "Strike"
     section: "9.5.6"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.7
     title: "Repair"
     section: "9.5.7"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.8
     title: "Craft"
     section: "9.5.8"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.5.9
     title: "Special Action"
     section: "9.5.9"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.6
     title: "Evening"
     section: "9.6"
     page: 10
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.6.1
     title: "Rest"
     section: "9.6.1"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.6.2
     title: "Draw Cards"
     section: "9.6.2"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.6.3
     title: "Discard Cards"
     section: "9.6.3"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.6.4
     title: "Check Item Capacity"
     section: "9.6.4"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.7
     title: "Playing with Two Vagabonds"
@@ -1775,10 +1775,10 @@ rules:
     title: "Special Action"
     section: "V.1.2"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-V.2
     title: "Tinker"
@@ -1803,10 +1803,10 @@ rules:
     title: "Special Action"
     section: "V.2.2"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-V.3
     title: "Ranger"
@@ -1831,8 +1831,8 @@ rules:
     title: "Special Action"
     section: "V.3.2"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: false, implementation_verified: false}
