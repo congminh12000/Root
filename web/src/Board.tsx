@@ -1,36 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
-import { Application, Container, Ellipse, Graphics, Sprite, Text, Texture } from 'pixi.js'
-import { buildLayout, PLATEAU, plotPositions, SLOT } from './map/layout'
-import { paintMap } from './map/paint'
-import { ACTIVE_MAP } from './map/spec'
+import { Application, Container, Graphics, Text } from 'pixi.js'
+import woodlandMap from './assets/woodland-reference.png'
+import { CLEARING_ANCHORS, MAP_SIZE, clearingPosition, forestPosition } from './map-layout'
 import type { Snapshot } from './types'
 
-const MAP = ACTIVE_MAP
-const [BASE_W, BASE_H] = MAP.size
-const PLOT = MAP.plotSize ?? SLOT.size
-
-function label(text: string, x: number, y: number, size = 12, color = '#344d3f', family = 'Georgia') {
-  const t = new Text({ text, style: { fontFamily: family, fontSize: size, fill: color, fontWeight: '500', letterSpacing: .4 } })
+function label(text: string, x: number, y: number, size = 14, color = '#fff4d8') {
+  const t = new Text({ text, style: { fontFamily: 'Georgia', fontSize: size, fill: color, fontWeight: '600' } })
   t.anchor.set(.5)
   t.position.set(x, y)
   return t
 }
 
-function loadImage(src: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image()
-    image.onload = () => resolve(image)
-    image.onerror = reject
-    image.src = src
-  })
+interface BoardProps {
+  state?: Snapshot | null
+  selected: number | null
+  onSelect: (id: number) => void
 }
 
-export function Board({ state, selected, onSelect }: { state: Snapshot; selected: number | null; onSelect: (id: number) => void }) {
+export function Board({ state, selected, onSelect }: BoardProps) {
   const host = useRef<HTMLDivElement>(null)
   const appRef = useRef<Application | null>(null)
+  const previousPawn = useRef<{ x: number; y: number } | null>(null)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
-  const previousPawn = useRef<{ x: number; y: number } | null>(null)
+  const [showPieces, setShowPieces] = useState(false)
+  const [showNames, setShowNames] = useState(false)
+  const [zoom, setZoom] = useState(1)
 
   useEffect(() => {
     const element = host.current
@@ -38,40 +33,23 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
     let disposed = false
     const app = new Application()
     let observer: ResizeObserver | undefined
-    const art = MAP.background ? loadImage(MAP.background) : Promise.resolve(undefined)
-    void Promise.all([art, app.init({ width: BASE_W, height: BASE_H, backgroundAlpha: 0, antialias: true,
-      resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true, preference: 'webgl' })]).then(([image]) => {
+    void app.init({ width: MAP_SIZE.width, height: MAP_SIZE.height, backgroundAlpha: 0,
+      antialias: true, autoStart: false, resolution: Math.min(window.devicePixelRatio || 1, 2),
+      autoDensity: true, preference: 'webgl' }).then(() => {
       if (disposed) { app.destroy(true, { children: true }); return }
       element.appendChild(app.canvas)
       appRef.current = app
-      const layout = buildLayout(MAP)
-      const backdrop = new Sprite()
-      app.stage.addChild(backdrop)
-      let painted = 0, timer = 0
-      // The board is painted once per display density, one texel per screen pixel, so it stays sharp.
-      const paint = (width: number) => {
-        const scale = Math.min(3, Math.max(1, width * Math.min(window.devicePixelRatio || 1, 2) / BASE_W))
-        if (Math.abs(scale - painted) < .25) return
-        painted = scale
-        const previous = backdrop.texture
-        backdrop.texture = Texture.from(paintMap(MAP, layout, scale, image))
-        backdrop.width = BASE_W
-        backdrop.height = BASE_H
-        if (previous !== Texture.EMPTY) previous.destroy(true)
-      }
-      paint(element.clientWidth || BASE_W)
       observer = new ResizeObserver(() => {
         const width = element.clientWidth
         if (width > 0) {
-          app.renderer.resize(width, width * BASE_H / BASE_W)
-          app.stage.scale.set(width / BASE_W)
-          window.clearTimeout(timer)
-          timer = window.setTimeout(() => { if (!disposed) paint(width) }, 250)
+          app.renderer.resize(width, width * MAP_SIZE.height / MAP_SIZE.width)
+          app.stage.scale.set(width / MAP_SIZE.width)
+          app.render()
         }
       })
       observer.observe(element)
       setReady(true)
-    }).catch(() => setError('Không khởi tạo được WebGL. Bạn vẫn có thể theo dõi bảng trạng thái bên dưới.'))
+    }).catch(() => setError('Không tải được lớp quân cờ WebGL. Bản đồ vẫn xem và chọn vùng được.'))
     return () => {
       disposed = true
       observer?.disconnect()
@@ -85,88 +63,106 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
   useEffect(() => {
     const app = appRef.current
     if (!ready || !app) return
+    if (!state || !showPieces) {
+      app.stop()
+      app.render()
+      return
+    }
     const layer = new Container()
     app.stage.addChild(layer)
-    const lastLocation = [...state.events].reverse().find(e => e.loc !== undefined)?.loc
-    let pulse: Graphics | null = null
     state.clearings.forEach(c => {
-      const g = new Graphics()
-      if (selected === c.id || lastLocation === c.id) {
-        g.ellipse(c.x, c.y + 4, PLATEAU.rx + 12, PLATEAU.ry + 11).fill({ color: 0xf8e7a8, alpha: .14 })
-          .stroke({ color: 0xf3d27a, alpha: .9, width: 3 })
-        if (lastLocation === c.id) pulse = g
-      }
-      layer.addChild(g)
-      const hit = new Container()
-      hit.hitArea = new Ellipse(c.x, c.y, PLATEAU.rx + 4, PLATEAU.ry + 6)
-      hit.eventMode = 'static'
-      hit.cursor = 'pointer'
-      hit.on('pointertap', () => onSelect(c.id))
-      layer.addChild(hit)
+      const position = clearingPosition(c)
       const armies = c.warriors.map((n, i) => ({ n, i })).filter(x => x.n)
+      const buildingCount = c.buildings.length + Number(c.keep) + Number(c.sympathy) + Number(Boolean(c.wood))
+      if (!armies.length && !buildingCount) return
+      const width = Math.max(42, armies.length * 30 + 14, buildingCount * 20 + 14)
+      const height = armies.length && buildingCount ? 61 : 35
+      const plaque = new Graphics().roundRect(position.x - width / 2 + 2, position.y + 4, width, height, 7)
+        .fill({ color: 0x172a20, alpha: .2 })
+        .roundRect(position.x - width / 2, position.y, width, height, 7)
+        .fill({ color: 0x25342a, alpha: .88 }).stroke({ color: 0xd4bd8d, width: 1, alpha: .8 })
+      layer.addChild(plaque)
       armies.forEach(({ n, i }, j) => {
-        const x = c.x + (j - (armies.length - 1) / 2) * 27, y = c.y - 6
-        const token = new Graphics().ellipse(x + 3, y + 15, 12, 4).fill({ color: 0x141a10, alpha: .4 })
-          .roundRect(x - 12, y - 11, 24, 26, 6).fill({ color: state.players[i].color })
-          .stroke({ color: 0xfff7df, width: 1.5 })
-        token.circle(x, y - 16, 5).fill({ color: state.players[i].color }).stroke({ color: 0xfff7df, width: 1.3 })
+        const x = position.x + (j - (armies.length - 1) / 2) * 30
+        const token = new Graphics().roundRect(x - 11, position.y + 8, 22, 21, 4)
+          .fill(state.players[i].color).stroke({ color: 0xf5dfb4, width: 1 })
         layer.addChild(token)
-        layer.addChild(label(String(n), x, y + 3, 12, '#fff8e8', 'monospace'))
+        layer.addChild(label(String(n), x, position.y + 19, 13))
       })
-      // Buildings sit on the painted slots; other markers stack on the plateau's left rim.
-      const plots = plotPositions(MAP.clearings[c.id])
-      c.buildings.forEach((b, k) => {
-        const [x, y] = plots[k], half = PLOT / 2 - 2
-        layer.addChild(new Graphics().roundRect(x - half, y - half, half * 2, half * 2, 3)
-          .fill({ color: state.players[b.player].color }).stroke({ color: 0xfff7df, width: 1.4 }))
-        layer.addChild(label(b.kind === 'roost' ? '⌂' : b.kind === 'base' ? '⚑' : b.kind === 'mill' ? '✳' : b.kind === 'workshop' ? '⚒' : '▥',
-          x, y, 12, '#fff8e8'))
-      })
-      // A ruin fills the last plot until it is explored; buildings fill plots from the first, so they never meet.
-      if (c.ruin) {
-        const [x, y] = plots[plots.length - 1], half = PLOT / 2 - 2
-        layer.addChild(new Graphics().roundRect(x - half, y - half, half * 2, half * 2, 3).fill(0x8f8a76).stroke({ color: 0x2a271f, width: 1.6 })
-          .rect(x - half + 3, y - half + 3, half * 2 - 6, 5).fill(0xb3ad97).rect(x - half + 3, y - half + 8, 5, half * 2 - 11).fill(0xb3ad97)
-          .moveTo(x + 2, y - 8).lineTo(x + 2, y + 10).moveTo(x - 4, y - 5).lineTo(x + 2, y + 1).lineTo(x + 8, y - 5)
-          .moveTo(x - 4, y + 9).lineTo(x + 2, y + 4).lineTo(x + 8, y + 9).stroke({ color: 0x8ff0dc, width: 2.2, cap: 'round' }))
-      }
-      const markers = [...(c.keep ? [{ color: '#bf704b', char: '♜' }] : []), ...(c.sympathy ? [{ color: '#87944e', char: '❧' }] : []),
-        ...(c.wood ? [{ color: '#8f724c', char: `${c.wood}w` }] : [])]
-      markers.forEach((m, j) => {
-        const x = c.x - PLATEAU.rx - 2, y = c.y - 12 + j * 17
-        layer.addChild(new Graphics().circle(x + 1.5, y + 2, 8).fill({ color: 0x141a10, alpha: .35 })
-          .circle(x, y, 8).fill(0xf2e8cb).stroke({ color: 0x2a271f, width: 1, alpha: .6 }))
-        layer.addChild(label(m.char, x, y, m.char.length > 1 ? 8 : 11, m.color))
-      })
+      const symbols = [
+        ...c.buildings.map(b => ({ color: state.players[b.player].color,
+          char: b.kind === 'roost' ? '⌂' : b.kind === 'base' ? '⚑' : b.kind === 'mill' ? '✳' : b.kind === 'workshop' ? '⚒' : '▥' })),
+        ...(c.keep ? [{ color: '#e7a46a', char: '♜' }] : []),
+        ...(c.sympathy ? [{ color: '#b6c58a', char: '❧' }] : []),
+        ...(c.wood ? [{ color: '#e2c192', char: `${c.wood}w` }] : []),
+      ]
+      symbols.forEach((s, j) => layer.addChild(label(s.char,
+        position.x + (j - (symbols.length - 1) / 2) * 20, position.y + (armies.length ? 45 : 18), 15, s.color)))
     })
-    const ranger = state.players.find(p => p.faction === 'ranger')!
-    const pos = state.clearings[ranger.position]
-    const target = pos ? { x: pos.x + 47, y: pos.y - 27 } : { x: 225, y: 210 + (-ranger.position - 1) * 30 }
-    const pawn = new Graphics().circle(0, -12, 7).fill(ranger.color).stroke({ color: 0xfff5e2, width: 2 })
-      .poly([0, -5, -10, 14, 10, 14]).fill(ranger.color).stroke({ color: 0xfff5e2, width: 2 })
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    pawn.position.copyFrom(previousPawn.current || target)
-    if (reduced) pawn.position.copyFrom(target)
-    previousPawn.current = target
-    layer.addChild(pawn)
-    let elapsed = 0
-    const animate = () => {
-      elapsed += app.ticker.deltaMS
-      const f = Math.min(1, app.ticker.deltaMS / 100)
-      pawn.x += (target.x - pawn.x) * f
-      pawn.y += (target.y - pawn.y) * f
-      if (pulse && !reduced) pulse.alpha = .8 + Math.sin(elapsed / 500) * .2
+    const ranger = state.players.find(p => p.faction === 'ranger')
+    let animate: (() => void) | undefined
+    if (ranger) {
+      const clearing = state.clearings.find(c => c.id === ranger.position)
+      const location = clearing ? clearingPosition(clearing) : forestPosition(ranger.position)
+      const target = { x: location.x + (clearing ? 64 : 0), y: location.y + 12 }
+      const pawn = new Graphics().ellipse(3, 20, 15, 5).fill({ color: 0x14231b, alpha: .3 })
+        .circle(0, -10, 8).fill(ranger.color).stroke({ color: 0xffe9be, width: 2 })
+        .poly([0, -2, -12, 18, 12, 18]).fill(ranger.color).stroke({ color: 0xffe9be, width: 2 })
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      pawn.position.copyFrom(reduced ? target : previousPawn.current || target)
+      previousPawn.current = target
+      layer.addChild(pawn)
+      animate = () => {
+        const f = Math.min(1, app.ticker.deltaMS / 100)
+        pawn.x += (target.x - pawn.x) * f
+        pawn.y += (target.y - pawn.y) * f
+      }
+      if (!reduced) app.ticker.add(animate)
     }
-    app.ticker.add(animate)
+    app.render()
+    app.start()
     return () => {
-      // React can run the application's cleanup before this layer's cleanup.
-      app.ticker?.remove(animate)
+      if (animate) app.ticker?.remove(animate)
       if (!layer.destroyed) layer.destroy({ children: true })
     }
-  }, [state, ready, selected, onSelect])
+  }, [state, ready, showPieces])
 
-  return <div className="board-renderer">
-    <div ref={host} role="img" aria-label={`Bản đồ ${MAP.clearings.length} vùng. Bảng vùng bên dưới cung cấp dữ liệu tương đương.`} />
-    {error && <p role="alert">{error}</p>}
+  const regions = CLEARING_ANCHORS.map((anchor, id) => ({
+    ...anchor, id, name: state?.clearings.find(c => c.id === id)?.name ?? `Vùng ${id + 1}`,
+  }))
+
+  return <div className="reference-map-view">
+    <div className="map-controls" aria-label="Hiển thị bản đồ">
+      <div className="map-zoom-controls">
+        <button aria-label="Thu nhỏ bản đồ" disabled={zoom === 1} onClick={() => setZoom(z => Math.max(1, z - .25))}>−</button>
+        <button className="map-reset" onClick={() => setZoom(1)} title="Hiển thị toàn bộ bản đồ">{Math.round(zoom * 100)}%</button>
+        <button aria-label="Phóng to bản đồ" disabled={zoom === 3} onClick={() => setZoom(z => Math.min(3, z + .25))}>+</button>
+      </div>
+      <div className="map-layer-controls">
+        <label><input type="checkbox" checked={showNames} onChange={e => setShowNames(e.target.checked)} />Tên vùng</label>
+        {state && <label><input type="checkbox" checked={showPieces} onChange={e => setShowPieces(e.target.checked)} />Quân cờ</label>}
+        {(showNames || showPieces || selected !== null) && <button onClick={() => {
+          setShowNames(false); setShowPieces(false); setZoom(1); onSelect(-1)
+        }}>Bản đồ gốc</button>}
+      </div>
+    </div>
+    <div className={`map-viewport ${zoom > 1 ? 'is-zoomed' : ''}`}>
+      <div className="board-renderer reference-map" style={{ width: `${zoom * 100}%`, aspectRatio: `${MAP_SIZE.width}/${MAP_SIZE.height}` }}>
+        <img className="map-illustration" src={woodlandMap} width={MAP_SIZE.width} height={MAP_SIZE.height}
+          alt="Bản đồ rừng mùa thu do bạn cung cấp: rừng thông, làng nhỏ, núi đá và sông uốn lượn."
+          draggable={false} fetchPriority="high" />
+        <div className="map-piece-layer" ref={host} aria-hidden="true" />
+        <div className="map-region-layer" aria-label="Các vùng trên bản đồ">
+          {regions.map(region => <button key={region.id}
+            className={`map-region ${selected === region.id ? 'is-selected' : ''} ${showNames ? 'show-name' : ''} ${region.y > 1000 ? 'label-above' : ''}`}
+            style={{ left: `${region.x / MAP_SIZE.width * 100}%`, top: `${(region.y - 32) / MAP_SIZE.height * 100}%` }}
+            aria-label={`Xem ${region.name}`} aria-pressed={selected === region.id}
+            onClick={() => onSelect(selected === region.id ? -1 : region.id)}>
+            <span>{region.name}</span>
+          </button>)}
+        </div>
+      </div>
+    </div>
+    {error && <p className="map-render-error" role="alert">{error}</p>}
   </div>
 }

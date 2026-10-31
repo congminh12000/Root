@@ -28,6 +28,7 @@ Mọi phần bên dưới mô tả **bản thử nghiệm cũ** (`backend/` Pyth
 - Có bot random, heuristic, tìm kiếm Monte Carlo và mô hình neural GRU nhỏ.
 - Có quy trình imitation → PPO, hai worker, checkpoint/resume và pool đối thủ cũ.
 - Web React/PixiJS có bàn chơi, live WebSocket, hồ sơ phe, toàn cảnh khán giả, replay và báo cáo.
+- Cập nhật 30/10/2026: nền bản đồ là đúng ảnh người dùng cung cấp trong `web/src/assets/woodland-reference.png`, không chỉnh pixel. `web/src/map-layout.ts` ánh xạ ID vùng sang tọa độ minh họa; không thay topology engine. `/map` xem độc lập, không gọi API/training. Điểm/thanh tiến độ trên thẻ phe đã bỏ; tên vùng/quân cờ chỉ hiện khi bật lớp tương ứng.
 - API của trình duyệt chỉ đọc. Chủ máy điều khiển trận qua CLI.
 - Bản đồ, 54 thẻ và 15 nhiệm vụ hiện là nội dung thử nghiệm tự thiết kế, **không tương đương Autumn/base deck chính thức**.
 - Chưa đủ các nhân vật cơ bản của Vagabond, allied-warrior movement/combat và mọi lựa chọn thời điểm/phân bổ. Danh sách cụ thể ở RULES.md.
@@ -44,7 +45,7 @@ Mọi phần bên dưới mô tả **bản thử nghiệm cũ** (`backend/` Pyth
 - `backend/root/storage.py`: SQLite journal, snapshot public/omniscient, verify replay.
 - `backend/root/server.py`, `cli.py`: FastAPI/WebSocket và CLI chủ máy.
 - `web/src/map/`: layout, painter 2.5D (Canvas 2D), bảng màu theo mùa và kiểm tra bố cục.
-- `web/src/Board.tsx`: nền bản đồ đã vẽ + lớp quân cờ PixiJS; `main.tsx`: giao diện khán giả.
+- `web/src/Board.tsx`: nền ảnh `woodland-reference.png` + lớp quân cờ PixiJS (theo `map-layout.ts`); `main.tsx`: giao diện khán giả. Bản đồ lakeside vẽ bằng painter (`web/src/map/`) chỉ còn ở trang preview `map-preview.html` và `map3d.html`.
 - `backend/tests`, `web/src/playback.test.ts` và `web/src/map/map.test.ts`: các kiểm tra hiện có.
 
 Không lặp lại bộ luật trong frontend. Không cho agent đọc authoritative state, bài đối thủ, thứ tự bộ bài hoặc seed xào bài. Spectator omniscient là luồng riêng. Search chỉ được lấy mẫu thế giới từ observation.

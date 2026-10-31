@@ -41,7 +41,7 @@ Minh họa mực vẽ tay in trên giấy: mọi viền (bờ sông, bờ hồ, 
 6. Ánh sáng chung: nguồn sáng từ góc trên trái, sương nhẹ phía xa (trên), vignette.
 7. Biểu tượng suit và băng tên, luôn nằm trên cùng để dễ đọc.
 
-Quân cờ và công trình là lớp PixiJS động trong `web/src/Board.tsx`. Kích thước cao nguyên và vị trí ô công trình dùng chung hằng số `PLATEAU`/`SLOT` trong `web/src/map/layout.ts`.
+Trang preview (`map-preview.html`, `mapCanvasPreview.ts`) vẽ bản đồ này. Bàn chơi khán giả `web/src/Board.tsx` hiện dùng ảnh `woodland-reference.png` (merge từ `main`, 30/10/2026). Kích thước cao nguyên và vị trí ô công trình dùng chung hằng số `PLATEAU`/`SLOT` trong `web/src/map/layout.ts`.
 
 ## Quy trình làm bản đồ mới
 
