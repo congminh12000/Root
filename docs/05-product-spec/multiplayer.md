@@ -10,7 +10,13 @@ npm run build                          # dựng giao diện vào packages/client
 npm run serve -- --host 0.0.0.0        # http://<IP-LAN>:8080
 ```
 
-Tùy chọn: `--port 8080`, `--data data/root2` (thư mục lưu trận, đã gitignore), `--bot-delay 400` (ms trước mỗi nước của bot). Mặc định server chỉ nghe `127.0.0.1`; dùng `--host 0.0.0.0` để máy khác trong LAN vào được.
+Tùy chọn:
+- `--port 8080`
+- `--data data/root2`: thư mục lưu trận, đã gitignore.
+- `--bot-delay 400`: số ms bot chờ trước mỗi nước.
+- `--turn-seconds 90`: thời hạn cho mỗi lựa chọn của người chơi. Đặt `0` để tắt.
+- `--password <khóa>`, hoặc biến môi trường `ROOT_PASSWORD`: mật khẩu phòng.
+- `--max-games 20`: số trận chưa kết thúc tối đa cùng lúc. Mặc định server chỉ nghe `127.0.0.1`; dùng `--host 0.0.0.0` để máy khác trong LAN vào được.
 
 Khi sửa giao diện: chạy `npm run serve` trong một terminal và `npm run dev:client` trong terminal khác. Vite proxy `/api` và `/ws` sang cổng 8080.
 
@@ -33,6 +39,12 @@ Khi sửa giao diện: chạy `npm run serve` trong một terminal và `npm run 
 
 HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ faction, kind: 'human' | 'bot', name?, bot? }] }` tạo trận, trả về 400 nếu tổ hợp phe không đủ Reach (decision 0003).
 
+## Thời hạn và mật khẩu (quyết định của người quản lý, 31/10/2026)
+
+- **Thời hạn:** mỗi lựa chọn của ghế người có 90 giây, kể cả các quyết định xen ngang như Field Hospitals, ambush hay Outrage. Đồng hồ chạy lại sau mỗi command được chấp nhận. Hết giờ thì bot mạnh nhất hiện có chọn thay đúng một lần, rồi quyền chọn trở lại với người đó. Command của bot ghi `actionId` bắt đầu bằng `timeout-`. Server gửi `deadline` và giờ server `now` để trình duyệt đếm ngược mà không phụ thuộc đồng hồ máy khách.
+- **Mật khẩu phòng:** khi đặt mật khẩu, mọi API `/api/*` (trừ `/api/config`) cần header `x-room-key`, và khán giả cần `&key=` khi mở WebSocket. Đường dẫn của từng ghế đã chứa token bí mật riêng nên không cần mật khẩu. Server so mật khẩu bằng phép so sánh thời gian hằng.
+- **Giới hạn:** tạo trận vượt `--max-games` trận chưa kết thúc thì server trả về 429.
+
 ## Bot
 
 | id | Cách chọn |
@@ -44,7 +56,6 @@ Bot `simple` yếu. Bản cũ (`backend/`) có tìm kiếm Monte Carlo và mô h
 
 ## Chưa có (cần người quản lý quyết định)
 
-- **Thời hạn cho người chơi thật.** Ghế người vắng làm trận dừng chờ, kể cả ở các quyết định xen ngang như Field Hospitals hay Outrage. Gợi ý: hết hạn thì chọn phương án "không dùng" hoặc phương án bắt buộc nhỏ nhất (timing-interrupts.md).
-- **Tài khoản và bảo mật.** Server không có đăng nhập và không mã hóa (HTTP thường). Chỉ dùng trong LAN tin cậy.
+- **Tài khoản và mã hóa.** Server không có tài khoản và chạy HTTP thường, không mã hóa. Chỉ dùng trong LAN tin cậy.
 - **Đổi người giữa trận, hoàn tác, chat.**
 - **Bản đồ dùng hình tự vẽ đơn giản.** Chưa có hoạt ảnh hay hiển thị lá bài đầy đủ.

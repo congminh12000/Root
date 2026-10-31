@@ -13,7 +13,11 @@ export interface LogEntry { revision: number; faction: FactionId; type: string; 
 
 export type ServerMessage =
   /** Sent on connect and after every accepted command. `legal` is empty unless this seat must act. */
-  | { type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]; seats: SeatInfo[]; log: LogEntry[] }
+  | { type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]; seats: SeatInfo[]; log: LogEntry[]
+      /** Epoch ms when the human the game waits on runs out of time; null when no clock runs. */
+      deadline: number | null
+      /** Server clock when sent, so clients count down without trusting their own clock. */
+      now: number }
   | { type: 'rejected'; actionId: string; result: Extract<CommandResult, { ok: false }> }
   | { type: 'error'; message: string }
 

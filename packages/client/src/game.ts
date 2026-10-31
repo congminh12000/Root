@@ -1,12 +1,15 @@
 import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { renderBoard } from './board.ts'
 import { clearingsOf, describe, GROUP } from './describe.ts'
+import { roomKey } from './lobby.ts'
 import { cardDesign, cardName, FACTION_COLOR, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME, SUIT_COLOR } from './names.ts'
 
 interface Update {
   type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]
   seats: { faction: FactionId; kind: string; name: string; connected: boolean }[]
   log: { revision: number; faction: FactionId; type: string; detail?: unknown }[]
+  deadline: number | null
+  now: number
 }
 type Message = Update | { type: 'rejected'; actionId: string; result: { code: string; message: string } } | { type: 'error'; message: string }
 
@@ -21,13 +24,18 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   let notice = ''
   let socket: WebSocket | null = null
   let counter = 0
+  let localDeadline: number | null = null
 
   function connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws'
-    socket = new WebSocket(`${proto}://${location.host}/ws?game=${encodeURIComponent(gameId)}${token ? `&token=${encodeURIComponent(token)}` : ''}`)
+    const auth = token ? `&token=${encodeURIComponent(token)}` : `&key=${encodeURIComponent(roomKey())}`
+    socket = new WebSocket(`${proto}://${location.host}/ws?game=${encodeURIComponent(gameId)}${auth}`)
     socket.onmessage = ev => {
       const msg = JSON.parse(ev.data) as Message
-      if (msg.type === 'update') { last = msg; notice = ''; highlight = []; draw() }
+      if (msg.type === 'update') {
+        localDeadline = msg.deadline === null ? null : Date.now() + (msg.deadline - msg.now)
+        last = msg; notice = ''; highlight = []; draw()
+      }
       else if (msg.type === 'rejected') { notice = `Máy chủ từ chối: ${msg.result.code}`; draw() }
       else { notice = msg.message; draw() }
     }
@@ -81,6 +89,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
         <span>Lượt ${v.turn.number} · ${PHASE_NAME[v.turn.phase]} · ${esc(STEP_NAME[v.turn.step] ?? v.turn.step)}</span>
         <span>Đang chờ: ${v.waitingOn.map(faction).join(' ') || '—'}</span>
         <span>${seat ? `Bạn là ${faction(seat)}` : 'Khán giả'}</span>
+        <span class="clock" id="clock"></span>
       </header>
       ${v.winner ? `<div class="winner">Kết thúc: ${v.winner.factions.map(faction).join(' + ')} thắng (${v.winner.reason})</div>` : ''}
       ${notice ? `<div class="notice">${esc(notice)}</div>` : ''}
@@ -107,6 +116,15 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       sel.addEventListener('focus', lightUp)
     })
   }
+
+  /** Countdown for the human the game waits on (90 s by default); a bot decides once when it reaches zero. */
+  setInterval(() => {
+    const el = root.querySelector('#clock')
+    if (!el || !last) return
+    const left = localDeadline === null ? null : Math.max(0, Math.ceil((localDeadline - Date.now()) / 1000))
+    el.textContent = left === null ? '' : `⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`
+    el.classList.toggle('urgent', left !== null && left <= 15)
+  }, 250)
 
   draw()
   connect()

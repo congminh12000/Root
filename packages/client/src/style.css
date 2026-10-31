@@ -34,3 +34,5 @@ select { max-width: 100%; font-size: 14px; padding: 4px; }
 .decree .done { text-decoration: line-through; color: #8b8b8b; }
 .log { max-height: 280px; overflow: auto; font-size: 13px; }
 .loading { padding: 24px; }
+.clock { font-variant-numeric: tabular-nums; font-weight: bold; }
+.clock.urgent { color: #ffb3a8; }

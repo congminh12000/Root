@@ -17,12 +17,21 @@ export interface SavedGame {
 
 type Listener = (msg: ServerMessage) => void
 
+export interface RoomOptions {
+  /** Pause before each bot move, so people can follow (ms). */
+  botDelayMs?: number
+  /** Time a human seat has for each decision; then a bot decides once for it (multiplayer.md). 0 turns it off. */
+  turnSeconds?: number
+}
+
 /** Actions whose payload is public: everyone saw it happen. Others are logged by type only (hidden cards). */
 const PUBLIC_DETAIL = new Set(['move', 'battle', 'craft', 'discard-card', 'marquise-build', 'marquise-recruit', 'eyrie-move', 'eyrie-battle', 'eyrie-build',
   'eyrie-recruit', 'eyrie-add-card', 'alliance-revolt', 'alliance-spread', 'alliance-organize', 'alliance-recruit', 'vagabond-move', 'vagabond-slip',
   'vagabond-battle', 'vagabond-quest', 'vagabond-strike', 'activate-dominance', 'vagabond-coalition', 'take-dominance', 'play-ambush', 'use-battle-card'])
 
 const LOG_SIZE = 80
+/** Who decides for a human whose time ran out. */
+const TIMEOUT_BOT = 'simple'
 
 /**
  * One game on the server: the only holder of the authoritative GameState. Humans act through seat tokens; bots act
@@ -35,18 +44,23 @@ export class Room {
   private listeners = new Map<Listener, FactionId | null>()
   private connected = new Map<FactionId, number>()
   private botTimer: NodeJS.Timeout | null = null
+  private clockTimer: NodeJS.Timeout | null = null
+  /** When the human the game waits on runs out of time (epoch ms), or null. */
+  deadline: number | null = null
   private persist: (g: SavedGame) => void
   private botDelayMs: number
+  private turnSeconds: number
 
-  constructor(saved: SavedGame, persist: (g: SavedGame) => void, botDelayMs = 400) {
+  constructor(saved: SavedGame, persist: (g: SavedGame) => void, opts: RoomOptions = {}) {
     this.saved = saved
     this.persist = persist
-    this.botDelayMs = botDelayMs
+    this.botDelayMs = opts.botDelayMs ?? 400
+    this.turnSeconds = opts.turnSeconds ?? 90
     this.state = replay(saved.record)
     this.log = saved.record.commands.slice(-LOG_SIZE).map(({ command }, i, all) => this.entry(command.playerId, command.type, command.payload, saved.record.commands.length - all.length + i + 1))
   }
 
-  static create(req: CreateGameRequest, persist: (g: SavedGame) => void, botDelayMs?: number): Room {
+  static create(req: CreateGameRequest, persist: (g: SavedGame) => void, opts: RoomOptions = {}): Room {
     const id = randomUUID().slice(0, 8)
     const seed = randomBytes(16).toString('hex')
     const seats = req.seats.map(s => ({
@@ -65,7 +79,7 @@ export class Room {
     createGame(options, rng) // validates the faction mix (decision 0003) before anything is saved
     const saved: SavedGame = { id, createdAt: new Date().toISOString(), seed, seats, record: { options, setupRandom: rng.values, commands: [] } }
     persist(saved)
-    return new Room(saved, persist, botDelayMs)
+    return new Room(saved, persist, opts)
   }
 
   get id() { return this.saved.id }
@@ -87,8 +101,8 @@ export class Room {
   subscribe(seat: FactionId | null, listener: Listener): () => void {
     this.listeners.set(listener, seat)
     if (seat) this.connected.set(seat, (this.connected.get(seat) ?? 0) + 1)
-    this.broadcast()
     this.scheduleBot()
+    this.broadcast()
     return () => {
       this.listeners.delete(listener)
       if (seat) this.connected.set(seat, (this.connected.get(seat) ?? 1) - 1)
@@ -108,6 +122,8 @@ export class Room {
       legal: seat ? legalActions(this.state, seat) : [],
       seats: this.seatInfo(),
       log: this.log,
+      deadline: this.deadline,
+      now: Date.now(),
     }
   }
 
@@ -122,8 +138,8 @@ export class Room {
     this.saved.record.commands.push({ command, random: rng.values })
     this.log = [...this.log, this.entry(seat, action.type, action.payload, this.state.meta.revision)].slice(-LOG_SIZE)
     this.persist(this.saved)
-    this.broadcast()
     this.scheduleBot()
+    this.broadcast()
     return out.result
   }
 
@@ -131,8 +147,12 @@ export class Room {
     return PUBLIC_DETAIL.has(type) ? { revision, faction: faction as FactionId, type, detail: payload } : { revision, faction: faction as FactionId, type }
   }
 
-  /** If a bot must act, it acts after a short delay so people can follow the game. */
+  /**
+   * If a bot must act, it acts after a short delay so people can follow the game. If a human must act, their clock
+   * starts; when it runs out a bot decides that one choice for them (multiplayer.md).
+   */
   private scheduleBot() {
+    this.startClock()
     if (this.botTimer || this.state.winner) return
     const actor = currentActor(this.state)
     const seat = this.saved.seats.find(s => s.faction === actor)
@@ -143,18 +163,39 @@ export class Room {
     }, this.botDelayMs)
   }
 
-  /** One bot decision now. Bots get the same PlayerView and legal list a human would. */
-  botStep(): boolean {
+  /** Restarts the decision clock whenever the game waits on a human, at a new revision. */
+  private startClock() {
+    if (this.clockTimer) { clearTimeout(this.clockTimer); this.clockTimer = null }
+    this.deadline = null
     const actor = currentActor(this.state)
     const seat = this.saved.seats.find(s => s.faction === actor)
-    if (!actor || !seat || seat.kind !== 'bot' || this.state.winner) return false
-    const bot = BOTS[seat.bot ?? 'simple']!
+    if (!this.turnSeconds || this.state.winner || !seat || seat.kind !== 'human') return
+    this.deadline = Date.now() + this.turnSeconds * 1000
+    this.clockTimer = setTimeout(() => {
+      this.clockTimer = null
+      try { this.botStep(true) } catch (e) { console.error(`game ${this.id}: timeout move failed: ${(e as Error).message}`) }
+    }, this.turnSeconds * 1000)
+  }
+
+  /**
+   * One bot decision now. Bots get the same PlayerView and legal list a human would. With `forHuman`, the bot
+   * decides for a human seat whose time ran out, using the strongest bot available.
+   */
+  botStep(forHuman = false): boolean {
+    const actor = currentActor(this.state)
+    const seat = this.saved.seats.find(s => s.faction === actor)
+    if (!actor || !seat || this.state.winner) return false
+    if (seat.kind !== (forHuman ? 'human' : 'bot')) return false
+    const bot = BOTS[forHuman ? TIMEOUT_BOT : seat.bot ?? 'simple']!
     const rng = seededRng(`${this.saved.seed}:bot:${this.state.meta.revision}`)
     const action = bot.choose(viewFor(this.state, actor), legalActions(this.state, actor), rng)
-    const result = this.submit(actor, `bot-${this.state.meta.revision}`, this.state.meta.revision, action)
+    const result = this.submit(actor, `${forHuman ? 'timeout' : 'bot'}-${this.state.meta.revision}`, this.state.meta.revision, action)
     if (!result.ok) throw new Error(`bot ${seat.bot} chose an illegal action: ${result.code}`)
     return true
   }
 
-  close() { if (this.botTimer) clearTimeout(this.botTimer) }
+  close() {
+    if (this.botTimer) clearTimeout(this.botTimer)
+    if (this.clockTimer) clearTimeout(this.clockTimer)
+  }
 }
