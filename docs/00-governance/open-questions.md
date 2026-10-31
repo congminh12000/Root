@@ -6,15 +6,7 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 
 | ID | Vấn đề | Chặn phần nào | Cần nguồn |
 |---|---|---|---|
-| OQ-02 | Rules Library online ghi "Updated Oct 8, 2025", PDF ghi 13/10/2025. Chưa so hai bản. | Không chặn; baseline là PDF | SRC-004 so với SRC-001 |
-| OQ-08 | Tổ hợp phe cho 2–4 người: §5.1.1 cho phép tùy ý, §5.2 Reach chỉ là khuyến nghị. Sản phẩm bắt buộc theo Reach hay chỉ cảnh báo? | Lobby | Quyết định của người quản lý |
-| OQ-10 | Scouting Party ("không bị ảnh hưởng bởi ambush"): defender có được chơi ambush (mất lá, không gây hit) không, hay không được chơi? | Battle bước 1 | FAQ Leder / Rules Library |
-| OQ-11 | Foil Ambush (§4.3.1.I): Law chỉ nói defender bỏ lá ambush. Lá ambush của attacker có bị bỏ không? | Battle bước 1 | SRC-004, Learning to Play |
-| OQ-13 | A New Roost (§7.4.3) khi supply còn dưới 3 chiến binh: đặt tối đa có thể (§1.5.4) hay không đặt vì "all those pieces can be placed"? | Eyrie Birdsong | SRC-004 / FAQ |
-| OQ-14 | Humiliate (§7.7.1) có làm điểm xuống dưới 0 không? | Eyrie Turmoil | SRC-004 / FAQ |
-| OQ-15 | Despot (§7.8.4): +1 mỗi battle có remove building/token, hay +1 cho mỗi quân bị remove? | Eyrie battle | SRC-004 / FAQ |
-| OQ-16 | Vagabond buộc chiến binh Allied đi vào clearing sympathetic (§9.2.9.II.b): ai trả Outrage (§8.2.6)? | Outrage | SRC-004 / FAQ |
-| OQ-17 | Refresh (§9.4.1) có lật được item úp nằm trong ô Damaged không? | Vagabond Birdsong | SRC-004 / FAQ |
+| — | Không còn vấn đề mở. | | |
 
 ## Đã đóng
 
@@ -28,3 +20,6 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 | OQ-04 | Số bản sao từng lá: đếm tam giác suit trên Root Crafting Chart. 45 lá chế tạo được khớp hoàn toàn với `base-deck.ts`; ambush 5 và dominance 4 theo Law; tổng 54. Danh sách số lượng theo tên do người quản lý cung cấp ngày 31/10/2026 (32 tên, 54 lá) cũng khớp từng dòng. Cả hai là nguồn cộng đồng, nên nếu có bộ bài thật thì vẫn nên đếm lại một lần. | SRC-012, SRC-003, Law §2.1.2–2.1.3 |
 | OQ-09 | Đếm lại slot trên ảnh bàn cờ Autumn trống: cả 12 clearing khớp dữ liệu (1, 2, 2, 2, 2, 2, 3, 2, 1, 2, 2, 1; tổng 22). Clearing 1 có 1 slot, 3 có 2, 4 có 2 (1 ruin). | SRC-013 |
 | OQ-12 | Xúc xắc battle: 12 mặt, giá trị 0–3, mỗi giá trị 3 mặt (`BATTLE_DIE`). Law không ghi; người quản lý cung cấp ngày 31/10/2026. | Người quản lý dự án |
+| OQ-08 | Bắt buộc tổng Reach (§5.2) cho mọi trận, người chơi thật lẫn bot. Xem [decisions/0003-enforce-reach.md](decisions/0003-enforce-reach.md). | Người quản lý dự án |
+| OQ-10, 11, 13–17 | Phán quyết cho 7 trường hợp Law không nói rõ (Scouting Party, Foil Ambush, A New Roost, Humiliate, Despot, Outrage khi Vagabond kéo quân Allied, Refresh item hỏng). Xem [decisions/0004-unclear-rulings.md](decisions/0004-unclear-rulings.md). | Người quản lý dự án |
+| OQ-02 | So Rules Library p16 với PDF 13/10/2025: nội dung trùng; chỉ khác chữ ở §4.2 và G.4. p16 thành nguồn chính. Xem [decisions/0005-rules-library-primary.md](decisions/0005-rules-library-primary.md). | SRC-004, SRC-001 |

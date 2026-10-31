@@ -53,7 +53,8 @@ Ba bước theo thứ tự 7.4.1–7.4.3.
 
 ### ROOT-7.4.3 A New Roost
 - Nếu không có roost nào trên bản đồ: đặt 1 roost và 3 chiến binh ở một clearing có **ít chiến binh nhất** (tính mọi phe), trong số các clearing đặt được **cả** các quân này (còn slot, không có keep…). Hòa thì Eyrie chọn.
-- Law không nói rõ trường hợp không đủ 3 chiến binh trong supply (OQ-13). Tạm thời coi "all those pieces can be placed" là điều kiện, nên khi không đủ thì không đặt.
+- Phải đặt được trọn 1 roost và 3 chiến binh. Supply còn dưới 3 chiến binh thì bước này không đặt gì; §1.5.4 không bỏ qua điều kiện này (decisions/0004, OQ-13).
+- Test (tách riêng với Recruit của Decree): supply còn 2 chiến binh, không có roost trên bản đồ thì không đặt gì. Supply còn 3 thì đặt đủ.
 
 ### ROOT-7.5 Daylight
 Hai bước theo thứ tự 7.5.1–7.5.2.
@@ -87,7 +88,8 @@ Hai bước 7.6.1–7.6.2.
 Bốn bước theo thứ tự.
 
 ### ROOT-7.7.1 Step 1: Humiliate
-- Mất 1 điểm cho mỗi lá bird trên Decree, tính cả 2 vizier. Điểm không xuống dưới 0 (Law không nói rõ; xem OQ-14).
+- Mất 1 điểm cho mỗi lá bird trên Decree, tính cả 2 vizier. Điểm không xuống dưới 0 (decisions/0004, OQ-14).
+- Test: đang 2 điểm, Decree có 4 lá bird thì còn 0.
 
 ### ROOT-7.7.2 Step 2: Purge
 - Bỏ mọi lá trên Decree, trừ hai vizier. Lá dominance trên Decree được đặt cạnh bản đồ (§3.3.3).
@@ -113,4 +115,5 @@ Nhóm 7.8.1–7.8.4. Vizier bắt đầu theo `EYRIE.leaders`.
 - Vizier ở Move và Battle. Khi là attacker trong battle thì gây thêm 1 hit (extra hit §4.3.5.I).
 
 ### ROOT-7.8.4 Despot
-- Vizier ở Move và Build. Mỗi khi remove ít nhất một building hoặc token của kẻ địch **trong battle**, được thêm 1 điểm, tức 2 điểm tính cả §3.2.1. Law ghi "you score one extra victory point", nên theo cách đọc chữ thì thêm 1 cho mỗi battle, không phải cho mỗi quân (OQ-15).
+- Vizier ở Move và Build. Mỗi khi remove ít nhất một building hoặc token của kẻ địch **trong battle**, được thêm 1 điểm, tức 2 điểm tính cả §3.2.1. Điểm thêm tính **một lần mỗi battle**, không theo từng quân (decisions/0004, OQ-15).
+- Test: phá 3 building/token trong một battle thì được 3 + 1 = 4 điểm. FAQ chính thức xác nhận.

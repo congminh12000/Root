@@ -1,7 +1,7 @@
 # 0002. Khóa baseline luật: The Law of Root, 13/10/2025
 
 - Ngày: 31/10/2026
-- Trạng thái: Đã chấp nhận
+- Trạng thái: Đã chấp nhận. Phần baseline được thay bằng [0005](0005-rules-library-primary.md): nguồn chính giờ là Rules Library p16; phạm vi và cách đặt ID vẫn giữ.
 
 ## Quyết định
 

@@ -10,11 +10,15 @@
 - Defender **có thể** chơi một lá ambush khớp suit clearing (lá bird luôn khớp). PendingDecision `ambush` cho defender.
 - **I. Foil Ambush:** nếu defender chơi ambush, attacker có thể chơi một lá ambush khớp suit để hủy. Khi đó lá của defender bị bỏ và bỏ qua bước II. PendingDecision `ambush` cho attacker.
 - **II. Resolve Ambush:** defender gây ngay **2 hit** lên attacker, áp dụng theo §4.3.6 (attacker chọn quân mất). Sau đó defender bỏ lá ambush. Nếu attacker không còn chiến binh hay pawn nào ở đó thì battle kết thúc ngay.
-- Lá ambush của attacker dùng để hủy cũng bị bỏ (Law không nói rõ; vì lá đã được chơi ra, xem OQ-11).
+- Khi hủy được, **cả hai lá** ambush đều bị bỏ và battle sang bước 2 (decisions/0004, OQ-11).
+- Attacker có Scouting Party: defender vẫn được chơi ambush và lá vẫn bị bỏ, nhưng attacker không nhận 2 hit (decisions/0004, OQ-10).
 - Hit từ ambush không bị giới hạn bởi số chiến binh của defender.
+- Mỗi battle chỉ được chơi một lá ambush mỗi bên (FAQ §4.3.1).
+- Field Hospitals: nếu chiến binh Marquise bị ambush remove ở clearing có keep và Marquise spend lá, chúng được đặt lại **ngay**, nên attacker vẫn còn quân và battle không kết thúc (FAQ §4.3.1/§6.2.3).
 - Test:
   - Defender chơi ambush, attacker còn 1 chiến binh: battle kết thúc, attacker mất quân.
-  - Attacker hủy được thì không có hit nào.
+  - Attacker hủy được thì không có hit nào; cả hai lá vào chồng bài bỏ.
+  - Attacker có Scouting Party: lá ambush của defender bị bỏ, attacker không mất quân.
   - Ambush fox không chơi được ở clearing mouse.
 
 ### ROOT-4.3.2 Step 2: Use Before-Roll Effects

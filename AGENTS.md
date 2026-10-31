@@ -8,7 +8,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 
 ## Source of Truth: đọc theo thứ tự
 
-1. [docs/00-governance/source-manifest.yaml](docs/00-governance/source-manifest.yaml): nguồn chính thức. Tải PDF bằng `npm run fetch:sources`.
+1. [docs/00-governance/source-manifest.yaml](docs/00-governance/source-manifest.yaml): nguồn chính thức. Tải PDF bằng `npm run fetch:sources`, tạo bản chụp Rules Library bằng `npm run snapshot:rules`.
 2. [docs/00-governance/rule-precedence.md](docs/00-governance/rule-precedence.md): xử lý khi luật xung đột.
 3. [docs/00-governance/open-questions.md](docs/00-governance/open-questions.md): những gì chưa được phép đoán.
 4. [docs/06-qa/rule-coverage.yaml](docs/06-qa/rule-coverage.yaml): mọi điều khoản trong phạm vi và trạng thái của chúng.
@@ -18,7 +18,8 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 ## Luật bắt buộc
 
 - **Không tự bịa luật.** Mọi logic gameplay phải dẫn về một điều khoản (`ROOT-<section>`), một dữ liệu thành phần có nguồn, hoặc một quyết định đã duyệt trong `decisions/`. Thiếu nguồn thì thêm vào open-questions và dừng phần đó.
-- **Không tự điền số điều khoản.** Số điều khoản phải có trong PDF baseline (Law 13/10/2025).
+- **Nguồn luật chính là Leder Rules Library p16** (bản chụp `rules-library-root-p16.json`, cả FAQ chính thức). Luôn đọc nó trước khi viết hoặc sửa luật; PDF 13/10/2025 chỉ để đối chiếu (decisions/0005). Trước mốc phát hành, chạy `npm run snapshot:rules` để bắt cập nhật của Leder.
+- **Không tự điền số điều khoản.** Số điều khoản phải có trong Rules Library p16.
 - **Chỉ engine được đổi game state.** UI, server và bot gửi `GameCommand`; bot chỉ chọn trong danh sách hành động hợp lệ.
 - **Bot không có quyền đặc biệt.** Bot nhận `PlayerView` giống người chơi, không đọc deck, bài người khác, item dưới ruin hay seed.
 - **Luôn kèm test.** Mỗi hành vi mới cần test hợp lệ và không hợp lệ. Cập nhật `rule-coverage.yaml` (status, implementation, tests) trong cùng thay đổi.
@@ -55,6 +56,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 ```bash
 npm install
 npm run fetch:sources
+npm run snapshot:rules
 npm run audit:rules
 npm run typecheck
 npm test

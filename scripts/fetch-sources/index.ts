@@ -6,7 +6,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { parse } from 'yaml'
 
-interface Source { id: string; url?: string; file?: string; sha256?: string }
+/** `regenerate` names the command that rebuilds a file which cannot be downloaded as is (the Rules Library snapshot). */
+interface Source { id: string; url?: string; file?: string; sha256?: string; regenerate?: string }
 
 const root = resolve(import.meta.dirname, '../..')
 const manifest = parse(readFileSync(resolve(root, 'docs/00-governance/source-manifest.yaml'), 'utf8')) as { sources: Source[] }
@@ -17,7 +18,9 @@ for (const src of manifest.sources) {
   if (!src.file || !src.sha256) continue
   const path = resolve(root, src.file)
   if (!existsSync(path)) {
-    if (checkOnly || !src.url) { console.log(`MISSING  ${src.id} ${src.file}`); failed++; continue }
+    if (checkOnly || !src.url || src.regenerate) {
+      console.log(`MISSING  ${src.id} ${src.file}${src.regenerate ? ` (run ${src.regenerate})` : ''}`); failed++; continue
+    }
     const res = await fetch(src.url)
     if (!res.ok) { console.log(`FAILED   ${src.id} HTTP ${res.status}`); failed++; continue }
     mkdirSync(dirname(path), { recursive: true })

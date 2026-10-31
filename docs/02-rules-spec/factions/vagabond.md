@@ -40,7 +40,8 @@ Nhóm 9.2.1–9.2.10.
 - Vagabond không kích hoạt dominance để thắng theo cách thường.
 - Trong trận **từ 4 người**, Vagabond có thể kích hoạt dominance để lập coalition với một người chơi đang có **ít điểm hơn mọi người khác** (không tính Vagabond) và chưa ở trong coalition nào. Hòa điểm thấp nhất thì Vagabond chọn một trong số đó.
 - Kết quả: `score.vagabond = null`, `coalition = <faction>`. Người đó thắng thì Vagabond cũng thắng.
-- Hai bên coalition không còn là kẻ địch của nhau (G.8).
+- Hai bên coalition không còn là kẻ địch của nhau (G.8) và không battle nhau (FAQ §4.3/§9.2.8).
+- Không lập coalition với người đã kích hoạt dominance, vì họ không còn score marker. Người đã ở trong coalition vẫn kích hoạt dominance được (FAQ §9.2.8).
 - Test: trận 3 người thì không lập được coalition. Chọn người không có điểm thấp nhất là không hợp lệ.
 
 ### ROOT-9.2.9 Relationships
@@ -50,7 +51,7 @@ Nhóm 9.2.1–9.2.10.
   - **b. Effect:** marker tiến một ô, ghi `advancePoints[level]` điểm.
 - **II. Allied Status:** marker tới ô cuối thì Vagabond Allied với phe đó.
   - **a. Aiding Ally:** mỗi lần Aid phe Allied được 2 điểm.
-  - **b. Moving with Ally:** khi move, Vagabond có thể buộc chiến binh của **một** phe Allied đi cùng tới clearing đích. Không áp dụng khi Vagabond move một mình theo hiệu ứng đặc biệt.
+  - **b. Moving with Ally:** khi move, Vagabond có thể buộc chiến binh của **một** phe Allied đi cùng tới clearing đích. Không áp dụng khi Vagabond move một mình theo hiệu ứng đặc biệt. Đi vào clearing sympathetic theo cách này không gây Outrage (decisions/0004, OQ-16).
   - **c. Attacking with Ally:** khi bắt đầu battle với tư cách attacker, có thể coi chiến binh của một phe Allied trong clearing là của mình. Giới hạn rolled hit = số chiến binh của họ + số kiếm chưa hỏng. Không dùng được khi đánh chính phe Allied đó.
   - **d. Taking Hits with Ally:** trong battle có dùng chiến binh Allied, Vagabond có thể chịu hit bằng cách remove chiến binh đó. Nếu số hit chịu bằng chiến binh Allied **nhiều hơn** số hit chịu bằng item thì phe đó thành Hostile khi battle kết thúc. Luật này thay cho điều kiện ở mục III.
 - **III. Hostile Status:** Vagabond remove một chiến binh của phe không Hostile thì marker phe đó vào ô Hostile. Nếu chuyện này xảy ra trong battle ở lượt Vagabond thì kiểm tra Infamy.
@@ -92,7 +93,7 @@ Hai bước theo thứ tự.
 
 ### ROOT-9.4.1 Refresh
 - Lật ngửa 2 item exhausted cho mỗi trà ngửa trên track. Trà được lật ngửa trong bước này không tính. Sau đó lật thêm 3 item. Vagabond chọn item.
-- Law không nói rõ item úp trong ô Damaged có được lật không (OQ-17). Tạm thời engine chỉ lật item trong Satchel, vì item damage "không dùng được cho tới khi repair" (board, SRC-006).
+- Item trong ô Damaged **không** được Refresh; phải Repair trước (decisions/0004, OQ-17).
 
 ### ROOT-9.4.2 Slip
 - Có thể đi sang một clearing hoặc rừng kề mà **không** exhaust giày, kể cả vào clearing Hostile. Bỏ qua mọi hiệu ứng ngăn rời clearing.

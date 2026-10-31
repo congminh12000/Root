@@ -7,7 +7,7 @@ Người quản lý đã chọn xây lại theo kế hoạch "Root 2" (Source of
 - **TypeScript monorepo** (`packages/`); engine TypeScript thuần, server authoritative.
 - **Có người chơi thật** qua mạng cùng bot; chế độ toàn bot vẫn giữ.
 - **Dùng tên, bản đồ Autumn và bộ bài chính thức** của Leder Games, chỉ dùng cá nhân/LAN, không commit PDF/art chính thức (`docs/00-governance/licensing.md`).
-- Baseline luật: The Law of Root 13/10/2025. Không tự bịa luật; mọi logic dẫn về `ROOT-<section>` trong `docs/06-qa/rule-coverage.yaml`.
+- **Nguồn luật chính: Leder Rules Library p16** (https://rules.ledergames.com/?product=root&locale=en-US&printing=p16), kể cả FAQ chính thức; PDF 13/10/2025 chỉ để đối chiếu (decisions/0005). Không tự bịa luật; mọi logic dẫn về `ROOT-<section>` trong `docs/06-qa/rule-coverage.yaml`.
 - Vẫn giữ: không dùng API trả phí, thuê GPU, hosting hoặc asset trả tiền; chạy trên máy hoặc LAN. Máy phát triển là MacBook Pro M1 Pro 16 GB; không hardcode đường dẫn máy.
 - Không khởi chạy server hoặc training trừ khi người dùng yêu cầu.
 

@@ -1,6 +1,6 @@
 # Test matrix và rule coverage
 
-Nguồn dữ liệu là [rule-coverage.yaml](rule-coverage.yaml): mỗi điều khoản trong phạm vi baseline (chương 1–9, C.1, M.1, V.1–V.3 của Law 13/10/2025) là một bản ghi. Danh sách được sinh từ mục lục điều khoản của PDF, nên `section` và `page` đã khớp nguồn.
+Nguồn dữ liệu là [rule-coverage.yaml](rule-coverage.yaml): mỗi điều khoản trong phạm vi bản 1.0 (chương 1–9, C.1, M.1, V.1–V.3) là một bản ghi. Số điều khoản giống nhau ở Rules Library p16 (nguồn chính) và PDF 13/10/2025; `page` là số trang trong PDF.
 
 ## Vòng đời `status`
 
@@ -25,6 +25,6 @@ npm run audit:rules
 
 ## Quy tắc
 
-- Không tự điền số điều khoản. Điều khoản mới phải có trong PDF baseline.
+- Không tự điền số điều khoản. Điều khoản mới phải có trong Rules Library p16.
 - Mỗi điều khoản `implemented` cần ít nhất một test hợp lệ và một test không hợp lệ (vd. `movement-valid.test.ts`, `movement-invalid.test.ts`).
 - Golden scenario (trạng thái đầu, chuỗi command, lựa chọn, kết quả RNG, trạng thái cuối) nằm trong `docs/06-qa/golden-scenarios/`. Kịch bản đầu tiên lấy từ SRC-003 Walking Through Root.

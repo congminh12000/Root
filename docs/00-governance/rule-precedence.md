@@ -19,12 +19,13 @@ Engine phải giải quyết xung đột theo đúng thứ tự dưới đây. M
 
 ## 2. Thứ tự giữa các nguồn của dự án
 
-1. **SRC-001 Law PDF 13/10/2025** là baseline đã khóa ([decisions/0002-rules-baseline.md](decisions/0002-rules-baseline.md)).
+1. **SRC-004 Rules Library p16** (bản chụp có checksum) là nguồn luật chính, kể cả FAQ chính thức ([decisions/0005](decisions/0005-rules-library-primary.md)).
 2. **SRC-005 Card Library** cho văn bản lá bài; văn bản lá bài thắng Law (§1.1.1).
-3. **SRC-004 Rules Library online** dùng để đối chiếu. Nếu khác PDF thì ghi vào open-questions, chưa đổi baseline.
+3. **SRC-001 Law PDF 13/10/2025** để đối chiếu và tra số trang.
 4. **SRC-002 Learning to Play, SRC-003 Walking Through Root** dùng cho setup minh họa và kịch bản test, không dùng để quyết định luật.
 5. **Đặc tả trong `docs/02-rules-spec/`** do dự án viết. Mỗi mục phải dẫn về điều khoản; không được thêm luật mới.
-6. **Code** luôn đứng sau đặc tả. Code khác đặc tả là lỗi, không phải nguồn luật.
+6. **Phán quyết của dự án** (decisions/0004…) chỉ dùng khi Law và FAQ chính thức không trả lời; FAQ ra sau thì thắng.
+7. **Code** luôn đứng sau đặc tả. Code khác đặc tả là lỗi, không phải nguồn luật.
 
 ## 3. Khi phát hiện xung đột
 

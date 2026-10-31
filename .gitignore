@@ -18,5 +18,6 @@ data/*
 !.env.example
 .DS_Store
 node_modules/
-# Official Leder Games PDFs: fetched locally by scripts/fetch-sources, never committed (docs/00-governance/licensing.md).
+# Official Leder Games sources (PDFs, Rules Library snapshot): fetched locally, never committed (docs/00-governance/licensing.md).
 docs/01-official-sources/**/*.pdf
+docs/01-official-sources/**/*.json

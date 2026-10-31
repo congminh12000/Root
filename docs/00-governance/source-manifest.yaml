@@ -7,7 +7,7 @@ sources:
     title: The Law of Root
     version: "2025-10-13"
     priority: P0
-    role: Luật chuẩn, ngoại lệ, điều kiện hợp lệ; nguồn cho rule-coverage.yaml
+    role: Bản PDF của Law; đối chiếu với SRC-004 (nguồn chính) và tra số trang cho rule-coverage.yaml
     url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/Root_Base_Law_Oct_2025.pdf?v=1774903756
     file: docs/01-official-sources/base/Root_Base_Law_Oct_2025.pdf
     sha256: d32c8c0681d5bac6d2b483fb75d77efb47e78deaa36cb798bc527a605909c045
@@ -44,14 +44,24 @@ sources:
     verification: inventoried
 
   - id: SRC-004
-    title: Root Rules & Errata (Leder Rules Library)
-    version: "2025-10-08"
+    title: Root Rules & Errata (Leder Rules Library), printing p16
+    version: "p16 (trang ghi Updated Oct 8, 2025)"
     priority: P0
-    role: Bản Law trực tuyến; đối chiếu khi PDF và web khác nhau
+    role: >-
+      NGUỒN LUẬT CHÍNH từ 31/10/2026 (decisions/0005). Bản Law trực tuyến mới nhất, kèm 46 câu FAQ chính thức
+      gắn vào từng điều khoản. SRC-001 (PDF) chỉ còn là bản đối chiếu và nguồn số trang.
     url: https://rules.ledergames.com/?product=root&locale=en-US&printing=p16
+    file: docs/01-official-sources/base/rules-library-root-p16.json
+    sha256: eaa8dbcb0feb2615f4eedcb34909da26cbaeadcbf256c58ac9064dbecb7d01fb
+    regenerate: npm run snapshot:rules
     retrieved: "2026-10-31"
-    verification: inventoried
-    notes: Link trên trang Resources là printing=p1 nhưng tự chuyển sang p16. Trang ghi "Updated Oct 8, 2025", PDF ghi 13/10/2025; chưa so khác biệt (open-questions OQ-02). Không thấy danh sách errata tách riêng.
+    verification: verified
+    notes: >-
+      Trang là ứng dụng web; dữ liệu luật nằm trong một object literal của bundle JS. scripts/snapshot-rules
+      đọc nó bằng acorn (không chạy code) và ghi 811 điều khoản cùng 46 FAQ. Link trên trang Resources là
+      printing=p1 nhưng tự chuyển sang p16; bundle còn có p4 và p6 (bản cũ, không dùng).
+      So với PDF 13/10/2025 trong phạm vi base (283 điều khoản): nội dung luật trùng nhau, chỉ khác câu chữ ở
+      §4.2 ("choose any number" thay cho "take any number") và G.4 (thêm câu định nghĩa cannot). OQ-02 đã đóng.
 
   - id: SRC-005
     title: Root Card Database (Leder Card Library)

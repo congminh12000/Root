@@ -17,7 +17,8 @@ Nhóm 6.2.1–6.2.3.
 - Test:
   - Eyrie không đặt roost được ở clearing có keep.
   - Eyrie vẫn move vào được.
-  - Revolt ở clearing có keep: bước III remove mọi quân địch **trước**, kể cả keep. Sau đó clearing không còn keep nên Alliance place base được. Alliance được 1 điểm cho keep, cộng điểm cho mỗi building hoặc token khác.
+  - Không Revolt được ở clearing có keep: Revolt cần clearing sympathetic, mà Alliance không place được sympathy ở đó (FAQ chính thức §6.2.2/§8.4.1).
+  - Spread Sympathy và Organize không chọn được clearing có keep.
 
 ### ROOT-6.2.3 Field Hospitals
 - **Khi nào:** bất cứ khi nào một số chiến binh Marquise bị remove khỏi một clearing, vì bất kỳ lý do gì và trong lượt của bất kỳ ai.

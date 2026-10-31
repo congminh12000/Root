@@ -39,7 +39,7 @@ Lá không phải item: hành vi lấy từ văn bản in trên lá (Card Librar
 | Armorers | persistent | Trong battle, khi bị trúng đòn | Bỏ lá này để bỏ qua toàn bộ rolled hits mình phải nhận; extra hit vẫn tính |
 | Brutal Tactics | persistent | Battle khi là attacker, sau khi roll (§4.3.4) | Có thể gây thêm 1 hit; khi đó defender được 1 điểm |
 | Sappers | persistent | Battle khi là defender, sau khi roll | Bỏ lá này để gây thêm 1 hit |
-| Scouting Party | persistent | Battle khi là attacker | Ambush của defender không có tác dụng với mình. Defender vẫn có thể chơi lá, xem OQ-10 |
+| Scouting Party | persistent | Battle khi là attacker | Ambush của defender không gây hit cho mình. Defender vẫn được chơi lá và lá vẫn bị bỏ (decisions/0004) |
 | Better Burrow Bank | persistent | Đầu Birdsong | Có thể rút 1 lá; nếu rút thì chọn một kẻ địch cũng rút 1 lá |
 | Command Warren | persistent | Đầu Daylight | Có thể mở một battle |
 | Cobbler | persistent | Đầu Evening | Có thể move một lần |

@@ -82,4 +82,4 @@ Nhóm 1.5.1–1.5.5.
 ### ROOT-1.5.5 Use of Force
 - Khi một hiệu ứng buộc người khác hành động, engine giải quyết như thể chính người đó tự chọn, trong giới hạn hiệu ứng. Năng lực của họ vẫn áp dụng. Ví dụ: Eyrie bị buộc di chuyển vẫn có Lords of the Forest.
 - Bị buộc vào battle thì họ vẫn tự ra mọi quyết định trong battle.
-- Base game: Vagabond buộc chiến binh Allied đi cùng (§9.2.9.II.b).
+- Base game: Vagabond buộc chiến binh Allied đi cùng (§9.2.9.II.b). Ngoại lệ: việc này không gây Outrage (decisions/0004, OQ-16).

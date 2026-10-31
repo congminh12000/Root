@@ -1,6 +1,6 @@
 # Đặc tả luật
 
-Đặc tả hành vi cho engine, viết lại từ The Law of Root 13/10/2025 (SRC-001). Mỗi mục bắt đầu bằng ID điều khoản `ROOT-<section>`, cùng ID trong [rule-coverage.yaml](../06-qa/rule-coverage.yaml). `npm run audit:rules` kiểm tra mỗi điều khoản `specified` trở lên có ID xuất hiện trong file spec được trỏ tới.
+Đặc tả hành vi cho engine, viết theo Leder Rules Library p16 (SRC-004, nguồn chính, gồm cả FAQ chính thức) và đối chiếu với PDF 13/10/2025 (SRC-001). Mỗi mục bắt đầu bằng ID điều khoản `ROOT-<section>`, cùng ID trong [rule-coverage.yaml](../06-qa/rule-coverage.yaml). `npm run audit:rules` kiểm tra mỗi điều khoản `specified` trở lên có ID xuất hiện trong file spec được trỏ tới.
 
 Đặc tả **không thêm luật**. Điều gì Law không nói thì ghi "Law không quy định" và đưa vào [open-questions](../00-governance/open-questions.md). Văn bản Law chỉ được tóm tắt, không chép nguyên văn; khi cần chữ chính xác, đọc PDF ở trang ghi trong coverage.
 

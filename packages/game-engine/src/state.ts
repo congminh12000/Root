@@ -136,7 +136,7 @@ export interface Seat {
 export interface GameState {
   meta: {
     gameId: string
-    /** Locked rules baseline, e.g. "law-2025-10-13" (docs/00-governance/decisions/0002-rules-baseline.md). */
+    /** Rules source the game was played under, e.g. "rules-library-p16" (docs/00-governance/decisions/0005-rules-library-primary.md). */
     rulesVersion: string
     /** Version of packages/game-data used to build this game. */
     dataVersion: string
