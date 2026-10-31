@@ -16,7 +16,7 @@ from dataclasses import asdict, dataclass
 
 from .content import (
     BUILD_COST, BUILD_POINTS, CARDS, COLORS, FACTION_NAMES, FACTIONS, FORESTS,
-    ITEM_SUPPLY, LEADERS, MAP, QUESTS, ROOST_POINTS, RULESET,
+    ITEM_SUPPLY, LEADERS, MAP, QUESTS, ROOST_POINTS, RUINS, RULESET,
     SYMPATHY_COST, SYMPATHY_POINTS, card, matches,
 )
 
@@ -86,7 +86,7 @@ class Game:
             if c["id"] != 11:
                 self._place(guild["id"], c["id"], 1)
         self.s["clearings"][0]["keep"] = True
-        for loc, kind in ((0, "mill"), (0, "recruiter"), (1, "workshop")):
+        for loc, kind in ((0, "mill"), (1, "workshop"), (4, "recruiter")):
             self._build(guild["id"], loc, kind)
         self._place(canopy["id"], 11, 6)
         self._build(canopy["id"], 11, "roost")
@@ -95,8 +95,9 @@ class Game:
         for _ in range(3):
             self._support(self._draw_one())
         ruins = ["boot", "hammer", "sword", "bag"]
+        assert len(RUINS) == len(ruins), "the map must mark one ruin per ruin item"
         self.rng.shuffle(ruins)
-        for i, item in zip((3, 4, 5, 8), ruins):
+        for i, item in zip(RUINS, ruins):
             self.s["clearings"][i]["ruin"] = item
         ranger = self.player("ranger")
         ranger["position"] = -1

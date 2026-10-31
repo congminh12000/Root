@@ -1,23 +1,27 @@
 # Bàn giao Root cho Claude
 
-## Đọc trước
+## Hướng mới từ 31/10/2026: đọc `AGENTS.md` trước
+
+Người quản lý đã chọn xây lại theo kế hoạch "Root 2" (Source of Truth → Game Data → Engine → Tests → Multiplayer/Bot → UI). Quy tắc làm việc cho mọi agent nằm ở [AGENTS.md](AGENTS.md); lý do ở `docs/00-governance/decisions/0001-rewrite-scope.md`.
+
+- **TypeScript monorepo** (`packages/`); engine TypeScript thuần, server authoritative.
+- **Có người chơi thật** qua mạng cùng bot; chế độ toàn bot vẫn giữ.
+- **Dùng tên, bản đồ Autumn và bộ bài chính thức** của Leder Games, chỉ dùng cá nhân/LAN, không commit PDF/art chính thức (`docs/00-governance/licensing.md`).
+- **Nguồn luật chính: Leder Rules Library p16** (https://rules.ledergames.com/?product=root&locale=en-US&printing=p16), kể cả FAQ chính thức; PDF 13/10/2025 chỉ để đối chiếu (decisions/0005). Không tự bịa luật; mọi logic dẫn về `ROOT-<section>` trong `docs/06-qa/rule-coverage.yaml`.
+- Vẫn giữ: không dùng API trả phí, thuê GPU, hosting hoặc asset trả tiền; chạy trên máy hoặc LAN. Máy phát triển là MacBook Pro M1 Pro 16 GB; không hardcode đường dẫn máy.
+- Không khởi chạy server hoặc training trừ khi người dùng yêu cầu.
+
+Mọi phần bên dưới mô tả **bản thử nghiệm cũ** (`backend/` Python, `web/` React/PixiJS). Bản này chỉ còn là mã tham khảo, không phát triển thêm tính năng.
+
+## Bản thử nghiệm cũ: đọc khi cần tham khảo
 
 1. `README.md`: cài đặt, chạy game, huấn luyện và đánh giá.
 2. `docs/RULES.md`: luật đã có, khác biệt với Root và những phần chưa hoàn tất.
 3. `docs/VALIDATION.md`: kết quả kiểm tra đã thực hiện ngày 29/10/2026, không phải kết quả kiểm tra mới sau khi nhận bàn giao.
 
-## Yêu cầu của người dùng
+## Trạng thái thực tế (bản cũ)
 
-- Web game chỉ có AI chơi với nhau; người dùng chỉ xem.
-- Mục tiêu dài hạn: chiều sâu luật và chiến thuật tương đương Root Digital, nhưng tên gọi, hình ảnh, giao diện và câu văn được làm riêng.
-- Không dùng API trả phí, thuê GPU, hosting hoặc asset trả tiền. Chạy trên phần cứng hiện có, offline sau khi cài thư viện.
-- Bản đầu giới hạn bốn phe cơ bản, một bản đồ và một bộ bài. Chạy tại máy chủ hoặc mạng LAN.
-- Máy phát triển đã dùng: MacBook Pro M1 Pro, RAM 16 GB. Không hardcode đường dẫn máy này vào mã nguồn.
-- Người dùng đã yêu cầu dừng máy chủ và bot. Lần bàn giao này chỉ đóng gói tệp; không khởi chạy lại server hoặc training.
-
-## Trạng thái thực tế
-
-**Đây là bản thử nghiệm, chưa hoàn thành toàn bộ kế hoạch Root.**
+**Đây là bản thử nghiệm, chưa hoàn thành toàn bộ kế hoạch Root.** Yêu cầu cũ "chỉ AI chơi, tên và hình làm riêng" đã được thay bằng hướng mới ở trên.
 
 - Bốn phe có cơ chế riêng: Guild, Canopy, Union và Wayfarer.
 - Có bộ mô phỏng headless, quyết định phản ứng, thông tin ẩn, seed/RNG và replay kiểm chứng được.
@@ -32,15 +36,17 @@
 
 ## Mã nguồn chính
 
-- `backend/root/content.py`: dữ liệu bản đồ, thẻ, nhiệm vụ và thông số phe.
+- `maps/<id>.json`: dữ liệu mỗi bản đồ (gameplay + địa hình), dùng chung cho engine và web; xem `docs/MAPS.md`; quy tắc thiết kế ở `docs/MAP_DESIGN.md`.
+- `backend/root/content.py`: nạp bản đồ, thẻ, nhiệm vụ và thông số phe.
 - `backend/root/engine.py`: luật chung; `observe`, `legal_actions`, `step`, `sample`, export/restore.
 - `backend/root/agents.py`: heuristic và tìm kiếm có ngân sách thời gian.
 - `backend/root/learning.py`: encoding, GRU policy/value, imitation, PPO, worker và checkpoint.
 - `backend/root/runner.py`: chạy trận và giải đánh giá có thể tiếp tục.
 - `backend/root/storage.py`: SQLite journal, snapshot public/omniscient, verify replay.
 - `backend/root/server.py`, `cli.py`: FastAPI/WebSocket và CLI chủ máy.
-- `web/src/Board.tsx`: cảnh PixiJS tự vẽ; `main.tsx`: giao diện khán giả.
-- `backend/tests` và `web/src/playback.test.ts`: các kiểm tra hiện có.
+- `web/src/map/`: layout, painter 2.5D (Canvas 2D), bảng màu theo mùa và kiểm tra bố cục.
+- `web/src/Board.tsx`: nền ảnh `woodland-reference.png` + lớp quân cờ PixiJS (theo `map-layout.ts`); `main.tsx`: giao diện khán giả. Bản đồ lakeside vẽ bằng painter (`web/src/map/`) chỉ còn ở trang preview `map-preview.html` và `map3d.html`.
+- `backend/tests`, `web/src/playback.test.ts` và `web/src/map/map.test.ts`: các kiểm tra hiện có.
 
 Không lặp lại bộ luật trong frontend. Không cho agent đọc authoritative state, bài đối thủ, thứ tự bộ bài hoặc seed xào bài. Spectator omniscient là luồng riêng. Search chỉ được lấy mẫu thế giới từ observation.
 

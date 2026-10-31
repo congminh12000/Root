@@ -1,0 +1,82 @@
+import assert from 'node:assert/strict'
+import { mkdtempSync, readdirSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { test } from 'node:test'
+import { WebSocket } from 'ws'
+import type { CreateGameResponse, ServerMessage } from '../src/protocol.ts'
+import { Room, type SavedGame } from '../src/room.ts'
+import { startServer } from '../src/server.ts'
+
+const allBots = { seats: (['marquise', 'eyrie', 'alliance', 'vagabond'] as const).map(faction => ({ faction, kind: 'bot' as const, bot: 'simple' })) }
+
+test('an all-bot game runs to the end and reloads from its record to the same state', () => {
+  let saved: SavedGame | null = null
+  const room = Room.create(allBots, g => { saved = structuredClone(g) }, 0)
+  for (let i = 0; i < 5000 && room.botStep(); i++);
+  assert.ok(room.state.winner)
+  const again = new Room(saved!, () => {}, 0)
+  assert.deepEqual(again.state, room.state)
+})
+
+test('seat tokens map to seats; spectators see no hand and no legal actions; bots are never driven by clients', () => {
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human', name: 'An' }, { faction: 'eyrie', kind: 'bot' }] }, () => {}, 0)
+  const token = room.saved.seats[0]!.token!
+  assert.equal(room.seatFor(token), 'marquise')
+  assert.equal(room.seatFor('nope'), null)
+  assert.equal(room.saved.seats[1]!.token, null, 'bot seats have no token')
+  const spectator = room.message(null)
+  assert.ok(spectator.type === 'update' && spectator.view.hand.length === 0 && spectator.legal.length === 0)
+  const own = room.message('marquise')
+  assert.ok(own.type === 'update' && own.view.hand.length === 3)
+})
+
+test('a command from the wrong seat or with a stale revision is rejected and changes nothing', () => {
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, 0)
+  const before = room.state
+  const legal = room.message('marquise')
+  assert.ok(legal.type === 'update' && legal.legal.length > 0)
+  const wrong = room.submit('eyrie', 'x1', 0, legal.legal[0]!)
+  assert.equal(wrong.ok, false)
+  const stale = room.submit('marquise', 'x2', 99, legal.legal[0]!)
+  assert.ok(!stale.ok && stale.code === 'stale-revision')
+  assert.equal(room.state, before)
+  assert.ok(room.submit('marquise', 'x3', 0, legal.legal[0]!).ok)
+  assert.equal(room.saved.record.commands.length, 1)
+})
+
+test('HTTP + WebSocket: create a game, join a seat, act, and see the update; the game file is saved', async () => {
+  const dataDir = mkdtempSync(join(tmpdir(), 'root-server-'))
+  const server = startServer({ port: 0, host: '127.0.0.1', dataDir, botDelayMs: 0 })
+  await new Promise(r => server.http.once('listening', r))
+  const port = (server.http.address() as { port: number }).port
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/api/games`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ seats: [{ faction: 'marquise', kind: 'human', name: 'An' }, { faction: 'eyrie', kind: 'bot', bot: 'random' }] }),
+    })
+    assert.equal(res.status, 201)
+    const game = (await res.json()) as CreateGameResponse
+    const token = game.links.find(l => l.faction === 'marquise')!.token!
+    const bad = await fetch(`http://127.0.0.1:${port}/api/games`, { method: 'POST', body: JSON.stringify({ seats: [{ faction: 'alliance', kind: 'bot' }, { faction: 'vagabond', kind: 'bot' }] }) })
+    assert.equal(bad.status, 400, 'Reach too low (decision 0003)')
+
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/ws?game=${game.id}&token=${token}`)
+    const messages: ServerMessage[] = []
+    const next = (pred: (m: ServerMessage) => boolean) => new Promise<ServerMessage>(resolve => {
+      const hit = messages.find(pred); if (hit) return resolve(hit)
+      const on = (raw: unknown) => { const m = JSON.parse(String(raw)) as ServerMessage; if (pred(m)) { ws.off('message', on); resolve(m) } }
+      ws.on('message', on)
+    })
+    ws.on('message', raw => messages.push(JSON.parse(String(raw))))
+    const first = await next(m => m.type === 'update' && m.legal.length > 0)
+    assert.ok(first.type === 'update' && first.seat === 'marquise')
+    ws.send(JSON.stringify({ type: 'command', actionId: 'c1', expectedRevision: first.view.revision, action: first.legal[0] }))
+    const after = await next(m => m.type === 'update' && m.view.revision > first.view.revision)
+    assert.ok(after.type === 'update')
+    ws.close()
+    assert.ok(readdirSync(dataDir).includes(`${game.id}.json`))
+  } finally {
+    await server.close()
+  }
+})

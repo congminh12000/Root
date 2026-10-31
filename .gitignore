@@ -17,3 +17,11 @@ data/*
 .env.*
 !.env.example
 .DS_Store
+node_modules/
+# Official Leder Games sources (PDFs, Rules Library snapshot): fetched locally, never committed (docs/00-governance/licensing.md).
+docs/01-official-sources/**/*.pdf
+docs/01-official-sources/**/*.json
+# Built web client (rebuilt by npm run build)
+packages/client/dist/
+# Personal Claude Code settings
+.claude/settings.local.json

@@ -1,0 +1,156 @@
+# Source of Truth — danh mục nguồn chính thức.
+# Trang gốc: https://ledergames.com/pages/resources (kiểm kê ngày 2026-10-31).
+# File PDF không commit; tải lại và kiểm checksum bằng `npm run fetch:sources`.
+# verification: verified = đã tải, checksum khớp, đã đối chiếu nội dung; inventoried = đã biết URL, chưa trích; pending = chưa có bản dùng được.
+sources:
+  - id: SRC-001
+    title: The Law of Root
+    version: "2025-10-13"
+    priority: P0
+    role: Bản PDF của Law; đối chiếu với SRC-004 (nguồn chính) và tra số trang cho rule-coverage.yaml
+    url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/Root_Base_Law_Oct_2025.pdf?v=1774903756
+    file: docs/01-official-sources/base/Root_Base_Law_Oct_2025.pdf
+    sha256: d32c8c0681d5bac6d2b483fb75d77efb47e78deaa36cb798bc527a605909c045
+    bytes: 6740395
+    pages: 32
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: Bìa ghi "October 13, 2025". Cùng trang Resources còn bản cũ 2024-09-05 và 2022-06-10; không dùng.
+
+  - id: SRC-002
+    title: Learning to Play
+    version: "2020-10-15"
+    priority: P0
+    role: Setup và hướng dẫn gameplay; thua Law khi xung đột (Law §1.1.1)
+    url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/Root_Base_Learn_to_Play_web_Oct_15_2020.pdf?v=1603389572
+    file: docs/01-official-sources/base/Root_Base_Learn_to_Play_web_Oct_15_2020.pdf
+    sha256: 1f185e82a8c8a1c110f769516c101f2260c0742929712a890d813ad0232b4826
+    bytes: 11060402
+    pages: 24
+    retrieved: "2026-10-31"
+    verification: inventoried
+
+  - id: SRC-003
+    title: Walking Through Root
+    version: "2020-10-15"
+    priority: P0
+    role: Kịch bản mẫu nhiều lượt, dùng làm golden scenario
+    url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/Root_Base_Walking_Through_Root_web_Oct_15_2020.pdf?v=1603137225
+    file: docs/01-official-sources/base/Root_Base_Walking_Through_Root_web_Oct_15_2020.pdf
+    sha256: c738f1eb79aa1078c8c1d552853e616a846f4d8fba0125e05065b4366ee33964
+    bytes: 19232483
+    pages: 20
+    retrieved: "2026-10-31"
+    verification: inventoried
+
+  - id: SRC-004
+    title: Root Rules & Errata (Leder Rules Library), printing p16
+    version: "p16 (trang ghi Updated Oct 8, 2025)"
+    priority: P0
+    role: >-
+      NGUỒN LUẬT CHÍNH từ 31/10/2026 (decisions/0005). Bản Law trực tuyến mới nhất, kèm 46 câu FAQ chính thức
+      gắn vào từng điều khoản. SRC-001 (PDF) chỉ còn là bản đối chiếu và nguồn số trang.
+    url: https://rules.ledergames.com/?product=root&locale=en-US&printing=p16
+    file: docs/01-official-sources/base/rules-library-root-p16.json
+    sha256: eaa8dbcb0feb2615f4eedcb34909da26cbaeadcbf256c58ac9064dbecb7d01fb
+    regenerate: npm run snapshot:rules
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Trang là ứng dụng web; dữ liệu luật nằm trong một object literal của bundle JS. scripts/snapshot-rules
+      đọc nó bằng acorn (không chạy code) và ghi 811 điều khoản cùng 46 FAQ. Link trên trang Resources là
+      printing=p1 nhưng tự chuyển sang p16; bundle còn có p4 và p6 (bản cũ, không dùng).
+      So với PDF 13/10/2025 trong phạm vi base (283 điều khoản): nội dung luật trùng nhau, chỉ khác câu chữ ở
+      §4.2 ("choose any number" thay cho "take any number") và G.4 (thêm câu định nghĩa cannot). OQ-02 đã đóng.
+
+  - id: SRC-005
+    title: Root Card Database (Leder Card Library)
+    priority: P0
+    role: Văn bản hiệu ứng, suit, chi phí chế tạo của 54 lá bài chung, 15 quest, leader, character
+    url: https://cards.ledergames.com/
+    feed: https://ledercards.netlify.app/cards.min.json
+    feed_sha256: 5bcd6f14b3e3abb86c47b15bf3b028f6b6fbc971a77496d2b5bf37667cfccc63
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Trang web đọc dữ liệu từ feed JSON trên (dạng nén compress-json; có 72 mục thuộc rootbasegame).
+      Suit, chi phí, item, điểm và yêu cầu quest được đọc từ ảnh từng lá và ghi vào packages/game-data.
+      Feed chỉ lưu mỗi mẫu bài một lần nên không có số bản sao (OQ-04). Không lưu ảnh bài vào repo.
+
+  - id: SRC-006
+    title: Root Update Kit (3rd printing)
+    priority: P0
+    role: Đối chiếu khác biệt giữa các bản in
+    url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/3rd-Printing-Update-Kit-1.pdf?v=1594352506
+    file: docs/01-official-sources/base/3rd-Printing-Update-Kit-1.pdf
+    sha256: ce37a4361fef9904c142d57568d5f0c60ddbd4779a8b0a68b6c43f7dd1a7b895
+    bytes: 10881610
+    pages: 16
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Trang Resources ghi ~5 MB, file tải về 10.9 MB. Tr. 1–8 là faction board bản in thứ 3 của bốn phe cơ bản
+      (mặt trước, mặt sau); số liệu track đã đọc từ hình và ghi vào packages/game-data/src/factions.ts.
+
+  - id: SRC-007
+    title: Faction Boards (Marquise, Eyrie, Alliance, Vagabond)
+    priority: P0
+    role: Track điểm, giá xây, draw bonus, Relationships chart
+    verification: verified
+    notes: Đã có qua SRC-006 (faction board bản in thứ 3). Không có PDF riêng.
+
+  - id: SRC-008
+    title: Board & Components (bản đồ Autumn)
+    priority: P0
+    role: Clearing, suit, slot, ruin, path, forest, góc bản đồ; số lượng quân (Law §C.1)
+    verification: verified
+    notes: >-
+      Law §M.1 không có dữ liệu hình học. Đã trích từ hình bản đồ trong SRC-003 tr. 3 (ảnh nền sạch cho path và
+      rừng, lớp walkthrough cho suit và ô slot) và SRC-002 tr. 5 (ô slot ở góc dưới phải). Kết quả ở
+      packages/game-data/src/maps/autumn.ts và docs/03-data-spec/autumn.md. Media Kit chỉ có ảnh quảng bá.
+
+  - id: SRC-009
+    title: Faction / Quest / Leader / Character cards
+    priority: P0
+    role: Dữ liệu riêng từng phe
+    verification: verified
+    notes: 15 quest đã trích từ SRC-005 (packages/game-data/src/cards/quests.ts). Leader và character đã có đủ luật ở Law §7.8 và §V.1–V.3.
+
+  - id: SRC-010
+    title: Law of Rootbotics
+    version: "2023-07-11"
+    priority: P2
+    role: Clockwork bot chính thức (giai đoạn sau)
+    url: https://cdn.shopify.com/s/files/1/0106/0162/7706/files/Root_Clockwork_Law_of_Rootbotics_July_11_2023_1.pdf?v=1689179030
+    verification: inventoried
+
+  - id: SRC-011
+    title: Root Digital (Direwolf Digital)
+    priority: reference
+    role: Tham khảo cách chuyển board game thành giao diện số; không phải nguồn luật
+    url: https://www.direwolfdigital.com/root/
+    verification: inventoried
+
+  - id: SRC-012
+    title: Root Crafting Chart (cộng đồng)
+    priority: reference
+    role: Đối chiếu số bản sao của từng lá trong bộ bài cơ bản
+    sha256: 80a5a6189b4cec12a72c1dc3a485382dcca00e49adfa28ddbbc65fb5a7ead01b
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Hình người quản lý dự án cung cấp, không phải tài liệu của Leder, tác giả chưa rõ; không lưu vào repo.
+      Bảng chia 45 lá chế tạo được theo chi phí, mỗi bản sao là một tam giác màu suit. Số lá từng nhóm và từng
+      mẫu khớp hoàn toàn với base-deck.ts; điểm ghi ở mỗi nhóm khớp item supply (§5.1.5).
+
+  - id: SRC-013
+    title: Ảnh bàn cờ Autumn trống
+    priority: reference
+    role: Đối chiếu slot và path của bản đồ Autumn
+    sha256: b92ddd1c3912bd7b28e4d945b49c30f758c03dcda099e8a4f58ab4cf4b2fe636
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Ảnh 800×732 do người quản lý dự án cung cấp, không có quân cờ che. Art của Leder nên không lưu vào repo.
+      Đếm ô slot của cả 12 clearing: 1, 2, 2, 2, 2, 2, 3, 2, 1, 2, 2, 1 (tổng 22), khớp packages/game-data/src/maps/autumn.ts.
+

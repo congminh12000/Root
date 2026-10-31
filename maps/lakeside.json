@@ -1,0 +1,30 @@
+{
+  "id": "lakeside",
+  "name": "Lakeside",
+  "season": "autumn",
+  "seed": 2026,
+  "size": [1312, 1199],
+  "background": "lakeside.webp",
+  "plotSize": 32,
+  "clearings": [
+    {"name": "Hollyhock Manor", "suit": "fox", "slots": 1, "x": 200, "y": 185, "paths": [1, 4, 5], "plots": [[250, 270]]},
+    {"name": "Bellfry Chapel", "suit": "rabbit", "slots": 1, "x": 645, "y": 88, "paths": [0, 2, 4, 6], "plots": [[715, 85]]},
+    {"name": "Woodcutter Rest", "suit": "mouse", "slots": 2, "x": 975, "y": 215, "paths": [1, 3, 6], "plots": [[1065, 250], [1025, 274]]},
+    {"name": "Eastbrook Farm", "suit": "fox", "slots": 1, "x": 1215, "y": 345, "paths": [2, 7], "plots": [[1165, 404]]},
+    {"name": "Millpond Lodge", "suit": "mouse", "slots": 3, "x": 465, "y": 385, "paths": [0, 1, 5], "plots": [[515, 318], [368, 428], [452, 284]], "ruin": true},
+    {"name": "Bluestone Cottage", "suit": "rabbit", "slots": 1, "x": 130, "y": 530, "paths": [0, 4, 9], "plots": [[178, 600]]},
+    {"name": "Redsail Wharf", "suit": "mouse", "slots": 3, "x": 895, "y": 520, "paths": [1, 2, 7], "plots": [[880, 432], [982, 470], [1026, 440]], "ruin": true},
+    {"name": "Aspen Hall", "suit": "rabbit", "slots": 3, "x": 1185, "y": 615, "paths": [3, 6, 11], "plots": [[1172, 676], [1222, 708], [1118, 668]], "ruin": true},
+    {"name": "Reedside Pier", "suit": "fox", "slots": 3, "x": 490, "y": 740, "paths": [9, 10], "plots": [[425, 808], [470, 785], [500, 842]], "ruin": true},
+    {"name": "Thatch End", "suit": "mouse", "slots": 1, "x": 165, "y": 925, "paths": [5, 8, 10], "plots": [[180, 975]]},
+    {"name": "Goldfinch House", "suit": "fox", "slots": 1, "x": 615, "y": 1010, "paths": [8, 9, 11], "plots": [[690, 1035]]},
+    {"name": "Shallows Quay", "suit": "rabbit", "slots": 2, "x": 1165, "y": 950, "paths": [7, 10], "plots": [[1215, 876], [1252, 866]]}
+  ],
+  "forests": [[0, 1, 4], [0, 4, 5], [1, 2, 6], [2, 3, 7, 6], [8, 9, 10], [1, 4, 5, 9, 8, 10, 11, 7, 6]],
+  "terrain": {
+    "treeSpacing": 9,
+    "rivers": [],
+    "lakes": [],
+    "rocks": []
+  }
+}

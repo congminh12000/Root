@@ -1,5 +1,7 @@
 # Root
 
+> **Bản mới (Root 2, TypeScript, luật chính thức, chơi người + bot qua LAN):** xem [AGENTS.md](AGENTS.md) và [docs/05-product-spec/multiplayer.md](docs/05-product-spec/multiplayer.md). Chạy: `npm install && npm run build && npm run serve -- --host 0.0.0.0`, rồi mở `http://<IP-LAN>:8080`. Phần dưới đây mô tả bản thử nghiệm cũ bằng Python.
+
 Một phòng thí nghiệm web **AI đấu AI, chỉ dành cho khán giả**, chạy hoàn toàn trên máy của bạn. Python/FastAPI giữ luật và điều phối; React/TypeScript/PixiJS hiển thị bàn chơi; PyTorch huấn luyện mô hình nhỏ bằng CPU hoặc Apple GPU sau khi kiểm tra.
 
 **Trạng thái: bản thử nghiệm chạy được, chưa tương đương 100% Root.** Có bốn cơ chế phe bất đối xứng, tìm kiếm Monte Carlo, lưu/replay trận, web LAN và quy trình học thực sự. Bản đồ, bộ bài và nhiệm vụ hiện là bộ nội dung tự thiết kế. Các ngoại lệ về luật nằm trong [docs/RULES.md](docs/RULES.md). Không dùng kết quả ở đây để tuyên bố AI chơi Root ở trình độ cao thủ.
