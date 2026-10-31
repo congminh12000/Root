@@ -50,7 +50,10 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 | `docs/06-qa/` | Coverage matrix, test matrix, golden scenario |
 | `packages/game-data/` | Dữ liệu nội dung có nguồn (bản đồ, bài, quest) và kiểu dữ liệu; không phụ thuộc package nào |
 | `packages/game-engine/` | Engine TypeScript thuần, không phụ thuộc UI hay Node; dùng kiểu từ `game-data`. API ở `docs/04-engine-spec/engine-api.md` |
-| `scripts/` | `fetch-sources`, `audit-rule-coverage` |
+| `packages/bots/` | Bot chỉ nhận `PlayerView` + danh sách hợp lệ (`random`, `simple`) |
+| `packages/server/` | Server LAN: HTTP + WebSocket, giữ trạng thái gốc, token ghế, lưu trận (`docs/05-product-spec/multiplayer.md`) |
+| `packages/client/` | Giao diện web (Vite, TypeScript, SVG tự vẽ); không chứa luật |
+| `scripts/` | `fetch-sources`, `audit-rule-coverage`, `snapshot-rules`, `ship.sh` |
 | `backend/`, `web/` | Bản thử nghiệm cũ (Python, React/PixiJS). Chỉ để tham khảo; không thêm tính năng |
 
 ## Lệnh
@@ -62,6 +65,8 @@ npm run snapshot:rules
 npm run audit:rules
 npm run typecheck
 npm test
+npm run build                        # dựng giao diện
+npm run serve -- --host 0.0.0.0      # chỉ khi người dùng yêu cầu chạy server
 npm run ship -- "feat(engine): ..."   # kiểm tra, commit, push
 ```
 

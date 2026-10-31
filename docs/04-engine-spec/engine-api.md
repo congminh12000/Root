@@ -53,8 +53,22 @@
 
 Engine tiếp tục battle sau mỗi quyết định trong battle, và chỉ kiểm tra thắng khi battle đã xong, vì hai bên chịu hit cùng lúc (§3.1.1).
 
+## Luồng lượt (bước 3–6)
+
+- `turn.ts` là máy trạng thái của lượt. Mỗi phe khai báo danh sách `TurnStep` trong `factions/<phe>.ts`, và engine tự chèn một bước `<phase>-start` trước mỗi phase cho hiệu ứng "at start of" (§1.4.1).
+- Một bước có thể có `enter` (chạy khi vào bước), `options`/`apply` (lựa chọn của người chơi), `optional` (cho phép `end-step`), `window` (hiệu ứng "any time" giữ bước mở), `busy` (đang giữa một hành động, §1.4.2) và `stuck` (Decree không thực hiện được thì Turmoil).
+- Sau mỗi command, `advanceTurn` chạy các bước tự động cho tới khi có người phải chọn, có quyết định đang chờ, battle đang dừng, hoặc trận kết thúc. Hết Evening thì sang ghế kế tiếp và đặt lại các bộ đếm theo lượt.
+- `hold` là bước dừng dành cho test kịch bản. Ở bước này máy trạng thái không tự chạy, chỉ còn hiệu ứng "any time" của phase.
+- Hiệu ứng lá persistent ngoài battle nằm ở `cards.ts`. Bài bị lộ cho một người (Codebreakers, Outrage) nằm trong `GameState.reveals`, và `viewFor` chỉ gửi cho đúng người đó (`PlayerView.revealed`).
+
+## Lựa chọn được rút gọn
+
+Những điểm dưới đây không đổi luật. Chúng chỉ gộp các lựa chọn cho ra cùng kết quả, để danh sách hành động không quá dài:
+- Crafting piece được chọn tự động (`payCost`). Hai piece cùng suit cho cùng kết quả. Biểu tượng `any` lấy piece còn lại đầu tiên.
+- Khi Alliance trả supporter, người chơi chỉ chọn số lá chim. Engine lấy các lá đầu tiên trong chồng, vì supporter chỉ được dùng theo suit.
+- Aid, Day Labor và chế tạo của Vagabond chỉ đưa ra mỗi thiết kế lá một lần. Các bản sao của cùng một lá có hiệu ứng như nhau.
+
 ## Chưa có
 
-- Các bước Birdsong, Daylight, Evening và hành động riêng của từng phe: bước 3–6 trong kế hoạch.
-- Outrage, hậu quả khi mất base, quan hệ và Infamy của Vagabond, chiến binh Allied: thuộc bước của phe tương ứng.
-- Hiện `legalActions` trong lượt chơi chỉ có kích hoạt và lấy dominance (vào Daylight).
+- Golden scenario từ Walking Through Root.
+- Hiệu ứng `order-effects` (§1.1.3) khi nhiều hiệu ứng xảy ra cùng lúc: hiện engine giải quyết theo thứ tự cố định.

@@ -13,22 +13,22 @@ npm run typecheck && npm test && npm run audit:rules
 
 ## Đã xong (nhánh `feat/root2-foundation`)
 
-- Nguồn luật, dữ liệu (bản đồ Autumn, 54 lá, quest, faction board, xúc xắc), đặc tả `docs/02-rules-spec/`. Không còn vấn đề mở.
-- Bước 1: khung engine (`packages/game-engine`): RNG ghi/phát lại, `createGame` + setup bốn phe, `applyCommand`, `viewFor`, `replay`.
-- Bước 2: luật chung: rule, move, craft, battle 6 bước, ghi điểm, thắng, dominance, Field Hospitals.
-- Coverage: 74/159 implemented. API ở `docs/04-engine-spec/engine-api.md`.
+- Nguồn luật, dữ liệu (bản đồ Autumn, 54 lá, quest, faction board, xúc xắc), đặc tả `docs/02-rules-spec/`. Không còn vấn đề mở về luật.
+- Bước 1: khung engine. Bước 2: luật chung (rule, move, craft, battle, ghi điểm, thắng, dominance, Field Hospitals).
+- Bước 3–6: luồng lượt và lượt đầy đủ của Marquise, Eyrie, Alliance, Vagabond (`turn.ts`, `factions/*.ts`). Outrage, mất base, quan hệ/Hostile/Infamy, chiến binh Allied, coalition.
+- Hiệu ứng 7 lá persistent ngoài battle (`cards.ts`).
+- Bước 7 (một phần): bot ngẫu nhiên chơi trọn trận trong `npm test`, kiểm tra bảo toàn quân và bài sau mỗi command, và replay. Đã chạy 2.000 trận ngẫu nhiên: 0 lỗi.
+- Multiplayer LAN: `packages/server` (HTTP + WebSocket, token ghế, lưu và dựng lại trận), `packages/client` (sảnh, bản đồ SVG, bảng chọn hành động), `packages/bots` (`random`, `simple`). Xem `docs/05-product-spec/multiplayer.md`.
 
 ## Còn lại
 
-| Bước | Việc |
+| Việc | Ghi chú |
 |---|---|
-| 3 | Luồng lượt chung (start/end phase, kiểm dominance đầu Birdsong, reset bộ đếm, chuyển ghế) + Marquise §6.4–6.6: gỗ, Battle/March/Recruit/Build/Overwork, thêm hành động bằng lá bird, Evening |
-| 4 | Eyrie §7.4–7.7: Decree, Turmoil, A New Roost |
-| 5 | Alliance §8.2–8.6: Outrage (hook vào move/removal), mất base §8.2.4, Revolt, Spread Sympathy, Mobilize, Train, Military Operations |
-| 6 | Vagabond §9.2–9.6: quan hệ, Hostile, Infamy, chiến binh Allied, coalition, các hành động exhaust item, Refresh, Slip, Rest, giới hạn item |
-| 7 | Bot ngẫu nhiên đánh hàng nghìn trận + kiểm bất biến; golden scenario từ Walking Through Root |
-
-Chỗ đã chừa sẵn (xem comment trong code): `returnBuilding` cho base Alliance, `returnToken` sympathy (Outrage), hiệu ứng lá persistent ngoài battle (Better Burrow Bank, Command Warren, Cobbler, Codebreakers, Royal Claim, Stand and Deliver!, Tax Collector).
+| Golden scenario Walking Through Root | Chép lại từng nước trong SRC-003 thành test |
+| Thời hạn cho người chơi vắng | Quyết định sản phẩm, chưa duyệt |
+| Bot mạnh hơn | `simple` chỉ là heuristic; cần search trên trạng thái lấy mẫu từ PlayerView |
+| Review luật (`verified`) | Mọi mục trong rule-coverage mới ở `implemented` |
+| Giao diện | Bản đồ tự vẽ đơn giản; chưa có hoạt ảnh, chưa xem chi tiết lá |
 
 ## Quy ước
 

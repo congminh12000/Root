@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "root-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["packages/server/src/main.ts", "--port", "8080", "--data", "data/root2-dev", "--bot-delay", "150"],
+      "port": 8080
+    }
+  ]
+}

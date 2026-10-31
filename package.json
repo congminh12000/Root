@@ -11,10 +11,13 @@
   "scripts": {
     "fetch:sources": "node scripts/fetch-sources/index.ts",
     "audit:rules": "node scripts/audit-rule-coverage/index.ts",
-    "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine && tsc -p packages/game-engine/test",
+    "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine && tsc -p packages/game-engine/test && tsc -p packages/bots && tsc -p packages/server && tsc -p packages/client",
     "test": "npm test --workspaces --if-present",
     "snapshot:rules": "node scripts/snapshot-rules/index.ts",
-    "ship": "bash scripts/ship.sh"
+    "ship": "bash scripts/ship.sh",
+    "build": "npm run build -w @root/client",
+    "serve": "node packages/server/src/main.ts",
+    "dev:client": "npm run dev -w @root/client"
   },
   "devDependencies": {
     "@types/node": "22.15.3",

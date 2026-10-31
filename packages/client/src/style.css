@@ -1,0 +1,36 @@
+:root { font-family: system-ui, -apple-system, sans-serif; color: #2a2418; background: #f4ecd8; }
+body { margin: 0; }
+a { color: #6b3f12; }
+.lobby { max-width: 900px; margin: 0 auto; padding: 16px; }
+.note { color: #6b5d45; font-size: 14px; }
+.card { background: #fffaf0; border: 1px solid #d8c9a6; border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+.card h2, .card h3 { margin: 0 0 8px; font-size: 16px; }
+.card h4 { margin: 6px 0 2px; }
+.seats td, .seats th { padding: 4px 8px; text-align: left; }
+.error { color: #b02a1f; }
+button { background: #6b3f12; color: #fff; border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 14px; }
+button:hover { background: #8a5420; }
+select { max-width: 100%; font-size: 14px; padding: 4px; }
+.bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 8px 16px; background: #3b2a16; color: #f4ecd8; font-size: 14px; }
+.bar a { color: #f4ecd8; }
+.winner { background: #2f6b3a; color: #fff; padding: 10px 16px; font-weight: bold; }
+.notice { background: #f3d36b; padding: 6px 16px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr); gap: 12px; padding: 12px; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+.board { width: 100%; height: auto; }
+.forest-label { font-size: 14px; fill: #4f6d3e; font-weight: bold; }
+.clearing-no { font-size: 16px; font-weight: bold; fill: #fff; }
+.glyph { font-size: 14px; font-weight: bold; fill: #fff; }
+.chip { font-size: 15px; font-weight: bold; fill: #fff; }
+.token { font-size: 11px; fill: #fff; }
+.fchip { color: #fff; border-radius: 10px; padding: 1px 8px; font-size: 13px; white-space: nowrap; }
+.cardchip { display: inline-block; border: 2px solid; border-radius: 6px; padding: 1px 6px; margin: 2px; font-size: 13px; background: #fff; }
+.score { margin: 3px 0; font-size: 14px; }
+.group { margin: 6px 0; }
+.group label { display: block; font-size: 13px; color: #5a4a30; margin-bottom: 2px; }
+.group select { width: 100%; margin-bottom: 4px; }
+.act { border-color: #6b3f12; border-width: 2px; }
+.decree { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 12px; margin-top: 4px; }
+.decree .done { text-decoration: line-through; color: #8b8b8b; }
+.log { max-height: 280px; overflow: auto; font-size: 13px; }
+.loading { padding: 24px; }
