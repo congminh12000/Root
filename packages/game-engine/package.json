@@ -1,0 +1,8 @@
+{
+  "name": "@root/game-engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@root/game-data": "0.0.0" }
+}

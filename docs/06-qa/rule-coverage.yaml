@@ -1,0 +1,1838 @@
+# Rule Coverage Matrix — Root base game (4 phe cơ bản, bản đồ Autumn).
+# Sinh từ mục lục điều khoản của SRC-001 (The Law of Root, 13/10/2025); section và page đã đối chiếu với PDF.
+# Vòng đời status: xem docs/06-qa/test-matrix.md. Kiểm tra: npm run audit:rules
+document: SRC-001
+version: "2025-10-13"
+scope: "Chương 1–9, C.1, M.1, V.1–V.3"
+rules:
+  - rule_id: ROOT-1.1
+    title: "Rules Conflicts"
+    section: "1.1"
+    page: 2
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.1.1
+    title: "Precedence"
+    section: "1.1.1"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.1.2
+    title: "Use of Cannot"
+    section: "1.1.2"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.1.3
+    title: "Unclear Resolutions and Choices"
+    section: "1.1.3"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.2
+    title: "Public and Private Information"
+    section: "1.2"
+    page: 2
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.2.1
+    title: "Hands"
+    section: "1.2.1"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.2.2
+    title: "Piles and the Shared Deck"
+    section: "1.2.2"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.3
+    title: "Negotiation, Deals, and Consent"
+    section: "1.3"
+    page: 2
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.3.1
+    title: "Agreements"
+    section: "1.3.1"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.3.2
+    title: "Cards"
+    section: "1.3.2"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.3.3
+    title: "Consent"
+    section: "1.3.3"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.4
+    title: "Game Structure"
+    section: "1.4"
+    page: 2
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.4.1
+    title: "Turn Structure"
+    section: "1.4.1"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.4.2
+    title: "Interrupts"
+    section: "1.4.2"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.4.3
+    title: "End of Turn"
+    section: "1.4.3"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5
+    title: "Pieces"
+    section: "1.5"
+    page: 2
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5.1
+    title: "Limits"
+    section: "1.5.1"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5.2
+    title: "Starting Faction"
+    section: "1.5.2"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5.3
+    title: "Piece Ownership"
+    section: "1.5.3"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5.4
+    title: "Piece Manipulation"
+    section: "1.5.4"
+    page: 2
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-1.5.5
+    title: "Use of Force"
+    section: "1.5.5"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/golden-rules.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.1
+    title: "Cards"
+    section: "2.1"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/cards.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.1.1
+    title: "Birds Are Wild"
+    section: "2.1.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/cards.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.1.2
+    title: "Ambush Cards"
+    section: "2.1.2"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/cards.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.1.3
+    title: "Dominance Cards"
+    section: "2.1.3"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/cards.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.1.4
+    title: "Your Play Area"
+    section: "2.1.4"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/cards.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.2
+    title: "Clearings and Paths"
+    section: "2.2"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.2.1
+    title: "Adjacency"
+    section: "2.2.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.2.2
+    title: "Suit"
+    section: "2.2.2"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.2.3
+    title: "Slots"
+    section: "2.2.3"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.2.4
+    title: "Ruins"
+    section: "2.2.4"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.3
+    title: "Rivers"
+    section: "2.3"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.4
+    title: "Forests"
+    section: "2.4"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.4.1
+    title: "Adjacency"
+    section: "2.4.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-2.5
+    title: "Rule"
+    section: "2.5"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/map.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.1
+    title: "How to Win"
+    section: "3.1"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.1.1
+    title: "Ties"
+    section: "3.1.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.2
+    title: "Scoring Victory Points"
+    section: "3.2"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.2.1
+    title: "Removing Buildings and Tokens"
+    section: "3.2.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.2.2
+    title: "Crafting Items"
+    section: "3.2.2"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.3
+    title: "Dominance Cards"
+    section: "3.3"
+    page: 3
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.3.1
+    title: "Activating"
+    section: "3.3.1"
+    page: 3
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.3.2
+    title: "Activated Cards"
+    section: "3.3.2"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.3.3
+    title: "Using Dominance Cards"
+    section: "3.3.3"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-3.3.4
+    title: "Taking Available Cards"
+    section: "3.3.4"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/scoring-victory.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.1
+    title: "Craft"
+    section: "4.1"
+    page: 4
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/crafting.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.1.1
+    title: "Cost"
+    section: "4.1.1"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/crafting.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.1.2
+    title: "Immediate Effects"
+    section: "4.1.2"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/crafting.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.1.3
+    title: "Persistent Effects"
+    section: "4.1.3"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/crafting.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.1.4
+    title: "No Duplicates"
+    section: "4.1.4"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/crafting.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.2
+    title: "Move"
+    section: "4.2"
+    page: 4
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/movement.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.2.1
+    title: "You Must Rule"
+    section: "4.2.1"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/movement.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.2.2
+    title: "No Movement Limits"
+    section: "4.2.2"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/movement.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3
+    title: "Battle"
+    section: "4.3"
+    page: 4
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.1
+    title: "Step 1"
+    section: "4.3.1"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.2
+    title: "Step 2"
+    section: "4.3.2"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.3
+    title: "Step 3"
+    section: "4.3.3"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.4
+    title: "Step 4"
+    section: "4.3.4"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.5
+    title: "Step 5"
+    section: "4.3.5"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-4.3.6
+    title: "Step 6"
+    section: "4.3.6"
+    page: 4
+    status: specified
+    spec: docs/02-rules-spec/battle.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1
+    title: "Standard Setup"
+    section: "5.1"
+    page: 5
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.1
+    title: "Step 1"
+    section: "5.1.1"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.2
+    title: "Step 2"
+    section: "5.1.2"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.3
+    title: "Step 3"
+    section: "5.1.3"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.4
+    title: "Step 4"
+    section: "5.1.4"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.5
+    title: "Step 5"
+    section: "5.1.5"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.6
+    title: "Step 6"
+    section: "5.1.6"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.1.7
+    title: "Step 7"
+    section: "5.1.7"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-5.2
+    title: "Reach"
+    section: "5.2"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.1
+    title: "Overview"
+    section: "6.1"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.2
+    title: "Faction Rules and Abilities"
+    section: "6.2"
+    page: 5
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.2.1
+    title: "Crafting"
+    section: "6.2.1"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.2.2
+    title: "The Keep"
+    section: "6.2.2"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.2.3
+    title: "Field Hospitals"
+    section: "6.2.3"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3
+    title: "Faction Setup"
+    section: "6.3"
+    page: 5
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3.1
+    title: "Step 1"
+    section: "6.3.1"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3.2
+    title: "Step 2"
+    section: "6.3.2"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3.3
+    title: "Step 3"
+    section: "6.3.3"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3.4
+    title: "Step 4"
+    section: "6.3.4"
+    page: 5
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.3.5
+    title: "Step 5"
+    section: "6.3.5"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.4
+    title: "Birdsong"
+    section: "6.4"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5
+    title: "Daylight"
+    section: "6.5"
+    page: 6
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5.1
+    title: "Battle"
+    section: "6.5.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5.2
+    title: "March"
+    section: "6.5.2"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5.3
+    title: "Recruit"
+    section: "6.5.3"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5.4
+    title: "Build"
+    section: "6.5.4"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.5.5
+    title: "Overwork"
+    section: "6.5.5"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-6.6
+    title: "Evening"
+    section: "6.6"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/marquise.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.1
+    title: "Overview"
+    section: "7.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.2
+    title: "Faction Rules and Abilities"
+    section: "7.2"
+    page: 6
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.2.1
+    title: "Crafting"
+    section: "7.2.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.2.2
+    title: "Lords of the Forest"
+    section: "7.2.2"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.2.3
+    title: "Disdain for Trade"
+    section: "7.2.3"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3
+    title: "Faction Setup"
+    section: "7.3"
+    page: 6
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3.1
+    title: "Step 1"
+    section: "7.3.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3.2
+    title: "Step 2"
+    section: "7.3.2"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3.3
+    title: "Step 3"
+    section: "7.3.3"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3.4
+    title: "Step 4"
+    section: "7.3.4"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.3.5
+    title: "Step 5"
+    section: "7.3.5"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.4
+    title: "Birdsong"
+    section: "7.4"
+    page: 6
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.4.1
+    title: "Emergency Orders"
+    section: "7.4.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.4.2
+    title: "Add to the Decree"
+    section: "7.4.2"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.4.3
+    title: "A New Roost"
+    section: "7.4.3"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.5
+    title: "Daylight"
+    section: "7.5"
+    page: 6
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.5.1
+    title: "Craft"
+    section: "7.5.1"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.5.2
+    title: "Resolve the Decree"
+    section: "7.5.2"
+    page: 6
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.6
+    title: "Evening"
+    section: "7.6"
+    page: 7
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.6.1
+    title: "Score Points"
+    section: "7.6.1"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.6.2
+    title: "Draw and Discard"
+    section: "7.6.2"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.7
+    title: "Turmoil"
+    section: "7.7"
+    page: 7
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.7.1
+    title: "Step 1"
+    section: "7.7.1"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.7.2
+    title: "Step 2"
+    section: "7.7.2"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.7.3
+    title: "Step 3"
+    section: "7.7.3"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.7.4
+    title: "Step 4"
+    section: "7.7.4"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.8
+    title: "Leaders Reference"
+    section: "7.8"
+    page: 7
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.8.1
+    title: "Builder"
+    section: "7.8.1"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.8.2
+    title: "Charismatic"
+    section: "7.8.2"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.8.3
+    title: "Commander"
+    section: "7.8.3"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-7.8.4
+    title: "Despot"
+    section: "7.8.4"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/eyrie.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.1
+    title: "Overview"
+    section: "8.1"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2
+    title: "Faction Rules and Abilities"
+    section: "8.2"
+    page: 7
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.1
+    title: "Crafting"
+    section: "8.2.1"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.2
+    title: "Guerrilla War"
+    section: "8.2.2"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.3
+    title: "The Supporters Stack"
+    section: "8.2.3"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.4
+    title: "Removing Bases"
+    section: "8.2.4"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.5
+    title: "Sympathy Tokens"
+    section: "8.2.5"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.2.6
+    title: "Outrage"
+    section: "8.2.6"
+    page: 7
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.3
+    title: "Faction Setup"
+    section: "8.3"
+    page: 8
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.3.1
+    title: "Step 1"
+    section: "8.3.1"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.3.2
+    title: "Step 2"
+    section: "8.3.2"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.3.3
+    title: "Step 3"
+    section: "8.3.3"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.3.4
+    title: "Step 4"
+    section: "8.3.4"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.4
+    title: "Birdsong"
+    section: "8.4"
+    page: 8
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.4.1
+    title: "Revolt"
+    section: "8.4.1"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.4.2
+    title: "Spread Sympathy"
+    section: "8.4.2"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.5
+    title: "Daylight"
+    section: "8.5"
+    page: 8
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.5.1
+    title: "Craft"
+    section: "8.5.1"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.5.2
+    title: "Mobilize"
+    section: "8.5.2"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.5.3
+    title: "Train"
+    section: "8.5.3"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.6
+    title: "Evening"
+    section: "8.6"
+    page: 8
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.6.1
+    title: "Military Operations"
+    section: "8.6.1"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-8.6.2
+    title: "Draw and Discard"
+    section: "8.6.2"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/alliance.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.1
+    title: "Overview"
+    section: "9.1"
+    page: 8
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2
+    title: "Faction Rules and Abilities"
+    section: "9.2"
+    page: 9
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.1
+    title: "Crafting"
+    section: "9.2.1"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.2
+    title: "Lone Wanderer"
+    section: "9.2.2"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.3
+    title: "Nimble"
+    section: "9.2.3"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.4
+    title: "Defenseless"
+    section: "9.2.4"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.5
+    title: "Items"
+    section: "9.2.5"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.6
+    title: "Maximum Rolled Hits"
+    section: "9.2.6"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.7
+    title: "Taking Hits"
+    section: "9.2.7"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.8
+    title: "Dominance Cards and Coalitions"
+    section: "9.2.8"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.9
+    title: "Relationships"
+    section: "9.2.9"
+    page: 9
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.2.10
+    title: "Forest Movement"
+    section: "9.2.10"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3
+    title: "Faction Setup"
+    section: "9.3"
+    page: 10
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.1
+    title: "Step 1"
+    section: "9.3.1"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.2
+    title: "Step 2"
+    section: "9.3.2"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.3
+    title: "Step 3"
+    section: "9.3.3"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.4
+    title: "Step 4"
+    section: "9.3.4"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.5
+    title: "Step 5"
+    section: "9.3.5"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.3.6
+    title: "Step 6"
+    section: "9.3.6"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.4
+    title: "Birdsong"
+    section: "9.4"
+    page: 10
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.4.1
+    title: "Refresh"
+    section: "9.4.1"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.4.2
+    title: "Slip"
+    section: "9.4.2"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5
+    title: "Daylight"
+    section: "9.5"
+    page: 10
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.1
+    title: "Move"
+    section: "9.5.1"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.2
+    title: "Battle"
+    section: "9.5.2"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.3
+    title: "Explore"
+    section: "9.5.3"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.4
+    title: "Aid"
+    section: "9.5.4"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.5
+    title: "Quest"
+    section: "9.5.5"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.6
+    title: "Strike"
+    section: "9.5.6"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.7
+    title: "Repair"
+    section: "9.5.7"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.8
+    title: "Craft"
+    section: "9.5.8"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.5.9
+    title: "Special Action"
+    section: "9.5.9"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.6
+    title: "Evening"
+    section: "9.6"
+    page: 10
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.6.1
+    title: "Rest"
+    section: "9.6.1"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.6.2
+    title: "Draw Cards"
+    section: "9.6.2"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.6.3
+    title: "Discard Cards"
+    section: "9.6.3"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.6.4
+    title: "Check Item Capacity"
+    section: "9.6.4"
+    page: 10
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.7
+    title: "Playing with Two Vagabonds"
+    section: "9.7"
+    page: 10
+    group: true
+    status: out_of_scope
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.7.1
+    title: "Setup"
+    section: "9.7.1"
+    page: 10
+    status: out_of_scope
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.7.2
+    title: "Share Quests"
+    section: "9.7.2"
+    page: 11
+    status: out_of_scope
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-9.7.3
+    title: "Taking Items from Ruins"
+    section: "9.7.3"
+    page: 11
+    status: out_of_scope
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1
+    title: "Root"
+    section: "C.1"
+    page: 24
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1.1
+    title: "Booklets"
+    section: "C.1.1"
+    page: 24
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1.2
+    title: "Cardboard Pieces"
+    section: "C.1.2"
+    page: 24
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-data/src/factions.ts, packages/game-data/src/maps/autumn.ts]
+    tests: [packages/game-data/test/factions.test.ts, packages/game-data/test/data.test.ts]
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1.3
+    title: "Wooden Pieces"
+    section: "C.1.3"
+    page: 24
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-data/src/factions.ts]
+    tests: [packages/game-data/test/factions.test.ts, packages/game-data/test/data.test.ts]
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1.4
+    title: "Cards"
+    section: "C.1.4"
+    page: 24
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-data/src/cards/base-deck.ts, packages/game-data/src/cards/quests.ts]
+    tests: [packages/game-data/test/data.test.ts]
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-C.1.5
+    title: "Other"
+    section: "C.1.5"
+    page: 24
+    status: specified
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-M.1
+    title: "Autumn Map"
+    section: "M.1"
+    page: 27
+    status: implemented
+    spec: docs/02-rules-spec/map.md
+    implementation: [packages/game-data/src/maps/autumn.ts]
+    tests: [packages/game-data/test/data.test.ts]
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.1
+    title: "Thief"
+    section: "V.1"
+    page: 28
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.1.1
+    title: "Starting Items"
+    section: "V.1.1"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.1.2
+    title: "Special Action"
+    section: "V.1.2"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.2
+    title: "Tinker"
+    section: "V.2"
+    page: 28
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.2.1
+    title: "Starting Items"
+    section: "V.2.1"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.2.2
+    title: "Special Action"
+    section: "V.2.2"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.3
+    title: "Ranger"
+    section: "V.3"
+    page: 28
+    group: true
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.3.1
+    title: "Starting Items"
+    section: "V.3.1"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-V.3.2
+    title: "Special Action"
+    section: "V.3.2"
+    page: 28
+    status: specified
+    spec: docs/02-rules-spec/factions/vagabond.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}

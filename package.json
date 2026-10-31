@@ -1,0 +1,22 @@
+{
+  "name": "root-web-game",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "fetch:sources": "node scripts/fetch-sources/index.ts",
+    "audit:rules": "node scripts/audit-rule-coverage/index.ts",
+    "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine",
+    "test": "npm test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.3",
+    "typescript": "5.8.3",
+    "yaml": "2.6.1"
+  }
+}

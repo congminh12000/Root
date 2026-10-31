@@ -1,0 +1,8 @@
+{
+  "name": "@root/game-data",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "test": "node --test test/*.test.ts" }
+}
