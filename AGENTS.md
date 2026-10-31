@@ -1,5 +1,7 @@
 # Hướng dẫn cho AI coding agent
 
+> Đang tiếp tục dở dang? Đọc [docs/HANDOFF.md](docs/HANDOFF.md) để biết đã xong gì và làm tiếp từ đâu.
+
 Áp dụng cho mọi agent (Claude, Codex…) làm việc trong repo này. Đọc hết trước khi sửa code gameplay.
 
 ## Mục tiêu
@@ -60,6 +62,7 @@ npm run snapshot:rules
 npm run audit:rules
 npm run typecheck
 npm test
+npm run ship -- "feat(engine): ..."   # kiểm tra, commit, push
 ```
 
 Cần Node 22.18+ (chạy script `.ts` trực tiếp).

@@ -13,7 +13,8 @@
     "audit:rules": "node scripts/audit-rule-coverage/index.ts",
     "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine && tsc -p packages/game-engine/test",
     "test": "npm test --workspaces --if-present",
-    "snapshot:rules": "node scripts/snapshot-rules/index.ts"
+    "snapshot:rules": "node scripts/snapshot-rules/index.ts",
+    "ship": "bash scripts/ship.sh"
   },
   "devDependencies": {
     "@types/node": "22.15.3",
