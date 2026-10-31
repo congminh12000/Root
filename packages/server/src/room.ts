@@ -4,6 +4,7 @@ import {
   applyCommand, createGame, currentActor, legalActions, recordingRng, replay, seededRng, viewFor,
   type Action, type CommandResult, type FactionId, type GameRecord, type GameState,
 } from '@root/game-engine'
+import { decide, sharedPool, type BotJob, type Thinker } from './bot-pool.ts'
 import type { CreateGameRequest, GameSummary, LogEntry, SeatInfo, ServerMessage } from './protocol.ts'
 
 /** What is saved for one game: the public record plus the server-only secrets (seed, seat tokens). */
@@ -22,6 +23,8 @@ export interface RoomOptions {
   botDelayMs?: number
   /** Time a human seat has for each decision; then a bot decides once for it (multiplayer.md). 0 turns it off. */
   turnSeconds?: number
+  /** Where scheduled bot decisions run; the shared worker pool by default (bot-pool.ts). */
+  thinker?: Thinker
 }
 
 /** Actions whose payload is public: everyone saw it happen. Others are logged by type only (hidden cards). */
@@ -46,18 +49,23 @@ export class Room {
   private listeners = new Map<Listener, FactionId | null>()
   private connected = new Map<FactionId, number>()
   private botTimer: NodeJS.Timeout | null = null
+  /** A scheduled bot decision is being worked out off the main thread. */
+  private thinking = false
+  private closed = false
   private clockTimer: NodeJS.Timeout | null = null
   /** When the human the game waits on runs out of time (epoch ms), or null. */
   deadline: number | null = null
   private persist: (g: SavedGame) => void
   private botDelayMs: number
   private turnSeconds: number
+  private thinker: Thinker | null
 
   constructor(saved: SavedGame, persist: (g: SavedGame) => void, opts: RoomOptions = {}) {
     this.saved = saved
     this.persist = persist
     this.botDelayMs = opts.botDelayMs ?? 400
     this.turnSeconds = opts.turnSeconds ?? 90
+    this.thinker = opts.thinker ?? null
     this.state = replay(saved.record)
     this.log = saved.record.commands.slice(-LOG_SIZE).map(({ command }, i, all) => this.entry(command.playerId, command.type, command.payload, saved.record.commands.length - all.length + i + 1))
   }
@@ -155,14 +163,39 @@ export class Room {
    */
   private scheduleBot() {
     this.startClock()
-    if (this.botTimer || this.state.winner) return
+    if (this.closed || this.botTimer || this.thinking || this.state.winner) return
     const actor = currentActor(this.state)
     const seat = this.saved.seats.find(s => s.faction === actor)
     if (!actor || !seat || seat.kind !== 'bot') return
     this.botTimer = setTimeout(() => {
       this.botTimer = null
-      try { this.botStep() } catch (e) { console.error(`game ${this.id}: bot failed: ${(e as Error).message}`) } // keep serving other games
+      void this.think(false)
     }, this.botDelayMs)
+  }
+
+  /**
+   * One scheduled bot decision, worked out in a worker so other games keep running. If the game moved on while the
+   * bot was thinking (the human acted just before the deadline), the answer is dropped.
+   */
+  private async think(forHuman: boolean) {
+    const job = this.botJob(forHuman)
+    if (!job) return
+    this.thinking = true
+    let index: number
+    try {
+      index = await (this.thinker ?? sharedPool().think)(job.job)
+    } catch (e) {
+      console.error(`game ${this.id}: bot worker failed, deciding here instead: ${(e as Error).message}`)
+      index = -1
+    } finally {
+      this.thinking = false
+    }
+    if (this.closed || this.state.meta.revision !== job.revision) { this.scheduleBot(); return }
+    try {
+      this.applyBot(job, index >= 0 ? job.job.legal[index]! : null)
+    } catch (e) {
+      console.error(`game ${this.id}: ${forHuman ? 'timeout move' : 'bot'} failed: ${(e as Error).message}`) // keep serving other games
+    }
   }
 
   /** Restarts the decision clock whenever the game waits on a human, at a new revision. */
@@ -171,32 +204,45 @@ export class Room {
     this.deadline = null
     const actor = currentActor(this.state)
     const seat = this.saved.seats.find(s => s.faction === actor)
-    if (!this.turnSeconds || this.state.winner || !seat || seat.kind !== 'human') return
+    if (this.closed || !this.turnSeconds || this.state.winner || !seat || seat.kind !== 'human') return
     this.deadline = Date.now() + this.turnSeconds * 1000
     this.clockTimer = setTimeout(() => {
       this.clockTimer = null
-      try { this.botStep(true) } catch (e) { console.error(`game ${this.id}: timeout move failed: ${(e as Error).message}`) }
+      void this.think(true)
     }, this.turnSeconds * 1000)
   }
 
-  /**
-   * One bot decision now. Bots get the same PlayerView and legal list a human would. With `forHuman`, the bot
-   * decides for a human seat whose time ran out, using the strongest bot available.
-   */
-  botStep(forHuman = false): boolean {
+  /** What a bot may see for the decision the game waits on, or null when no bot of that kind should act. */
+  private botJob(forHuman: boolean): { job: BotJob; actor: FactionId; forHuman: boolean; revision: number } | null {
     const actor = currentActor(this.state)
     const seat = this.saved.seats.find(s => s.faction === actor)
-    if (!actor || !seat || this.state.winner) return false
-    if (seat.kind !== (forHuman ? 'human' : 'bot')) return false
-    const bot = BOTS[forHuman ? TIMEOUT_BOT : seat.bot ?? DEFAULT_BOT]!
-    const rng = seededRng(`${this.saved.seed}:bot:${this.state.meta.revision}`)
-    const action = bot.choose(viewFor(this.state, actor), legalActions(this.state, actor), rng)
-    const result = this.submit(actor, `${forHuman ? 'timeout' : 'bot'}-${this.state.meta.revision}`, this.state.meta.revision, action)
-    if (!result.ok) throw new Error(`bot ${seat.bot} chose an illegal action: ${result.code}`)
+    if (!actor || !seat || this.state.winner) return null
+    if (seat.kind !== (forHuman ? 'human' : 'bot')) return null
+    const revision = this.state.meta.revision
+    const job = { bot: forHuman ? TIMEOUT_BOT : seat.bot ?? DEFAULT_BOT, view: viewFor(this.state, actor), legal: legalActions(this.state, actor), seed: `${this.saved.seed}:bot:${revision}` }
+    return { job, actor, forHuman, revision }
+  }
+
+  /** Submits the bot's choice; with no choice given, the bot decides here on the main thread. */
+  private applyBot(j: NonNullable<ReturnType<Room['botJob']>>, action: Action | null) {
+    const chosen = action ?? j.job.legal[decide(j.job)]!
+    const result = this.submit(j.actor, `${j.forHuman ? 'timeout' : 'bot'}-${j.revision}`, j.revision, chosen)
+    if (!result.ok) throw new Error(`bot ${j.job.bot} chose an illegal action: ${result.code}`)
+  }
+
+  /**
+   * One bot decision now, on this thread. Bots get the same PlayerView and legal list a human would. With
+   * `forHuman`, the bot decides for a human seat whose time ran out, using the strongest bot available.
+   */
+  botStep(forHuman = false): boolean {
+    const job = this.botJob(forHuman)
+    if (!job) return false
+    this.applyBot(job, null)
     return true
   }
 
   close() {
+    this.closed = true
     if (this.botTimer) clearTimeout(this.botTimer)
     if (this.clockTimer) clearTimeout(this.clockTimer)
   }
