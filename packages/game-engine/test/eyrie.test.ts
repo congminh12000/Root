@@ -142,3 +142,13 @@ test('§7.6 Evening: score the rightmost empty roost space, draw one plus bonuse
   at(s, 'eyrie', 'draw')
   assert.equal(s.hands.eyrie!.length, 2)
 })
+
+test('§7.2.3 Disdain for Trade scores one per item; §7.8.1 the Builder scores the printed points', () => {
+  for (const [leader, points] of [['despot', 1], ['builder', 2]] as const) {
+    let s = eyrie({}, leader)
+    s.hands.eyrie = ['anvil#1'] // fox hammer, 2 points; the roost is in fox clearing 0
+    at(s, 'eyrie', 'craft')
+    s = answer(s, { type: 'craft', payload: { card: 'anvil#1' } })
+    assert.equal(s.score.eyrie, points, leader)
+  }
+})
