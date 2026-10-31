@@ -185,10 +185,10 @@ rules:
     title: "Piece Manipulation"
     section: "1.5.4"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/board.ts, packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.5.5
     title: "Use of Force"
@@ -204,46 +204,46 @@ rules:
     section: "2.1"
     page: 3
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/board.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.1.1
     title: "Birds Are Wild"
     section: "2.1.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.1.2
     title: "Ambush Cards"
     section: "2.1.2"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.1.3
     title: "Dominance Cards"
     section: "2.1.3"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.1.4
     title: "Your Play Area"
     section: "2.1.4"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts, packages/game-engine/src/common.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.2
     title: "Clearings and Paths"
@@ -259,37 +259,37 @@ rules:
     title: "Adjacency"
     section: "2.2.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/board.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.2.2
     title: "Suit"
     section: "2.2.2"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.2.3
     title: "Slots"
     section: "2.2.3"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/board.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.2.4
     title: "Ruins"
     section: "2.2.4"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.3
     title: "Rivers"
@@ -323,29 +323,29 @@ rules:
     title: "Rule"
     section: "2.5"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/map.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.1
     title: "How to Win"
     section: "3.1"
     page: 3
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts, packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.1.1
     title: "Ties"
     section: "3.1.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.2
     title: "Scoring Victory Points"
@@ -361,19 +361,19 @@ rules:
     title: "Removing Buildings and Tokens"
     section: "3.2.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/rules.test.ts, packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.2.2
     title: "Crafting Items"
     section: "3.2.2"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.3
     title: "Dominance Cards"
@@ -389,10 +389,10 @@ rules:
     title: "Activating"
     section: "3.3.1"
     page: 3
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/common.ts, packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.3.2
     title: "Activated Cards"
@@ -407,19 +407,19 @@ rules:
     title: "Using Dominance Cards"
     section: "3.3.3"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-3.3.4
     title: "Taking Available Cards"
     section: "3.3.4"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/scoring-victory.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/common.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.1
     title: "Craft"
@@ -435,37 +435,37 @@ rules:
     title: "Cost"
     section: "4.1.1"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/crafting.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.1.2
     title: "Immediate Effects"
     section: "4.1.2"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/crafting.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.1.3
     title: "Persistent Effects"
     section: "4.1.3"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/crafting.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.1.4
     title: "No Duplicates"
     section: "4.1.4"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/crafting.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.2
     title: "Move"
@@ -481,10 +481,10 @@ rules:
     title: "You Must Rule"
     section: "4.2.1"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/movement.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/move.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.2.2
     title: "No Movement Limits"
@@ -509,55 +509,55 @@ rules:
     title: "Step 1"
     section: "4.3.1"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3.2
     title: "Step 2"
     section: "4.3.2"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3.3
     title: "Step 3"
     section: "4.3.3"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3.4
     title: "Step 4"
     section: "4.3.4"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3.5
     title: "Step 5"
     section: "4.3.5"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-4.3.6
     title: "Step 6"
     section: "4.3.6"
     page: 4
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/battle.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts, packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1
     title: "Standard Setup"
@@ -682,10 +682,10 @@ rules:
     title: "Field Hospitals"
     section: "6.2.3"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts, packages/game-engine/src/common.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.3
     title: "Faction Setup"
@@ -847,19 +847,19 @@ rules:
     title: "Lords of the Forest"
     section: "7.2.2"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/rules.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.2.3
     title: "Disdain for Trade"
     section: "7.2.3"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.3
     title: "Faction Setup"
@@ -1087,19 +1087,19 @@ rules:
     title: "Commander"
     section: "7.8.3"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.8.4
     title: "Despot"
     section: "7.8.4"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.1
     title: "Overview"
@@ -1133,10 +1133,10 @@ rules:
     title: "Guerrilla War"
     section: "8.2.2"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.2.3
     title: "The Supporters Stack"
@@ -1345,10 +1345,10 @@ rules:
     title: "Lone Wanderer"
     section: "9.2.2"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts, packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.3
     title: "Nimble"
@@ -1363,10 +1363,10 @@ rules:
     title: "Defenseless"
     section: "9.2.4"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.5
     title: "Items"
@@ -1381,19 +1381,19 @@ rules:
     title: "Maximum Rolled Hits"
     section: "9.2.6"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/battle.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.7
     title: "Taking Hits"
     section: "9.2.7"
     page: 9
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts]
+    tests: [packages/game-engine/test/battle.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.2.8
     title: "Dominance Cards and Coalitions"

@@ -1,10 +1,14 @@
 import { sameJson, type Action } from './actions.ts'
+import { battleDecisionOptions, continueBattle, performBattleDecision } from './battle.ts'
 import type { CommandResult, GameCommand } from './command.ts'
+import { commonDecisionOptions, dominanceActions, performCommonDecision, performDominance } from './common.ts'
 import type { Rng } from './rng.ts'
+import { checkVictory } from './rules.ts'
 import { advanceSetup, setupStep } from './setup.ts'
 import type { FactionId, GameState } from './state.ts'
 
 const RECENT_ACTION_IDS = 64
+const BATTLE_DECISIONS = new Set(['ambush', 'battle-effects', 'take-hits'])
 
 /** The faction the game is waiting on: the top pending decision's owner, otherwise the active seat. */
 export function currentActor(state: GameState): FactionId | null {
@@ -21,7 +25,10 @@ export function legalActions(state: GameState, faction: FactionId): Action[] {
     const step = setupStep(top.player, top.step)
     return 'options' in step ? step.options(state) : []
   }
-  return [] // turn actions arrive with the shared rules (plan step 2) and the factions (steps 3–6)
+  if (top && BATTLE_DECISIONS.has(top.kind)) return battleDecisionOptions(state)
+  if (top) return commonDecisionOptions(state)
+  // Turn actions: the factions' own (plan steps 3–6) plus dominance in Daylight (§3.3).
+  return state.turn.phase === 'daylight' ? dominanceActions(state, faction) : []
 }
 
 /**
@@ -41,13 +48,13 @@ export function applyCommand(state: GameState, command: GameCommand, rng: Rng): 
   if (!legalActions(state, seat.faction).some(a => sameJson(a, action))) return reject('illegal-action', `${command.type} is not a legal action now`)
 
   const next: GameState = JSON.parse(JSON.stringify(state))
-  perform(next, action as Action, rng)
+  perform(next, seat.faction, action as Action, rng)
   next.meta.revision += 1
   next.meta.recentActionIds = [...next.meta.recentActionIds, command.actionId].slice(-RECENT_ACTION_IDS)
   return { state: next, result: { ok: true, revision: next.meta.revision } }
 }
 
-function perform(state: GameState, action: Action, rng: Rng) {
+function perform(state: GameState, faction: FactionId, action: Action, rng: Rng) {
   const top = state.pending.at(-1)
   if (top?.kind === 'setup') {
     const step = setupStep(top.player, top.step)
@@ -56,5 +63,12 @@ function perform(state: GameState, action: Action, rng: Rng) {
     advanceSetup(state, rng)
     return
   }
-  throw new Error(`no handler for ${action.type}`)
+  if (top && BATTLE_DECISIONS.has(top.kind)) performBattleDecision(state, action)
+  else if (top) performCommonDecision(state, action)
+  else if (action.type === 'activate-dominance' || action.type === 'take-dominance') performDominance(state, faction, action)
+  else throw new Error(`no handler for ${action.type}`)
+
+  // A decision may have paused a battle; resume it, then check for a winner (§3.1).
+  if (state.battle) continueBattle(state, rng)
+  if (!state.battle) checkVictory(state)
 }

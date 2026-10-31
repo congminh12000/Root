@@ -1,4 +1,4 @@
-import type { ClearingId, EyrieLeader, ForestId, MarquiseBuilding, VagabondCharacter } from './state.ts'
+import type { CardId, ClearingId, EyrieLeader, ForestId, MarquiseBuilding, VagabondCharacter } from './state.ts'
 
 /**
  * Everything a player can choose. A GameCommand's `type` and `payload` must equal one entry of
@@ -12,6 +12,19 @@ export type Action =
   | { type: 'eyrie-choose-leader'; payload: { leader: EyrieLeader } }
   | { type: 'vagabond-choose-character'; payload: { character: VagabondCharacter } }
   | { type: 'vagabond-place-pawn'; payload: { forest: ForestId } }
+  // Battle decisions (§4.3)
+  | { type: 'play-ambush'; payload: { card: CardId } }
+  | { type: 'decline-ambush'; payload: Record<string, never> }
+  | { type: 'use-battle-card'; payload: { card: CardId } }
+  | { type: 'end-battle-cards'; payload: Record<string, never> }
+  /** Buildings/tokens by type, or Vagabond items by `type` / `type:exhausted`, for the hits left after warriors. */
+  | { type: 'take-hits'; payload: { remove: Record<string, number> } }
+  // Shared decisions and actions
+  | { type: 'field-hospital'; payload: { card: CardId } }
+  | { type: 'decline-field-hospital'; payload: Record<string, never> }
+  | { type: 'discard-card'; payload: { card: CardId } }
+  | { type: 'activate-dominance'; payload: { card: CardId } }
+  | { type: 'take-dominance'; payload: { dominance: CardId; spend: CardId } }
 
 /** Key-order-independent equality for JSON-shaped values. */
 export function sameJson(a: unknown, b: unknown): boolean {

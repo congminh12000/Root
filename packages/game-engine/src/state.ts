@@ -118,13 +118,38 @@ export interface FactionStates {
  */
 export type PendingDecision =
   | { kind: 'ambush'; player: FactionId; clearing: ClearingId; role: 'defender' | 'attacker' } // §4.3.1
-  | { kind: 'battle-effects'; player: FactionId; clearing: ClearingId; timing: 'before-roll' | 'after-roll' } // §4.3.2, §4.3.4
-  | { kind: 'take-hits'; player: FactionId; clearing: ClearingId; hits: number } // §4.3.6 defender orders removal
+  | { kind: 'battle-effects'; player: FactionId; clearing: ClearingId } // §4.3.4 (no base card acts before rolling)
+  /** §4.3.6 the side taking hits picks which buildings/tokens (or, for the Vagabond, which items) go. `by` scores. */
+  | { kind: 'take-hits'; player: FactionId; clearing: ClearingId; hits: number; by: FactionId | null }
   | { kind: 'field-hospital'; player: 'marquise'; clearing: ClearingId; warriors: number } // §6.2.3
   | { kind: 'outrage'; player: FactionId; clearing: ClearingId } // §8.2.6 payer chooses the card
   | { kind: 'discard-down'; player: FactionId; to: number } // §6.6, §7.6.2, §8.6.2, §9.6.3
   /** One step of a faction's setup (§5.1.7). Steps without a choice run automatically when they reach the top. */
   | { kind: 'setup'; player: FactionId; step: string }
+
+// ── Battle in progress ─────────────────────────────────────────────────────────
+
+export type BattleSide = 'attacker' | 'defender'
+
+/** A battle that is waiting on a decision (§4.3). Cleared when the battle ends. */
+export interface BattleState {
+  clearing: ClearingId
+  attacker: FactionId
+  defender: FactionId
+  step: 'ambush' | 'foil' | 'ambush-hits' | 'ambush-check' | 'roll' | 'effects-attacker' | 'effects-defender' | 'hits-defender' | 'hits-attacker' | 'end'
+  /** The defender's ambush card while the attacker decides whether to foil it (§4.3.1). */
+  ambushCard: CardId | null
+  /** Rolled hits after the §4.3.3.I cap, by the side that deals them. */
+  rolled: Record<BattleSide, number>
+  /** Extra hits from effects (§4.3.5.I), by the side that deals them. */
+  extra: Record<BattleSide, number>
+  /** Armorers: this side ignores the rolled hits dealt to it (§4.3.5.III). */
+  ignoreRolled: Record<BattleSide, boolean>
+  /** Persistent cards already used in this battle. */
+  usedCards: CardId[]
+  /** Despot's extra point is scored at most once per battle (decisions/0004, FAQ §7.8.4). */
+  despotScored: boolean
+}
 
 // ── Whole game ─────────────────────────────────────────────────────────────────
 
@@ -176,5 +201,6 @@ export interface GameState {
   craftingUsed: (ClearingId | 'vagabond')[]
 
   pending: PendingDecision[]
+  battle: BattleState | null
   winner: { factions: FactionId[]; reason: 'points' | 'dominance' | 'coalition' } | null
 }

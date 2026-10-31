@@ -39,6 +39,22 @@
   - Vagabond: chọn nhân vật; chọn khu rừng đặt pawn.
 - Hết setup thì `stage = 'play'` và lượt 1 bắt đầu ở Birdsong của `seats[0]`.
 
+## Luật chung (bước 2)
+
+| Module | Nội dung |
+|---|---|
+| `rules.ts` | Định nghĩa lá bài, chim là wild (§2.1.1), bỏ bài (lá dominance sang cạnh bản đồ), rule (§2.5, Lords of the Forest), kẻ địch (G.8), ghi điểm, thắng 30 điểm và hòa (§3.1), thắng dominance (§3.3.1) |
+| `board.ts` | Kề nhau, góc và góc đối diện, slot, đặt quân tối đa có thể (§1.5.4), rút bài và xáo lại khi deck hết (§2.1) |
+| `move.ts` | Điều kiện move (§4.2.1) và liệt kê mọi move hợp lệ |
+| `craft.ts` | Ghép chi phí với crafting piece (§4.1.1), item supply, không trùng lá persistent, Favor, Disdain for Trade |
+| `removal.ts` | Loại quân và chịu hit (§4.3.6): chiến binh trước, sau đó người chịu chọn building/token, Vagabond hỏng item; điểm §3.2.1, Despot, Field Hospitals |
+| `battle.ts` | Battle là một quá trình dừng ở mỗi quyết định: ambush, hủy ambush, Scouting Party, xúc xắc, Guerrilla War, Commander, Brutal Tactics/Sappers/Armorers, defenseless, hai bên chịu hit |
+| `common.ts` | Field Hospitals, bỏ bài về giới hạn, kích hoạt và lấy dominance |
+
+Engine tiếp tục battle sau mỗi quyết định trong battle, và chỉ kiểm tra thắng khi battle đã xong, vì hai bên chịu hit cùng lúc (§3.1.1).
+
 ## Chưa có
 
-Hành động trong lượt chơi (Birdsong, Daylight, Evening) sẽ có từ bước 2 (luật chung) và bước 3–6 (từng phe). Hiện `legalActions` trả rỗng khi đã vào giai đoạn chơi.
+- Các bước Birdsong, Daylight, Evening và hành động riêng của từng phe: bước 3–6 trong kế hoạch.
+- Outrage, hậu quả khi mất base, quan hệ và Infamy của Vagabond, chiến binh Allied: thuộc bước của phe tương ứng.
+- Hiện `legalActions` trong lượt chơi chỉ có kích hoạt và lấy dominance (vào Daylight).

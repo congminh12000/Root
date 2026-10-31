@@ -52,6 +52,7 @@ export function createGame(options: GameOptions, rng: Rng): GameState {
     score: {}, // §5.1.2
     craftingUsed: [],
     pending: [],
+    battle: null,
     winner: null,
   }
   for (const seat of seats) {
