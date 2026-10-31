@@ -4,7 +4,8 @@ import type { MapDef } from '../types.ts'
  * The Autumn map (Law §M.1, no special rules).
  * Read from the map art in Walking Through Root p. 3 (SRC-003): clean background image for paths and
  * forests, the overlaid walkthrough board for suit markers and slot boxes, and Learning to Play p. 5
- * (SRC-002) for the bottom-right slots hidden under walkthrough pieces. Ids run roughly row by row.
+ * (SRC-002) for the bottom-right slots hidden under walkthrough pieces. Slot counts were rechecked on an
+ * empty board image (SRC-013). Ids run roughly row by row.
  */
 export const AUTUMN: MapDef = {
   id: 'autumn',

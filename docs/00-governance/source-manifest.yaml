@@ -132,3 +132,15 @@ sources:
       Hình người quản lý dự án cung cấp, không phải tài liệu của Leder, tác giả chưa rõ; không lưu vào repo.
       Bảng chia 45 lá chế tạo được theo chi phí, mỗi bản sao là một tam giác màu suit. Số lá từng nhóm và từng
       mẫu khớp hoàn toàn với base-deck.ts; điểm ghi ở mỗi nhóm khớp item supply (§5.1.5).
+
+  - id: SRC-013
+    title: Ảnh bàn cờ Autumn trống
+    priority: reference
+    role: Đối chiếu slot và path của bản đồ Autumn
+    sha256: b92ddd1c3912bd7b28e4d945b49c30f758c03dcda099e8a4f58ab4cf4b2fe636
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Ảnh 800×732 do người quản lý dự án cung cấp, không có quân cờ che. Art của Leder nên không lưu vào repo.
+      Đếm ô slot của cả 12 clearing: 1, 2, 2, 2, 2, 2, 3, 2, 1, 2, 2, 1 (tổng 22), khớp packages/game-data/src/maps/autumn.ts.
+

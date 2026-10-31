@@ -2,7 +2,7 @@
 
 Dữ liệu chuẩn ở [`packages/game-data/src/maps/autumn.ts`](../../packages/game-data/src/maps/autumn.ts), kiểu dữ liệu ở `types.ts` cùng package. Bản đồ in không có số clearing (priority marker chỉ có trong Clockwork, Law §C.6.2), nên dự án tự đánh số 1–12, theo hàng từ trên xuống. Trong code, ID bắt đầu từ 0, tức là số trong bảng trừ 1.
 
-Nguồn: hình bản đồ ở Walking Through Root tr. 3 (SRC-003) và Learning to Play tr. 5 (SRC-002). Vấn đề còn mở: OQ-09.
+Nguồn: hình bản đồ ở Walking Through Root tr. 3 (SRC-003) và Learning to Play tr. 5 (SRC-002). Số slot cả 12 clearing đã được đối chiếu lại với ảnh bàn cờ trống (SRC-013, OQ-09 đã đóng).
 
 | # | Vị trí | Suit | Slot | Ruin | Nối tới |
 |---|---|---|---|---|---|
