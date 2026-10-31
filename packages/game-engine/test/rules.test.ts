@@ -27,6 +27,18 @@ test('§2.1 drawing reshuffles the discard pile the moment the deck runs out', (
   assert.deepEqual(drawCards(s, 2, seededRng('d')), [], 'nothing left anywhere: draw nothing')
 })
 
+test('§2.1 the reshuffle happens when the deck empties, not at the next draw', () => {
+  const s = scenario()
+  s.deck = ['anvil#1']
+  s.discard = ['sword#1']
+  assert.deepEqual(drawCards(s, 1, seededRng('d')), ['anvil#1'])
+  assert.deepEqual(s.deck, ['sword#1'], 'shuffled in at once')
+  assert.deepEqual(s.discard, [])
+  s.discard = ['cobbler#1'] // discarded after the reshuffle: stays in the discard pile
+  assert.deepEqual(drawCards(s, 1, seededRng('d')), ['sword#1'])
+  assert.deepEqual(s.deck, ['cobbler#1'], 'the deck emptied again, so the new discard was shuffled in')
+})
+
 test('§2.1.1 birds are wild, but only a bird pays for a bird', () => {
   assert.ok(matchesSuit('armorers#1', 'fox'))
   assert.ok(matchesSuit('anvil#1', 'fox'))
