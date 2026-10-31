@@ -384,8 +384,14 @@ export const VAGABOND_TURN: TurnStep[] = [
     apply: applyDaylight,
   },
   {
-    id: 'rest', phase: 'evening', // §9.6.1: in a forest, repair every damaged item
-    enter: state => { if (vb(state).pawn?.kind === 'forest') repairItems(state, damagedPool(state)) },
+    id: 'rest', phase: 'evening', // §9.6.1: in a forest, every damaged item returns to the Satchel face up
+    enter: state => {
+      const v = vb(state)
+      if (v.pawn?.kind !== 'forest') return
+      const damaged = v.damaged
+      v.damaged = []
+      for (const item of damaged) gainItem(state, { type: item.type, exhausted: false })
+    },
   },
   {
     id: 'draw', phase: 'evening', // §9.6.2–9.6.3

@@ -1,4 +1,5 @@
 import type { Action, FactionId, PlayerView, Rng } from '@root/game-engine'
+import { searchBot } from './search.ts'
 
 /**
  * A bot sees exactly what a player sees: its PlayerView and the legal actions the server computed for its seat
@@ -15,14 +16,14 @@ export const randomBot: Bot = {
   choose: (_view, legal, rng) => legal[rng.int(legal.length)]!,
 }
 
-const warriorsAt = (view: PlayerView, f: FactionId, c: number) => view.map.clearings[c]?.warriors[f] ?? 0
+type Clearings = { warriors: Partial<Record<FactionId, number>> }[]
+const warriorsAt = (map: Clearings, f: FactionId, c: number) => map[c]?.warriors[f] ?? 0
 
 /**
  * How much the simple bot likes an action, from the view alone. Higher is better; ties and near-ties are broken at
  * random. This is a hand-written heuristic, not a trained or searched policy.
  */
-function weight(view: PlayerView, a: Action): number {
-  const me = view.self!
+export function weight(me: FactionId, map: Clearings, a: Action): number {
   switch (a.type) {
     case 'end-step': return 1
     case 'craft': return 8
@@ -53,7 +54,7 @@ function weight(view: PlayerView, a: Action): number {
     case 'eyrie-battle':
     case 'command-warren': {
       const { clearing, defender } = a.payload
-      const mine = warriorsAt(view, me, clearing), theirs = warriorsAt(view, defender, clearing)
+      const mine = warriorsAt(map, me, clearing), theirs = warriorsAt(map, defender, clearing)
       return mine > theirs ? 7 : mine === theirs ? 3 : 1
     }
     case 'vagabond-battle': return 4
@@ -68,11 +69,19 @@ function weight(view: PlayerView, a: Action): number {
 export const simpleBot: Bot = {
   id: 'simple',
   choose(view, legal, rng) {
-    const scored = legal.map(a => ({ a, w: weight(view, a) }))
+    const scored = legal.map(a => ({ a, w: weight(view.self!, view.map.clearings, a) }))
     const best = Math.max(...scored.map(x => x.w))
     const top = scored.filter(x => x.w >= best - 1)
     return top[rng.int(top.length)]!.a
   },
 }
 
-export const BOTS: Record<string, Bot> = { random: randomBot, simple: simpleBot }
+/** `search` thinks about one second per decision; `search-fast` 0.3 s, for tests and quick games. */
+export const BOTS: Record<string, Bot> = {
+  random: randomBot,
+  simple: simpleBot,
+  search: searchBot(),
+  'search-fast': searchBot({ budgetMs: 300 }, 'search-fast'),
+}
+export { determinize } from './determinize.ts'
+export { evaluate, searchBot, SEARCH_DEFAULTS, type SearchOptions } from './search.ts'

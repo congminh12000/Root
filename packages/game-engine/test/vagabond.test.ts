@@ -217,7 +217,7 @@ test('§9.6 Evening: rest in a forest repairs all, draw one per coin, item limit
   s.deck = ['anvil#1', 'sword#1', 'bake-sale#1']
   at(s, 'vagabond', 'rest')
   assert.equal(s.factions.vagabond!.damaged.length, 0)
-  assert.ok(s.factions.vagabond!.satchel.some(i => i.type === 'crossbow' && i.exhausted), 'returns on the same face')
+  assert.ok(s.factions.vagabond!.satchel.some(i => i.type === 'crossbow' && !i.exhausted), 'returns face up (p16 §9.6.1)')
   at(s, 'vagabond', 'draw')
   assert.equal(s.hands.vagabond!.length, 2)
   at(s, 'vagabond', 'item-capacity')

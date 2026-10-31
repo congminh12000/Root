@@ -48,16 +48,20 @@ export function placeWarriors(state: GameState, faction: FactionId, c: ClearingI
   return placed
 }
 
-/** Draws from the top of the shared deck, reshuffling the discard pile the moment the deck runs out (§2.1, G.6). */
+/**
+ * Draws from the top of the shared deck. The moment the deck is empty the discard pile is shuffled into a new deck
+ * (§2.1), so cards discarded later stay in the discard pile.
+ */
 export function drawCards(state: GameState, n: number, rng: Rng): CardId[] {
   const drawn: CardId[] = []
-  while (drawn.length < n) {
-    if (!state.deck.length) {
-      if (!state.discard.length) break
+  // Deck and discard were both empty when the deck ran out; cards discarded since are shuffled now.
+  if (!state.deck.length && state.discard.length) { state.deck = shuffle(state.discard, rng); state.discard = [] }
+  while (drawn.length < n && state.deck.length) {
+    drawn.push(state.deck.shift()!)
+    if (!state.deck.length && state.discard.length) {
       state.deck = shuffle(state.discard, rng)
       state.discard = []
     }
-    drawn.push(state.deck.shift()!)
   }
   return drawn
 }

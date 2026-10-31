@@ -26,9 +26,17 @@ export interface PlayerView {
   questsAvailable: GameState['questsAvailable']
   score: GameState['score']
   turn: GameState['turn']
-  /** Decisions owed by this seat; others see only who the game is waiting on. */
+  /** Every decision the game is waiting on, newest last. They hold no hidden information (timing-interrupts.md). */
   pending: GameState['pending']
   waitingOn: FactionId[]
+  /** Public game structure, so a bot can rebuild a full state from what it sees (packages/bots). */
+  stage: GameState['stage']
+  seats: { faction: FactionId; kind: 'human' | 'bot' }[]
+  battle: GameState['battle']
+  craftingUsed: GameState['craftingUsed']
+  cardsUsed: GameState['cardsUsed']
+  questDeckCount: number
+  gameId: string
   winner: GameState['winner']
   /** Hands shown to this seat this turn (Codebreakers, Outrage §8.2.6). */
   revealed: GameState['reveals']
@@ -71,9 +79,16 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     questsAvailable: [...state.questsAvailable],
     score: { ...state.score },
     turn: { ...state.turn },
-    pending: self ? state.pending.filter(p => p.player === self).map(p => ({ ...p })) : [],
+    pending: copy(state.pending),
     waitingOn: state.winner ? [] : top ? [top.player] : [state.seats[state.turn.seat]!.faction],
     winner: copy(state.winner),
     revealed: self ? copy(state.reveals.filter(r => r.to === self)) : [],
+    stage: state.stage,
+    seats: state.seats.map(s => ({ faction: s.faction, kind: s.controller.kind })),
+    battle: copy(state.battle),
+    craftingUsed: [...state.craftingUsed],
+    cardsUsed: [...state.cardsUsed],
+    questDeckCount: state.questDeck.length,
+    gameId: state.meta.gameId,
   }
 }

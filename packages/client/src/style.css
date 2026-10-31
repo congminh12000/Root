@@ -34,3 +34,13 @@ select { max-width: 100%; font-size: 14px; padding: 4px; }
 .decree .done { text-decoration: line-through; color: #8b8b8b; }
 .log { max-height: 280px; overflow: auto; font-size: 13px; }
 .loading { padding: 24px; }
+.clock { font-variant-numeric: tabular-nums; font-weight: bold; }
+.clock.urgent { color: #ffb3a8; }
+.board-col { min-width: 0; }
+.board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: 13px; color: #5a4a30; }
+.board-tools button { background: #fffaf0; color: #6b3f12; border: 1px solid #6b3f12; }
+.board-tools button.on { background: #6b3f12; color: #fff; }
+.map canvas { display: block; width: 100%; border-radius: 14px; }
+.filter { background: #fff3c4; border-radius: 6px; padding: 4px 8px; margin-bottom: 6px; font-size: 13px; }
+.filter button { padding: 2px 8px; font-size: 12px; }
+.board .clearing { cursor: pointer; }

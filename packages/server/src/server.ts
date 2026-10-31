@@ -1,10 +1,11 @@
+import { timingSafeEqual } from 'node:crypto'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 import { extname, join, normalize } from 'node:path'
 import { factionMixAllowed, type FactionId } from '@root/game-engine'
 import { WebSocketServer, type WebSocket } from 'ws'
 import type { ClientMessage, CreateGameRequest, CreateGameResponse } from './protocol.ts'
-import { Room } from './room.ts'
+import { Room, type RoomOptions } from './room.ts'
 import { Store } from './store.ts'
 
 export interface ServerOptions {
@@ -14,6 +15,12 @@ export interface ServerOptions {
   /** Built client (packages/client/dist); served if it exists. */
   staticDir?: string
   botDelayMs?: number
+  /** Seconds a human has per decision before a bot decides for them; 0 turns the clock off. */
+  turnSeconds?: number
+  /** When set, listing, creating and watching games need this key; seat links work on their own token. */
+  password?: string
+  /** Most unfinished games at once. */
+  maxGames?: number
 }
 
 const FACTIONS: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
@@ -23,8 +30,17 @@ const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javas
 export function startServer(opts: ServerOptions) {
   const store = new Store(opts.dataDir)
   const rooms = new Map<string, Room>()
+  const roomOpts: RoomOptions = { ...(opts.botDelayMs !== undefined && { botDelayMs: opts.botDelayMs }), ...(opts.turnSeconds !== undefined && { turnSeconds: opts.turnSeconds }) }
+  const maxGames = opts.maxGames ?? 20
   for (const saved of store.loadAll()) {
-    try { rooms.set(saved.id, new Room(saved, store.save, opts.botDelayMs)) } catch (e) { console.error(`skip game ${saved.id}: ${(e as Error).message}`) }
+    try { rooms.set(saved.id, new Room(saved, store.save, roomOpts)) } catch (e) { console.error(`skip game ${saved.id}: ${(e as Error).message}`) }
+  }
+
+  /** Constant-time key check; always true when no password is set. */
+  const keyOk = (key: string | null | undefined) => {
+    if (!opts.password) return true
+    const a = Buffer.from(key ?? ''), b = Buffer.from(opts.password)
+    return a.length === b.length && timingSafeEqual(a, b)
   }
 
   const json = (res: ServerResponse, code: number, body: unknown) => {
@@ -48,11 +64,14 @@ export function startServer(opts: ServerOptions) {
   const http = createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://local')
     try {
+      if (url.pathname === '/api/config') return json(res, 200, { passwordRequired: !!opts.password, turnSeconds: opts.turnSeconds ?? 90 })
+      if (url.pathname.startsWith('/api/') && !keyOk(req.headers['x-room-key'] as string | undefined)) return json(res, 401, { error: 'wrong or missing room password' })
       if (url.pathname === '/api/games' && req.method === 'GET') return json(res, 200, [...rooms.values()].map(r => r.summary()))
       if (url.pathname === '/api/games' && req.method === 'POST') {
         const body = await readBody(req)
         if (!validCreate(body)) return json(res, 400, { error: 'invalid seats or faction mix (Reach, decision 0003)' })
-        const room = Room.create(body, store.save, opts.botDelayMs)
+        if ([...rooms.values()].filter(r => !r.state.winner).length >= maxGames) return json(res, 429, { error: `at most ${maxGames} unfinished games` })
+        const room = Room.create(body, store.save, roomOpts)
         rooms.set(room.id, room)
         const out: CreateGameResponse = { id: room.id, links: room.saved.seats.map(s => ({ faction: s.faction, token: s.token })) }
         return json(res, 201, out)
@@ -80,6 +99,7 @@ export function startServer(opts: ServerOptions) {
     const token = url.searchParams.get('token')
     const seat = room.seatFor(token)
     if (token && !seat) { ws.send(JSON.stringify({ type: 'error', message: 'unknown seat token' })); ws.close(); return }
+    if (!seat && !keyOk(url.searchParams.get('key'))) { ws.send(JSON.stringify({ type: 'error', message: 'room password required to watch' })); ws.close(); return }
     const unsubscribe = room.subscribe(seat, msg => ws.send(JSON.stringify(msg)))
     ws.on('message', raw => {
       let msg: ClientMessage

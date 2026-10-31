@@ -12,15 +12,15 @@ const allBots = { seats: (['marquise', 'eyrie', 'alliance', 'vagabond'] as const
 
 test('an all-bot game runs to the end and reloads from its record to the same state', () => {
   let saved: SavedGame | null = null
-  const room = Room.create(allBots, g => { saved = structuredClone(g) }, 0)
+  const room = Room.create(allBots, g => { saved = structuredClone(g) }, { botDelayMs: 0 })
   for (let i = 0; i < 5000 && room.botStep(); i++);
   assert.ok(room.state.winner)
-  const again = new Room(saved!, () => {}, 0)
+  const again = new Room(saved!, () => {}, { botDelayMs: 0 })
   assert.deepEqual(again.state, room.state)
 })
 
 test('seat tokens map to seats; spectators see no hand and no legal actions; bots are never driven by clients', () => {
-  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human', name: 'An' }, { faction: 'eyrie', kind: 'bot' }] }, () => {}, 0)
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human', name: 'An' }, { faction: 'eyrie', kind: 'bot' }] }, () => {}, { botDelayMs: 0 })
   const token = room.saved.seats[0]!.token!
   assert.equal(room.seatFor(token), 'marquise')
   assert.equal(room.seatFor('nope'), null)
@@ -32,7 +32,7 @@ test('seat tokens map to seats; spectators see no hand and no legal actions; bot
 })
 
 test('a command from the wrong seat or with a stale revision is rejected and changes nothing', () => {
-  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, 0)
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, { botDelayMs: 0, turnSeconds: 0 })
   const before = room.state
   const legal = room.message('marquise')
   assert.ok(legal.type === 'update' && legal.legal.length > 0)
@@ -43,6 +43,20 @@ test('a command from the wrong seat or with a stale revision is rejected and cha
   assert.equal(room.state, before)
   assert.ok(room.submit('marquise', 'x3', 0, legal.legal[0]!).ok)
   assert.equal(room.saved.record.commands.length, 1)
+  room.close()
+})
+
+test('a human who runs out of time gets one decision made by a bot, then the clock restarts', async () => {
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, { botDelayMs: 0, turnSeconds: 0.05 })
+  const unsubscribe = room.subscribe(null, () => {}) // the clock starts once someone is connected or a command lands
+  assert.ok(room.deadline !== null)
+  const msg = room.message(null)
+  assert.ok(msg.type === 'update' && msg.deadline === room.deadline)
+  await new Promise(r => setTimeout(r, 700)) // the timeout bot thinks for 0.3 s
+  assert.ok(room.saved.record.commands.length >= 1)
+  assert.ok(room.saved.record.commands[0]!.command.actionId.startsWith('timeout-'))
+  unsubscribe()
+  room.close()
 })
 
 test('HTTP + WebSocket: create a game, join a seat, act, and see the update; the game file is saved', async () => {
@@ -76,6 +90,36 @@ test('HTTP + WebSocket: create a game, join a seat, act, and see the update; the
     assert.ok(after.type === 'update')
     ws.close()
     assert.ok(readdirSync(dataDir).includes(`${game.id}.json`))
+  } finally {
+    await server.close()
+  }
+})
+
+test('room password guards listing, creating and watching; seat links still work; unfinished games are capped', async () => {
+  const dataDir = mkdtempSync(join(tmpdir(), 'root-server-'))
+  const server = startServer({ port: 0, host: '127.0.0.1', dataDir, botDelayMs: 0, turnSeconds: 0, password: 'lan-key', maxGames: 1 })
+  await new Promise(r => server.http.once('listening', r))
+  const base = `http://127.0.0.1:${(server.http.address() as { port: number }).port}`
+  try {
+    assert.deepEqual(await (await fetch(`${base}/api/config`)).json(), { passwordRequired: true, turnSeconds: 0 })
+    assert.equal((await fetch(`${base}/api/games`)).status, 401)
+    assert.equal((await fetch(`${base}/api/games`, { headers: { 'x-room-key': 'wrong' } })).status, 401)
+    const create = () => fetch(`${base}/api/games`, {
+      method: 'POST', headers: { 'content-type': 'application/json', 'x-room-key': 'lan-key' },
+      body: JSON.stringify({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }),
+    })
+    const first = await create()
+    assert.equal(first.status, 201)
+    assert.equal((await create()).status, 429, 'one unfinished game at most')
+    const game = (await first.json()) as CreateGameResponse
+    const open = (q: string) => new Promise<ServerMessage>(resolve => {
+      const ws = new WebSocket(`${base.replace('http', 'ws')}/ws?game=${game.id}${q}`)
+      ws.once('message', raw => { resolve(JSON.parse(String(raw))); ws.close() })
+    })
+    assert.equal((await open('')).type, 'error', 'spectator without the key')
+    assert.equal((await open('&key=lan-key')).type, 'update')
+    const seat = await open(`&token=${game.links[0]!.token}`)
+    assert.ok(seat.type === 'update' && seat.seat !== null, 'a seat link needs no key')
   } finally {
     await server.close()
   }
