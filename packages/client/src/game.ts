@@ -34,7 +34,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       const msg = JSON.parse(ev.data) as Message
       if (msg.type === 'update') {
         localDeadline = msg.deadline === null ? null : Date.now() + (msg.deadline - msg.now)
-        last = msg; notice = ''; highlight = []; draw()
+        last = msg; notice = ''; highlight = filter === null ? [] : [filter]; draw()
       }
       else if (msg.type === 'rejected') { notice = `Máy chủ từ chối: ${msg.result.code}`; draw() }
       else { notice = msg.message; draw() }
@@ -68,21 +68,67 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   }
 
   function actions(legal: Action[]): string {
+    const shown = filter === null ? legal : legal.filter(a => clearingsOf(a).includes(filter!))
     if (!legal.length) return ''
+    const head = filter === null ? '' : `<div class="filter">Đang lọc ô ${filter + 1} (${shown.length}/${legal.length}) <button data-clear="1">Bỏ lọc</button></div>`
     const groups = new Map<string, Action[]>()
-    for (const a of legal) groups.set(a.type, [...(groups.get(a.type) ?? []), a])
-    return [...groups].map(([type, list]) => list.length === 1
+    for (const a of shown) groups.set(a.type, [...(groups.get(a.type) ?? []), a])
+    return head + [...groups].map(([type, list]) => list.length === 1
       ? `<div class="group"><button data-act="${legal.indexOf(list[0]!)}">${esc(GROUP[type] ?? type)}${list[0]!.type === 'end-step' || list[0]!.type.startsWith('decline') ? '' : `: ${esc(describe(list[0]!))}`}</button></div>`
       : `<div class="group"><label>${esc(GROUP[type] ?? type)} (${list.length})</label>
           <select data-group="${type}">${list.map(a => `<option value="${legal.indexOf(a)}">${esc(describe(a))}</option>`).join('')}</select>
           <button data-go="${type}">Thực hiện</button></div>`).join('')
   }
 
+  // ── Board: 3D (Three.js, loaded on demand) or 2D SVG; it lives outside the panel that re-renders. ──
+  let mode: '3d' | '2d' = (() => { try { return localStorage.getItem('root-board') === '2d' ? '2d' : '3d' } catch { return '3d' } })()
+  let filter: number | null = null
+  let board3d: { update(v: PlayerView, h: number[]): void; dispose(): void } | null = null
+  let loading3d = false
+
+  const pick = (c: number) => { filter = filter === c ? null : c; highlight = filter === null ? [] : [filter]; draw() }
+
+  function drawBoard() {
+    const host = root.querySelector<HTMLElement>('.map')
+    if (!host || !last) return
+    if (mode === '3d') {
+      if (board3d) { board3d.update(last.view, highlight); return }
+      if (loading3d) return
+      loading3d = true
+      void import('./board3d.ts').then(m => {
+        loading3d = false
+        if (!m.webglAvailable()) { mode = '2d'; drawBoard(); return }
+        host.innerHTML = ''
+        board3d = m.mountBoard3D(host, pick)
+        if (last) board3d.update(last.view, highlight)
+      })
+      return
+    }
+    if (board3d) { board3d.dispose(); board3d = null }
+    host.innerHTML = renderBoard(last.view, highlight)
+    host.querySelectorAll<SVGElement>('[data-clearing]').forEach(el => el.addEventListener('click', () => pick(Number(el.dataset.clearing))))
+  }
+
+  function skeleton() {
+    if (root.querySelector('.layout')) return
+    root.innerHTML = `<div class="top"></div><div class="layout">
+      <div class="board-col"><div class="board-tools"><button data-mode="3d">3D</button><button data-mode="2d">2D</button><span>Bấm vào một ô để lọc lựa chọn. Kéo để xoay, cuộn để phóng to.</span></div><div class="map"></div></div>
+      <aside></aside></div>`
+    root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(b => b.addEventListener('click', () => {
+      mode = b.dataset.mode as '3d' | '2d'
+      try { localStorage.setItem('root-board', mode) } catch { /* private mode */ }
+      drawBoard(); markMode()
+    }))
+  }
+  const markMode = () => root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(b => b.classList.toggle('on', b.dataset.mode === mode))
+
   function draw() {
     if (!last) { root.innerHTML = `<p class="loading">Đang kết nối trận ${esc(gameId)}… ${esc(notice)}</p>`; return }
+    skeleton()
+    markMode()
     const { view: v, legal, seats, seat } = last
     const active = v.waitingOn[0]
-    root.innerHTML = `
+    root.querySelector('.top')!.innerHTML = `
       <header class="bar">
         <a href="./">← Sảnh</a>
         <span>Trận <b>${esc(last.gameId)}</b></span>
@@ -92,29 +138,28 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
         <span class="clock" id="clock"></span>
       </header>
       ${v.winner ? `<div class="winner">Kết thúc: ${v.winner.factions.map(faction).join(' + ')} thắng (${v.winner.reason})</div>` : ''}
-      ${notice ? `<div class="notice">${esc(notice)}</div>` : ''}
-      <div class="layout">
-        <div class="map">${renderBoard(v, highlight)}</div>
-        <aside>
+      ${notice ? `<div class="notice">${esc(notice)}</div>` : ''}`
+    const aside = root.querySelector('aside')!
+    aside.innerHTML = `
           <section class="card"><h3>Điểm</h3>${seats.map(s => `<div class="score">${faction(s.faction)} <b>${v.score[s.faction] ?? 'dominance'}</b> · ${s.kind === 'bot' ? 'bot' : esc(s.name)}${s.kind === 'human' && !s.connected ? ' (vắng)' : ''} · ${v.handCounts[s.faction] ?? 0} lá${s.faction === active ? ' ◀' : ''}</div>`).join('')}</section>
           ${seat ? `<section class="card"><h3>Bài của bạn</h3>${v.hand.map(card).join(' ') || '—'}
             ${v.playAreas[seat]?.length ? `<div>Play area: ${v.playAreas[seat]!.map(card).join(' ')}</div>` : ''}
             ${v.revealed.map(r => `<div>Bài của ${faction(r.of)}: ${r.cards.map(card).join(' ') || '—'}</div>`).join('')}</section>` : ''}
           ${legal.length ? `<section class="card act"><h3>Lựa chọn của bạn</h3>${actions(legal)}</section>` : ''}
           <section class="card"><h3>Bảng phe</h3>${factionBoards(v)}</section>
-          <section class="card log"><h3>Nhật ký</h3>${[...last.log].reverse().slice(0, 30).map(l => `<div>#${l.revision} ${faction(l.faction)} ${esc(GROUP[l.type] ?? l.type)}${l.detail ? `: ${esc(describe({ type: l.type, payload: l.detail } as Action))}` : ''}</div>`).join('')}</section>
-        </aside>
-      </div>`
-    root.querySelectorAll<HTMLButtonElement>('button[data-act]').forEach(b => b.addEventListener('click', () => send(legal[Number(b.dataset.act)]!)))
-    root.querySelectorAll<HTMLButtonElement>('button[data-go]').forEach(b => b.addEventListener('click', () => {
-      const sel = root.querySelector<HTMLSelectElement>(`select[data-group="${b.dataset.go}"]`)!
+          <section class="card log"><h3>Nhật ký</h3>${[...last.log].reverse().slice(0, 30).map(l => `<div>#${l.revision} ${faction(l.faction)} ${esc(GROUP[l.type] ?? l.type)}${l.detail ? `: ${esc(describe({ type: l.type, payload: l.detail } as Action))}` : ''}</div>`).join('')}</section>`
+    aside.querySelectorAll<HTMLButtonElement>('button[data-act]').forEach(b => b.addEventListener('click', () => send(legal[Number(b.dataset.act)]!)))
+    aside.querySelectorAll<HTMLButtonElement>('button[data-go]').forEach(b => b.addEventListener('click', () => {
+      const sel = aside.querySelector<HTMLSelectElement>(`select[data-group="${b.dataset.go}"]`)!
       send(legal[Number(sel.value)]!)
     }))
-    root.querySelectorAll<HTMLSelectElement>('select[data-group]').forEach(sel => {
-      const lightUp = () => { highlight = clearingsOf(legal[Number(sel.value)]!); root.querySelector('.map')!.innerHTML = renderBoard(v, highlight) }
+    aside.querySelector<HTMLButtonElement>('button[data-clear]')?.addEventListener('click', () => { filter = null; highlight = []; draw() })
+    aside.querySelectorAll<HTMLSelectElement>('select[data-group]').forEach(sel => {
+      const lightUp = () => { highlight = clearingsOf(legal[Number(sel.value)]!); drawBoard() }
       sel.addEventListener('change', lightUp)
       sel.addEventListener('focus', lightUp)
     })
+    drawBoard()
   }
 
   /** Countdown for the human the game waits on (90 s by default); a bot decides once when it reaches zero. */

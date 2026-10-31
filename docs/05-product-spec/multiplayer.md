@@ -45,6 +45,13 @@ HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ fac
 - **Mật khẩu phòng:** khi đặt mật khẩu, mọi API `/api/*` (trừ `/api/config`) cần header `x-room-key`, và khán giả cần `&key=` khi mở WebSocket. Đường dẫn của từng ghế đã chứa token bí mật riêng nên không cần mật khẩu. Server so mật khẩu bằng phép so sánh thời gian hằng.
 - **Giới hạn:** tạo trận vượt `--max-games` trận chưa kết thúc thì server trả về 429.
 
+## Bàn chơi 3D
+
+- Mặc định trang trận hiện bàn 3D vẽ bằng Three.js (`packages/client/src/board3d.ts`). Nút 2D chuyển sang bản đồ SVG; nếu trình duyệt không có WebGL thì tự dùng 2D. Lựa chọn 2D/3D được nhớ trong trình duyệt.
+- Mọi hình đều do code tự dựng từ `game-data`, không dùng art chính thức: bàn gỗ, mặt đất, đường đất, cây theo từng khu rừng, viền clearing theo màu suit, quân, công trình và token. Ngẫu nhiên có seed cố định nên mọi máy thấy cùng một bàn.
+- Kéo để xoay, cuộn để phóng to. Bấm vào một ô (cả 2D và 3D) để lọc các lựa chọn liên quan tới ô đó; bấm lại để bỏ lọc.
+- Three.js nằm trong một chunk riêng, chỉ tải khi mở bàn 3D.
+
 ## Bot
 
 | id | Cách chọn |
@@ -58,4 +65,4 @@ Bot `simple` yếu. Bản cũ (`backend/`) có tìm kiếm Monte Carlo và mô h
 
 - **Tài khoản và mã hóa.** Server không có tài khoản và chạy HTTP thường, không mã hóa. Chỉ dùng trong LAN tin cậy.
 - **Đổi người giữa trận, hoàn tác, chat.**
-- **Bản đồ dùng hình tự vẽ đơn giản.** Chưa có hoạt ảnh hay hiển thị lá bài đầy đủ.
+- **Hoạt ảnh và xem lá bài.** Chưa có hoạt ảnh khi di chuyển hay đánh, chưa có khung xem chi tiết lá.

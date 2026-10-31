@@ -8,5 +8,6 @@ export default defineConfig({
       '/ws': { target: 'ws://127.0.0.1:8080', ws: true },
     },
   },
-  build: { outDir: 'dist', emptyOutDir: true },
+  // three.js is its own lazily loaded chunk (board3d.ts), so its size does not delay the page.
+  build: { outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 800 },
 })

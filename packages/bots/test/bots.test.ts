@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { applyCommand, createGame, currentActor, legalActions, seededRng, viewFor, type FactionId } from '@root/game-engine'
-import { BOTS } from '../src/index.ts'
+import { randomBot, simpleBot } from '../src/index.ts'
 
 /** Bots only ever receive a PlayerView and the legal list; every pick must be accepted by the engine. */
-for (const bot of Object.values(BOTS)) {
+// The search bots have their own, time-bounded tests (search.test.ts); full games with them are for scripts/arena.ts.
+for (const bot of [randomBot, simpleBot]) {
   test(`${bot.id} bot finishes games choosing only from legal actions`, () => {
     const factions: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
     for (let g = 0; g < 4; g++) {
