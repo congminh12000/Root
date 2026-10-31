@@ -11,7 +11,7 @@
   "scripts": {
     "fetch:sources": "node scripts/fetch-sources/index.ts",
     "audit:rules": "node scripts/audit-rule-coverage/index.ts",
-    "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine",
+    "typecheck": "tsc -p packages/game-data && tsc -p packages/game-engine && tsc -p packages/game-engine/test",
     "test": "npm test --workspaces --if-present"
   },
   "devDependencies": {

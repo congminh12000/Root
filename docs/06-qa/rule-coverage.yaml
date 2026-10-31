@@ -636,10 +636,10 @@ rules:
     title: "Reach"
     section: "5.2"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/setup.ts, packages/game-data/src/factions.ts]
+    tests: [packages/game-engine/test/setup.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.1
     title: "Overview"

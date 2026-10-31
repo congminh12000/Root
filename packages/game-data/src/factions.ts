@@ -9,7 +9,13 @@ import type { ItemType, Suit } from './types.ts'
  * so with n pieces of a type on the map, spaces 0..n-1 are uncovered.
  */
 
+export type BaseFactionId = 'marquise' | 'eyrie' | 'alliance' | 'vagabond'
 export type MarquiseBuildingType = 'sawmill' | 'workshop' | 'recruiter'
+
+/** Reach values (Law §5.2). The Vagabond's 5 is for the first Vagabond; a second one (Riverfolk) is 2. */
+export const REACH: Record<BaseFactionId, number> = { marquise: 10, eyrie: 7, alliance: 3, vagabond: 5 }
+/** Minimum total Reach by player count (Law §5.2), enforced by decision 0003. */
+export const MIN_REACH: Record<number, number> = { 2: 17, 3: 18, 4: 21, 5: 25, 6: 28 }
 export type EyrieLeaderId = 'builder' | 'charismatic' | 'commander' | 'despot'
 export type DecreeColumnId = 'recruit' | 'move' | 'battle' | 'build'
 export type VagabondCharacterId = 'thief' | 'tinker' | 'ranger'

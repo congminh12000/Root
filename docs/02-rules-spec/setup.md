@@ -6,7 +6,7 @@ Bản 1.0 chỉ dùng Standard Setup. Advanced Setup (App. A) nằm ngoài phạ
 Gồm 7 bước theo thứ tự; engine chạy chúng trong `createGame(options, rng)`.
 
 ### ROOT-5.1.1 Step 1: Assign Factions and Starting Player
-- Mỗi người một phe, gán tùy ý (lobby quyết định; ràng buộc Reach là OQ-08).
+- Mỗi người một phe, không trùng. Law cho gán tùy ý, nhưng dự án bắt buộc bộ phe đạt tổng Reach (§5.2, decisions/0003).
 - Người đi đầu và thứ tự ngồi chọn **ngẫu nhiên** bằng RNG server. Kết quả là `seats`.
 - Mỗi người nhận board và quân của phe mình (game-data `MARQUISE`, `EYRIE`, `ALLIANCE`, `VAGABOND`).
 
@@ -35,7 +35,12 @@ Gồm 7 bước theo thứ tự; engine chạy chúng trong `createGame(options,
 ### ROOT-5.2 Reach
 - Tổng Reach của các phe nên đạt mức tối thiểu theo số người: 2 người 17+, 3 người 18+, 4 người 21+.
 - Reach của bốn phe cơ bản: Marquise 10, Eyrie 7, Alliance 3, Vagabond 5.
-- Law chỉ khuyến nghị, không bắt buộc. Lobby cấm hay chỉ cảnh báo là OQ-08.
+- Law chỉ khuyến nghị. Dự án **bắt buộc** (decisions/0003): lobby và `createGame` từ chối bộ phe dưới mức. Kiểm tra bằng `factionMixAllowed`.
+- Bộ phe hợp lệ với bốn phe cơ bản:
+  - 2 người: Marquise + Eyrie.
+  - 3 người: Marquise với hai trong ba phe còn lại.
+  - 4 người: cả bốn phe.
+- Test: Eyrie + Alliance + Vagabond (15) bị từ chối; Marquise + Alliance + Vagabond (18) được chấp nhận.
 
 ## Thành phần (App. C.1)
 
