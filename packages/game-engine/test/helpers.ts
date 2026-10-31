@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { AUTUMN, EYRIE, MARQUISE } from '@root/game-data'
 import { applyCommand, createGame, currentActor, legalActions, seededRng, type Action, type FactionId, type GameState, type Rng } from '../src/index.ts'
-import { goto } from '../src/turn.ts'
+import { advanceTurn, goto } from '../src/turn.ts'
 
 export const ALL: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
 
@@ -78,3 +78,9 @@ export function at(s: GameState, f: FactionId, step: string, rng: Rng = fixed([]
 }
 
 export const ofType = <T extends Action['type']>(actions: Action[], type: T) => actions.filter((a): a is Extract<Action, { type: T }> => a.type === type)
+
+/** Lets the turn machine run automatic steps from where it stands, as it does after every command. */
+export function run(s: GameState, rng: Rng = fixed([])): GameState {
+  advanceTurn(s, rng)
+  return s
+}

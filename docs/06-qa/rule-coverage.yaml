@@ -838,10 +838,10 @@ rules:
     title: "Crafting"
     section: "7.2.1"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts, packages/game-engine/src/craft.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.2.2
     title: "Lords of the Forest"
@@ -921,139 +921,139 @@ rules:
     section: "7.4"
     page: 6
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.4.1
     title: "Emergency Orders"
     section: "7.4.1"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.4.2
     title: "Add to the Decree"
     section: "7.4.2"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.4.3
     title: "A New Roost"
     section: "7.4.3"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.5
     title: "Daylight"
     section: "7.5"
     page: 6
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.5.1
     title: "Craft"
     section: "7.5.1"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.5.2
     title: "Resolve the Decree"
     section: "7.5.2"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.6
     title: "Evening"
     section: "7.6"
     page: 7
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.6.1
     title: "Score Points"
     section: "7.6.1"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.6.2
     title: "Draw and Discard"
     section: "7.6.2"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.7
     title: "Turmoil"
     section: "7.7"
     page: 7
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.7.1
     title: "Step 1"
     section: "7.7.1"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.7.2
     title: "Step 2"
     section: "7.7.2"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.7.3
     title: "Step 3"
     section: "7.7.3"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.7.4
     title: "Step 4"
     section: "7.7.4"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.8
     title: "Leaders Reference"
@@ -1078,10 +1078,10 @@ rules:
     title: "Charismatic"
     section: "7.8.2"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/eyrie.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.8.3
     title: "Commander"
