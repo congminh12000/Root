@@ -22,6 +22,21 @@ test('four dominance cards, one per suit (§2.1.3)', () => {
   assert.ok(dom.every(c => c.copies === 1))
 })
 
+test('copies per crafting cost match the Root Crafting Chart (SRC-012)', () => {
+  const byCost = new Map<string, number>()
+  for (const c of BASE_DECK) if (c.cost.length) {
+    const key = c.cost.join('+')
+    byCost.set(key, (byCost.get(key) ?? 0) + c.copies)
+  }
+  assert.deepEqual(Object.fromEntries(byCost), {
+    mouse: 11, rabbit: 4, fox: 5,
+    'mouse+mouse': 2, 'rabbit+rabbit': 9, 'fox+fox': 5,
+    'mouse+mouse+mouse': 3, 'rabbit+rabbit+rabbit': 1, 'fox+fox+fox': 1,
+    'rabbit+fox+mouse': 3, 'any+any+any+any': 1,
+  })
+  assert.ok(BASE_DECK.every(c => c.copiesEvidence !== 'unverified'))
+})
+
 test('only craftable cards have a cost; only item cards carry an item and points', () => {
   for (const c of BASE_DECK) {
     const craftable = c.kind !== 'ambush' && c.kind !== 'dominance'

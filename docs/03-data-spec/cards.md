@@ -15,11 +15,9 @@ Nguồn là Leder Card Library (SRC-005). Suit, chi phí chế tạo, item, đi�
 | Rabbit | 13 | Ambush, A Visit to Friends, Bake Sale, Better Burrow Bank ×2, Cobbler ×2, Command Warren ×2, Dominance, Favor of the Rabbits, Root Tea, Smuggler's Trail |
 | Mouse | 13 | Ambush, Codebreakers ×2, Crossbow, Dominance, Favor of the Mice, Investments, Mouse-in-a-Sack, Root Tea, Scouting Party ×2, Sword, Travel Gear |
 
-**Số bản sao chưa được kiểm chứng đầy đủ (OQ-04).** Chỉ có hai nguồn chính thức:
-- Law quy định số lá ambush và dominance.
-- Walking Through Root chia hai lá Brutal Tactics.
-
-Các số ×2 và ×3 còn lại cộng đúng 54 lá, nhưng cần đếm lại từ bộ bài thật. Mỗi mẫu có trường `copiesEvidence` ghi nguồn của số bản sao.
+**Số bản sao** (OQ-04, đã đóng):
+- Ambush và dominance theo Law.
+- Các lá còn lại khớp Root Crafting Chart (SRC-012, nguồn cộng đồng): bảng này đánh dấu mỗi bản sao bằng một tam giác suit. Test `copies per crafting cost` khóa số lá của từng nhóm chi phí.
 
 ## Quy ước
 

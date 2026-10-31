@@ -9,8 +9,11 @@ export type CardSuit = Suit | 'bird' // Law §2.1
  */
 export type ItemType = 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
 
-/** Where a value was checked. `unverified` values must be confirmed before release (open-questions.md). */
-export type Evidence = 'law' | 'card-library' | 'walkthrough' | 'map-art' | 'unverified'
+/**
+ * Where a value was checked. `community` is a fan-made reference that agrees with every official source we hold;
+ * `unverified` values must be confirmed before release (open-questions.md).
+ */
+export type Evidence = 'law' | 'card-library' | 'walkthrough' | 'map-art' | 'community' | 'unverified'
 
 export interface CardDef {
   /** Stable id of the design, e.g. "root-tea-fox". Physical copies get ids `${id}#${n}` at setup. */

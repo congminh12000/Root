@@ -7,7 +7,6 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 | ID | Vấn đề | Chặn phần nào | Cần nguồn |
 |---|---|---|---|
 | OQ-02 | Rules Library online ghi "Updated Oct 8, 2025", PDF ghi 13/10/2025. Chưa so hai bản. | Không chặn; baseline là PDF | SRC-004 so với SRC-001 |
-| OQ-04 | **Số bản sao của từng lá.** Card Library chỉ lưu mỗi mẫu một lần. Chỉ ambush (5) và dominance (4) có trong Law; Walking Through Root xác nhận có ít nhất 2 Brutal Tactics. Các số còn lại trong `base-deck.ts` (`copiesEvidence: 'unverified'`) cộng đúng 54 nhưng chưa có nguồn chính thức. Cần đếm từ bộ bài thật. | Xác suất rút bài; không chặn việc viết engine | Bộ bài vật lý |
 | OQ-08 | Tổ hợp phe cho 2–4 người: §5.1.1 cho phép tùy ý, §5.2 Reach chỉ là khuyến nghị. Sản phẩm bắt buộc theo Reach hay chỉ cảnh báo? | Lobby | Quyết định của người quản lý |
 | OQ-09 | Bản đồ Autumn được đọc từ hình in nhỏ. Cần đối chiếu một lần với bàn cờ thật hoặc bản in lớn, nhất là số slot của clearing 1, 3 và 4, vì trong hình walkthrough một phần bị quân cờ che. | Build, setup | Bàn cờ vật lý |
 | OQ-10 | Scouting Party ("không bị ảnh hưởng bởi ambush"): defender có được chơi ambush (mất lá, không gây hit) không, hay không được chơi? | Battle bước 1 | FAQ Leder / Rules Library |
@@ -28,3 +27,4 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 | OQ-06 | Ký hiệu item: M giày, S kiếm, C nỏ, F đuốc, H búa, T trà, X tiền, B túi. Hàng item supply in trên bản đồ có 2 túi, 2 giày, 1 nỏ, 1 búa, 2 kiếm, 2 trà, 2 tiền, khớp §5.1.5. | SRC-003 tr. 3 |
 | OQ-03 | Dữ liệu faction board: giá gỗ và điểm của Marquise, điểm roost, giá và điểm sympathy, draw bonus. Xem [../03-data-spec/factions.md](../03-data-spec/factions.md). | SRC-006 tr. 1–8 |
 | OQ-07 | Relationships chart có Indifferent, 2 bậc giữa và Allied; cần Aid 1/2/3 lần để lên bậc, được +1/+2/+2 điểm. Khớp `Relationship = 0..3` trong state.ts. | SRC-006 tr. 7 |
+| OQ-04 | Số bản sao từng lá: đếm tam giác suit trên Root Crafting Chart. 45 lá chế tạo được khớp hoàn toàn với `base-deck.ts`; ambush 5 và dominance 4 theo Law; tổng 54. Danh sách số lượng theo tên do người quản lý cung cấp ngày 31/10/2026 (32 tên, 54 lá) cũng khớp từng dòng. Cả hai là nguồn cộng đồng, nên nếu có bộ bài thật thì vẫn nên đếm lại một lần. | SRC-012, SRC-003, Law §2.1.2–2.1.3 |

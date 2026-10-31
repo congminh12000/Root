@@ -120,3 +120,15 @@ sources:
     role: Tham khảo cách chuyển board game thành giao diện số; không phải nguồn luật
     url: https://www.direwolfdigital.com/root/
     verification: inventoried
+
+  - id: SRC-012
+    title: Root Crafting Chart (cộng đồng)
+    priority: reference
+    role: Đối chiếu số bản sao của từng lá trong bộ bài cơ bản
+    sha256: 80a5a6189b4cec12a72c1dc3a485382dcca00e49adfa28ddbbc65fb5a7ead01b
+    retrieved: "2026-10-31"
+    verification: verified
+    notes: >-
+      Hình người quản lý dự án cung cấp, không phải tài liệu của Leder, tác giả chưa rõ; không lưu vào repo.
+      Bảng chia 45 lá chế tạo được theo chi phí, mỗi bản sao là một tam giác màu suit. Số lá từng nhóm và từng
+      mẫu khớp hoàn toàn với base-deck.ts; điểm ghi ở mỗi nhóm khớp item supply (§5.1.5).
