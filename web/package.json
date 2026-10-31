@@ -13,12 +13,14 @@
   "dependencies": {
     "pixi.js": "8.10.1",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "three": "0.170.0"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
+    "@types/three": "0.170.0",
     "@vitejs/plugin-react": "4.4.1",
     "eslint": "9.39.5",
     "eslint-plugin-react-hooks": "5.2.0",

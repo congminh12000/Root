@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { Application, Container, Graphics, Text } from 'pixi.js'
-import type { Clearing, Snapshot } from './types'
+import { Application, Container, Ellipse, Graphics, Sprite, Text, Texture } from 'pixi.js'
+import { buildLayout, PLATEAU, plotPositions, SLOT } from './map/layout'
+import { paintMap } from './map/paint'
+import { ACTIVE_MAP } from './map/spec'
+import type { Snapshot } from './types'
 
-const SUIT_COLORS: Record<string, number> = { fox: 0xb96f48, rabbit: 0xb5a35d, mouse: 0x708f9c }
-const BASE_W = 960, BASE_H = 755
+const MAP = ACTIVE_MAP
+const [BASE_W, BASE_H] = MAP.size
+const PLOT = MAP.plotSize ?? SLOT.size
 
 function label(text: string, x: number, y: number, size = 12, color = '#344d3f', family = 'Georgia') {
   const t = new Text({ text, style: { fontFamily: family, fontSize: size, fill: color, fontWeight: '500', letterSpacing: .4 } })
@@ -12,63 +16,13 @@ function label(text: string, x: number, y: number, size = 12, color = '#344d3f',
   return t
 }
 
-function random(seed: number) {
-  let n = seed
-  return () => { n = (n * 1664525 + 1013904223) >>> 0; return n / 4294967296 }
-}
-
-function tree(stage: Container, x: number, y: number, r: number, variant: number) {
-  const g = new Graphics()
-  g.ellipse(x + 3, y + r * .6, r * .8, r * .35).fill({ color: 0x2f4936, alpha: .07 })
-  g.moveTo(x, y + r).lineTo(x, y - r * .3).stroke({ color: 0x6b7754, width: 1.8, alpha: .6 })
-  if (variant > .5) {
-    g.poly([x, y - r, x - r * .65, y + r * .35, x + r * .65, y + r * .35]).fill({ color: 0x7f9774, alpha: .65 })
-    g.poly([x, y - r * 1.3, x - r * .48, y - r * .15, x + r * .48, y - r * .15]).fill({ color: 0x6b8567, alpha: .65 })
-  } else {
-    g.circle(x - r * .32, y - r * .15, r * .6).circle(x + r * .35, y - r * .1, r * .65)
-      .circle(x, y - r * .55, r * .7).fill({ color: variant > .25 ? 0x8ca17a : 0xa3ad7b, alpha: .65 })
-  }
-  stage.addChild(g)
-}
-
-function landscape(stage: Container, clearings: Clearing[]) {
-  const bg = new Graphics().rect(0, 0, BASE_W, BASE_H).fill(0xe2e5cc)
-  stage.addChild(bg)
-  const land = new Graphics()
-  land.poly([0, 0, 380, 0, 290, 140, 120, 220, 0, 210]).fill({ color: 0xc0cea9, alpha: .45 })
-  land.poly([650, 0, 960, 0, 960, 480, 830, 430, 740, 210]).fill({ color: 0xb4c8aa, alpha: .4 })
-  land.poly([0, 470, 230, 390, 390, 590, 670, 750, 0, 755]).fill({ color: 0xc4cea5, alpha: .5 })
-  // Original river and contour strokes; all generated locally.
-  for (let i = 0; i < 5; i++) {
-    land.moveTo(-60, 220 + i * 8).bezierCurveTo(130, 150 + i * 12, 70, 400 + i * 8, 300, 360 + i * 8)
-      .bezierCurveTo(500, 330 + i * 9, 500, 570 + i * 7, 1000, 480 + i * 8)
-      .stroke({ color: i === 0 ? 0xb5c8bc : 0xc6d4c2, width: i === 0 ? 43 : 2, alpha: .7 })
-  }
-  land.moveTo(-60, 218).bezierCurveTo(130, 150, 70, 400, 300, 360).bezierCurveTo(500, 330, 500, 570, 1000, 480)
-    .stroke({ color: 0x93b7b5, width: 30, alpha: .52 })
-  stage.addChild(land)
-  const rng = random(1984)
-  for (let i = 0; i < 650; i++) {
-    const x = rng() * BASE_W, y = rng() * BASE_H
-    if (!clearings.some(c => Math.hypot(c.x - x, (c.y - y) * 1.15) < 85)) tree(stage, x, y, 8 + rng() * 10, rng())
-  }
-  const roads = new Graphics()
-  clearings.forEach(c => c.paths.filter(id => id > c.id).forEach(id => {
-    const d = clearings[id]
-    const length = Math.hypot(d.x - c.x, d.y - c.y)
-    for (let t = 0; t < length; t += 11) {
-      const a = t / length, b = Math.min(1, (t + 5) / length)
-      roads.moveTo(c.x + (d.x - c.x) * a, c.y + (d.y - c.y) * a)
-        .lineTo(c.x + (d.x - c.x) * b, c.y + (d.y - c.y) * b)
-        .stroke({ color: 0x9b9c7a, width: 2, alpha: .8 })
-    }
-  }))
-  stage.addChild(roads)
-  stage.addChild(label('N', 905, 55, 13, '#60765b'))
-  const compass = new Graphics().poly([905, 68, 900, 88, 905, 82, 910, 88]).fill(0x60765b)
-  stage.addChild(compass)
-  stage.addChild(label('THE LOWLANDS', 480, 716, 15, '#52694c'))
-  stage.addChild(label('AN ORIGINAL EXPERIMENTAL MAP', 480, 736, 8, '#687c60', 'monospace'))
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = reject
+    image.src = src
+  })
 }
 
 export function Board({ state, selected, onSelect }: { state: Snapshot; selected: number | null; onSelect: (id: number) => void }) {
@@ -77,7 +31,6 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
   const previousPawn = useRef<{ x: number; y: number } | null>(null)
-  const clearingsRef = useRef(state.clearings)
 
   useEffect(() => {
     const element = host.current
@@ -85,17 +38,35 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
     let disposed = false
     const app = new Application()
     let observer: ResizeObserver | undefined
-    void app.init({ width: BASE_W, height: BASE_H, backgroundAlpha: 0, antialias: true,
-      resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true, preference: 'webgl' }).then(() => {
+    const art = MAP.background ? loadImage(MAP.background) : Promise.resolve(undefined)
+    void Promise.all([art, app.init({ width: BASE_W, height: BASE_H, backgroundAlpha: 0, antialias: true,
+      resolution: Math.min(window.devicePixelRatio || 1, 2), autoDensity: true, preference: 'webgl' })]).then(([image]) => {
       if (disposed) { app.destroy(true, { children: true }); return }
       element.appendChild(app.canvas)
       appRef.current = app
-      landscape(app.stage, clearingsRef.current)
+      const layout = buildLayout(MAP)
+      const backdrop = new Sprite()
+      app.stage.addChild(backdrop)
+      let painted = 0, timer = 0
+      // The board is painted once per display density, one texel per screen pixel, so it stays sharp.
+      const paint = (width: number) => {
+        const scale = Math.min(3, Math.max(1, width * Math.min(window.devicePixelRatio || 1, 2) / BASE_W))
+        if (Math.abs(scale - painted) < .25) return
+        painted = scale
+        const previous = backdrop.texture
+        backdrop.texture = Texture.from(paintMap(MAP, layout, scale, image))
+        backdrop.width = BASE_W
+        backdrop.height = BASE_H
+        if (previous !== Texture.EMPTY) previous.destroy(true)
+      }
+      paint(element.clientWidth || BASE_W)
       observer = new ResizeObserver(() => {
         const width = element.clientWidth
         if (width > 0) {
           app.renderer.resize(width, width * BASE_H / BASE_W)
           app.stage.scale.set(width / BASE_W)
+          window.clearTimeout(timer)
+          timer = window.setTimeout(() => { if (!disposed) paint(width) }, 250)
         }
       })
       observer.observe(element)
@@ -121,35 +92,52 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
     state.clearings.forEach(c => {
       const g = new Graphics()
       if (selected === c.id || lastLocation === c.id) {
-        g.ellipse(c.x, c.y + 3, 77, 57).fill({ color: 0xf8edbc, alpha: .3 })
-        g.ellipse(c.x, c.y + 3, 76, 56).stroke({ color: 0x9c7f40, alpha: .5, width: 1.5 })
+        g.ellipse(c.x, c.y + 4, PLATEAU.rx + 12, PLATEAU.ry + 11).fill({ color: 0xf8e7a8, alpha: .14 })
+          .stroke({ color: 0xf3d27a, alpha: .9, width: 3 })
         if (lastLocation === c.id) pulse = g
       }
-      g.ellipse(c.x + 3, c.y + 9, 65, 43).fill({ color: 0x304d33, alpha: .12 })
-      g.ellipse(c.x, c.y + 2, 65, 43).fill(0xf3eedb).stroke({ color: 0xbbbea0, width: 1.5 })
-      g.circle(c.x, c.y - 40, 10).fill(SUIT_COLORS[c.suit]).stroke({ color: 0xf3eedb, width: 2 })
-      g.eventMode = 'static'
-      g.cursor = 'pointer'
-      g.on('pointertap', () => onSelect(c.id))
       layer.addChild(g)
-      layer.addChild(label(c.suit === 'fox' ? '◆' : c.suit === 'rabbit' ? '✦' : '●', c.x, c.y - 40, 11, '#fff8e7'))
+      const hit = new Container()
+      hit.hitArea = new Ellipse(c.x, c.y, PLATEAU.rx + 4, PLATEAU.ry + 6)
+      hit.eventMode = 'static'
+      hit.cursor = 'pointer'
+      hit.on('pointertap', () => onSelect(c.id))
+      layer.addChild(hit)
       const armies = c.warriors.map((n, i) => ({ n, i })).filter(x => x.n)
       armies.forEach(({ n, i }, j) => {
-        const x = c.x + (j - (armies.length - 1) / 2) * 27
-        const token = new Graphics().roundRect(x - 12, c.y - 11, 24, 26, 6).fill({ color: state.players[i].color })
+        const x = c.x + (j - (armies.length - 1) / 2) * 27, y = c.y - 6
+        const token = new Graphics().ellipse(x + 3, y + 15, 12, 4).fill({ color: 0x141a10, alpha: .4 })
+          .roundRect(x - 12, y - 11, 24, 26, 6).fill({ color: state.players[i].color })
           .stroke({ color: 0xfff7df, width: 1.5 })
-        token.circle(x, c.y - 16, 5).fill({ color: state.players[i].color }).stroke({ color: 0xfff7df, width: 1.3 })
+        token.circle(x, y - 16, 5).fill({ color: state.players[i].color }).stroke({ color: 0xfff7df, width: 1.3 })
         layer.addChild(token)
-        layer.addChild(label(String(n), x, c.y + 3, 12, '#fff8e8', 'monospace'))
+        layer.addChild(label(String(n), x, y + 3, 12, '#fff8e8', 'monospace'))
       })
-      const symbols = [...c.buildings.map(b => ({ color: state.players[b.player].color, char: b.kind === 'roost' ? '⌂' : b.kind === 'base' ? '⚑' : b.kind === 'mill' ? '✳' : b.kind === 'workshop' ? '⚒' : '▥' })),
-        ...(c.keep ? [{ color: '#bf704b', char: '♜' }] : []), ...(c.sympathy ? [{ color: '#87944e', char: '❧' }] : []),
-        ...(c.wood ? [{ color: '#8f724c', char: `${c.wood}w` }] : []), ...(c.ruin ? [{ color: '#9b987e', char: '◇' }] : [])]
-      symbols.forEach((s, j) => {
-        const x = c.x + (j - (symbols.length - 1) / 2) * 21
-        layer.addChild(label(s.char, x, c.y + 28, 14, s.color))
+      // Buildings sit on the painted slots; other markers stack on the plateau's left rim.
+      const plots = plotPositions(MAP.clearings[c.id])
+      c.buildings.forEach((b, k) => {
+        const [x, y] = plots[k], half = PLOT / 2 - 2
+        layer.addChild(new Graphics().roundRect(x - half, y - half, half * 2, half * 2, 3)
+          .fill({ color: state.players[b.player].color }).stroke({ color: 0xfff7df, width: 1.4 }))
+        layer.addChild(label(b.kind === 'roost' ? '⌂' : b.kind === 'base' ? '⚑' : b.kind === 'mill' ? '✳' : b.kind === 'workshop' ? '⚒' : '▥',
+          x, y, 12, '#fff8e8'))
       })
-      layer.addChild(label(c.name.toUpperCase(), c.x, c.y + 59, 9, '#3c5140', 'monospace'))
+      // A ruin fills the last plot until it is explored; buildings fill plots from the first, so they never meet.
+      if (c.ruin) {
+        const [x, y] = plots[plots.length - 1], half = PLOT / 2 - 2
+        layer.addChild(new Graphics().roundRect(x - half, y - half, half * 2, half * 2, 3).fill(0x8f8a76).stroke({ color: 0x2a271f, width: 1.6 })
+          .rect(x - half + 3, y - half + 3, half * 2 - 6, 5).fill(0xb3ad97).rect(x - half + 3, y - half + 8, 5, half * 2 - 11).fill(0xb3ad97)
+          .moveTo(x + 2, y - 8).lineTo(x + 2, y + 10).moveTo(x - 4, y - 5).lineTo(x + 2, y + 1).lineTo(x + 8, y - 5)
+          .moveTo(x - 4, y + 9).lineTo(x + 2, y + 4).lineTo(x + 8, y + 9).stroke({ color: 0x8ff0dc, width: 2.2, cap: 'round' }))
+      }
+      const markers = [...(c.keep ? [{ color: '#bf704b', char: '♜' }] : []), ...(c.sympathy ? [{ color: '#87944e', char: '❧' }] : []),
+        ...(c.wood ? [{ color: '#8f724c', char: `${c.wood}w` }] : [])]
+      markers.forEach((m, j) => {
+        const x = c.x - PLATEAU.rx - 2, y = c.y - 12 + j * 17
+        layer.addChild(new Graphics().circle(x + 1.5, y + 2, 8).fill({ color: 0x141a10, alpha: .35 })
+          .circle(x, y, 8).fill(0xf2e8cb).stroke({ color: 0x2a271f, width: 1, alpha: .6 }))
+        layer.addChild(label(m.char, x, y, m.char.length > 1 ? 8 : 11, m.color))
+      })
     })
     const ranger = state.players.find(p => p.faction === 'ranger')!
     const pos = state.clearings[ranger.position]
@@ -178,7 +166,7 @@ export function Board({ state, selected, onSelect }: { state: Snapshot; selected
   }, [state, ready, selected, onSelect])
 
   return <div className="board-renderer">
-    <div ref={host} role="img" aria-label="Bản đồ 12 vùng. Bảng vùng bên dưới cung cấp dữ liệu tương đương." />
+    <div ref={host} role="img" aria-label={`Bản đồ ${MAP.clearings.length} vùng. Bảng vùng bên dưới cung cấp dữ liệu tương đương.`} />
     {error && <p role="alert">{error}</p>}
   </div>
 }

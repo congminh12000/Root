@@ -1,0 +1,37 @@
+{
+  "id": "lowlands",
+  "name": "The Lowlands",
+  "season": "autumn",
+  "seed": 1984,
+  "size": [960, 755],
+  "clearings": [
+    {"name": "Copper Gate", "suit": "fox", "slots": 2, "x": 165, "y": 105, "paths": [1, 3, 4]},
+    {"name": "Sun Orchard", "suit": "rabbit", "slots": 2, "x": 455, "y": 120, "paths": [0, 2, 5]},
+    {"name": "Moonwatch", "suit": "mouse", "slots": 2, "x": 790, "y": 95, "paths": [1, 6]},
+    {"name": "Bramble Hollow", "suit": "rabbit", "slots": 2, "x": 95, "y": 330, "paths": [0, 4, 7], "ruin": true},
+    {"name": "Old Kiln", "suit": "mouse", "slots": 2, "x": 330, "y": 265, "paths": [0, 3, 5, 8], "ruin": true},
+    {"name": "Amber Crossing", "suit": "fox", "slots": 2, "x": 590, "y": 250, "paths": [1, 4, 6, 9], "ruin": true},
+    {"name": "Mist Harbour", "suit": "rabbit", "slots": 2, "x": 860, "y": 300, "paths": [2, 5, 9]},
+    {"name": "Fern Sanctuary", "suit": "mouse", "slots": 2, "x": 175, "y": 560, "paths": [3, 8]},
+    {"name": "Rootwell", "suit": "fox", "slots": 3, "x": 400, "y": 470, "paths": [4, 7, 9, 10], "ruin": true},
+    {"name": "Silver Meadow", "suit": "mouse", "slots": 3, "x": 690, "y": 455, "paths": [5, 6, 8, 11]},
+    {"name": "Harvest Rest", "suit": "rabbit", "slots": 2, "x": 470, "y": 665, "paths": [8, 11]},
+    {"name": "Cinder Reach", "suit": "fox", "slots": 2, "x": 815, "y": 640, "paths": [9, 10]}
+  ],
+  "forests": [[0, 3, 4], [0, 1, 4, 5], [1, 2, 5, 6], [3, 4, 7, 8], [4, 5, 8, 9], [5, 6, 9], [7, 8, 10], [8, 9, 10, 11], [9, 6, 11]],
+  "terrain": {
+    "treeSpacing": 9,
+    "rivers": [
+      {"width": 26, "points": [[30, 462], [120, 445], [200, 420], [275, 385], [350, 372], [440, 385], [520, 375], [600, 360], [680, 365], [760, 395], [790, 450], [775, 520], [730, 575], [690, 640], [665, 700], [655, 790]]}
+    ],
+    "lakes": [
+      {"points": [[-30, 392], [28, 398], [70, 425], [82, 468], [52, 506], [-30, 520]]}
+    ],
+    "rocks": [
+      {"x": 915, "y": 38, "r": 34}, {"x": 952, "y": 96, "r": 24}, {"x": 868, "y": 4, "r": 22}, {"x": 940, "y": 452, "r": 28},
+      {"x": 955, "y": 505, "r": 22}, {"x": 28, "y": 34, "r": 24}, {"x": 68, "y": 8, "r": 16}, {"x": 30, "y": 722, "r": 26},
+      {"x": 84, "y": 748, "r": 18}, {"x": 270, "y": 160, "r": 9}, {"x": 545, "y": 565, "r": 10}, {"x": 300, "y": 645, "r": 8},
+      {"x": 890, "y": 742, "r": 12}, {"x": 620, "y": 30, "r": 10}
+    ]
+  }
+}
