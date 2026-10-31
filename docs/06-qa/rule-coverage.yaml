@@ -158,10 +158,10 @@ rules:
     title: "Limits"
     section: "1.5.1"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/test/fuzz.ts]
+    tests: [packages/game-engine/test/fuzz.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.5.2
     title: "Starting Faction"
@@ -242,8 +242,8 @@ rules:
     page: 3
     status: implemented
     spec: docs/02-rules-spec/cards.md
-    implementation: [packages/game-engine/src/craft.ts, packages/game-engine/src/common.ts]
-    tests: [packages/game-engine/test/rules.test.ts]
+    implementation: [packages/game-engine/src/craft.ts, packages/game-engine/src/common.ts, packages/game-engine/src/cards.ts]
+    tests: [packages/game-engine/test/rules.test.ts, packages/game-engine/test/cards.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-2.2
     title: "Clearings and Paths"
