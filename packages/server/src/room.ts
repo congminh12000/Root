@@ -31,7 +31,9 @@ const PUBLIC_DETAIL = new Set(['move', 'battle', 'craft', 'discard-card', 'marqu
 
 const LOG_SIZE = 80
 /** Who decides for a human whose time ran out. */
-const TIMEOUT_BOT = 'simple'
+const TIMEOUT_BOT = 'search-fast'
+/** Bot for a seat created without naming one. */
+const DEFAULT_BOT = 'search'
 
 /**
  * One game on the server: the only holder of the authoritative GameState. Humans act through seat tokens; bots act
@@ -64,8 +66,8 @@ export class Room {
     const id = randomUUID().slice(0, 8)
     const seed = randomBytes(16).toString('hex')
     const seats = req.seats.map(s => ({
-      faction: s.faction, kind: s.kind, name: s.name?.trim() || (s.kind === 'bot' ? `Bot (${s.bot ?? 'simple'})` : s.faction),
-      bot: s.kind === 'bot' ? (s.bot && BOTS[s.bot] ? s.bot : 'simple') : null,
+      faction: s.faction, kind: s.kind, name: s.name?.trim() || (s.kind === 'bot' ? `Bot (${s.bot && BOTS[s.bot] ? s.bot : DEFAULT_BOT})` : s.faction),
+      bot: s.kind === 'bot' ? (s.bot && BOTS[s.bot] ? s.bot : DEFAULT_BOT) : null,
       token: s.kind === 'human' ? randomBytes(12).toString('base64url') : null,
     }))
     const options = {
@@ -186,7 +188,7 @@ export class Room {
     const seat = this.saved.seats.find(s => s.faction === actor)
     if (!actor || !seat || this.state.winner) return false
     if (seat.kind !== (forHuman ? 'human' : 'bot')) return false
-    const bot = BOTS[forHuman ? TIMEOUT_BOT : seat.bot ?? 'simple']!
+    const bot = BOTS[forHuman ? TIMEOUT_BOT : seat.bot ?? DEFAULT_BOT]!
     const rng = seededRng(`${this.saved.seed}:bot:${this.state.meta.revision}`)
     const action = bot.choose(viewFor(this.state, actor), legalActions(this.state, actor), rng)
     const result = this.submit(actor, `${forHuman ? 'timeout' : 'bot'}-${this.state.meta.revision}`, this.state.meta.revision, action)

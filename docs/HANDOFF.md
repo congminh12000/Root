@@ -20,15 +20,22 @@ npm run typecheck && npm test && npm run audit:rules
 - Bước 7 (một phần): bot ngẫu nhiên chơi trọn trận trong `npm test`, kiểm tra bảo toàn quân và bài sau mỗi command, và replay. Đã chạy 2.000 trận ngẫu nhiên: 0 lỗi.
 - Multiplayer LAN: `packages/server` (HTTP + WebSocket, token ghế, lưu và dựng lại trận), `packages/client` (sảnh, bản đồ SVG, bảng chọn hành động), `packages/bots` (`random`, `simple`). Xem `docs/05-product-spec/multiplayer.md`.
 
+## Đã xong thêm (nhánh `feat/root2-next`)
+
+- Thời hạn 90 giây cho mỗi lựa chọn của người chơi; hết giờ thì bot `search-fast` chọn thay một lần.
+- Mật khẩu phòng (`--password`) và giới hạn số trận (`--max-games`).
+- Bot `search`: tìm kiếm Monte Carlo trên thông tin ẩn được đoán, chỉ dùng `PlayerView`.
+- Bàn chơi 3D bằng Three.js, bấm vào ô để lọc lựa chọn; vẫn giữ bản 2D.
+- Review toàn bộ điều khoản với p16: 140 điều `verified`. Sửa 2 lỗi: thời điểm xáo lại deck (§2.1) và Rest lật item ngửa (§9.6.1).
+
 ## Còn lại
 
 | Việc | Ghi chú |
 |---|---|
-| Golden scenario Walking Through Root | Chép lại từng nước trong SRC-003 thành test |
-| Thời hạn cho người chơi vắng | Quyết định sản phẩm, chưa duyệt |
-| Bot mạnh hơn | `simple` chỉ là heuristic; cần search trên trạng thái lấy mẫu từ PlayerView |
-| Review luật (`verified`) | Mọi mục trong rule-coverage mới ở `implemented` |
-| Giao diện | Bản đồ tự vẽ đơn giản; chưa có hoạt ảnh, chưa xem chi tiết lá |
+| §1.1.3 thứ tự hiệu ứng đồng thời | Người tới lượt phải được chọn thứ tự; engine đang dùng thứ tự cố định |
+| Golden scenario Walking Through Root | Chép lại ván mẫu trong SRC-003 thành test |
+| Bot chạy trong worker thread | Để bot `search` không chặn các trận khác |
+| Hoạt ảnh và xem chi tiết lá bài | |
 
 ## Quy ước
 

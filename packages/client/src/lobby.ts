@@ -27,7 +27,7 @@ export async function renderLobby(root: HTMLElement) {
             <td>${FACTION_NAME[f]}</td>
             <td><input type="checkbox" data-f="${f}" class="use" checked></td>
             <td><select data-f="${f}" class="kind"><option value="human">Người</option><option value="bot"${f === 'marquise' ? '' : ' selected'}>Bot</option></select></td>
-            <td><input data-f="${f}" class="name" placeholder="Tên người chơi"><select data-f="${f}" class="bot"><option value="simple">simple</option><option value="random">random</option></select></td>
+            <td><input data-f="${f}" class="name" placeholder="Tên người chơi"><select data-f="${f}" class="bot"><option value="search">search (mạnh, ~1 giây/nước)</option><option value="search-fast">search-fast (0,3 giây/nước)</option><option value="simple">simple (yếu)</option><option value="random">random</option></select></td>
           </tr>`).join('')}
         </table>
         <button id="create">Tạo trận</button>

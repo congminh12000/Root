@@ -52,7 +52,7 @@ test('a human who runs out of time gets one decision made by a bot, then the clo
   assert.ok(room.deadline !== null)
   const msg = room.message(null)
   assert.ok(msg.type === 'update' && msg.deadline === room.deadline)
-  await new Promise(r => setTimeout(r, 120))
+  await new Promise(r => setTimeout(r, 700)) // the timeout bot thinks for 0.3 s
   assert.ok(room.saved.record.commands.length >= 1)
   assert.ok(room.saved.record.commands[0]!.command.actionId.startsWith('timeout-'))
   unsubscribe()

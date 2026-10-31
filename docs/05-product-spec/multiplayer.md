@@ -56,10 +56,26 @@ HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ fac
 
 | id | Cách chọn |
 |---|---|
+| `search` | Mặc định. Tìm kiếm Monte Carlo trên thông tin ẩn được đoán (`packages/bots/src/search.ts`), khoảng 1 giây mỗi quyết định. |
+| `search-fast` | Như `search` nhưng 0,3 giây mỗi quyết định. Dùng khi người chơi hết giờ. |
+| `simple` | Heuristic viết tay: ưu tiên hành động ghi điểm, chỉ đánh khi có lợi thế quân. |
 | `random` | Chọn ngẫu nhiên đều trong danh sách hợp lệ. Dùng để fuzz. |
-| `simple` | Heuristic viết tay: ưu tiên hành động ghi điểm (xây, chế tạo, Revolt, quest), chỉ đánh khi có lợi thế quân. Chưa có tìm kiếm hay học máy. |
 
-Bot `simple` yếu. Bản cũ (`backend/`) có tìm kiếm Monte Carlo và mô hình neural, nhưng chạy trên bộ luật thử nghiệm khác. Muốn chuyển sang thì phải viết lại phần mã hóa trạng thái cho bộ luật chính thức.
+**Cách `search` hoạt động.** Với mỗi quyết định, bot làm như sau:
+1. Lấy khoảng 10 lựa chọn tốt nhất theo heuristic.
+2. Lặp lại tới khi hết thời gian:
+   - Đoán thông tin ẩn từ `PlayerView`: bài của người khác, thứ tự deck, supporter, item dưới ruin, deck quest. Cách đoán là xáo ngẫu nhiên các lá bot chưa thấy, đúng số lượng công khai (`determinize.ts`).
+   - Thử một lựa chọn (chọn bằng UCB1), rồi cho các phe đánh tiếp hai vòng bằng heuristic.
+   - Chấm thế cờ thu được: thắng là 1, thua là 0, còn lại tính theo chênh lệch điểm.
+3. Chọn lựa chọn được thử nhiều nhất.
+
+Bot không bao giờ đọc state thật. Test kiểm tra rằng state đoán ra bảo toàn mọi lá và quân, và cho đúng danh sách hành động hợp lệ như state thật.
+
+Đo bằng `node packages/bots/scripts/arena.ts search-fast simple 24`: 4 người chơi, một bot `search-fast` đấu ba bot `simple`, đổi phe mỗi trận. Nếu ngang sức thì tỉ lệ thắng kỳ vọng là 25%. Kết quả xem ở phần báo cáo của PR.
+
+Giới hạn hiện tại:
+- Bot chạy trên luồng chính của server, nên trong lúc nó suy nghĩ (tới 1 giây), các trận khác phải chờ.
+- Chưa đo với người chơi giỏi.
 
 ## Chưa có (cần người quản lý quyết định)
 
