@@ -1124,10 +1124,10 @@ rules:
     title: "Crafting"
     section: "8.2.1"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.2.2
     title: "Guerrilla War"
@@ -1142,37 +1142,37 @@ rules:
     title: "The Supporters Stack"
     section: "8.2.3"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.2.4
     title: "Removing Bases"
     section: "8.2.4"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts, packages/game-engine/src/move.ts, packages/game-engine/src/common.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.2.5
     title: "Sympathy Tokens"
     section: "8.2.5"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.2.6
     title: "Outrage"
     section: "8.2.6"
     page: 7
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/removal.ts, packages/game-engine/src/move.ts, packages/game-engine/src/common.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.3
     title: "Faction Setup"
@@ -1225,93 +1225,93 @@ rules:
     section: "8.4"
     page: 8
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.4.1
     title: "Revolt"
     section: "8.4.1"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.4.2
     title: "Spread Sympathy"
     section: "8.4.2"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.5
     title: "Daylight"
     section: "8.5"
     page: 8
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.5.1
     title: "Craft"
     section: "8.5.1"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.5.2
     title: "Mobilize"
     section: "8.5.2"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.5.3
     title: "Train"
     section: "8.5.3"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.6
     title: "Evening"
     section: "8.6"
     page: 8
     group: true
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.6.1
     title: "Military Operations"
     section: "8.6.1"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.6.2
     title: "Draw and Discard"
     section: "8.6.2"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/alliance.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.1
     title: "Overview"
