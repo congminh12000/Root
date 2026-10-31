@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import { legalActions } from '../src/index.ts'
 import { startBattle } from '../src/battle.ts'
 import type { GameState } from '../src/index.ts'
-import { answer, at, building, ofType, roll, scenario, token, turnOf, types, warriors } from './helpers.ts'
+import { answer, at, building, effect, ofType, roll, scenario, token, turnOf, types, warriors } from './helpers.ts'
 
 function sympathy(s: GameState, ...cs: number[]) {
   for (const c of cs) { s.map.clearings[c]!.tokens.push({ faction: 'alliance', type: 'sympathy' }); s.factions.alliance!.sympathyOnTrack -= 1 }
@@ -90,7 +90,7 @@ test('§8.2.6 Outrage: moving warriors into sympathy costs a matching card, or a
   s.hands.marquise = ['bake-sale#1', 'anvil#1']
   at(s, 'marquise', 'actions')
   s = answer(s, { type: 'move', payload: { from: 0, to: 1, warriors: 1 } })
-  assert.deepEqual(s.pending.at(-1), { kind: 'outrage', player: 'marquise', clearing: 1 })
+  assert.deepEqual(effect(s), { kind: 'outrage', player: 'marquise', clearing: 1 })
   assert.deepEqual(legalActions(s, 'marquise'), [{ type: 'outrage-give', payload: { card: 'bake-sale#1' } }])
   s = answer(s, { type: 'outrage-give', payload: { card: 'bake-sale#1' } })
   assert.deepEqual(s.factions.alliance!.supporters, ['bake-sale#1'])
@@ -125,7 +125,7 @@ test('§8.2.6 removing a sympathy token in battle causes Outrage for the remover
   turnOf(s, 'marquise')
   startBattle(s, 'marquise', 'alliance', 1, roll(1, 0))
   assert.equal(s.factions.alliance!.sympathyOnTrack, 10)
-  assert.deepEqual(s.pending.at(-1), { kind: 'outrage', player: 'marquise', clearing: 1 })
+  assert.deepEqual(effect(s), { kind: 'outrage', player: 'marquise', clearing: 1 })
   s = answer(s, { type: 'outrage-give', payload: { card: 'bake-sale#1' } })
   assert.equal(s.score.marquise, 1, 'one point for the token (§3.2.1)')
   assert.deepEqual(s.factions.alliance!.supporters, ['bake-sale#1'])
@@ -144,7 +144,7 @@ test('§8.2.4 losing a base: discard its supporters (birds too), lose half the o
   assert.equal(a.basesOnBoard.fox, null)
   assert.equal(a.officers, 1, 'half of three, rounded up, removed')
   assert.ok(!a.supporters.includes('anvil#1') && !a.supporters.includes('armorers#1'))
-  assert.deepEqual(s.pending.at(-1), { kind: 'discard-supporters', player: 'alliance', to: 5 })
+  assert.deepEqual(effect(s), { kind: 'discard-supporters', player: 'alliance', to: 5 })
   s = answer(s, { type: 'discard-supporter', payload: { card: 'sword#1' } })
   assert.equal(s.factions.alliance!.supporters.length, 5)
   assert.equal(s.pending.length, 0)

@@ -133,9 +133,13 @@ export type PendingDecision =
   | { kind: 'battle-effects'; player: FactionId; clearing: ClearingId } // §4.3.4 (no base card acts before rolling)
   /** §4.3.6 the side taking hits picks which buildings/tokens (or, for the Vagabond, which items) go. `by` scores. */
   | { kind: 'take-hits'; player: FactionId; clearing: ClearingId; hits: number; by: FactionId | null }
-  | { kind: 'field-hospital'; player: 'marquise'; clearing: ClearingId; warriors: number } // §6.2.3
-  | { kind: 'outrage'; player: FactionId; clearing: ClearingId } // §8.2.6 payer chooses the card
-  | { kind: 'discard-supporters'; player: 'alliance'; to: number } // §8.2.4 step 3
+  /**
+   * Effects triggered by removing pieces or moving. `batch` marks the ones triggered at the same moment: the same
+   * command, or step 6 of the battle in progress (-1). Their order is chosen, not fixed (§1.1.3, §4.3.6; order.ts).
+   */
+  | { kind: 'field-hospital'; player: 'marquise'; clearing: ClearingId; warriors: number; batch?: number } // §6.2.3
+  | { kind: 'outrage'; player: FactionId; clearing: ClearingId; batch?: number } // §8.2.6 payer chooses the card
+  | { kind: 'discard-supporters'; player: 'alliance'; to: number; batch?: number } // §8.2.4 step 3
   | { kind: 'discard-down'; player: FactionId; to: number } // §6.6, §7.6.2, §8.6.2, §9.6.3
   /** One step of a faction's setup (§5.1.7). Steps without a choice run automatically when they reach the top. */
   | { kind: 'setup'; player: FactionId; step: string }

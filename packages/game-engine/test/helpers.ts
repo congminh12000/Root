@@ -84,3 +84,9 @@ export function run(s: GameState, rng: Rng = fixed([])): GameState {
   advanceTurn(s, rng)
   return s
 }
+
+/** The top pending decision without its `batch` marker (order.ts). */
+export function effect(s: GameState) {
+  const { batch: _batch, ...rest } = s.pending.at(-1) as { batch?: number }
+  return rest
+}

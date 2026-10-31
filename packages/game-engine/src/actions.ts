@@ -1,3 +1,4 @@
+import type { TriggeredEffect } from './order.ts'
 import type { CardId, ClearingId, DecreeColumn, EyrieLeader, FactionId, ForestId, ItemType, MarquiseBuilding, PawnLocation, QuestId, VagabondCharacter } from './state.ts'
 
 /**
@@ -31,6 +32,7 @@ export type Action =
   | { type: 'discard-supporter'; payload: { card: CardId } } // §8.2.4
   // Turn flow (turn-flow.md)
   | { type: 'end-step'; payload: Record<string, never> }
+  | { type: 'order-effects'; payload: { index: number; effect: TriggeredEffect['kind']; player: FactionId } } // §1.1.3, §4.3.6
   | { type: 'craft'; payload: { card: CardId } } // §4.1
   | { type: 'battle'; payload: { clearing: ClearingId; defender: FactionId } } // §4.3
   | { type: 'move'; payload: { from: ClearingId; to: ClearingId; warriors: number } } // §4.2

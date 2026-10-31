@@ -1,5 +1,6 @@
 import { BATTLE_DIE } from '@root/game-data'
 import type { Action } from './actions.ts'
+import { isTriggeredEffect } from './order.ts'
 import { applyHitChoice, choices, dealHits, hitPool } from './removal.ts'
 import type { Rng } from './rng.ts'
 import { award, cardDef, checkVictory, discardCard, hasPieces, isEnemy, matchesSuit, pawnAt, suitOf, takeFromHand, warriorsAt } from './rules.ts'
@@ -62,7 +63,9 @@ const attackerRemains = (state: GameState, b: BattleState) => warriorsAt(state, 
 export function continueBattle(state: GameState, rng: Rng) {
   for (;;) {
     const b = state.battle
-    if (!b || state.pending.length || state.winner) return
+    // §4.3.6, §1.5.4: both sides' hits are dealt before the effects they trigger resolve.
+    const dealing = b?.step === 'hits-attacker' && state.pending.every(isTriggeredEffect)
+    if (!b || (state.pending.length && !dealing) || state.winner) return
     switch (b.step) {
       case 'ambush': // §4.3.1
         if (ambushCards(state, b.defender, b.clearing).length) {

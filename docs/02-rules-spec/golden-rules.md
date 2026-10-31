@@ -14,8 +14,10 @@ Nhóm 1.1.1–1.1.3. Thứ tự ưu tiên giữa các nguồn nằm ở [rule-pr
 
 ### ROOT-1.1.3 Unclear Resolutions and Choices
 - Khi nhiều hiệu ứng xảy ra cùng lúc mà thứ tự không rõ, hoặc không rõ ai quyết định, thì **người đang tới lượt** chọn.
-- Engine: tạo PendingDecision `order-effects` cho người tới lượt khi có ≥ 2 hiệu ứng đồng thời chưa có quy định thứ tự.
-- Test: hai hiệu ứng "at start of Birdsong" (vd. Better Burrow Bank và một hiệu ứng khác) thì người tới lượt chọn thứ tự.
+- Engine (`order.ts`): Field Hospitals, Outrage và bỏ bớt supporter sinh ra cùng lúc (cùng command, hoặc cùng bước 6 của một battle) mang chung `batch`. Khi có ≥ 2 cái như vậy ở đỉnh stack, người chọn được hành động `order-effects` để chọn cái nào xử lý trước. Người chọn: trong battle, nếu mọi hiệu ứng đều do quân của một bên bị gỡ thì bên đó chọn (§4.3.6); còn lại là người tới lượt.
+- Hiệu ứng "at start of" đã do người tới lượt tự chọn thứ tự dùng trong bước `<phase>-start`, không cần thêm quyết định.
+- Battle: hit của cả hai bên được gỡ xong rồi mới xử lý hiệu ứng (§4.3.6, §1.5.4).
+- Test: `order.test.ts`: Mèo đánh Liên minh với một lá fox, hai thứ tự cho hai kết quả; Liên minh mất base và sympathy cùng lúc thì Liên minh chọn.
 
 ### ROOT-1.2 Public and Private Information
 Nhóm 1.2.1–1.2.2. Ánh xạ sang `PlayerView` ở [game-state.md](../04-engine-spec/game-state.md).

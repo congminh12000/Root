@@ -1,4 +1,5 @@
 import type { ClearingId, FactionId, GameState, ItemType, SlotContent, Suit, TokenType, VagabondItem } from './state.ts'
+import { effectBatch } from './order.ts'
 import { award, discardCard, isEnemy, matchesSuit, suitOf } from './rules.ts'
 
 /**
@@ -28,7 +29,7 @@ export function loseBase(state: GameState, suit: Suit) {
   a.officers -= lost
   a.warriorSupply += lost
   const anyBase = Object.values(a.basesOnBoard).some(c => c !== null)
-  if (!anyBase && a.supporters.length > ALLIANCE_LIMIT) state.pending.push({ kind: 'discard-supporters', player: 'alliance', to: ALLIANCE_LIMIT })
+  if (!anyBase && a.supporters.length > ALLIANCE_LIMIT) state.pending.push({ kind: 'discard-supporters', player: 'alliance', to: ALLIANCE_LIMIT, batch: effectBatch(state) })
 }
 const ALLIANCE_LIMIT = 5 // §8.2.3.I
 
@@ -43,7 +44,7 @@ function returnToken(state: GameState, type: TokenType, c: ClearingId, ctx: Remo
 
 /** Outrage (§8.2.6): the player who removed sympathy or moved warriors into a sympathetic clearing owes a card. */
 export function outrage(state: GameState, player: FactionId, c: ClearingId) {
-  if (state.factions.alliance) state.pending.push({ kind: 'outrage', player, clearing: c })
+  if (state.factions.alliance) state.pending.push({ kind: 'outrage', player, clearing: c, batch: effectBatch(state) })
 }
 
 /**
@@ -142,7 +143,7 @@ export function offerFieldHospital(state: GameState, c: ClearingId, warriors: nu
   const m = state.factions.marquise
   if (!m || m.keep === null || warriors < 1) return
   if (!state.hands.marquise?.some(card => matchesSuit(card, suitOf(state, c)))) return
-  state.pending.push({ kind: 'field-hospital', player: 'marquise', clearing: c, warriors })
+  state.pending.push({ kind: 'field-hospital', player: 'marquise', clearing: c, warriors, batch: effectBatch(state) })
 }
 
 // ── Taking hits (§4.3.6, §9.2.7) ───────────────────────────────────────────────

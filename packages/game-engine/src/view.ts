@@ -1,4 +1,5 @@
 import type { AllianceState, CardId, FactionId, FactionStates, GameState, ItemType } from './state.ts'
+import { currentActor } from './engine.ts'
 
 /**
  * What one seat may see (§1.2). Built by the engine from GameState; the server sends only this.
@@ -53,7 +54,6 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
   if (alliance) { const { supporters: _hidden, ...rest } = alliance; factions.alliance = rest }
   const handCounts: PlayerView['handCounts'] = {}
   for (const [f, cards] of Object.entries(state.hands)) handCounts[f as FactionId] = cards.length
-  const top = state.pending.at(-1)
   const copy = <T>(x: T): T => JSON.parse(JSON.stringify(x))
   return {
     self,
@@ -80,7 +80,7 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     score: { ...state.score },
     turn: { ...state.turn },
     pending: copy(state.pending),
-    waitingOn: state.winner ? [] : top ? [top.player] : [state.seats[state.turn.seat]!.faction],
+    waitingOn: state.winner ? [] : [currentActor(state)!],
     winner: copy(state.winner),
     revealed: self ? copy(state.reveals.filter(r => r.to === self)) : [],
     stage: state.stage,
