@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { ALLIANCE, AUTUMN, EYRIE, MARQUISE, VAGABOND } from '../src/index.ts'
+import { ALLIANCE, AUTUMN, BATTLE_DIE, EYRIE, MARQUISE, VAGABOND } from '../src/index.ts'
+
+test('battle die: twelve faces, values 0–3 three times each (OQ-12)', () => {
+  assert.equal(BATTLE_DIE.length, 12)
+  for (const v of [0, 1, 2, 3]) assert.equal(BATTLE_DIE.filter(f => f === v).length, 3, `value ${v}`)
+})
 
 test('Marquise tracks: six spaces per building type, matching the six buildings of each type (§C.1.2)', () => {
   assert.equal(MARQUISE.woodCost.length, MARQUISE.buildingsPerType)

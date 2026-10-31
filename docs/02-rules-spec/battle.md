@@ -23,7 +23,8 @@
 ### ROOT-4.3.3 Step 3: Roll Dice
 - Tung hai xúc xắc battle bằng RNG server, ghi kết quả vào log. Attacker sẽ gây số hit bằng **giá trị cao**, defender bằng **giá trị thấp**. Bằng nhau thì hai bên như nhau.
 - Ngoại lệ: Guerrilla War (§8.2.2) đảo lại khi Alliance là defender.
-- Law và Learning to Play chỉ ghi "2 custom dice", không ghi các mặt. Phân bố mặt phải lấy từ xúc xắc thật (OQ-12). Trước khi có số liệu, engine không được giả định.
+- Mỗi xúc xắc có 12 mặt, giá trị 0, 1, 2, 3, mỗi giá trị 3 mặt (`BATTLE_DIE` trong game-data). Law chỉ ghi "custom dice"; số liệu do người quản lý cung cấp (OQ-12).
+- Hệ quả: hai viên cho mọi cặp giá trị với xác suất đều; trước khi áp giới hạn, attacker có kỳ vọng 2,125 hit, defender 0,875.
 - **I. Maximum Rolled Hits:** số hit từ xúc xắc không vượt số **chiến binh của mình** trong clearing battle, dù là attacker hay defender. Vagabond dùng số kiếm chưa hỏng (§9.2.6).
 - Test: roll 3–1, attacker có 2 chiến binh thì attacker gây 2 hit, defender gây 1. Defender không có chiến binh thì gây 0 rolled hit.
 
