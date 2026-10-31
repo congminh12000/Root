@@ -56,19 +56,19 @@ rules:
     title: "Hands"
     section: "1.2.1"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/view.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.2.2
     title: "Piles and the Shared Deck"
     section: "1.2.2"
     page: 2
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/view.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-1.3
     title: "Negotiation, Deals, and Consent"
@@ -573,64 +573,64 @@ rules:
     title: "Step 1"
     section: "5.1.1"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.2
     title: "Step 2"
     section: "5.1.2"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.3
     title: "Step 3"
     section: "5.1.3"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.4
     title: "Step 4"
     section: "5.1.4"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.5
     title: "Step 5"
     section: "5.1.5"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.6
     title: "Step 6"
     section: "5.1.6"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.1.7
     title: "Step 7"
     section: "5.1.7"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/setup.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/create.ts, packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-5.2
     title: "Reach"
@@ -701,46 +701,46 @@ rules:
     title: "Step 1"
     section: "6.3.1"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.3.2
     title: "Step 2"
     section: "6.3.2"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.3.3
     title: "Step 3"
     section: "6.3.3"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.3.4
     title: "Step 4"
     section: "6.3.4"
     page: 5
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.3.5
     title: "Step 5"
     section: "6.3.5"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/marquise.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/marquise.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-6.4
     title: "Birdsong"
@@ -875,46 +875,46 @@ rules:
     title: "Step 1"
     section: "7.3.1"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.3.2
     title: "Step 2"
     section: "7.3.2"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.3.3
     title: "Step 3"
     section: "7.3.3"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.3.4
     title: "Step 4"
     section: "7.3.4"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.3.5
     title: "Step 5"
     section: "7.3.5"
     page: 6
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/eyrie.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/eyrie.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-7.4
     title: "Birdsong"
@@ -1188,37 +1188,37 @@ rules:
     title: "Step 1"
     section: "8.3.1"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.3.2
     title: "Step 2"
     section: "8.3.2"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.3.3
     title: "Step 3"
     section: "8.3.3"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.3.4
     title: "Step 4"
     section: "8.3.4"
     page: 8
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/alliance.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/alliance.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-8.4
     title: "Birdsong"
@@ -1436,55 +1436,55 @@ rules:
     title: "Step 1"
     section: "9.3.1"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3.2
     title: "Step 2"
     section: "9.3.2"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3.3
     title: "Step 3"
     section: "9.3.3"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3.4
     title: "Step 4"
     section: "9.3.4"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3.5
     title: "Step 5"
     section: "9.3.5"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.3.6
     title: "Step 6"
     section: "9.3.6"
     page: 10
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-9.4
     title: "Birdsong"
@@ -1766,10 +1766,10 @@ rules:
     title: "Starting Items"
     section: "V.1.1"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-V.1.2
     title: "Special Action"
@@ -1794,10 +1794,10 @@ rules:
     title: "Starting Items"
     section: "V.2.1"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-V.2.2
     title: "Special Action"
@@ -1822,10 +1822,10 @@ rules:
     title: "Starting Items"
     section: "V.3.1"
     page: 28
-    status: specified
+    status: implemented
     spec: docs/02-rules-spec/factions/vagabond.md
-    implementation: []
-    tests: []
+    implementation: [packages/game-engine/src/factions/vagabond.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
     review: {rules_verified: false, implementation_verified: false}
   - rule_id: ROOT-V.3.2
     title: "Special Action"

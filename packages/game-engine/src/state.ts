@@ -1,8 +1,7 @@
 /**
  * Authoritative game state for the Root base game (Marquise, Eyrie, Alliance, Vagabond on the Autumn map).
  * Only the engine reads or writes this shape; clients receive a PlayerView (view.ts) projected from it.
- * Comments cite The Law of Root (SRC-001, 13 Oct 2025) by section, e.g. §2.2.3.
- * Anything not yet checked against the Law is marked VERIFY and listed in docs/00-governance/open-questions.md.
+ * Comments cite the Law by section, e.g. §2.2.3, as published in the Leder Rules Library p16 (decisions/0005).
  */
 
 import type { DecreeColumnId, EyrieLeaderId, ItemType, MarquiseBuildingType, Suit, VagabondCharacterId } from '@root/game-data'
@@ -67,7 +66,7 @@ export type DecreeCard = { kind: 'card'; id: CardId } | { kind: 'vizier'; index:
 
 export interface EyrieState extends FactionBase {
   roostsOnTrack: number // §7.3.5, rightmost empty space gives Evening points (§7.6.1)
-  leader: EyrieLeader
+  leader: EyrieLeader | null // null until chosen in setup (§7.3.3)
   leadersFaceUp: EyrieLeader[] // §7.7.3.I refills when empty
   decree: Record<DecreeColumn, DecreeCard[]>
   /** Decree cards already resolved this Daylight, by column (§7.5.2 resolves left to right, any order inside a column). */
@@ -89,8 +88,8 @@ export type Relationship = 0 | 1 | 2 | 3 | 'hostile'
 export interface VagabondItem { type: ItemType; exhausted: boolean }
 
 export interface VagabondState extends FactionBase {
-  character: VagabondCharacter
-  pawn: PawnLocation
+  character: VagabondCharacter | null // null until chosen in setup (§9.3.1)
+  pawn: PawnLocation | null // null until placed in setup (§9.3.2)
   /** §9.2.5.II boots, swords, crossbows, torches and hammers, plus tea, coins and bags while face down. */
   satchel: VagabondItem[]
   /** §9.2.5.I face-up tea, coins and bags sit on their tracks, max 3 each. */
@@ -124,11 +123,15 @@ export type PendingDecision =
   | { kind: 'field-hospital'; player: 'marquise'; clearing: ClearingId; warriors: number } // §6.2.3
   | { kind: 'outrage'; player: FactionId; clearing: ClearingId } // §8.2.6 payer chooses the card
   | { kind: 'discard-down'; player: FactionId; to: number } // §6.6, §7.6.2, §8.6.2, §9.6.3
+  /** One step of a faction's setup (§5.1.7). Steps without a choice run automatically when they reach the top. */
+  | { kind: 'setup'; player: FactionId; step: string }
 
 // ── Whole game ─────────────────────────────────────────────────────────────────
 
 export interface Seat {
   faction: FactionId
+  /** Id the server matches against GameCommand.playerId. */
+  playerId: string
   /** Account id for a human seat, bot profile id for a bot. Never trusted from client payloads. */
   controller: { kind: 'human'; userId: string } | { kind: 'bot'; profile: string }
 }
@@ -142,12 +145,16 @@ export interface GameState {
     dataVersion: string
     /** Increments on every accepted command; commands carry expectedRevision. */
     revision: number
+    /** Last accepted actionIds, so a command retried after reconnect is applied at most once. */
+    recentActionIds: string[]
   }
+  /** Factions are still setting up (§5.1.7) until every setup decision is answered. */
+  stage: 'setup' | 'play'
   /** Clockwise seating order (§1.4.1); seats[0] is the starting player (§5.1.1). */
   seats: Seat[]
   turn: { seat: number; phase: Phase; step: string; number: number }
 
-  map: { id: string; clearings: ClearingState[]; vagabondPawn: PawnLocation | null }
+  map: { id: string; clearings: ClearingState[] }
 
   /** Draw pile, top first. Hidden from every player (§1.2.2). */
   deck: CardId[]

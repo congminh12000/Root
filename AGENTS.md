@@ -47,7 +47,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 | `docs/04-engine-spec/` | Đặc tả engine |
 | `docs/06-qa/` | Coverage matrix, test matrix, golden scenario |
 | `packages/game-data/` | Dữ liệu nội dung có nguồn (bản đồ, bài, quest) và kiểu dữ liệu; không phụ thuộc package nào |
-| `packages/game-engine/` | Engine TypeScript thuần, không phụ thuộc UI hay Node; dùng kiểu từ `game-data` |
+| `packages/game-engine/` | Engine TypeScript thuần, không phụ thuộc UI hay Node; dùng kiểu từ `game-data`. API ở `docs/04-engine-spec/engine-api.md` |
 | `scripts/` | `fetch-sources`, `audit-rule-coverage` |
 | `backend/`, `web/` | Bản thử nghiệm cũ (Python, React/PixiJS). Chỉ để tham khảo; không thêm tính năng |
 

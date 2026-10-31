@@ -15,5 +15,5 @@ export interface GameCommand {
 }
 
 export type CommandResult =
-  | { ok: true; revision: number }
-  | { ok: false; code: 'stale-revision' | 'not-your-turn' | 'illegal-action' | 'bad-payload'; rule?: string; message: string }
+  | { ok: true; revision: number; duplicate?: true }
+  | { ok: false; code: 'wrong-game' | 'unknown-player' | 'stale-revision' | 'game-over' | 'not-your-turn' | 'illegal-action'; message: string }
