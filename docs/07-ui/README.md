@@ -75,4 +75,18 @@ Mỗi mốc là một hoặc vài PR nhỏ, theo thứ tự; mốc sau dựa tr�
 | **UI-7 Bản đồ Autumn** | Khi người quản lý gửi tư liệu: dựng Autumn theo phong cách đã chốt; nếu là ảnh chính thức thì chỉ nạp từ thư mục gitignored trên máy (licensing.md) | Bản đồ khớp topology trong game-data; ô/đường/rừng đúng chỗ |
 | **UI-8 Hoàn thiện** | Màn kết thúc, nhật ký dễ đọc, âm thanh tùy chọn (tự làm hoặc CC0), hướng dẫn nhanh | Một người mới chơi hết ván với bot mà không cần hỏi |
 
+### Trạng thái
+
+- **UI-1 xong (01/11/2026):** `ui/tokens.ts` (mọi màu, chữ, khoảng cách, chuyển động; bàn 3D/2D giữ màu cũ trong nhóm `scene` tới UI-3), `ui/setup.ts` (font Latin + tiếng Việt, token, icon), `ui/icons.ts` (13 icon tự vẽ), `ui/parts.ts` (chip phe, pip chất, khung xúc xắc), `ui-kit.html`, `test/tokens.test.ts` (cấm mã màu ngoài token), Playwright `visual/` (ảnh gốc 1440 và 1280).
+
+### Lệnh
+
+```bash
+npm run dev -w @root/client            # rồi mở /ui-kit.html
+npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so ảnh với visual/__screenshots__
+npm run test:visual:update -w @root/client   # chỉ khi cố ý đổi hình; ghi lý do trong PR
+```
+
+Lần đầu trên máy mới: `npx playwright install chromium` (tải một lần, miễn phí). Ảnh gốc chụp trên macOS; máy khác có thể lệch font, khi đó tạo ảnh gốc riêng chứ không nới ngưỡng.
+
 Mốc UI-1 và UI-2 nên làm trước mọi thứ: nếu chưa có token và component chung, các phần sau sẽ lệch phong cách.

@@ -79,6 +79,7 @@ Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
+| ★ | Token, font tiếng Việt offline, icon, ui-kit, ảnh so sánh | Có | UI-1 |
 | ★ | Mọi chữ tiếng Việt, thuật ngữ luật giữ tên gốc khi cần | Có | mọi mốc |
 | ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
 | ★ | Giảm chuyển động | Có | mọi mốc |

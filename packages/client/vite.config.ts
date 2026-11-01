@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
 // `npm run dev` proxies the API and WebSocket to a server started with `npm run serve`.
@@ -9,5 +10,9 @@ export default defineConfig({
     },
   },
   // three.js is its own lazily loaded chunk (board3d.ts), so its size does not delay the page.
-  build: { outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 800 },
+  // ui-kit.html shows every shared piece in every state (docs/07-ui).
+  build: {
+    outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 800,
+    rollupOptions: { input: { main: resolve(import.meta.dirname, 'index.html'), kit: resolve(import.meta.dirname, 'ui-kit.html') } },
+  },
 })

@@ -87,6 +87,7 @@ npm run audit:rules
 npm run typecheck
 npm test
 npm run build                        # dựng giao diện
+npm run test:visual -w @root/client  # so ảnh ui-kit (docs/07-ui)
 npm run serve -- --host 0.0.0.0      # chỉ khi người dùng yêu cầu chạy server
 npm run ship -- "feat(engine): ..."   # rules:guard, kiểm tra, commit, push
 npm run pack:context                 # gói ngữ cảnh cho AI không đọc được repo

@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import type { Spot, Travel } from './motion.ts'
 import { FACTION_COLOR, SUIT_COLOR } from './names.ts'
+import { scene as palette } from './ui/tokens.ts'
 
 /**
  * The Autumn map as a 3D tabletop diorama, built only from game-data and our own procedural shapes (licensing.md:
@@ -56,7 +57,7 @@ function label(text: string, opts: { size?: number; color?: string; bg?: string 
   canvas.width = 128; canvas.height = 128
   const g = canvas.getContext('2d')!
   if (opts.bg) { g.fillStyle = opts.bg; g.beginPath(); g.arc(64, 64, 58, 0, Math.PI * 2); g.fill() }
-  g.fillStyle = opts.color ?? '#fff'
+  g.fillStyle = opts.color ?? palette.label
   g.font = 'bold 72px system-ui, sans-serif'
   g.textAlign = 'center'; g.textBaseline = 'middle'
   g.fillText(text, 64, 68)
@@ -77,7 +78,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
   const rand = () => rng.int(1_000_000) / 1_000_000
 
   // Table and board edge.
-  const table = new THREE.Mesh(new THREE.BoxGeometry(SPAN_X + 4, 0.6, SPAN_Z + 4), mat('#6b4426', 0.6))
+  const table = new THREE.Mesh(new THREE.BoxGeometry(SPAN_X + 4, 0.6, SPAN_Z + 4), mat(palette.table, 0.6))
   table.position.y = -0.75 // top at -0.45, below the lowest ground
   table.receiveShadow = true
   scene.add(table)
@@ -87,7 +88,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
   ground.rotateX(-Math.PI / 2)
   const pos = ground.attributes.position!
   const colors: number[] = []
-  const grass = new THREE.Color('#9db86b'), dry = new THREE.Color('#c9b26a'), moss = new THREE.Color('#7fa35a')
+  const grass = new THREE.Color(palette.ground.grass), dry = new THREE.Color(palette.ground.dry), moss = new THREE.Color(palette.ground.moss)
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i)
     pos.setY(i, groundHeight(x, z))
@@ -102,7 +103,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
   scene.add(groundMesh)
 
   // Paths: flat dirt ribbons that follow the ground.
-  const dirt = mat('#a9825a', 1)
+  const dirt = mat(palette.path, 1)
   for (const [a, b] of AUTUMN.paths) {
     const pa = world(a), pb = world(b)
     const len = pa.distanceTo(pb)
@@ -124,7 +125,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
 
   // Forests: instanced low-poly trees scattered inside each forest, away from clearings and paths.
   const trunks: THREE.Matrix4[] = [], crowns: { m: THREE.Matrix4; c: THREE.Color }[] = []
-  const leaf = ['#d9622b', '#e8a33a', '#b8452a', '#8a9a3c', '#f0c24b', '#5f8a3a'].map(c => new THREE.Color(c))
+  const leaf = palette.leaves.map(c => new THREE.Color(c))
   for (const ring of AUTUMN.forests) {
     const poly = ring.map(world)
     const xs = poly.map(p => p.x), zs = poly.map(p => p.z)
@@ -142,9 +143,9 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
       })
     }
   }
-  const trunkMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 6), mat('#5b3a22'), trunks.length)
+  const trunkMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 6), mat(palette.trunk), trunks.length)
   trunks.forEach((m, i) => trunkMesh.setMatrixAt(i, m))
-  const crownMesh = new THREE.InstancedMesh(new THREE.ConeGeometry(0.32, 0.9, 7), mat('#ffffff', 0.85), crowns.length)
+  const crownMesh = new THREE.InstancedMesh(new THREE.ConeGeometry(0.32, 0.9, 7), mat(palette.crownBase, 0.85), crowns.length)
   crowns.forEach(({ m, c }, i) => { crownMesh.setMatrixAt(i, m); crownMesh.setColorAt(i, c) })
   for (const m of [trunkMesh, crownMesh]) { m.castShadow = true; m.receiveShadow = true; scene.add(m) }
 
@@ -152,7 +153,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
   const pickables: THREE.Mesh[] = []
   for (const c of AUTUMN.clearings) {
     const p = world(c.id)
-    const floor = new THREE.Mesh(new THREE.CylinderGeometry(CLEARING_R, CLEARING_R * 1.04, 0.12, 40), mat('#e3d3ad', 1))
+    const floor = new THREE.Mesh(new THREE.CylinderGeometry(CLEARING_R, CLEARING_R * 1.04, 0.12, 40), mat(palette.clearing, 1))
     floor.position.set(p.x, 0.04, p.z)
     floor.receiveShadow = true
     floor.userData.clearing = c.id
@@ -168,7 +169,7 @@ function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
     scene.add(no)
   }
   for (const [f] of AUTUMN.forests.entries()) {
-    const tag = label(`r${f + 1}`, { color: '#3d5a2a', size: 0.5 })
+    const tag = label(`r${f + 1}`, { color: palette.pine, size: 0.5 })
     const c = forestCentre(f)
     tag.position.set(c.x, 1.6, c.z)
     scene.add(tag)
@@ -195,7 +196,7 @@ function warrior(color: string): THREE.Group {
 function building(type: string, color: string): THREE.Group {
   const g = new THREE.Group()
   if (type === 'roost') {
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.45, 8), mat('#6b4a2c'))
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.45, 8), mat(palette.wall))
     trunk.position.y = 0.22
     const nest = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.07, 8, 16), mat(color, 0.6))
     nest.rotation.x = Math.PI / 2; nest.position.y = 0.47
@@ -207,7 +208,7 @@ function building(type: string, color: string): THREE.Group {
   } else {
     const box = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.28, 0.38), mat(color, 0.7))
     box.position.y = 0.14
-    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.22, 4), mat('#7a3b22', 0.8))
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.22, 4), mat(palette.roof, 0.8))
     roof.position.y = 0.39; roof.rotation.y = Math.PI / 4
     g.add(box, roof)
     const glyph = label(type === 'sawmill' ? 'S' : type === 'workshop' ? 'W' : 'R', { size: 0.32 })
@@ -221,7 +222,7 @@ function building(type: string, color: string): THREE.Group {
 function ruin(): THREE.Group {
   const g = new THREE.Group()
   for (const [x, h] of [[-0.1, 0.35], [0.1, 0.22]] as const) {
-    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, h, 7), mat('#9a9a92'))
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, h, 7), mat(palette.ruin))
     pillar.position.set(x, h / 2, 0)
     pillar.castShadow = true
     g.add(pillar)
@@ -231,7 +232,7 @@ function ruin(): THREE.Group {
 
 function token(type: string, color: string): THREE.Object3D {
   if (type === 'wood') {
-    const log = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 8), mat('#8a5a2b'))
+    const log = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.3, 8), mat(palette.woodToken))
     log.rotation.z = Math.PI / 2; log.position.y = 0.08; log.castShadow = true
     return log
   }
@@ -249,9 +250,9 @@ function pawn(): THREE.Group {
   const g = new THREE.Group()
   const cloak = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.55, 10), mat(FACTION_COLOR.vagabond, 0.6))
   cloak.position.y = 0.28
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), mat('#c8b08a'))
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), mat(palette.skin))
   head.position.y = 0.62
-  const pack = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.18, 0.1), mat('#7a5a3a'))
+  const pack = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.18, 0.1), mat(palette.pack))
   pack.position.set(0, 0.36, -0.14)
   g.add(cloak, head, pack)
   g.traverse(o => { o.castShadow = true })
@@ -270,7 +271,7 @@ function buildPieces(view: PlayerView, highlight: number[], changed: number[]): 
     c.slots.forEach((slot, i) => {
       const a = Math.PI * (1.15 + (i + 0.5) / c.slots.length * 0.7)
       const sx = p.x + Math.cos(a) * 0.85, sz = p.z + Math.sin(a) * 0.85
-      const pad = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.04, 0.66), mat('#f6efdc', 1))
+      const pad = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.04, 0.66), mat(palette.slot, 1))
       pad.position.set(sx, 0.12, sz)
       pad.receiveShadow = true
       root.add(pad)
@@ -304,14 +305,14 @@ function buildPieces(view: PlayerView, highlight: number[], changed: number[]): 
       add(obj)
     })
     if (fresh) {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R, 0.09, 8, 48), new THREE.MeshBasicMaterial({ color: '#f2b705', transparent: true }))
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R, 0.09, 8, 48), new THREE.MeshBasicMaterial({ color: palette.pulse, transparent: true }))
       ring.rotation.x = Math.PI / 2
       ring.position.set(p.x, 0.22, p.z)
       root.add(ring)
       pulse.push(ring)
     }
     if (highlight.includes(id)) {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R + 0.18, 0.06, 8, 48), new THREE.MeshBasicMaterial({ color: '#fff36b' }))
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R + 0.18, 0.06, 8, 48), new THREE.MeshBasicMaterial({ color: palette.highlight }))
       ring.rotation.x = Math.PI / 2
       ring.position.set(p.x, 0.2, p.z)
       root.add(ring)
@@ -378,10 +379,10 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
   host.append(renderer.domElement)
 
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color('#e7dcc0')
-  scene.fog = new THREE.Fog('#e7dcc0', 40, 70)
-  scene.add(new THREE.HemisphereLight('#fff6e0', '#6d5a3a', 1.1))
-  const sun = new THREE.DirectionalLight('#ffe2b0', 2.2)
+  scene.background = new THREE.Color(palette.backdrop)
+  scene.fog = new THREE.Fog(palette.backdrop, 40, 70)
+  scene.add(new THREE.HemisphereLight(palette.sky, palette.groundBounce, 1.1))
+  const sun = new THREE.DirectionalLight(palette.sun, 2.2)
   sun.position.set(-9, 16, 7)
   sun.castShadow = true
   sun.shadow.mapSize.set(2048, 2048)
