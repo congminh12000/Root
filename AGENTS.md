@@ -64,6 +64,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 | `docs/02-rules-spec/` | Đặc tả hành vi theo từng điều khoản `ROOT-<section>`; viết trước khi code |
 | `docs/03-data-spec/` | Bản đồ Autumn (đánh số 1–12), bộ bài, quest và faction board |
 | `docs/04-engine-spec/` | Đặc tả engine |
+| `docs/07-ui/` | Kế hoạch giao diện, style guide (bắt buộc cho mọi việc giao diện), checklist để chơi được |
 | `docs/06-qa/` | Coverage matrix, test matrix, golden scenario |
 | `packages/game-data/` | Dữ liệu nội dung có nguồn (bản đồ, bài, quest) và kiểu dữ liệu; không phụ thuộc package nào |
 | `packages/game-engine/` | Engine TypeScript thuần, không phụ thuộc UI hay Node; dùng kiểu từ `game-data`. API ở `docs/04-engine-spec/engine-api.md` |

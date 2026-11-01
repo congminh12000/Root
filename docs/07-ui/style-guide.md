@@ -1,0 +1,87 @@
+# Style guide: "Rừng thu vẽ tay"
+
+Hợp đồng phong cách cho bàn cờ, quân, bảng và mọi màn hình. Nguồn cảm hứng: [reference/style-lakeside.jpg](reference/style-lakeside.jpg) (chỉ tham khảo phong cách). Khi có điều không rõ, so với ảnh đó trước. Muốn đổi mục nào trong file này thì cần người quản lý duyệt, sau đó cập nhật `tokens.ts` trong cùng thay đổi.
+
+## 1. Tinh thần
+
+Tranh minh họa hoạt hình nhìn từ trên cao, như bản đồ trong sách truyện: ấm, rõ, nhiều chi tiết nhỏ nhưng không rối. Mọi thứ có **viền mực sẫm**, **màu phẳng chia 2–3 sắc độ**, ánh sáng dịu từ **góc trên bên trái**. Không dùng hiệu ứng ảnh thật (không phản chiếu gương, không bloom, không DOF mạnh).
+
+## 2. Bảng màu (giá trị gốc cho `tokens.ts`)
+
+Màu lấy từ ảnh tham khảo. Mỗi màu có tên theo vai trò, không theo màu sắc.
+
+| Token | Hex | Dùng cho |
+|---|---|---|
+| `ink` | `#2a2118` | Viền, chữ chính, bóng đổ |
+| `paper` | `#f4ecd8` | Nền trang, nền bảng |
+| `paper-raised` | `#fffaf0` | Thẻ, hộp thoại |
+| `meadow` | `#8f9a4c` | Cỏ, nền ô (clearing) |
+| `meadow-light` | `#aeb063` | Cỏ sáng, viền ô được chọn |
+| `pine` | `#244232` | Thông, rừng |
+| `pine-light` | `#3d6b48` | Mặt sáng của cây |
+| `path` | `#c9a66b` | Đường đất |
+| `path-edge` | `#9c7a45` | Mép đường |
+| `water` | `#3f86c6` | Hồ, sông |
+| `water-shallow` | `#7cb8de` | Nước nông, gợn sóng |
+| `rock` | `#8d8a82` | Đá, ruin |
+| `wood` | `#7a5232` | Cầu cảng, gỗ, nút chính |
+| `autumn-orange` | `#e0662b` | Cây thu, điểm nhấn |
+| `autumn-gold` | `#e9b23a` | Cây thu, điểm, thông báo |
+| `roof-red` | `#b84a32` | Mái nhà, cảnh báo |
+| `roof-blue` | `#3b4f73` | Mái nhà, thông tin |
+
+**Màu phe và chất** giữ giá trị hiện có trong `names.ts`, chỉnh độ sáng nếu cần để nổi trên nền cỏ. Phe và chất luôn có **hình dạng riêng** đi kèm màu:
+
+| | Màu | Hình phân biệt |
+|---|---|---|
+| Marquise de Cat | cam `#d9772b` | Tai mèo nhọn, công trình mái dốc |
+| Eyrie Dynasties | xanh dương `#2f6fd1` | Mỏ chim, roost hình tổ |
+| Woodland Alliance | xanh lá `#3a9e4f`, **viền sáng** vì dễ chìm vào cỏ | Tai thỏ dài, base hình lều |
+| Vagabond | xám `#6b6b6b` | Áo choàng, gậy |
+| Cáo / thỏ / chuột / chim | `#d6453d` / `#e8c33a` / `#e98a3c` / `#7cb2d8` | Biểu tượng con vật riêng trên pip và ô |
+
+Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọn = viền `ink` dày cộng ánh `autumn-gold`; không hợp lệ = giảm độ bão hòa 60%; lỗi = `roof-red`.
+
+## 3. Nét và hình
+
+- **Viền mực:** quân và công trình dày bằng 4–6% chiều cao vật; thẻ và nút trong HTML viền 2 px màu `ink`. Trong 3D dùng viền "inverted hull" hoặc pass phát hiện cạnh, độ dày không đổi khi zoom.
+- **Đổ bóng kiểu hoạt hình (toon):** 3 nấc sáng (sáng, giữa, tối), không chuyển mượt. Bóng đổ mềm, màu `ink` 25%.
+- **Hình khối tròn, hơi phình**, không góc nhọn sắc; mái nhà và cây có phần chồng lớp như ảnh tham khảo.
+- **Kết cấu nhẹ:** cỏ có đốm sắc độ, đường đất có mép sẫm, nước có vệt gợn trắng ngắn. Kết cấu sinh bằng code và seed cố định, không dùng ảnh chụp.
+- **Mật độ:** rừng dày ở vùng rừng (forest) của bản đồ, thưa quanh ô; ô và đường luôn thoáng để đặt quân.
+
+## 4. Ánh sáng và camera
+
+- Một nguồn sáng chính ấm (`#ffe2b0`) từ trên bên trái, ánh sáng nền bán cầu (trời ấm, đất nâu). Không dùng nhiều đèn màu.
+- Camera mặc định nhìn gần như từ trên xuống (nghiêng khoảng 55–65°), giống ảnh tham khảo; cho phép xoay và phóng to có giới hạn, có nút về góc mặc định.
+- Chuyển cảnh camera mượt, ngắn (≤ 400 ms).
+
+## 5. Chữ
+
+- Tiêu đề, tên phe, số điểm: **Pangolin**. Chữ thường, bảng, nhật ký: **Be Vietnam Pro**. Cả hai đóng gói sẵn, chạy offline.
+- Cỡ chữ: 12 / 14 / 16 / 20 / 28 px. Số dùng `tabular-nums`.
+- Nhãn trên bàn 3D (số ô, số quân) là sprite có nền tròn và viền `ink`, luôn quay mặt về camera.
+
+## 6. Thành phần HTML
+
+- **Thẻ / bảng:** nền `paper-raised`, viền 2 px `ink`, bo góc 10 px, bóng `0 3px 0 ink 20%` (bóng lệch kiểu in).
+- **Nút chính:** nền `wood`, chữ `paper`, viền `ink`; khi hover sáng hơn một nấc; khi bấm lún 2 px.
+- **Lá bài:** tỉ lệ 63:88, dải màu chất ở đầu, biểu tượng chất, tên, chi phí chế tạo bằng pip có hình, hiệu ứng tóm tắt. Không dùng art chính thức; vùng tranh là họa tiết chất tự vẽ.
+- **Chip phe:** hình con vật + tên; luôn có cả màu và hình.
+- **Hộp quyết định:** nổi giữa màn, chặn thao tác khác, có tiêu đề nói rõ ai đang quyết định gì và điều khoản luật liên quan (vd §4.3.1).
+
+## 7. Chuyển động
+
+Giữ các thời lượng đang dùng và đưa vào token: nảy 380 ms, vòng lan 1200 ms, di chuyển 750 ms, xúc xắc 700–850 ms, hộp thoại 180 ms. Kiểu chuyển động: có đà, hơi vượt rồi dừng (easeOutBack) cho vật xuất hiện; mượt hai đầu cho di chuyển. Tắt hết khi bật "giảm chuyển động".
+
+## 8. Âm thanh (tùy chọn, UI-8)
+
+Tiếng gỗ, giấy, xúc xắc gỗ; nhỏ và ngắn; mặc định tắt. Chỉ dùng âm tự làm hoặc CC0, ghi nguồn.
+
+## 9. Không được
+
+- Dùng art, icon, font hoặc hình lá bài chính thức của Leder.
+- Viết mã màu trực tiếp ngoài `tokens.ts`.
+- Phân biệt thông tin chỉ bằng màu.
+- Thêm hiệu ứng hậu kỳ (bloom, phản chiếu, mờ chuyển động) làm lệch chất tranh vẽ.
+- Để giao diện tự quyết luật hoặc che bớt hành động hợp lệ mà không có cách xem đủ.

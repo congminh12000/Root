@@ -1,0 +1,86 @@
+# Checklist giao diện để chơi được
+
+Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style-guide; **Một phần** = có nhưng thiếu; **Chưa** = chưa có. Cột "Mốc" ứng với lộ trình trong [README.md](README.md). Mục đánh dấu ★ là **bắt buộc** để một người chơi trọn ván với bot mà không cần danh sách thả xuống chung.
+
+## A. Vào trận
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Sảnh: chọn phe, người hay bot, mức bot, tạo trận, link từng ghế | Có | UI-2 |
+| ★ | Nhập mật khẩu phòng, vào lại trận cũ, danh sách trận | Có | UI-2 |
+| | Chọn thời gian mỗi nước khi tạo trận | Chưa | UI-2 |
+| ★ | Setup: chọn leader Eyrie, nhân vật Vagabond, đặt keep và quân ban đầu bằng bấm trên bàn | Một phần (chọn qua danh sách) | UI-6 |
+
+## B. Bàn cờ
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Ô (clearing) có chất, số ô, slot công trình, ruin | Có | UI-3 |
+| ★ | Đường đi, rừng (forest), Vagabond trong rừng | Có | UI-3 |
+| ★ | Quân, công trình, token của 4 phe phân biệt bằng màu và hình | Một phần (chỉ màu) | UI-3 |
+| ★ | Số quân rõ khi đông; hover/bấm ô xem chi tiết (ai cai quản, quân, token) | Một phần | UI-4 |
+| ★ | Cai quản (rule) của từng ô hiển thị được | Chưa | UI-4 |
+| ★ | Đánh dấu ô/quân có thể chọn cho hành động đang làm | Một phần (lọc theo ô) | UI-4 |
+| | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Một phần | UI-3 |
+| | Bàn 2D dự phòng cùng phong cách | Có (chưa theo style) | UI-3 |
+| | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Có | UI-3 (restyle) |
+| ★ | Bản đồ Autumn theo phong cách đã chốt | Chưa (chờ tư liệu) | UI-7 |
+
+## C. Thao tác
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Di chuyển: chọn ô đi → ô đến → số quân | Chưa (danh sách) | UI-4 |
+| ★ | Đánh: chọn ô → chọn phe bị đánh | Chưa (danh sách) | UI-4 |
+| ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Chưa (danh sách) | UI-4 |
+| ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Chưa (danh sách) | UI-5 |
+| ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Một phần | UI-4 |
+| ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Có | UI-4 |
+| ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Có | UI-2 |
+| | Phím tắt (Esc huỷ chọn, Enter xác nhận, số để chọn số quân) | Chưa | UI-4 |
+
+## D. Bài và bảng phe
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Tay bài dạng quạt: chất, chi phí, đánh dấu lá dùng được | Một phần (chip tên) | UI-5 |
+| ★ | Xem chi tiết lá bài | Có | UI-5 (restyle) |
+| ★ | Play area (lá persistent đã chế tạo), dominance có thể lấy | Một phần | UI-5 |
+| ★ | Marquise: track sawmill/workshop/recruiter kèm điểm, kho gỗ, keep | Một phần (dạng chữ) | UI-5 |
+| ★ | Eyrie: decree 4 cột, leader, track roost, đánh dấu cột đã làm | Một phần | UI-5 |
+| ★ | Alliance: track sympathy kèm điểm, supporter, base, officer | Một phần | UI-5 |
+| ★ | Vagabond: túi item (tươi, úp, hỏng), track trà/tiền/túi, quan hệ, quest | Một phần | UI-5 |
+| ★ | Đối thủ: số lá trên tay, bảng phe thu gọn, bài được cho xem | Một phần | UI-5 |
+| | Item supply, quest đang mở, deck và chồng bỏ | Có | UI-5 |
+
+## E. Quyết định xen ngang
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Ambush và phá ambush | Một phần (danh sách) | UI-6 |
+| ★ | Chia hit lên quân, công trình, token; Vagabond chọn item hỏng | Một phần | UI-6 |
+| ★ | Field Hospitals, Outrage, bỏ bớt supporter, chọn thứ tự hiệu ứng | Một phần | UI-6 |
+| ★ | Lá battle (Armorers, Sappers…), bỏ bài khi quá 5 lá | Một phần | UI-6 |
+| ★ | Người đang chờ thấy ai đang quyết định gì | Một phần | UI-6 |
+
+## F. Theo dõi ván
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Có | UI-2 |
+| ★ | Bảng điểm (track 0–30), dominance, coalition | Một phần | UI-5 |
+| ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Một phần | UI-8 |
+| ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Một phần (một dòng) | UI-8 |
+| | Khán giả xem trận | Có | UI-2 |
+| | Hướng dẫn nhanh, chú giải ký hiệu | Chưa | UI-8 |
+| | Âm thanh tùy chọn | Chưa | UI-8 |
+
+## G. Chất lượng chung
+
+| | Mục | Hiện tại | Mốc |
+|---|---|---|---|
+| ★ | Mọi chữ tiếng Việt, thuật ngữ luật giữ tên gốc khi cần | Có | mọi mốc |
+| ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
+| ★ | Giảm chuyển động | Có | mọi mốc |
+| ★ | Desktop 1280–1920 px; tablet ngang dùng được | Một phần | UI-2 |
+| | ≥ 55 fps trên M1 ở 1440p | Chưa đo | UI-3 |
