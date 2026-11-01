@@ -1,14 +1,15 @@
-import type { Action, FactionId, PlayerView } from '@root/game-engine'
+import type { Action, FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { changedClearings, renderBoard } from './board.ts'
 import { cardChip, cardDetail } from './cardview.ts'
 import { clearingsOf, describe, GROUP } from './describe.ts'
 import { roomKey } from './lobby.ts'
+import { freshRoll, travelsSince, type LogEntry, type Travel } from './motion.ts'
 import { cardName, FACTION_COLOR, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME } from './names.ts'
 
 interface Update {
   type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]
   seats: { faction: FactionId; kind: string; name: string; connected: boolean }[]
-  log: { revision: number; faction: FactionId; type: string; detail?: unknown }[]
+  log: LogEntry[]
   deadline: number | null
   now: number
 }
@@ -29,6 +30,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   /** Clearings and scores that changed with the latest update; animated once, then cleared. */
   let changed: number[] = []
   let scored: FactionId[] = []
+  let travels: Travel[] = []
 
   function connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws'
@@ -40,13 +42,31 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
         localDeadline = msg.deadline === null ? null : Date.now() + (msg.deadline - msg.now)
         changed = last ? changedClearings(last.view, msg.view) : []
         scored = last ? (Object.keys(msg.view.score) as FactionId[]).filter(f => msg.view.score[f] !== last!.view.score[f]) : []
+        travels = last ? travelsSince(last.view, msg.log) : []
+        const roll = freshRoll(last?.view ?? null, msg.view)
         last = msg; notice = ''; highlight = filter === null ? [] : [filter]; draw()
-        changed = []; scored = []
+        if (roll) showDice(roll)
+        changed = []; scored = []; travels = []
       }
       else if (msg.type === 'rejected') { notice = `Máy chủ từ chối: ${msg.result.code}`; draw() }
       else { notice = msg.message; draw() }
     }
     socket.onclose = () => { notice = 'Mất kết nối, đang nối lại…'; draw(); setTimeout(connect, 1500) }
+  }
+
+  /** The latest battle roll over the board for a few seconds: both dice, then the hits each side deals. */
+  let diceTimer: ReturnType<typeof setTimeout> | undefined
+  function showDice(r: LastRoll) {
+    const el = root.querySelector<HTMLElement>('.dice')
+    if (!el) return
+    const die = (n: number) => `<span class="die" style="background:#6b5537">${n}</span>`
+    el.innerHTML = `${die(r.dice[0])}${die(r.dice[1])}<div class="what">${faction(r.attacker)} đánh ${faction(r.defender)} ở ô ${r.clearing + 1}<br>
+      ${FACTION_NAME[r.attacker]} gây <b>${r.hits.attacker}</b> hit, ${FACTION_NAME[r.defender]} gây <b>${r.hits.defender}</b>${r.defender === 'alliance' ? ' (Guerrilla: Alliance lấy số cao)' : ''}</div>`
+    el.hidden = false
+    // Restart the entry animations when two rolls come back to back.
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''
+    clearTimeout(diceTimer)
+    diceTimer = setTimeout(() => { el.hidden = true }, 3500)
   }
 
   function send(action: Action) {
@@ -90,7 +110,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   // ── Board: 3D (Three.js, loaded on demand) or 2D SVG; it lives outside the panel that re-renders. ──
   let mode: '3d' | '2d' = (() => { try { return localStorage.getItem('root-board') === '2d' ? '2d' : '3d' } catch { return '3d' } })()
   let filter: number | null = null
-  let board3d: { update(v: PlayerView, h: number[], changed?: number[]): void; dispose(): void } | null = null
+  let board3d: { update(v: PlayerView, h: number[], changed?: number[], travels?: Travel[]): void; dispose(): void } | null = null
   let loading3d = false
 
   const pick = (c: number) => { filter = filter === c ? null : c; highlight = filter === null ? [] : [filter]; draw() }
@@ -99,7 +119,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
     const host = root.querySelector<HTMLElement>('.map')
     if (!host || !last) return
     if (mode === '3d') {
-      if (board3d) { board3d.update(last.view, highlight, changed); return }
+      if (board3d) { board3d.update(last.view, highlight, changed, travels); return }
       if (loading3d) return
       loading3d = true
       void import('./board3d.ts').then(m => {
@@ -112,14 +132,14 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       return
     }
     if (board3d) { board3d.dispose(); board3d = null }
-    host.innerHTML = renderBoard(last.view, highlight, changed)
+    host.innerHTML = renderBoard(last.view, highlight, changed, travels)
     host.querySelectorAll<SVGElement>('[data-clearing]').forEach(el => el.addEventListener('click', () => pick(Number(el.dataset.clearing))))
   }
 
   function skeleton() {
     if (root.querySelector('.layout')) return
     root.innerHTML = `<div class="top"></div><div class="layout">
-      <div class="board-col"><div class="board-tools"><button data-mode="3d">3D</button><button data-mode="2d">2D</button><span>Bấm vào một ô để lọc lựa chọn. Kéo để xoay, cuộn để phóng to.</span></div><div class="map"></div></div>
+      <div class="board-col"><div class="board-tools"><button data-mode="3d">3D</button><button data-mode="2d">2D</button><span>Bấm vào một ô để lọc lựa chọn. Kéo để xoay, cuộn để phóng to.</span></div><div class="map"></div><div class="dice" hidden></div></div>
       <aside></aside></div><div class="carddetail" hidden></div>`
     // Any card chip opens its details; the panel survives re-renders.
     const panel = root.querySelector<HTMLElement>('.carddetail')!
