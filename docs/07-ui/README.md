@@ -100,4 +100,4 @@ Mốc UI-1 và UI-2 nên làm trước mọi thứ: nếu chưa có token và co
 
 ## Lake — bản duyệt riêng
 
-Theo kế hoạch người quản lý duyệt, `/lake-kit.html` là bản dựng hình Lake riêng, có 22 nền xây và 4 Ruin, chưa nối vào game hoặc thay thế UI-7 Autumn. Xem [thiết kế và trạng thái duyệt](lake-preview.md).
+Theo kế hoạch người quản lý duyệt, `/lake-kit.html` là bản dựng hình Lake riêng, có 22 nền xây và 4 Ruin; bố cục và slot/Ruin đã được người quản lý duyệt. Lake chưa nối vào game hoặc thay thế UI-7 Autumn. Xem [thiết kế và trạng thái duyệt](lake-preview.md).

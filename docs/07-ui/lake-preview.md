@@ -1,4 +1,4 @@
-# Lake — bản dựng 3D chờ duyệt
+# Lake — thiết kế 3D đã duyệt
 
 Ngày 01/11/2026. Theo kế hoạch người quản lý duyệt trong chat: dựng hình trước, 3D vẽ tay, dời nhà trang trí ra rìa, giữ khu item và đường điểm dạng mô hình, cho đặt/gỡ công trình mẫu. Chưa phải bản đồ chơi hoặc luật Lake chính thức; không thay thế UI-7 Autumn.
 
@@ -39,7 +39,7 @@ Slot là đất nện nằm sát mặt đất, có đá thấp quanh mép và l�
 - Playwright kiểm tra hai kích thước 1440×900, 1280×800, raycast, bàn phím và mọi mẫu công trình. Ảnh sinh khi test ở `packages/client/test-results/lake-review/` (gitignored); ảnh duyệt có chủ đích ở [reference/lake-review/](reference/lake-review/).
 - Cảnh tĩnh chỉ vẽ khi camera hoặc trạng thái thay đổi. Đo GPU 30 khung bằng nút trong “Ghi chú bản duyệt & hiệu năng”; số đo phụ thuộc máy, kích thước canvas và trình duyệt, không dùng số headless WebGL làm số đo M1.
 
-**Chờ người quản lý:** duyệt đường bờ, vị trí clearing, nền xây và bốn R theo ảnh. Chưa đánh dấu thiết kế Lake hoàn tất và chưa triển khai luật Lake. Việc đưa vào game cần nguồn luật/dữ liệu và quy trình rules:guard riêng.
+**Đã được người quản lý duyệt trong chat:** đường bờ, vị trí clearing, nền xây và bốn R. Hoàn tất bước thiết kế bản dựng Lake; chưa triển khai luật Lake. Việc đưa vào game cần nguồn luật/dữ liệu và quy trình rules:guard riêng.
 
 ### Kết quả kiểm tra 01/11/2026
 

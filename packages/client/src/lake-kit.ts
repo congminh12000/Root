@@ -34,7 +34,7 @@ function LakeKit() {
   }
   return html`<main class="lake-page">
     <header class="lake-heading"><div><p class="lake-eyebrow">XƯỞNG BẢN ĐỒ · 01</p><h1>Lake <span>Rừng bên hồ</span></h1>
-      <p>Bản dựng 3D chờ duyệt · 12 clearing · 22 slot · 4 Ruin</p></div>
+      <p>Thiết kế 3D đã duyệt · 12 clearing · 22 slot · 4 Ruin</p></div>
       <nav aria-label="Trang xem thử"><a href="./">Sảnh</a> · <a href="./board-kit.html">Autumn</a> · <a href="./ui-kit.html">UI kit</a></nav></header>
     <div class="lake-layout"><section class="lake-stage card" aria-label="Bàn Lake">
       <div class="lake-tools"><button class="secondary" onClick=${() => scene.current?.home()}>Về góc mặc định</button>
@@ -55,7 +55,7 @@ function LakeKit() {
       <section class="card"><h2>Danh sách slot</h2><p class="note">Mỗi nút ứng với một nền cố định. Tab và Enter để chọn.</p>
         <div class="lake-slots">${VILLAGES.map(c => html`<div><span>Clearing ${c.id}</span><div>${c.slots.map(p => html`<button class="secondary" data-plot=${p.id} aria-label=${`Slot ${p.id}${hasRuin(state,p) ? ', Ruin' : ''}`} aria-pressed=${state.selected === p.id} onClick=${() => dispatch({ type: 'select', id: p.id })}>${p.id}${hasRuin(state,p) ? ' · R' : state.buildings[p.id] ? ' · nhà' : ' · trống'}</button>`)}</div></div>`)}</div>
       </section>
-      <details class="card"><summary>Ghi chú bản duyệt & hiệu năng</summary><p>Ảnh người quản lý gửi là tham chiếu bố cục. Đây là Lake minh họa tự dựng, chưa xác nhận là bản đồ chơi chính thức. Số slot và R cần người quản lý duyệt trước khi nối vào game.</p>
+      <details class="card"><summary>Ghi chú bản duyệt & hiệu năng</summary><p>Ảnh người quản lý gửi là tham chiếu bố cục. Đây là Lake minh họa tự dựng, chưa xác nhận là bản đồ chơi chính thức. Bố cục và slot/Ruin đã được duyệt; việc nối vào game cần nguồn luật và dữ liệu riêng.</p>
         <p>Khu item và đường điểm chỉ là mô hình minh họa. Khôi phục sẽ trả lại mọi Ruin và xóa công trình mẫu.</p>
         <button class="secondary" disabled=${error || measuring} onClick=${measure}>${measuring ? 'Đang đo…' : 'Đo 30 khung hình'}</button><output>${measurement}</output></details>
     </aside></div></main>`
