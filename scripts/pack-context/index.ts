@@ -1,5 +1,5 @@
 // Packs the project context into one Markdown file for an AI that cannot read the repository (ChatGPT, Grok… on
-// the web): agent rules, handoff, rulings, engine and product specs, rule coverage and the file tree.
+// the web): agent rules, handoff, rulings, engine, product and UI specs, rule coverage and the file tree.
 // It never includes official Leder material (PDFs, the Rules Library snapshot): licensing.md.
 // Usage: npm run pack:context                       (writes context-pack/root-context.md, gitignored)
 //        npm run pack:context -- --full-specs       (also every rule spec in docs/02-rules-spec)
@@ -20,6 +20,7 @@ const CORE = [
   ...readdirSync(resolve(root, 'docs/00-governance/decisions')).sort().map(f => `docs/00-governance/decisions/${f}`),
   'docs/04-engine-spec/game-state.md', 'docs/04-engine-spec/engine-api.md', 'docs/05-product-spec/multiplayer.md',
   'docs/02-rules-spec/README.md', 'docs/02-rules-spec/golden-rules.md',
+  'docs/07-ui/README.md', 'docs/07-ui/style-guide.md', 'docs/07-ui/checklist.md',
 ]
 const specs = args.includes('--full-specs')
   ? readdirSync(resolve(root, 'docs/02-rules-spec')).filter(f => f.endsWith('.md')).sort().map(f => `docs/02-rules-spec/${f}`)

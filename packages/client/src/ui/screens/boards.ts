@@ -97,12 +97,14 @@ const BOARD: Record<FactionId, (p: { v: PlayerView }) => unknown> = { marquise: 
 
 /** Every faction's board as tabs (your own first), plus the shared supply. */
 export function FactionBoards({ view: v, seat, initial }: { view: PlayerView; seat: FactionId | null; initial?: FactionId | 'shared' }) {
-  const factions = (Object.keys(BOARD) as FactionId[]).filter(f => v.factions[f])
+  // Every seat gets a tab; a faction's state appears only once its setup has started (§5.1.7).
+  const factions = v.seats.map(s => s.faction)
   const order = seat ? [seat, ...factions.filter(f => f !== seat)] : factions
   const [tab, setTab] = useState<FactionId | 'shared'>(initial ?? order[0] ?? 'shared')
+  const ready = tab === 'shared' || !!v.factions[tab]
   const Board = tab === 'shared' ? Shared : BOARD[tab]
   return html`<section class="card boards"><h3>Bảng phe</h3>
     <div class="tabs" role="tablist">${order.map(f => html`<button role="tab" class="secondary" aria-selected=${tab === f} onClick=${() => setTab(f)}><${Chip} f=${f} /></button>`)}
       <button role="tab" class="secondary" aria-selected=${tab === 'shared'} onClick=${() => setTab('shared')}>Chung</button></div>
-    <div role="tabpanel" aria-label=${tab === 'shared' ? 'Chung' : FACTION_NAME[tab]}><${Board} v=${v} /></div></section>`
+    <div role="tabpanel" aria-label=${tab === 'shared' ? 'Chung' : FACTION_NAME[tab]}>${ready ? html`<${Board} v=${v} />` : html`<p class="note">Phe này chưa tới lượt setup.</p>`}</div></section>`
 }

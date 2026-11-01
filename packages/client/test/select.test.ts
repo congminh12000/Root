@@ -81,3 +81,30 @@ test('card actions: every legal action naming a card is found from that card', a
   }
   assert.ok(found > 200, `checked ${found}`)
 })
+
+test('decisions: every pending decision is worded, names who decides, and cites a clause', async () => {
+  const { decisionOf } = await import('../src/interaction/decisions.ts')
+  const { viewFor } = await import('@root/game-engine')
+  const kinds = new Set<string>()
+  for (const seed of ['dec-a', 'dec-b']) {
+    const factions: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
+    const rng = seededRng(seed)
+    let s = createGame({ gameId: seed, players: factions.map(f => ({ playerId: f, faction: f, controller: { kind: 'bot', profile: 'r' } })) }, rng)
+    for (let n = 0; n < 3000 && !s.winner; n++) {
+      const f = currentActor(s)!
+      const legal = legalActions(s, f)
+      const mine = decisionOf(viewFor(s, f), legal)
+      const watching = decisionOf(viewFor(s, null), [])
+      assert.equal(!!mine, s.pending.length > 0)
+      if (mine) {
+        kinds.add(mine.kind)
+        assert.equal(mine.player, f)
+        assert.ok(mine.title.length > 10 && !mine.title.includes('undefined') && /^§/.test(mine.rule), JSON.stringify(mine))
+        if (!legal.some(a => a.type === 'order-effects')) assert.equal(watching!.title, mine.title, 'spectators see the same decision')
+        assert.equal(watching!.dialog, false, 'never a dialog for someone who is not deciding')
+      }
+      s = applyCommand(s, { gameId: seed, playerId: f, expectedRevision: s.meta.revision, actionId: `${n}`, ...legal[rng.int(legal.length)]! }, rng).state
+    }
+  }
+  for (const k of ['setup', 'take-hits', 'discard-down', 'ambush']) assert.ok(kinds.has(k), `saw ${k} (saw ${[...kinds].join(', ')})`)
+})

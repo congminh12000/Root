@@ -134,6 +134,27 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .scoretrack .marker { --stack: 0; position: absolute; bottom: calc(4px + var(--stack) * 6px); transform: translateX(calc(-50% + var(--stack) * 11px)); width: 24px; height: 24px; border-radius: 50%; background: var(--chip); border: 2px solid var(--ink); display: grid; place-items: center; --icon-fill: var(--paper-raised); transition: left var(--motion-travel) ease-in-out; }
 .scoretrack .marker .icon { width: 16px; height: 16px; vertical-align: 0; }
 
+/* ── Decisions (UI-6) ─────────────────────────────────────────────────────── */
+.decisionbar { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; padding: 6px var(--sp-4); background: var(--gold-a35); border-bottom: 2px solid var(--ink-a25); }
+.decisionbar.mine { background: var(--autumn-gold); }
+.decisionbar button { margin-left: auto; }
+.rule { color: var(--ink-soft); font-size: var(--fs-xs); }
+.dialog-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: var(--sp-4); background: var(--ink-a25); animation: rise var(--motion-dialog) ease-out; }
+.dialog { width: min(780px, 100%); max-height: 86vh; overflow: auto; background: var(--paper-raised); border: 3px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-raised); padding: var(--sp-4); }
+.dialog header { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-2); }
+.dialog header h2 { margin: 0; font-size: var(--fs-lg); flex: 1; min-width: 240px; }
+.dialog .battleline { background: var(--paper); border-radius: var(--r-sm); padding: 6px var(--sp-2); margin: 0 0 var(--sp-3); }
+.dialog .options { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-3) 0; }
+.dialog .options.cards { gap: var(--sp-3); }
+.dialog .option { white-space: normal; text-align: left; }
+.dialog .option small { display: block; color: inherit; opacity: .8; font-size: 11px; }
+.dialog .option.choice { display: flex; flex-direction: column; gap: 4px; width: 220px; background: var(--paper-raised); color: var(--ink); padding: var(--sp-3); }
+.dialog .option.choice b { font: var(--fs-lg) var(--font-display); }
+.dialog .option.choice:hover { background: var(--gold-a35); }
+.dialog .option.withcard { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.dialog .option.withcard .minicard { transform: none; margin: 0; }
+.dialog footer { display: flex; justify-content: flex-end; border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
+
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
 .board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }
@@ -174,7 +195,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 /* ── UI kit page (ui-kit.html) ────────────────────────────────────────────── */
 .kit-page { max-width: 1200px; margin: 0 auto; padding: var(--sp-6) var(--sp-4); }
 .kit-page > h1 { font-size: var(--fs-xl); margin: 0; }
-.kit h2 { border-bottom: 2px dashed var(--ink-a25); padding-bottom: var(--sp-1); }
+.kit > h2 { border-bottom: 2px dashed var(--ink-a25); padding-bottom: var(--sp-1); }
 .kit-row { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: flex-start; margin: var(--sp-2) 0; }
 .kit-item { display: flex; flex-direction: column; align-items: center; gap: var(--sp-1); }
 .kit-item small { color: var(--ink-soft); font-size: var(--fs-xs); }
@@ -185,9 +206,11 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .swatch { margin: 0; width: 112px; font-size: var(--fs-xs); }
 .swatch span { display: block; height: 48px; border: 2px solid var(--ink); border-radius: var(--r-sm); margin-bottom: 4px; }
 .carddetail.inline { width: 220px; }
+.kit-dialog .dialog-backdrop { position: static; background: none; padding: 0; margin: var(--sp-3) 0; animation: none; }
+.kit-dialog .dialog { max-height: none; }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker { animation: none; transition: none; }
+  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop { animation: none; transition: none; }
   .board .pulse, .board .travel { display: none; }
 }

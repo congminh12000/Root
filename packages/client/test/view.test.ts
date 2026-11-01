@@ -37,3 +37,25 @@ test('changedClearings lists exactly the clearings a command touched', () => {
   }
   assert.ok(moves > 0)
 })
+
+test('faction boards, hand and decisions render at every step of a game, setup included', async () => {
+  const { FactionBoards } = await import('../src/ui/screens/boards.ts')
+  const { DecisionDialog } = await import('../src/ui/screens/decision.ts')
+  const { decisionOf } = await import('../src/interaction/decisions.ts')
+  const factions: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
+  const rng = seededRng('render')
+  let s = createGame({ gameId: 'r', players: factions.map(f => ({ playerId: f, faction: f, controller: { kind: 'bot', profile: 'r' } })) }, rng)
+  let dialogs = 0
+  for (let n = 0; n < 600 && !s.winner; n++) {
+    const f = currentActor(s)!
+    const legal = legalActions(s, f)
+    for (const seat of [f, null]) {
+      const v = viewFor(s, seat)
+      for (const tab of [...factions, 'shared'] as const) render(html`<${FactionBoards} view=${v} seat=${seat} initial=${tab} />`)
+      const d = decisionOf(v, seat ? legal : [])
+      if (d && seat && d.dialog) { render(html`<${DecisionDialog} decision=${d} view=${v} legal=${legal} send=${() => {}} onFold=${() => {}} />`); dialogs++ }
+    }
+    s = applyCommand(s, { gameId: 'r', playerId: f, expectedRevision: s.meta.revision, actionId: `${n}`, ...legal[rng.int(legal.length)]! }, rng).state
+  }
+  assert.ok(dialogs > 10, `rendered ${dialogs} dialogs`)
+})

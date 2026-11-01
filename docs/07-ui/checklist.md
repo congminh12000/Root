@@ -9,7 +9,7 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Sảnh: chọn phe, người hay bot, mức bot, tạo trận, link từng ghế | Xong | UI-2 |
 | ★ | Nhập mật khẩu phòng, vào lại trận cũ, danh sách trận | Xong | UI-2 |
 | | Chọn thời gian mỗi nước khi tạo trận | Chưa | UI-2 |
-| ★ | Setup: chọn leader Eyrie, nhân vật Vagabond, đặt keep và quân ban đầu bằng bấm trên bàn | Một phần (chọn qua danh sách) | UI-6 |
+| ★ | Setup: chọn leader Eyrie, nhân vật Vagabond, đặt keep và quân ban đầu bằng bấm trên bàn | Xong | UI-6 |
 
 ## B. Bàn cờ
 
@@ -57,11 +57,11 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Ambush và phá ambush | Một phần (danh sách) | UI-6 |
-| ★ | Chia hit lên quân, công trình, token; Vagabond chọn item hỏng | Một phần | UI-6 |
-| ★ | Field Hospitals, Outrage, bỏ bớt supporter, chọn thứ tự hiệu ứng | Một phần | UI-6 |
-| ★ | Lá battle (Armorers, Sappers…), bỏ bài khi quá 5 lá | Một phần | UI-6 |
-| ★ | Người đang chờ thấy ai đang quyết định gì | Một phần | UI-6 |
+| ★ | Ambush và phá ambush | Xong | UI-6 |
+| ★ | Chia hit lên quân, công trình, token; Vagabond chọn item hỏng | Xong | UI-6 |
+| ★ | Field Hospitals, Outrage, bỏ bớt supporter, chọn thứ tự hiệu ứng | Xong | UI-6 |
+| ★ | Lá battle (Armorers, Sappers…), bỏ bài khi quá 5 lá | Xong | UI-6 |
+| ★ | Người đang chờ thấy ai đang quyết định gì | Xong | UI-6 |
 
 ## F. Theo dõi ván
 
