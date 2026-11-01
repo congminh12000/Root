@@ -1,4 +1,4 @@
-import type { AllianceState, CardId, FactionId, FactionStates, GameState, ItemType } from './state.ts'
+import type { AllianceState, CardId, FactionId, FactionStates, GameState, ItemType, LastRoll } from './state.ts'
 import { currentActor } from './engine.ts'
 
 /**
@@ -34,6 +34,7 @@ export interface PlayerView {
   stage: GameState['stage']
   seats: { faction: FactionId; kind: 'human' | 'bot' }[]
   battle: GameState['battle']
+  lastRoll: LastRoll | null
   craftingUsed: GameState['craftingUsed']
   cardsUsed: GameState['cardsUsed']
   questDeckCount: number
@@ -86,6 +87,7 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     stage: state.stage,
     seats: state.seats.map(s => ({ faction: s.faction, kind: s.controller.kind })),
     battle: copy(state.battle),
+    lastRoll: copy(state.lastRoll ?? null),
     craftingUsed: [...state.craftingUsed],
     cardsUsed: [...state.cardsUsed],
     questDeckCount: state.questDeck.length,

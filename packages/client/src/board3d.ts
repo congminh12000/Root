@@ -2,6 +2,7 @@ import { AUTUMN } from '@root/game-data'
 import { seededRng, type FactionId, type PlayerView } from '@root/game-engine'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import type { Spot, Travel } from './motion.ts'
 import { FACTION_COLOR, SUIT_COLOR } from './names.ts'
 
 /**
@@ -328,7 +329,31 @@ function buildPieces(view: PlayerView, highlight: number[], changed: number[]): 
   return { root, pop, pulse }
 }
 
-const POP_MS = 380, PULSE_MS = 1200
+/** A piece standing on a spot: clearings are flat, forests follow the ground. */
+const spotPoint = (s: Spot): THREE.Vector3 => {
+  const p = s.kind === 'clearing' ? world(s.id) : forestCentre(s.id)
+  p.y = s.kind === 'clearing' ? 0.12 : groundHeight(p.x, p.z)
+  return p
+}
+
+/** One figure per travel (with its count), hopping along the path; hidden once it lands (see `animate`). */
+function buildMovers(travels: Travel[]): { o: THREE.Object3D; from: THREE.Vector3; to: THREE.Vector3 }[] {
+  return travels.map(t => {
+    const o = new THREE.Group()
+    const fig = t.pawn ? pawn() : warrior(FACTION_COLOR[t.faction])
+    fig.scale.setScalar(PIECE_SCALE * 1.15)
+    o.add(fig)
+    if (t.count > 1) {
+      const tag = label(String(t.count), { bg: FACTION_COLOR[t.faction], size: 0.5 })
+      tag.position.y = 1.25
+      o.add(tag)
+    }
+    return { o, from: spotPoint(t.from), to: spotPoint(t.to) }
+  })
+}
+
+const POP_MS = 380, PULSE_MS = 1200, TRAVEL_MS = 750
+const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2)
 /** Overshoots a little, then settles at 1 (easeOutBack). */
 const easeOutBack = (x: number) => 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2
 
@@ -337,8 +362,8 @@ const easeOutBack = (x: number) => 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1
 // ── The view ───────────────────────────────────────────────────────────────────
 
 export interface Board3D {
-  /** Redraws the pieces; clearings in `changed` pulse once and their pieces pop in. */
-  update(view: PlayerView, highlight: number[], changed?: number[]): void
+  /** Redraws the pieces; clearings in `changed` pulse once and their pieces pop in; `travels` hop along their paths. */
+  update(view: PlayerView, highlight: number[], changed?: number[], travels?: Travel[]): void
   dispose(): void
 }
 
@@ -376,7 +401,8 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
   const pickables = buildScenery(scene)
   let pieces: THREE.Group | null = null
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
-  let anim: { start: number; pop: { o: THREE.Object3D; scale: number }[]; pulse: THREE.Mesh[] } | null = null
+  type Mover = ReturnType<typeof buildMovers>[number]
+  let anim: { start: number; pop: { o: THREE.Object3D; scale: number }[]; pulse: THREE.Mesh[]; movers: Mover[] } | null = null
 
   const resize = () => {
     const w = host.clientWidth || 800, h = Math.max(360, Math.round(w * 0.72))
@@ -411,7 +437,13 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
       ;(ring.material as THREE.MeshBasicMaterial).opacity = 1 - f
       ring.visible = f < 1
     }
-    if (ms >= Math.max(POP_MS, PULSE_MS)) anim = null
+    const t = Math.min(1, ms / TRAVEL_MS), e = easeInOut(t)
+    for (const m of a.movers) {
+      m.o.position.lerpVectors(m.from, m.to, e)
+      m.o.position.y += Math.sin(Math.PI * e) * (0.6 + 0.08 * m.from.distanceTo(m.to))
+      m.o.visible = t < 1
+    }
+    if (ms >= Math.max(POP_MS, PULSE_MS, a.movers.length ? TRAVEL_MS : 0)) anim = null
   }
 
   let running = true
@@ -425,16 +457,18 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
   tick()
 
   return {
-    update(view, highlight, changed = []) {
+    update(view, highlight, changed = [], travels = []) {
       if (pieces) {
         scene.remove(pieces)
         pieces.traverse(o => { if (o instanceof THREE.Mesh) o.geometry.dispose() })
       }
       const built = buildPieces(view, highlight, reduceMotion ? [] : changed)
+      const movers = reduceMotion ? [] : buildMovers(travels)
+      for (const m of movers) built.root.add(m.o)
       pieces = built.root
       scene.add(pieces)
-      anim = built.pop.length || built.pulse.length
-        ? { start: performance.now(), pop: built.pop.map(o => ({ o, scale: o.scale.x })), pulse: built.pulse }
+      anim = built.pop.length || built.pulse.length || movers.length
+        ? { start: performance.now(), pop: built.pop.map(o => ({ o, scale: o.scale.x })), pulse: built.pulse, movers }
         : null
       if (anim) animate(0)
     },

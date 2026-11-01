@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { canBattle, startBattle } from '../src/battle.ts'
-import { currentActor, legalActions } from '../src/index.ts'
+import { currentActor, legalActions, viewFor } from '../src/index.ts'
 import { answer, building, fixed, roll, scenario, token, turnOf, types, warriors } from './helpers.ts'
 
 // Clearing 6 is mouse, 0 is fox (and a corner).
@@ -31,6 +31,9 @@ test('§4.3.3 high roll to the attacker, low to the defender, each capped by its
   warriors(t, 6, { marquise: 1, eyrie: 3 })
   startBattle(t, 'marquise', 'eyrie', 6, roll(3, 3))
   assert.deepEqual(t.map.clearings[6]!.warriors, { eyrie: 2 }, 'one Marquise warrior deals at most one hit')
+  assert.deepEqual(t.lastRoll, { revision: t.meta.revision + 1, clearing: 6, attacker: 'marquise', defender: 'eyrie', dice: [3, 3], hits: { attacker: 1, defender: 3 } },
+    'the roll stays public after the battle, with both faces and the capped hits')
+  assert.deepEqual(viewFor(t, 'alliance').lastRoll, t.lastRoll)
 })
 
 test('§4.3.5.II a defender with no warriors is defenseless: one extra hit; §3.2.1 one point per building', () => {

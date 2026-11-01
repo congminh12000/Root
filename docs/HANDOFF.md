@@ -34,13 +34,13 @@ npm run typecheck && npm test && npm run audit:rules
 - §1.1.3 / §4.3.6: Field Hospitals, Outrage và bỏ bớt supporter sinh ra cùng lúc thì người chọn được chọn thứ tự (`order.ts`, hành động `order-effects`). Trong battle, hit của cả hai bên được gỡ xong rồi mới xử lý hiệu ứng.
 - Bot chạy trong worker thread (`packages/server/src/bot-pool.ts`).
 - Khung xem chi tiết lá bài; hoạt ảnh ô thay đổi và điểm (2D và 3D).
+- Quân chạy dọc đường khi di chuyển (2D trượt, 3D nhảy vòng cung); khung xúc xắc hiện mặt tung và số hit mỗi bên.
 - Dùng được với model khác: `AGENTS.md` là nguồn hướng dẫn duy nhất; `rules:guard` (chạy trong `ship` và pre-commit) bắt buộc kiểm tra bản chụp luật khi đụng tới luật; `rules:clause` in điều khoản; `pack:context` gói ngữ cảnh cho chat web.
 
 ## Còn lại
 
 | Việc | Ghi chú |
 |---|---|
-| Hoạt ảnh quân chạy theo đường, xúc xắc | Hiện chỉ có vòng sáng và quân bật lên ở ô thay đổi |
 | Thử với người chơi thật | Bot chưa được đo với người giỏi |
 
 ## Quy ước

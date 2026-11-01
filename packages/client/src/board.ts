@@ -1,5 +1,6 @@
 import { AUTUMN } from '@root/game-data'
 import type { FactionId, PlayerView } from '@root/game-engine'
+import type { Spot, Travel } from './motion.ts'
 import { FACTION_COLOR, SUIT_COLOR } from './names.ts'
 
 /**
@@ -30,8 +31,24 @@ export function changedClearings(prev: PlayerView, next: PlayerView): number[] {
   return [...out].sort((x, y) => x - y)
 }
 
-/** Renders the board as an SVG string. `highlight` rings clearings an action is about; `changed` pulse once. */
-export function renderBoard(view: PlayerView, highlight: number[] = [], changed: number[] = []): string {
+const spotAt = (s: Spot): [number, number] => (s.kind === 'clearing' ? pos(s.id) : forestCentre(s.id))
+
+/** Ghost pieces that slide along the path from where they left to where they arrived, then fade (style.css). */
+function travelGhost(t: Travel): string {
+  const [fx, fy] = spotAt(t.from), [x, y] = spotAt(t.to)
+  const style = `--dx:${(fx - x).toFixed(1)};--dy:${(fy - y).toFixed(1)}`
+  const body = t.pawn
+    ? svg('path', { d: `M${x} ${y - 16} L${x + 11} ${y + 10} L${x - 11} ${y + 10} Z`, fill: FACTION_COLOR.vagabond, stroke: '#fff', 'stroke-width': 2 })
+    : svg('circle', { cx: x, cy: y, r: 17, fill: FACTION_COLOR[t.faction], stroke: '#fff', 'stroke-width': 3 })
+      + svg('text', { x, y: y + 5, 'text-anchor': 'middle', class: 'chip' }, String(t.count))
+  return svg('g', { class: 'travel', style }, body)
+}
+
+/**
+ * Renders the board as an SVG string. `highlight` rings clearings an action is about; `changed` pulse once;
+ * `travels` slide along their paths once.
+ */
+export function renderBoard(view: PlayerView, highlight: number[] = [], changed: number[] = [], travels: Travel[] = []): string {
   const parts: string[] = []
   parts.push(svg('rect', { x: 0, y: 0, width: W, height: H, rx: 18, fill: '#e9dfc4' }))
   for (const [f, ring] of AUTUMN.forests.entries()) {
@@ -79,5 +96,6 @@ export function renderBoard(view: PlayerView, highlight: number[] = [], changed:
     const [px, py] = pawn.kind === 'clearing' ? [x + 40, y + 36] : [x, y - 22]
     parts.push(svg('path', { d: `M${px} ${py - 16} L${px + 11} ${py + 10} L${px - 11} ${py + 10} Z`, fill: FACTION_COLOR.vagabond, stroke: '#fff', 'stroke-width': 2 }))
   }
+  parts.push(...travels.map(travelGhost))
   return svg('svg', { viewBox: `0 0 ${W} ${H}`, class: 'board', role: 'img', 'aria-label': 'Bản đồ Autumn' }, parts.join(''))
 }
