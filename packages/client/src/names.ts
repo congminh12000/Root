@@ -4,8 +4,7 @@ import type { FactionId, ItemType, PawnLocation } from '@root/game-engine'
 /** Display names. Official faction and card names (decision 0001); everything else is our own wording. */
 
 export const FACTION_NAME: Record<FactionId, string> = { marquise: 'Marquise de Cat', eyrie: 'Eyrie Dynasties', alliance: 'Woodland Alliance', vagabond: 'Vagabond' }
-export const FACTION_COLOR: Record<FactionId, string> = { marquise: '#d9772b', eyrie: '#2f6fd1', alliance: '#3a9e4f', vagabond: '#6b6b6b' }
-export const SUIT_COLOR = { fox: '#d6453d', rabbit: '#e8c33a', mouse: '#e98a3c', bird: '#7cb2d8' } as const
+export { factionColor as FACTION_COLOR, suitColor as SUIT_COLOR } from './ui/tokens.ts'
 export const SUIT_NAME = { fox: 'cáo', rabbit: 'thỏ', mouse: 'chuột', bird: 'chim' } as const
 
 export const ITEM_NAME: Record<ItemType, string> = { boots: 'giày', sword: 'kiếm', crossbow: 'nỏ', torch: 'đuốc', hammer: 'búa', tea: 'trà', coin: 'tiền', bag: 'túi' }

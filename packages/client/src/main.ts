@@ -1,3 +1,4 @@
+import './ui/setup.ts'
 import { renderGame } from './game.ts'
 import { renderLobby } from './lobby.ts'
 

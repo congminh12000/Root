@@ -1,3 +1,4 @@
+import { suitPip } from './ui/parts.ts'
 import { cardDesign, ITEM_NAME, SUIT_COLOR, SUIT_NAME } from './names.ts'
 
 /** Card details shown when a card chip is clicked: game-data only, our own wording around the printed summary. */
@@ -12,7 +13,7 @@ const KIND: Record<string, string> = {
   dominance: 'Dominance: không chế tạo; kích hoạt để thắng theo điều kiện trên lá (§2.1.3, §3.3)',
 }
 
-const pip = (suit: string) => `<span class="pip" style="background:${SUIT_COLOR[suit as keyof typeof SUIT_COLOR] ?? '#bbb'}" title="${esc(SUIT_NAME[suit as keyof typeof SUIT_NAME] ?? 'bất kỳ')}"></span>`
+const pip = suitPip
 
 /** A clickable chip for one physical card, e.g. "anvil#1". */
 export function cardChip(card: string, name: string): string {

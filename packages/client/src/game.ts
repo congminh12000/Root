@@ -3,8 +3,9 @@ import { changedClearings, renderBoard } from './board.ts'
 import { cardChip, cardDetail } from './cardview.ts'
 import { clearingsOf, describe, GROUP } from './describe.ts'
 import { roomKey } from './lobby.ts'
+import { diceHtml, factionChip } from './ui/parts.ts'
 import { freshRoll, travelsSince, type LogEntry, type Travel } from './motion.ts'
-import { cardName, FACTION_COLOR, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME } from './names.ts'
+import { cardName, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME } from './names.ts'
 
 interface Update {
   type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]
@@ -17,7 +18,7 @@ type Message = Update | { type: 'rejected'; actionId: string; result: { code: st
 
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
 const card = (c: string) => cardChip(c, cardName(c))
-const faction = (f: FactionId) => `<span class="fchip" style="background:${FACTION_COLOR[f]}">${FACTION_NAME[f]}</span>`
+const faction = factionChip
 
 /** One game: a WebSocket to the server, re-rendered on every update. The client never decides legality. */
 export function renderGame(root: HTMLElement, gameId: string, token: string | null) {
@@ -59,9 +60,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   function showDice(r: LastRoll) {
     const el = root.querySelector<HTMLElement>('.dice')
     if (!el) return
-    const die = (n: number) => `<span class="die" style="background:#6b5537">${n}</span>`
-    el.innerHTML = `${die(r.dice[0])}${die(r.dice[1])}<div class="what">${faction(r.attacker)} đánh ${faction(r.defender)} ở ô ${r.clearing + 1}<br>
-      ${FACTION_NAME[r.attacker]} gây <b>${r.hits.attacker}</b> hit, ${FACTION_NAME[r.defender]} gây <b>${r.hits.defender}</b>${r.defender === 'alliance' ? ' (Guerrilla: Alliance lấy số cao)' : ''}</div>`
+    el.innerHTML = diceHtml(r)
     el.hidden = false
     // Restart the entry animations when two rolls come back to back.
     el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''

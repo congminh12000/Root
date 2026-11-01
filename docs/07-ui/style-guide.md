@@ -40,6 +40,8 @@ Màu lấy từ ảnh tham khảo. Mỗi màu có tên theo vai trò, không the
 | Vagabond | xám `#6b6b6b` | Áo choàng, gậy |
 | Cáo / thỏ / chuột / chim | `#d6453d` / `#e8c33a` / `#e98a3c` / `#7cb2d8` | Biểu tượng con vật riêng trên pip và ô |
 
+**Icon** (`ui/icons.ts`): phe là đầu mèo, đầu chim, lá cờ khởi nghĩa (Alliance; không dùng tai thỏ để khỏi trùng icon chất thỏ), người áo choàng; chất là mặt cáo, thỏ, chuột, chim. Mảng phẳng màu `--icon-fill` cộng viền mực.
+
 Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọn = viền `ink` dày cộng ánh `autumn-gold`; không hợp lệ = giảm độ bão hòa 60%; lỗi = `roof-red`.
 
 ## 3. Nét và hình
