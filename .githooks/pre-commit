@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Rules work must be checked against the current Leder Rules Library before it is committed (scripts/rules-guard).
+# Enabled by `npm install` (git config core.hooksPath .githooks).
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+node scripts/rules-guard/index.ts

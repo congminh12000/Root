@@ -22,6 +22,7 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
 fi
 
 echo "== checks"
+npm run -s rules:guard
 npm run -s typecheck
 npm test --silent
 npm run -s audit:rules
