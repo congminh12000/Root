@@ -34,7 +34,7 @@ export function ActionBar({ legal, stage, setStage, onPreview, send }: {
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if (typing(e) || e.metaKey || e.ctrlKey || e.altKey) return
+      if (typing(e) || (e.target instanceof Element && !!e.target.closest('button, a, summary, [role="button"]')) || e.metaKey || e.ctrlKey || e.altKey) return
       if (e.key === 'Escape' && stage.kind !== 'idle') { setStage(IDLE); e.preventDefault() }
       if (counts && /^[1-9]$/.test(e.key) && counts.includes(Number(e.key))) setCount(Number(e.key))
       if (e.key === 'Enter' && stage.kind === 'path' && (chosen ?? (v.along.length === 1 ? v.along[0] : undefined))) {

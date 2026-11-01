@@ -214,3 +214,14 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
   .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop { animation: none; transition: none; }
   .board .pulse, .board .travel { display: none; }
 }
+
+.result { margin: var(--sp-3); border-top: 6px solid var(--autumn-gold); }
+.result h2 { margin-top: 0; }
+.result li { margin-block: var(--sp-2); }
+.guide { margin: var(--sp-3); }
+.guide summary { cursor: pointer; font: var(--fs-lg) var(--font-display); }
+.guide li { margin-block: var(--sp-2); }
+.log-entry { padding-block: var(--sp-2); border-bottom: 1px dashed var(--ink-a25); }
+.log-entry button { color: var(--ink); background: var(--paper-raised); display: block; width: 100%; text-align: left; white-space: normal; margin-top: var(--sp-2); }
+.log-entry button[aria-pressed="true"] { outline: 2px solid var(--ink); background: var(--gold-a35); }
+.log-entry button:disabled { opacity: 1; cursor: default; }

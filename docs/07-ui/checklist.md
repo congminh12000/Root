@@ -69,11 +69,11 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 |---|---|---|---|
 | ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Xong | UI-2 |
 | ★ | Bảng điểm (track 0–30), dominance, coalition | Xong | UI-5 |
-| ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Một phần | UI-8 |
-| ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Một phần (một dòng) | UI-8 |
+| ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Xong | UI-8 |
+| ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Xong | UI-8 |
 | | Khán giả xem trận | Xong | UI-2 |
-| | Hướng dẫn nhanh, chú giải ký hiệu | Chưa | UI-8 |
-| | Âm thanh tùy chọn | Chưa | UI-8 |
+| | Hướng dẫn nhanh, chú giải ký hiệu | Xong | UI-8 |
+| | Âm thanh tùy chọn | Xong | UI-8 |
 
 ## G. Chất lượng chung
 

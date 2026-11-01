@@ -95,3 +95,5 @@ npm run test:visual:update -w @root/client   # chỉ khi cố ý đổi hình; g
 Lần đầu trên máy mới: `npx playwright install chromium` (tải một lần, miễn phí). Ảnh gốc chụp trên macOS; máy khác có thể lệch font, khi đó tạo ảnh gốc riêng chứ không nới ngưỡng.
 
 Mốc UI-1 và UI-2 nên làm trước mọi thứ: nếu chưa có token và component chung, các phần sau sẽ lệch phong cách.
+
+- **UI-8 (01/11/2026):** `finish.ts`: kết quả từ `PlayerView.winner`, lý do tiếng Việt, điểm cuối cho mọi ghế và liên kết về sảnh; nhật ký công khai đầy đủ trong cửa sổ server gửi (tối đa 80 dòng), bấm để đánh dấu ô; hướng dẫn nhanh và chú giải gập được. `sound.ts`: tiếng gõ tự tổng hợp bằng Web Audio, mặc định tắt và chỉ bật sau thao tác người dùng; không dùng asset bên ngoài. Có test vị trí nhật ký, kết quả ba loại thắng, trạng thái rỗng và test bàn phím hướng dẫn. Chưa xác nhận tiêu chí người mới tự chơi hết ván bằng thử nghiệm người dùng.

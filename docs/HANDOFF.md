@@ -41,7 +41,7 @@ npm run typecheck && npm test && npm run audit:rules
 
 | Việc | Ghi chú |
 |---|---|
-| Giao diện theo phong cách mới | UI-1 → UI-6 xong; UI-7 chờ tư liệu bản đồ của người quản lý; tiếp theo UI-8 (hoàn thiện). Lộ trình, quy trình, checklist ở `docs/07-ui/` |
+| Giao diện theo phong cách mới | UI-1 → UI-6 xong; UI-7 chờ tư liệu bản đồ của người quản lý; UI-8 đã triển khai (kết quả, nhật ký, hướng dẫn nhanh, âm thanh); còn thử với người mới. Lộ trình, quy trình, checklist ở `docs/07-ui/` |
 | Thử với người chơi thật | Bot chưa được đo với người giỏi |
 
 ## Quy ước
