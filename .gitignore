@@ -25,3 +25,5 @@ docs/01-official-sources/**/*.json
 packages/client/dist/
 # Personal Claude Code settings
 .claude/settings.local.json
+# Context bundle for AIs without repo access (npm run pack:context)
+context-pack/

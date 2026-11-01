@@ -35,6 +35,7 @@ npm run typecheck && npm test && npm run audit:rules
 - Bot chạy trong worker thread (`packages/server/src/bot-pool.ts`).
 - Khung xem chi tiết lá bài; hoạt ảnh ô thay đổi và điểm (2D và 3D).
 - Quân chạy dọc đường khi di chuyển (2D trượt, 3D nhảy vòng cung); khung xúc xắc hiện mặt tung và số hit mỗi bên.
+- Dùng được với model khác: `AGENTS.md` là nguồn hướng dẫn duy nhất; `rules:guard` (chạy trong `ship` và pre-commit) bắt buộc kiểm tra bản chụp luật khi đụng tới luật; `rules:clause` in điều khoản; `pack:context` gói ngữ cảnh cho chat web.
 
 ## Còn lại
 
