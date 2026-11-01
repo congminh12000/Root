@@ -61,13 +61,25 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .group label { display: block; font-size: var(--fs-xs); color: var(--ink-soft); margin-bottom: 2px; }
 .group select { width: 100%; margin-bottom: 4px; }
 .act { border-width: 3px; }
+.act .prompt { margin: 0 0 var(--sp-2); color: var(--ink-soft); }
+.act .stage { display: flex; align-items: center; gap: var(--sp-2); justify-content: space-between; background: var(--gold-a35); border-radius: var(--r-sm); padding: var(--sp-1) var(--sp-2); margin-bottom: var(--sp-2); font: var(--fs-md) var(--font-display); }
+.act .stage button { font-size: var(--fs-xs); }
+.group.buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.group.buttons > label { flex-basis: 100%; }
+.group.buttons button { white-space: normal; text-align: left; }
+.counts { display: flex; gap: 6px; margin-bottom: var(--sp-2); }
+.counts button { min-width: 36px; font: var(--fs-md) var(--font-display); }
+.clearinginfo .head { display: flex; justify-content: space-between; align-items: center; }
+.clearinginfo .head h3 { margin: 0; }
+.clearinginfo > div { margin: 4px 0; }
+.clearinginfo .pieces { display: inline-flex; align-items: center; gap: 4px; margin-right: var(--sp-2); }
+.fulllist { margin-top: var(--sp-3); border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
+.fulllist summary { cursor: pointer; color: var(--ink-soft); font-size: var(--fs-xs); }
 .decree { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: var(--fs-xs); margin-top: 4px; }
 .decree .done { text-decoration: line-through; color: var(--ink-soft); }
 .log { max-height: 280px; overflow: auto; font-size: var(--fs-xs); }
 .clock { font-variant-numeric: tabular-nums; font-weight: 700; }
 .clock.urgent { color: var(--autumn-gold); }
-.filter { background: var(--gold-a35); border-radius: var(--r-sm); padding: 4px var(--sp-2); margin-bottom: 6px; font-size: var(--fs-xs); }
-.filter button { padding: 2px var(--sp-2); font-size: var(--fs-xs); }
 
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
@@ -83,6 +95,8 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .count { font: 700 12px var(--font-body); fill: var(--paper-raised); }
 .token { font-size: 11px; fill: var(--white); stroke: var(--ink); stroke-width: 2; paint-order: stroke; }
 .board .clearing { cursor: pointer; }
+.board .target { animation: march 1.6s linear infinite; pointer-events: none; }
+@keyframes march { to { stroke-dashoffset: -34; } }
 .board .pulse { fill: none; stroke: var(--autumn-gold); stroke-width: 8; transform-box: fill-box; transform-origin: center; animation: pulse var(--motion-pulse) ease-out forwards; pointer-events: none; }
 .board .pop { transform-box: fill-box; transform-origin: center; animation: pop var(--motion-pop) cubic-bezier(.34,1.56,.64,1); }
 @keyframes pulse { from { transform: scale(1); opacity: 1; } to { transform: scale(1.45); opacity: 0; } }
@@ -120,6 +134,6 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .board .pulse, .board .pop, .score.bump b, .carddetail, .dice, .dice .die, button { animation: none; transition: none; }
+  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button { animation: none; transition: none; }
   .board .pulse, .board .travel { display: none; }
 }

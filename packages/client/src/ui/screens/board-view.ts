@@ -5,15 +5,15 @@ import { renderBoard } from '../../board.ts'
 import type { Travel } from '../../motion.ts'
 import type { Changes } from '../../net/changes.ts'
 
-type Board3D = { update(v: PlayerView, h: number[], changed?: number[], travels?: Travel[]): void; resetCamera(): void; dispose(): void }
+type Board3D = { update(v: PlayerView, h: number[], changed?: number[], travels?: Travel[], targets?: number[]): void; resetCamera(): void; dispose(): void }
 export type BoardMode = '3d' | '2d'
 
 /**
  * The board: three.js (loaded on demand) or the SVG fallback, both drawn imperatively into a host Preact leaves
  * alone. Each update's animations run once (`changes.seq`); re-renders for a new highlight do not replay them.
  */
-export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL, cameraHome = 0 }: {
-  view: PlayerView; highlight: number[]; changes: Changes; mode: BoardMode; onPick: (c: number) => void; onNoWebGL: () => void
+export function BoardView({ view, highlight, targets = [], changes, mode, onPick, onNoWebGL, cameraHome = 0 }: {
+  view: PlayerView; highlight: number[]; targets?: number[]; changes: Changes; mode: BoardMode; onPick: (c: number) => void; onNoWebGL: () => void
   /** Bump it to glide the 3D camera back to the default view. */
   cameraHome?: number
 }) {
@@ -22,8 +22,8 @@ export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL, c
   const shown = useRef(0)
   const pick = useRef(onPick)
   pick.current = onPick
-  const latest = useRef({ view, highlight })
-  latest.current = { view, highlight }
+  const latest = useRef({ view, highlight, targets })
+  latest.current = { view, highlight, targets }
 
   // Mount or drop the 3D board when the mode changes.
   useEffect(() => {
@@ -34,7 +34,7 @@ export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL, c
       if (!m.webglAvailable()) { onNoWebGL(); return }
       host.current.innerHTML = ''
       board3d.current = m.mountBoard3D(host.current, c => pick.current(c))
-      board3d.current.update(latest.current.view, latest.current.highlight)
+      board3d.current.update(latest.current.view, latest.current.highlight, [], [], latest.current.targets)
     })
     return () => { alive = false; board3d.current?.dispose(); board3d.current = null; if (host.current) host.current.innerHTML = '' }
   }, [mode])
@@ -44,9 +44,9 @@ export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL, c
     const fresh = changes.seq !== shown.current
     shown.current = changes.seq
     const changed = fresh ? changes.changed : [], travels = fresh ? changes.travels : []
-    if (mode === '3d') { board3d.current?.update(view, highlight, changed, travels); return }
-    if (host.current) host.current.innerHTML = renderBoard(view, highlight, changed, travels)
-  }, [view, highlight, changes, mode])
+    if (mode === '3d') { board3d.current?.update(view, highlight, changed, travels, targets); return }
+    if (host.current) host.current.innerHTML = renderBoard(view, highlight, changed, travels, targets)
+  }, [view, highlight.join(), targets.join(), changes, mode])
 
   useEffect(() => { if (cameraHome) board3d.current?.resetCamera() }, [cameraHome])
 

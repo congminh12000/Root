@@ -2,7 +2,9 @@ import './ui/setup.ts'
 import type { FactionId, LastRoll } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
+import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
+import { ActionBar } from './ui/screens/action-bar.ts'
 import { ICONS } from './ui/icons.ts'
 import { color, factionColor, font, fontSize, motion, radius, space, suitColor } from './ui/tokens.ts'
 
@@ -22,6 +24,13 @@ const Item = ({ label, children }: { label: string; children: ComponentChildren 
 const roll: LastRoll = { revision: 1, clearing: 4, attacker: 'marquise', defender: 'eyrie', dice: [3, 1], hits: { attacker: 3, defender: 1 } }
 const guerrilla: LastRoll = { revision: 2, clearing: 8, attacker: 'eyrie', defender: 'alliance', dice: [2, 0], hits: { attacker: 0, defender: 2 } }
 const noop = () => {}
+const legal = [
+  { type: 'move', payload: { from: 0, to: 4, warriors: 1 } }, { type: 'move', payload: { from: 0, to: 4, warriors: 2 } },
+  { type: 'move', payload: { from: 0, to: 4, warriors: 3 } }, { type: 'move', payload: { from: 0, to: 9, warriors: 1 } },
+  { type: 'battle', payload: { clearing: 0, defender: 'eyrie' } }, { type: 'marquise-build', payload: { building: 'sawmill', clearing: 0, wood: [0] } },
+  { type: 'battle', payload: { clearing: 6, defender: 'alliance' } },
+  { type: 'craft', payload: { card: 'anvil#1' } }, { type: 'craft', payload: { card: 'sword#1' } }, { type: 'end-step', payload: {} },
+] as Action[]
 
 const Kit = () => html`
 <main class="kit-page">
@@ -85,13 +94,14 @@ const Kit = () => html`
     <div class="winner">Kết thúc: <${FactionChip} f="alliance" /> thắng (points)</div>
     <p class="error">Không tạo được trận</p><//>
 
+  <${Section} title="Thanh hành động" note="Chọn trên bàn cờ: chưa chọn ô, đã chọn ô 1, đã chọn đường ô 1 → ô 5 (chọn số chiến binh).">
+    <div class="kit-grid">
+      ${([{ kind: 'idle' }, { kind: 'at', clearing: 0 }, { kind: 'path', from: 0, to: 4 }] as const).map(stage =>
+        html`<${ActionBar} legal=${legal} stage=${stage} setStage=${noop} onPreview=${noop} send=${noop} />`)}</div><//>
+
   <${Section} title="Bảng">
     <div class="kit-grid">
       <section class="card"><h3>Điểm</h3>${FACTIONS.map((f, i) => html`<div class="score"><${FactionChip} f=${f} /> <b class=${i === 1 ? 'bump' : ''}>${[12, 9, 15, 7][i]}</b> · bot · ${i + 3} lá${i === 2 ? ' ◀' : ''}</div>`)}</section>
-      <section class="card act"><h3>Lựa chọn của bạn</h3>
-        <div class="filter">Đang lọc ô 5 (2/9) <button class="secondary">Bỏ lọc</button></div>
-        <div class="group"><label>Di chuyển (3)</label><select><option>ô 1 → ô 5, 2 chiến binh</option></select><button>Thực hiện</button></div>
-        <div class="group"><button>Kết thúc bước</button></div></section>
       <section class="card"><h3>Trống</h3><p class="note">Chưa có lá nào.</p></section></div><//>
 
   <${Section} title="Token khác">

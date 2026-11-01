@@ -1,13 +1,16 @@
 import type { Action, FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useEffect, useMemo, useState } from 'preact/hooks'
-import { clearingsOf, describe, GROUP } from '../../describe.ts'
+import { describe, GROUP } from '../../describe.ts'
+import { click, IDLE, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { cardName, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
 import { connectGame } from '../../net/connection.ts'
 import type { LogEntry } from '../../motion.ts'
 import type { Seat } from '../../net/types.ts'
 import { CardChip, CardDetailOverlay, Dice, FactionChip, Icon } from '../components.ts'
+import { ActionBar } from './action-bar.ts'
+import { ClearingInfo } from './clearing-info.ts'
 import { BoardView, type BoardMode } from './board-view.ts'
 
 const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
@@ -18,20 +21,27 @@ const storedMode = (): BoardMode => { try { return localStorage.getItem('root-bo
 export function Game({ gameId, token }: { gameId: string; token: string | null }) {
   const conn = useMemo(() => connectGame(gameId, token), [gameId, token])
   useEffect(() => () => conn.close(), [conn])
-  const [filter, setFilter] = useState<number | null>(null)
-  /** Clearings lit on the board: the filter, or the option being looked at in a list. */
+  /** What is chosen on the board (interaction/select.ts). */
+  const [stage, setStage] = useState<Stage>(IDLE)
+  /** Clearings of the option the pointer or focus is on, lit over the chosen ones. */
   const [preview, setPreview] = useState<number[] | null>(null)
   const [mode, setModeState] = useState<BoardMode>(storedMode)
   const [cameraHome, setCameraHome] = useState(0)
+  /** The clearing whose contents are shown under the board (the last one clicked). */
+  const [inspect, setInspect] = useState<number | null>(null)
   const setMode = (m: BoardMode) => { setModeState(m); try { localStorage.setItem('root-board', m) } catch { /* private mode */ } }
 
   const u = conn.update.value
-  // A new position from the server drops the preview of an option that may no longer exist.
-  useEffect(() => setPreview(null), [u?.view.revision])
+  // A new position drops the preview; a chosen path falls back to its start clearing, if that still has actions.
+  useEffect(() => {
+    setPreview(null)
+    if (u) setStage(s => stillValid(u.legal, s.kind === 'path' ? { kind: 'at', clearing: s.from } : s))
+  }, [u?.view.revision])
   if (!u) return html`<p class="loading">Đang kết nối trận ${gameId}… ${conn.notice.value}</p>`
   const { view: v, legal, seats, seat } = u
-  const highlight = preview ?? (filter === null ? [] : [filter])
-  const pick = (c: number) => { setPreview(null); setFilter(f => (f === c ? null : c)) }
+  const board = viewOf(legal, stage)
+  const highlight = preview ?? board.selected
+  const pick = (c: number) => { setPreview(null); setInspect(c); setStage(s => click(legal, s, c)) }
 
   return html`
     <${TopBar} gameId=${u.gameId} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value} />
@@ -40,15 +50,16 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
         <div class="board-tools">
           ${(['3d', '2d'] as const).map(m => html`<button aria-pressed=${mode === m} onClick=${() => setMode(m)}>${m.toUpperCase()}</button>`)}
           ${mode === '3d' && html`<button class="secondary" onClick=${() => setCameraHome(n => n + 1)}>Về góc mặc định</button>`}
-          <span>Bấm vào một ô để lọc lựa chọn.${mode === '3d' ? ' Kéo để xoay, cuộn để phóng to.' : ''}</span>
+          <span>${legal.length ? 'Bấm ô có viền vàng để chọn hành động.' : ''}${mode === '3d' ? ' Kéo để xoay, cuộn để phóng to.' : ''}</span>
         </div>
-        <${BoardView} view=${v} highlight=${highlight} changes=${conn.changes.value} mode=${mode} onPick=${pick} onNoWebGL=${() => setModeState('2d')} cameraHome=${cameraHome} />
+        <${BoardView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} mode=${mode} onPick=${pick} onNoWebGL=${() => setModeState('2d')} cameraHome=${cameraHome} />
         <${DicePanel} changes=${conn.changes.value} />
+        ${inspect !== null && html`<${ClearingInfo} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}
       </div>
       <aside>
         <${Scores} view=${v} seats=${seats} changes=${conn.changes.value} />
         ${seat && html`<${Hand} view=${v} seat=${seat} />`}
-        ${legal.length > 0 && html`<${Actions} legal=${legal} filter=${filter} onClearFilter=${() => setFilter(null)} onPreview=${setPreview} send=${conn.send} />`}
+        ${legal.length > 0 && html`<${ActionBar} legal=${legal} stage=${stage} setStage=${setStage} onPreview=${setPreview} send=${conn.send} />`}
         <section class="card"><h3>Bảng phe</h3><${FactionBoards} view=${v} /></section>
         <${Log} log=${u.log} />
       </aside>
@@ -108,34 +119,6 @@ function Hand({ view: v, seat }: { view: PlayerView; seat: FactionId }) {
   return html`<section class="card"><h3>Bài của bạn</h3><${Cards} cards=${v.hand} />
     ${v.playAreas[seat]?.length ? html`<div>Play area: <${Cards} cards=${v.playAreas[seat]!} /></div>` : null}
     ${v.revealed.map(r => html`<div>Bài của <${Chip} f=${r.of} />: <${Cards} cards=${r.cards} /></div>`)}</section>`
-}
-
-/** Legal actions grouped by type; the board filter narrows them to one clearing. */
-function Actions({ legal, filter, onClearFilter, onPreview, send }: {
-  legal: Action[]; filter: number | null; onClearFilter: () => void; onPreview: (c: number[] | null) => void; send: (a: Action) => void
-}) {
-  const shown = filter === null ? legal : legal.filter(a => clearingsOf(a).includes(filter))
-  const groups = new Map<string, Action[]>()
-  for (const a of shown) groups.set(a.type, [...(groups.get(a.type) ?? []), a])
-  return html`<section class="card act"><h3>Lựa chọn của bạn</h3>
-    ${filter !== null && html`<div class="filter">Đang lọc ô ${filter + 1} (${shown.length}/${legal.length}) <button class="secondary" onClick=${onClearFilter}>Bỏ lọc</button></div>`}
-    ${[...groups].map(([type, list]) => html`<${ActionGroup} key=${type} type=${type} list=${list} onPreview=${onPreview} send=${send} />`)}</section>`
-}
-
-function ActionGroup({ type, list, onPreview, send }: { type: string; list: Action[]; onPreview: (c: number[] | null) => void; send: (a: Action) => void }) {
-  const [index, setIndex] = useState(0)
-  const label = GROUP[type] ?? type
-  if (list.length === 1) {
-    const a = list[0]!
-    const bare = a.type === 'end-step' || a.type.startsWith('decline')
-    return html`<div class="group"><button onClick=${() => send(a)}>${label}${bare ? '' : `: ${describe(a)}`}</button></div>`
-  }
-  const i = Math.min(index, list.length - 1)
-  const look = (n: number) => { setIndex(n); onPreview(clearingsOf(list[n]!)) }
-  return html`<div class="group"><label for=${`g-${type}`}>${label} (${list.length})</label>
-    <select id=${`g-${type}`} value=${i} onChange=${(e: Event) => look(Number((e.target as HTMLSelectElement).value))} onFocus=${() => look(i)}>
-      ${list.map((a, n) => html`<option value=${n}>${describe(a)}</option>`)}</select>
-    <button onClick=${() => send(list[i]!)}>Thực hiện</button></div>`
 }
 
 function FactionBoards({ view: v }: { view: PlayerView }) {
