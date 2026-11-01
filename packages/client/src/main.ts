@@ -1,9 +1,9 @@
 import './ui/setup.ts'
-import { renderGame } from './game.ts'
-import { renderLobby } from './lobby.ts'
+import { html } from 'htm/preact'
+import { render } from 'preact'
+import { Game } from './ui/screens/game.ts'
+import { Lobby } from './ui/screens/lobby.ts'
 
-const root = document.getElementById('app')!
 const params = new URLSearchParams(location.search)
 const game = params.get('game')
-if (game) renderGame(root, game, params.get('seat'))
-else void renderLobby(root)
+render(game ? html`<${Game} gameId=${game} token=${params.get('seat')} />` : html`<${Lobby} />`, document.getElementById('app')!)

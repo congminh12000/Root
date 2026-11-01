@@ -14,7 +14,7 @@ Tài liệu gốc cho mọi việc giao diện, dùng chung cho mọi model (AGE
 |---|---|---|
 | Bàn cờ | **three.js** (đang dùng, 0.170) | Đã có bàn 3D chạy được, miễn phí, chạy tốt trên M1. Phong cách tham khảo là tranh minh họa nhìn từ trên xuống: dựng bằng camera nghiêng cao, đổ bóng kiểu hoạt hình (toon) và viền mực, không cần engine khác. |
 | Bàn 2D dự phòng | SVG (đang có) | Cho máy không có WebGL và để test; cùng token màu. |
-| Phần HTML (tay bài, bảng phe, hộp quyết định, sảnh) | **Preact + @preact/signals** | Hiện giao diện dựng lại bằng chuỗi `innerHTML` mỗi lần cập nhật nên mất focus, mất vị trí cuộn, khó làm kéo thả và hộp thoại. Preact chỉ ~4 KB, MIT, viết JSX bằng TypeScript, không đổi cách build (Vite). |
+| Phần HTML (tay bài, bảng phe, hộp quyết định, sảnh) | **Preact + @preact/signals**, viết bằng `htm` | Hiện giao diện dựng lại bằng chuỗi `innerHTML` mỗi lần cập nhật nên mất focus, mất vị trí cuộn, khó làm kéo thả và hộp thoại. Preact chỉ ~4 KB, MIT, viết JSX bằng TypeScript, không đổi cách build (Vite). |
 | Màu, cỡ chữ, khoảng cách | **Design token** trong `packages/client/src/ui/tokens.ts` | Một nguồn duy nhất cho CSS (biến `--…`) và vật liệu three.js. |
 | Font | Tự đóng gói qua `@fontsource` (OFL, chạy offline): **Pangolin** cho tiêu đề, **Be Vietnam Pro** cho chữ thường | Cả hai có đủ dấu tiếng Việt; Pangolin hợp nét vẽ tay. |
 | Icon | SVG tự vẽ, một sprite | Cùng nét mực với bàn cờ; không dùng icon chính thức. |
@@ -78,6 +78,7 @@ Mỗi mốc là một hoặc vài PR nhỏ, theo thứ tự; mốc sau dựa tr�
 ### Trạng thái
 
 - **UI-1 xong (01/11/2026):** `ui/tokens.ts` (mọi màu, chữ, khoảng cách, chuyển động; bàn 3D/2D giữ màu cũ trong nhóm `scene` tới UI-3), `ui/setup.ts` (font Latin + tiếng Việt, token, icon), `ui/icons.ts` (13 icon tự vẽ), `ui/parts.ts` (chip phe, pip chất, khung xúc xắc), `ui-kit.html`, `test/tokens.test.ts` (cấm mã màu ngoài token), Playwright `visual/` (ảnh gốc 1440 và 1280).
+- **UI-2 xong (01/11/2026):** sảnh và màn trận viết lại bằng Preact + `htm` (template trong file `.ts`, không cần bước JSX, test Node chạy thẳng) và `@preact/signals`. `net/` giữ WebSocket (`connection.ts`), API (`api.ts`) và phần tính thay đổi giữa hai cập nhật (`changes.ts`, có test). Component chung ở `ui/components.ts`; màn hình ở `ui/screens/`; bàn three.js/SVG vẫn vẽ bằng code cũ trong `BoardView`, hoạt ảnh chỉ chạy một lần mỗi cập nhật (`changes.seq`). Khung lá bài, vị trí cuộn và lựa chọn đang xem giữ nguyên qua các lần cập nhật.
 
 ### Lệnh
 

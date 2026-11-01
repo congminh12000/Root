@@ -50,9 +50,3 @@ export function installIcons(doc: Document = document) {
   if (doc.getElementById('i-close')) return
   doc.body.insertAdjacentHTML('afterbegin', iconSprite())
 }
-
-/** An icon; with `label` it is announced to screen readers, otherwise it is decoration. */
-export function icon(name: IconName, label?: string): string {
-  const a11y = label ? `role="img" aria-label="${label.replace(/"/g, '&quot;')}"` : 'aria-hidden="true"'
-  return `<svg class="icon" ${a11y}><use href="#i-${name}"/></svg>`
-}

@@ -1,13 +1,13 @@
 # Checklist giao diện để chơi được
 
-Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style-guide; **Một phần** = có nhưng thiếu; **Chưa** = chưa có. Cột "Mốc" ứng với lộ trình trong [README.md](README.md). Mục đánh dấu ★ là **bắt buộc** để một người chơi trọn ván với bot mà không cần danh sách thả xuống chung.
+Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm tra; **Có** = dùng được nhưng chưa theo style-guide; **Một phần** = có nhưng thiếu; **Chưa** = chưa có. Cột "Mốc" ứng với lộ trình trong [README.md](README.md). Mục đánh dấu ★ là **bắt buộc** để một người chơi trọn ván với bot mà không cần danh sách thả xuống chung.
 
 ## A. Vào trận
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Sảnh: chọn phe, người hay bot, mức bot, tạo trận, link từng ghế | Có | UI-2 |
-| ★ | Nhập mật khẩu phòng, vào lại trận cũ, danh sách trận | Có | UI-2 |
+| ★ | Sảnh: chọn phe, người hay bot, mức bot, tạo trận, link từng ghế | Xong | UI-2 |
+| ★ | Nhập mật khẩu phòng, vào lại trận cũ, danh sách trận | Xong | UI-2 |
 | | Chọn thời gian mỗi nước khi tạo trận | Chưa | UI-2 |
 | ★ | Setup: chọn leader Eyrie, nhân vật Vagabond, đặt keep và quân ban đầu bằng bấm trên bàn | Một phần (chọn qua danh sách) | UI-6 |
 
@@ -36,7 +36,7 @@ Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style
 | ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Chưa (danh sách) | UI-5 |
 | ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Một phần | UI-4 |
 | ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Có | UI-4 |
-| ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Có | UI-2 |
+| ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Xong | UI-2 |
 | | Phím tắt (Esc huỷ chọn, Enter xác nhận, số để chọn số quân) | Chưa | UI-4 |
 
 ## D. Bài và bảng phe
@@ -67,11 +67,11 @@ Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Có | UI-2 |
+| ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Xong | UI-2 |
 | ★ | Bảng điểm (track 0–30), dominance, coalition | Một phần | UI-5 |
 | ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Một phần | UI-8 |
 | ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Một phần (một dòng) | UI-8 |
-| | Khán giả xem trận | Có | UI-2 |
+| | Khán giả xem trận | Xong | UI-2 |
 | | Hướng dẫn nhanh, chú giải ký hiệu | Chưa | UI-8 |
 | | Âm thanh tùy chọn | Chưa | UI-8 |
 
@@ -79,7 +79,7 @@ Trạng thái ngày 01/11/2026. **Có** = dùng được nhưng chưa theo style
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Token, font tiếng Việt offline, icon, ui-kit, ảnh so sánh | Có | UI-1 |
+| ★ | Token, font tiếng Việt offline, icon, ui-kit, ảnh so sánh | Xong | UI-1 |
 | ★ | Mọi chữ tiếng Việt, thuật ngữ luật giữ tên gốc khi cần | Có | mọi mốc |
 | ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
 | ★ | Giảm chuyển động | Có | mọi mốc |

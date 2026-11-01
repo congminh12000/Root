@@ -41,3 +41,13 @@ test('travels and rolls come from the public log and views alone, matching what 
   assert.deepEqual([...seen].sort(), ['move', 'vagabond-move', 'vagabond-slip'])
   assert.ok(rolls > 0, 'some battle rolled')
 })
+
+test('changesBetween: nothing to animate on the first update; seq tells updates apart', async () => {
+  const { changesBetween } = await import('../src/net/changes.ts')
+  const s = createGame({ gameId: 'c', players: (['marquise', 'eyrie'] as FactionId[]).map(f => ({ playerId: f, faction: f, controller: { kind: 'bot', profile: 'r' } })) }, seededRng('c'))
+  const u = { type: 'update' as const, gameId: 'c', seat: null, view: viewFor(s, null), legal: [], seats: [], log: [], deadline: null, now: 0 }
+  assert.deepEqual(changesBetween(null, u, 1), { seq: 1, changed: [], scored: [], travels: [], roll: null })
+  const moved = { ...u, view: { ...u.view, score: { ...u.view.score, eyrie: 3 } } }
+  assert.deepEqual(changesBetween(u, moved, 2).scored, ['eyrie'])
+  assert.equal(changesBetween(u, moved, 2).seq, 2)
+})

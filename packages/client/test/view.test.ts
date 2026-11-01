@@ -3,16 +3,18 @@ import { test } from 'node:test'
 import { BASE_DECK } from '@root/game-data'
 import { applyCommand, createGame, currentActor, legalActions, seededRng, viewFor, type FactionId } from '@root/game-engine'
 import { changedClearings } from '../src/board.ts'
-import { cardChip, cardDetail } from '../src/cardview.ts'
+import { html } from 'htm/preact'
+import { render } from 'preact-render-to-string'
+import { CardChip, CardDetail } from '../src/ui/components.ts'
 
 test('every card in the deck has a detail panel with its name, kind and cost or effect', () => {
   for (const c of BASE_DECK) {
-    const html = cardDetail(`${c.id}#1`)
-    assert.ok(html.includes(c.name.replace(/&/g, '&amp;')), c.id)
-    assert.ok(/Item|Dùng ngay|Lâu dài|Ambush|Dominance/.test(html), `kind for ${c.id}`)
-    if (c.kind === 'item') assert.ok(html.includes(`+${c.vp}`), `points for ${c.id}`)
+    const out = render(html`<${CardDetail} card=${`${c.id}#1`} />`)
+    assert.ok(out.includes(c.name.replace(/&/g, '&amp;')), c.id)
+    assert.ok(/Item|Dùng ngay|Lâu dài|Ambush|Dominance/.test(out), `kind for ${c.id}`)
+    if (c.kind === 'item') assert.ok(out.includes(`+${c.vp} điểm`), `points for ${c.id}`)
   }
-  assert.ok(cardChip('anvil#1', 'Anvil').includes('data-card="anvil#1"'))
+  assert.ok(render(html`<${CardChip} card="anvil#1" />`).includes('data-card="anvil#1"'))
 })
 
 test('changedClearings lists exactly the clearings a command touched', () => {
