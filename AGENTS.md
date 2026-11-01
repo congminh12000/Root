@@ -70,7 +70,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 | `packages/game-engine/` | Engine TypeScript thuần, không phụ thuộc UI hay Node; dùng kiểu từ `game-data`. API ở `docs/04-engine-spec/engine-api.md` |
 | `packages/bots/` | Bot chỉ nhận `PlayerView` + danh sách hợp lệ (`random`, `simple`) |
 | `packages/server/` | Server LAN: HTTP + WebSocket, giữ trạng thái gốc, token ghế, lưu trận (`docs/05-product-spec/multiplayer.md`) |
-| `packages/client/` | Giao diện web (Vite, TypeScript, SVG tự vẽ); không chứa luật |
+| `packages/client/` | Giao diện web (Vite, Preact + htm, three.js, SVG tự vẽ); không chứa luật. Kế hoạch và style guide ở `docs/07-ui/` |
 | `scripts/` | `fetch-sources`, `audit-rule-coverage`, `snapshot-rules`, `rules-guard`, `rules-clause`, `pack-context`, `ship.sh` |
 | `.githooks/` | Hook pre-commit chạy `rules-guard` |
 | `backend/`, `web/` | Bản thử nghiệm cũ (Python, React/PixiJS). Chỉ để tham khảo; không thêm tính năng |

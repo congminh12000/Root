@@ -73,7 +73,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .board-col { min-width: 0; position: relative; }
 .board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }
 .board-tools button { background: var(--paper-raised); color: var(--ink); }
-.board-tools button.on { background: var(--wood); color: var(--paper); }
+.board-tools button[aria-pressed="true"], button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--paper); }
 .map canvas { display: block; width: 100%; border-radius: var(--r-lg); border: 2px solid var(--ink); }
 .board { width: 100%; height: auto; }
 .forest-label { font-size: 14px; fill: var(--pine-light); font-weight: bold; }
