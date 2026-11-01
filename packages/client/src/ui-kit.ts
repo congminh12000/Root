@@ -1,3 +1,4 @@
+import { GameResult, GameLog, QuickGuide } from './ui/screens/finish.ts'
 import './ui/setup.ts'
 import type { FactionId, LastRoll } from '@root/game-engine'
 import { html } from 'htm/preact'
@@ -108,7 +109,9 @@ const Kit = () => html`
     <header class="bar"><a href="./">← Sảnh</a><span>Trận <b>a1b2c3</b></span><span>Lượt 7 · Daylight · Hành động</span><span>Đang chờ: <${FactionChip} f="eyrie" /></span>
       <span class="clock"><${Icon} name="clock" /> 1:12</span><span class="clock urgent"><${Icon} name="clock" /> 0:09</span></header>
     <div class="notice">Máy chủ từ chối: stale-revision</div>
-    <div class="winner">Kết thúc: <${FactionChip} f="alliance" /> thắng (points)</div>
+    <${GameResult} view=${{ ...sample, winner: { factions: ['alliance'], reason: 'points' } }} />
+    <${GameLog} log=${[{ revision: 3, faction: 'marquise', type: 'move', detail: { from: 0, to: 4, warriors: 2 } }]} selected=${3} onSelect=${noop} />
+    <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
     <p class="error">Không tạo được trận</p><//>
 
   <${Section} title="Thanh hành động" note="Chọn trên bàn cờ: chưa chọn ô, đã chọn ô 1, đã chọn đường ô 1 → ô 5 (chọn số chiến binh).">
