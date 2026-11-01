@@ -8,7 +8,7 @@
 | `legalActions(state, faction)` | Mọi `Action` phe đó được làm lúc này. Rỗng nếu không phải lượt quyết định của phe đó. |
 | `applyCommand(state, command, rng)` | Kiểm tra rồi áp dụng một `GameCommand` (thứ tự kiểm tra ở dưới). Không bao giờ sửa `state` đầu vào; trả về state mới cùng `CommandResult`. |
 | `currentActor(state)` | Phe đang được chờ: người chọn thứ tự khi có ≥ 2 hiệu ứng đồng thời (`order-effects`, §1.1.3), nếu không thì chủ của quyết định trên đỉnh `pending`, nếu không có thì là người tới lượt. |
-| `viewFor(state, faction \| null)` | `PlayerView` đã che thông tin ẩn. `null` là khán giả. |
+| `viewFor(state, faction \| null)` | `PlayerView` đã che thông tin ẩn. `null` là khán giả. `lastRoll` là lần tung xúc xắc gần nhất (công khai, chỉ để hiển thị). |
 | `replay(record)` | Dựng lại trận từ `GameRecord` mà không cần seed. |
 | `seededRng`, `recordingRng`, `replayRng` | Nguồn ngẫu nhiên của server, bản có ghi lại, và bản phát lại. |
 
