@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { legalActions, viewFor } from '../src/index.ts'
-import { answer, at, building, ofType, roll, scenario, token, types, warriors } from './helpers.ts'
+import { answer, at, building, effect, ofType, roll, scenario, token, types, warriors } from './helpers.ts'
 
 test('Better Burrow Bank: at the start of Birdsong, draw one and an enemy draws one', () => {
   let s = scenario()
@@ -79,7 +79,7 @@ test('Tax Collector: once in Daylight, remove one of your warriors to draw a car
   s = answer(s, { type: 'tax-collector', payload: { card: 'tax-collector#1', clearing: 0 } })
   assert.equal(s.map.clearings[0]!.warriors.marquise, undefined)
   assert.ok(s.hands.marquise!.includes('sword#1'))
-  assert.deepEqual(s.pending.at(-1), { kind: 'field-hospital', player: 'marquise', clearing: 0, warriors: 1 })
+  assert.deepEqual(effect(s), { kind: 'field-hospital', player: 'marquise', clearing: 0, warriors: 1 })
   s = answer(s, { type: 'decline-field-hospital', payload: {} })
   assert.ok(!types(legalActions(s, 'marquise')).includes('tax-collector'), 'once per turn')
 })

@@ -2,6 +2,7 @@ import { sameJson, type Action } from './actions.ts'
 import { battleDecisionOptions, continueBattle, performBattleDecision } from './battle.ts'
 import type { CommandResult, GameCommand } from './command.ts'
 import { commonDecisionOptions, performCommonDecision } from './common.ts'
+import { effectOrderer, orderActions, performOrder } from './order.ts'
 import type { Rng } from './rng.ts'
 import { checkVictory } from './rules.ts'
 import { advanceSetup, setupStep } from './setup.ts'
@@ -11,9 +12,11 @@ import { advanceTurn, performTurn, turnActions } from './turn.ts'
 const RECENT_ACTION_IDS = 64
 const BATTLE_DECISIONS = new Set(['ambush', 'battle-effects', 'take-hits'])
 
-/** The faction the game is waiting on: the top pending decision's owner, otherwise the active seat. */
+/** The faction the game is waiting on: who orders simultaneous effects, the top pending decision's owner, otherwise the active seat. */
 export function currentActor(state: GameState): FactionId | null {
   if (state.winner) return null
+  const orderer = effectOrderer(state)
+  if (orderer) return orderer
   const top = state.pending.at(-1)
   return top ? top.player : state.seats[state.turn.seat]!.faction
 }
@@ -26,6 +29,7 @@ export function legalActions(state: GameState, faction: FactionId): Action[] {
     const step = setupStep(top.player, top.step)
     return 'options' in step ? step.options(state) : []
   }
+  if (effectOrderer(state)) return orderActions(state)
   if (top && BATTLE_DECISIONS.has(top.kind)) return battleDecisionOptions(state)
   if (top) return commonDecisionOptions(state)
   if (state.battle || state.stage !== 'play') return []
@@ -65,7 +69,8 @@ export function perform(state: GameState, faction: FactionId, action: Action, rn
     advanceTurn(state, rng)
     return
   }
-  if (top && BATTLE_DECISIONS.has(top.kind)) performBattleDecision(state, action)
+  if (action.type === 'order-effects') performOrder(state, action)
+  else if (top && BATTLE_DECISIONS.has(top.kind)) performBattleDecision(state, action)
   else if (top) performCommonDecision(state, action, rng)
   else performTurn(state, faction, action, rng)
 

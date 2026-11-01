@@ -24,7 +24,14 @@ select { max-width: 100%; font-size: 14px; padding: 4px; }
 .chip { font-size: 15px; font-weight: bold; fill: #fff; }
 .token { font-size: 11px; fill: #fff; }
 .fchip { color: #fff; border-radius: 10px; padding: 1px 8px; font-size: 13px; white-space: nowrap; }
-.cardchip { display: inline-block; border: 2px solid; border-radius: 6px; padding: 1px 6px; margin: 2px; font-size: 13px; background: #fff; }
+.cardchip { display: inline-block; border: 2px solid; border-radius: 6px; padding: 1px 6px; margin: 2px; font-size: 13px; background: #fff; color: #2a2418; cursor: pointer; }
+.cardchip:hover { background: #fff3c4; }
+.carddetail { position: fixed; right: 16px; bottom: 16px; width: min(340px, calc(100vw - 32px)); background: #fffaf0; border: 1px solid #d8c9a6; border-radius: 12px; padding: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.18); font-size: 14px; z-index: 10; animation: rise .18s ease-out; }
+.carddetail-head { display: flex; align-items: baseline; gap: 6px; border-left: 6px solid; padding-left: 8px; margin-bottom: 6px; font-size: 16px; }
+.carddetail .close { margin-left: auto; background: none; color: #6b3f12; font-size: 20px; padding: 0 4px; }
+.carddetail .effect { margin: 8px 0; }
+.pip { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin: 0 2px; vertical-align: -2px; border: 1px solid #0003; }
+@keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 .score { margin: 3px 0; font-size: 14px; }
 .group { margin: 6px 0; }
 .group label { display: block; font-size: 13px; color: #5a4a30; margin-bottom: 2px; }
@@ -44,3 +51,10 @@ select { max-width: 100%; font-size: 14px; padding: 4px; }
 .filter { background: #fff3c4; border-radius: 6px; padding: 4px 8px; margin-bottom: 6px; font-size: 13px; }
 .filter button { padding: 2px 8px; font-size: 12px; }
 .board .clearing { cursor: pointer; }
+.board .pulse { fill: none; stroke: #f2b705; stroke-width: 8; transform-box: fill-box; transform-origin: center; animation: pulse 1.2s ease-out forwards; pointer-events: none; }
+.board .pop { transform-box: fill-box; transform-origin: center; animation: pop .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pulse { from { transform: scale(1); opacity: 1; } to { transform: scale(1.45); opacity: 0; } }
+@keyframes pop { from { transform: scale(.4); } }
+.score.bump b { animation: bump .6s ease-out; display: inline-block; }
+@keyframes bump { 30% { transform: scale(1.6); color: #2f6b3a; } }
+@media (prefers-reduced-motion: reduce) { .board .pulse, .board .pop, .score.bump b, .carddetail { animation: none; } .board .pulse { display: none; } }

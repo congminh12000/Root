@@ -18,11 +18,12 @@ export const GROUP: Record<string, string> = {
   'play-ambush': 'Chơi Ambush', 'decline-ambush': 'Không ambush', 'use-battle-card': 'Dùng lá trong battle', 'end-battle-cards': 'Xong lá battle',
   'take-hits': 'Chọn quân chịu hit', 'field-hospital': 'Field Hospitals', 'decline-field-hospital': 'Không dùng Field Hospitals',
   'discard-card': 'Bỏ bài', 'activate-dominance': 'Kích hoạt dominance', 'take-dominance': 'Lấy dominance',
-  'outrage-give': 'Outrage: đưa lá', 'outrage-reveal': 'Outrage: cho xem bài', 'discard-supporter': 'Bỏ supporter',
+  'order-effects': 'Chọn hiệu ứng xử lý trước', 'outrage-give': 'Outrage: đưa lá', 'outrage-reveal': 'Outrage: cho xem bài', 'discard-supporter': 'Bỏ supporter',
   'better-burrow-bank': 'Better Burrow Bank', 'royal-claim': 'Royal Claim', 'stand-and-deliver': 'Stand and Deliver!', 'command-warren': 'Command Warren',
   cobbler: 'Cobbler', 'cobbler-vagabond': 'Cobbler', codebreakers: 'Codebreakers', 'tax-collector': 'Tax Collector',
 }
 
+const EFFECT = { 'field-hospital': 'Field Hospitals', outrage: 'Outrage', 'discard-supporters': 'Bỏ bớt supporter' } as const
 const BUILDING = { sawmill: 'sawmill', workshop: 'workshop', recruiter: 'recruiter' } as const
 const list = (cs: number[]) => cs.map(clearing).join(', ') || 'không'
 const warriors = (n: number) => `${n} chiến binh`
@@ -75,6 +76,7 @@ export function describe(a: Action): string {
     case 'cobbler': return `${warriors(a.payload.warriors)} ${clearing(a.payload.from)} → ${clearing(a.payload.to)}`
     case 'cobbler-vagabond': return clearing(a.payload.to)
     case 'codebreakers': return `xem bài ${FACTION_NAME[a.payload.target]}`
+    case 'order-effects': return `${EFFECT[a.payload.effect]} (${FACTION_NAME[a.payload.player]} quyết)`
     case 'tax-collector': return `bỏ 1 chiến binh ở ${clearing(a.payload.clearing)}, rút 1 lá`
   }
 }

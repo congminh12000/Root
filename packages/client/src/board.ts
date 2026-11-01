@@ -21,8 +21,17 @@ export function forestCentre(f: number): [number, number] {
   return [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length]
 }
 
-/** Renders the board as an SVG string. `highlight` rings clearings an action is about. */
-export function renderBoard(view: PlayerView, highlight: number[] = []): string {
+/** Clearings whose pieces differ between two views, including where the Vagabond pawn left or arrived. */
+export function changedClearings(prev: PlayerView, next: PlayerView): number[] {
+  const out = new Set<number>()
+  next.map.clearings.forEach((c, i) => { if (JSON.stringify(c) !== JSON.stringify(prev.map.clearings[i])) out.add(i) })
+  const a = prev.factions.vagabond?.pawn, b = next.factions.vagabond?.pawn
+  if (JSON.stringify(a) !== JSON.stringify(b)) for (const p of [a, b]) if (p?.kind === 'clearing') out.add(p.id)
+  return [...out].sort((x, y) => x - y)
+}
+
+/** Renders the board as an SVG string. `highlight` rings clearings an action is about; `changed` pulse once. */
+export function renderBoard(view: PlayerView, highlight: number[] = [], changed: number[] = []): string {
   const parts: string[] = []
   parts.push(svg('rect', { x: 0, y: 0, width: W, height: H, rx: 18, fill: '#e9dfc4' }))
   for (const [f, ring] of AUTUMN.forests.entries()) {
@@ -40,13 +49,14 @@ export function renderBoard(view: PlayerView, highlight: number[] = []): string 
     const c = view.map.clearings[def.id]!
     const lit = highlight.includes(def.id)
     parts.push(svg('circle', { cx: x, cy: y, r: 52, fill: '#f6efdc', stroke: lit ? '#111' : SUIT_COLOR[def.suit], 'stroke-width': lit ? 7 : 5, 'data-clearing': def.id, class: 'clearing' }))
+    if (changed.includes(def.id)) parts.push(svg('circle', { cx: x, cy: y, r: 52, class: 'pulse' }))
     parts.push(svg('circle', { cx: x - 40, cy: y - 40, r: 14, fill: SUIT_COLOR[def.suit] }))
     parts.push(svg('text', { x: x - 40, y: y - 35, 'text-anchor': 'middle', class: 'clearing-no' }, String(def.id + 1)))
     // Slots along the bottom of the clearing.
     c.slots.forEach((slot, i) => {
       const sx = x - (c.slots.length - 1) * 15 + i * 30 - 12, sy = y + 18
       const fill = slot === null ? '#fff' : slot.kind === 'ruin' ? '#999' : FACTION_COLOR[slot.faction]
-      parts.push(svg('rect', { x: sx, y: sy, width: 24, height: 24, rx: 4, fill, stroke: '#555', 'stroke-width': 1.5 }))
+      parts.push(svg('rect', { x: sx, y: sy, width: 24, height: 24, rx: 4, fill, stroke: '#555', 'stroke-width': 1.5, ...(changed.includes(def.id) ? { class: 'pop' } : {}) }))
       const glyph = slot === null ? '' : slot.kind === 'ruin' ? 'R' : BUILDING_GLYPH[slot.type] ?? '?'
       if (glyph) parts.push(svg('text', { x: sx + 12, y: sy + 17, 'text-anchor': 'middle', class: 'glyph' }, glyph))
     })
@@ -54,7 +64,7 @@ export function renderBoard(view: PlayerView, highlight: number[] = []): string 
     const entries = Object.entries(c.warriors).filter(([, n]) => n && n > 0) as [FactionId, number][]
     entries.forEach(([f, n], i) => {
       const wx = x - (entries.length - 1) * 17 + i * 34, wy = y - 10
-      parts.push(svg('circle', { cx: wx, cy: wy, r: 15, fill: FACTION_COLOR[f], stroke: '#222', 'stroke-width': 1.5 }))
+      parts.push(svg('circle', { cx: wx, cy: wy, r: 15, fill: FACTION_COLOR[f], stroke: '#222', 'stroke-width': 1.5, ...(changed.includes(def.id) ? { class: 'pop' } : {}) }))
       parts.push(svg('text', { x: wx, y: wy + 5, 'text-anchor': 'middle', class: 'chip' }, String(n)))
     })
     c.tokens.forEach((t, i) => {

@@ -37,11 +37,11 @@ rules:
     title: "Unclear Resolutions and Choices"
     section: "1.1.3"
     page: 2
-    status: specified
+    status: verified
     spec: docs/02-rules-spec/golden-rules.md
-    implementation: []
-    tests: []
-    review: {rules_verified: false, implementation_verified: false}
+    implementation: [packages/game-engine/src/order.ts, packages/game-engine/src/engine.ts]
+    tests: [packages/game-engine/test/order.test.ts]
+    review: {rules_verified: true, implementation_verified: true}
   - rule_id: ROOT-1.2
     title: "Public and Private Information"
     section: "1.2"
@@ -556,8 +556,8 @@ rules:
     page: 4
     status: verified
     spec: docs/02-rules-spec/battle.md
-    implementation: [packages/game-engine/src/battle.ts, packages/game-engine/src/removal.ts]
-    tests: [packages/game-engine/test/battle.test.ts]
+    implementation: [packages/game-engine/src/battle.ts, packages/game-engine/src/removal.ts, packages/game-engine/src/order.ts]
+    tests: [packages/game-engine/test/battle.test.ts, packages/game-engine/test/order.test.ts]
     review: {rules_verified: true, implementation_verified: true}
   - rule_id: ROOT-5.1
     title: "Standard Setup"

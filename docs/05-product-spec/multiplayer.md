@@ -51,6 +51,8 @@ HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ fac
 - Mọi hình đều do code tự dựng từ `game-data`, không dùng art chính thức: bàn gỗ, mặt đất, đường đất, cây theo từng khu rừng, viền clearing theo màu suit, quân, công trình và token. Ngẫu nhiên có seed cố định nên mọi máy thấy cùng một bàn.
 - Kéo để xoay, cuộn để phóng to. Bấm vào một ô (cả 2D và 3D) để lọc các lựa chọn liên quan tới ô đó; bấm lại để bỏ lọc.
 - Three.js nằm trong một chunk riêng, chỉ tải khi mở bàn 3D.
+- Hoạt ảnh: sau mỗi cập nhật, ô có quân thay đổi phát một vòng sáng lan ra và quân ở đó bật lên (2D và 3D); điểm vừa đổi nảy lên. Tắt khi trình duyệt bật "giảm chuyển động".
+- Bấm vào tên một lá bài (trên tay, play area, supporter, dominance, bài được cho xem) để mở khung chi tiết: chất, loại, chi phí chế tạo, hiệu ứng, mã Card Library.
 
 ## Bot
 
@@ -73,12 +75,13 @@ Bot không bao giờ đọc state thật. Test kiểm tra rằng state đoán ra
 
 Đo bằng `node packages/bots/scripts/arena.ts search-fast simple 24`: 4 người chơi, một bot `search-fast` đấu ba bot `simple`, đổi phe mỗi trận. Nếu ngang sức thì tỉ lệ thắng kỳ vọng là 25%. Kết quả xem ở phần báo cáo của PR.
 
+**Worker thread.** Nước của bot (kể cả nước chọn thay khi hết giờ) được tính trong một nhóm worker thread dùng chung (`packages/server/src/bot-pool.ts`, tối đa 4 luồng, ít hơn số lõi CPU một luồng). Luồng chính vẫn trả lời người chơi và các trận khác trong lúc bot suy nghĩ. Worker chỉ nhận `PlayerView`, danh sách hợp lệ và seed riêng của bot, rồi trả về số thứ tự hành động. Nếu trận đã đi tiếp trong lúc bot nghĩ (vd. người chơi bấm ngay trước khi hết giờ), câu trả lời bị bỏ. Nếu worker lỗi, bot chọn trên luồng chính để trận không bị kẹt.
+
 Giới hạn hiện tại:
-- Bot chạy trên luồng chính của server, nên trong lúc nó suy nghĩ (tới 1 giây), các trận khác phải chờ.
 - Chưa đo với người chơi giỏi.
 
 ## Chưa có (cần người quản lý quyết định)
 
 - **Tài khoản và mã hóa.** Server không có tài khoản và chạy HTTP thường, không mã hóa. Chỉ dùng trong LAN tin cậy.
 - **Đổi người giữa trận, hoàn tác, chat.**
-- **Hoạt ảnh và xem lá bài.** Chưa có hoạt ảnh khi di chuyển hay đánh, chưa có khung xem chi tiết lá.
+- **Hoạt ảnh di chuyển theo đường.** Hiện chỉ có hoạt ảnh ở ô thay đổi, chưa có quân chạy dọc đường đi hay xúc xắc lăn.

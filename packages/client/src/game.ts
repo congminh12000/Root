@@ -1,8 +1,9 @@
 import type { Action, FactionId, PlayerView } from '@root/game-engine'
-import { renderBoard } from './board.ts'
+import { changedClearings, renderBoard } from './board.ts'
+import { cardChip, cardDetail } from './cardview.ts'
 import { clearingsOf, describe, GROUP } from './describe.ts'
 import { roomKey } from './lobby.ts'
-import { cardDesign, cardName, FACTION_COLOR, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME, SUIT_COLOR } from './names.ts'
+import { cardName, FACTION_COLOR, FACTION_NAME, ITEM_NAME, PHASE_NAME, questName, STEP_NAME } from './names.ts'
 
 interface Update {
   type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]
@@ -14,7 +15,7 @@ interface Update {
 type Message = Update | { type: 'rejected'; actionId: string; result: { code: string; message: string } } | { type: 'error'; message: string }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!)
-const card = (c: string) => `<span class="cardchip" style="border-color:${SUIT_COLOR[cardDesign(c).suit]}">${esc(cardName(c))}</span>`
+const card = (c: string) => cardChip(c, cardName(c))
 const faction = (f: FactionId) => `<span class="fchip" style="background:${FACTION_COLOR[f]}">${FACTION_NAME[f]}</span>`
 
 /** One game: a WebSocket to the server, re-rendered on every update. The client never decides legality. */
@@ -25,6 +26,9 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   let socket: WebSocket | null = null
   let counter = 0
   let localDeadline: number | null = null
+  /** Clearings and scores that changed with the latest update; animated once, then cleared. */
+  let changed: number[] = []
+  let scored: FactionId[] = []
 
   function connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws'
@@ -34,7 +38,10 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       const msg = JSON.parse(ev.data) as Message
       if (msg.type === 'update') {
         localDeadline = msg.deadline === null ? null : Date.now() + (msg.deadline - msg.now)
+        changed = last ? changedClearings(last.view, msg.view) : []
+        scored = last ? (Object.keys(msg.view.score) as FactionId[]).filter(f => msg.view.score[f] !== last!.view.score[f]) : []
         last = msg; notice = ''; highlight = filter === null ? [] : [filter]; draw()
+        changed = []; scored = []
       }
       else if (msg.type === 'rejected') { notice = `Máy chủ từ chối: ${msg.result.code}`; draw() }
       else { notice = msg.message; draw() }
@@ -83,7 +90,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
   // ── Board: 3D (Three.js, loaded on demand) or 2D SVG; it lives outside the panel that re-renders. ──
   let mode: '3d' | '2d' = (() => { try { return localStorage.getItem('root-board') === '2d' ? '2d' : '3d' } catch { return '3d' } })()
   let filter: number | null = null
-  let board3d: { update(v: PlayerView, h: number[]): void; dispose(): void } | null = null
+  let board3d: { update(v: PlayerView, h: number[], changed?: number[]): void; dispose(): void } | null = null
   let loading3d = false
 
   const pick = (c: number) => { filter = filter === c ? null : c; highlight = filter === null ? [] : [filter]; draw() }
@@ -92,7 +99,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
     const host = root.querySelector<HTMLElement>('.map')
     if (!host || !last) return
     if (mode === '3d') {
-      if (board3d) { board3d.update(last.view, highlight); return }
+      if (board3d) { board3d.update(last.view, highlight, changed); return }
       if (loading3d) return
       loading3d = true
       void import('./board3d.ts').then(m => {
@@ -105,7 +112,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       return
     }
     if (board3d) { board3d.dispose(); board3d = null }
-    host.innerHTML = renderBoard(last.view, highlight)
+    host.innerHTML = renderBoard(last.view, highlight, changed)
     host.querySelectorAll<SVGElement>('[data-clearing]').forEach(el => el.addEventListener('click', () => pick(Number(el.dataset.clearing))))
   }
 
@@ -113,7 +120,16 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
     if (root.querySelector('.layout')) return
     root.innerHTML = `<div class="top"></div><div class="layout">
       <div class="board-col"><div class="board-tools"><button data-mode="3d">3D</button><button data-mode="2d">2D</button><span>Bấm vào một ô để lọc lựa chọn. Kéo để xoay, cuộn để phóng to.</span></div><div class="map"></div></div>
-      <aside></aside></div>`
+      <aside></aside></div><div class="carddetail" hidden></div>`
+    // Any card chip opens its details; the panel survives re-renders.
+    const panel = root.querySelector<HTMLElement>('.carddetail')!
+    root.addEventListener('click', ev => {
+      const el = ev.target as HTMLElement
+      const chip = el.closest<HTMLElement>('[data-card]')
+      if (chip) { panel.innerHTML = cardDetail(chip.dataset.card!); panel.hidden = false; return }
+      if (el.closest('[data-close-card]') || !el.closest('.carddetail')) panel.hidden = true
+    })
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') panel.hidden = true })
     root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach(b => b.addEventListener('click', () => {
       mode = b.dataset.mode as '3d' | '2d'
       try { localStorage.setItem('root-board', mode) } catch { /* private mode */ }
@@ -141,7 +157,7 @@ export function renderGame(root: HTMLElement, gameId: string, token: string | nu
       ${notice ? `<div class="notice">${esc(notice)}</div>` : ''}`
     const aside = root.querySelector('aside')!
     aside.innerHTML = `
-          <section class="card"><h3>Điểm</h3>${seats.map(s => `<div class="score">${faction(s.faction)} <b>${v.score[s.faction] ?? 'dominance'}</b> · ${s.kind === 'bot' ? 'bot' : esc(s.name)}${s.kind === 'human' && !s.connected ? ' (vắng)' : ''} · ${v.handCounts[s.faction] ?? 0} lá${s.faction === active ? ' ◀' : ''}</div>`).join('')}</section>
+          <section class="card"><h3>Điểm</h3>${seats.map(s => `<div class="score${scored.includes(s.faction) ? ' bump' : ''}">${faction(s.faction)} <b>${v.score[s.faction] ?? 'dominance'}</b> · ${s.kind === 'bot' ? 'bot' : esc(s.name)}${s.kind === 'human' && !s.connected ? ' (vắng)' : ''} · ${v.handCounts[s.faction] ?? 0} lá${s.faction === active ? ' ◀' : ''}</div>`).join('')}</section>
           ${seat ? `<section class="card"><h3>Bài của bạn</h3>${v.hand.map(card).join(' ') || '—'}
             ${v.playAreas[seat]?.length ? `<div>Play area: ${v.playAreas[seat]!.map(card).join(' ')}</div>` : ''}
             ${v.revealed.map(r => `<div>Bài của ${faction(r.of)}: ${r.cards.map(card).join(' ') || '—'}</div>`).join('')}</section>` : ''}

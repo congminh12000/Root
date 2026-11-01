@@ -257,10 +257,14 @@ function pawn(): THREE.Group {
   return g
 }
 
-function buildPieces(view: PlayerView, highlight: number[]): THREE.Group {
+/** Pieces for one view. Objects in `changed` clearings are listed in `pop`, plus one fading ring each in `pulse`. */
+function buildPieces(view: PlayerView, highlight: number[], changed: number[]): { root: THREE.Group; pop: THREE.Object3D[]; pulse: THREE.Mesh[] } {
   const root = new THREE.Group()
+  const pop: THREE.Object3D[] = [], pulse: THREE.Mesh[] = []
   for (const [id, c] of view.map.clearings.entries()) {
     const p = world(id)
+    const fresh = changed.includes(id)
+    const add = (o: THREE.Object3D) => { root.add(o); if (fresh) pop.push(o) }
     // Slots on an arc at the back of the clearing.
     c.slots.forEach((slot, i) => {
       const a = Math.PI * (1.15 + (i + 0.5) / c.slots.length * 0.7)
@@ -273,7 +277,7 @@ function buildPieces(view: PlayerView, highlight: number[]): THREE.Group {
       const obj = slot.kind === 'ruin' ? ruin() : building(slot.type, FACTION_COLOR[slot.faction])
       obj.scale.setScalar(PIECE_SCALE)
       obj.position.set(sx, 0.14, sz)
-      root.add(obj)
+      add(obj)
     })
     // Warriors in rows at the front; large groups become a stack with a count.
     const groups = Object.entries(c.warriors).filter(([, n]) => n && n > 0) as [FactionId, number][]
@@ -284,7 +288,7 @@ function buildPieces(view: PlayerView, highlight: number[]): THREE.Group {
         const w = warrior(FACTION_COLOR[f])
         w.scale.setScalar(PIECE_SCALE)
         w.position.set(baseX + (k % 2) * 0.36 - 0.18, 0.12, baseZ + Math.floor(k / 2) * 0.32 - 0.16)
-        root.add(w)
+        add(w)
       }
       if (n > 1) {
         const tag = label(String(n), { bg: FACTION_COLOR[f], size: 0.5 })
@@ -296,8 +300,15 @@ function buildPieces(view: PlayerView, highlight: number[]): THREE.Group {
       const obj = token(t.type, FACTION_COLOR[t.faction])
       obj.scale.setScalar(PIECE_SCALE)
       obj.position.add(new THREE.Vector3(p.x + 1.05, 0.12, p.z - 0.35 + i * 0.5))
-      root.add(obj)
+      add(obj)
     })
+    if (fresh) {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R, 0.09, 8, 48), new THREE.MeshBasicMaterial({ color: '#f2b705', transparent: true }))
+      ring.rotation.x = Math.PI / 2
+      ring.position.set(p.x, 0.22, p.z)
+      root.add(ring)
+      pulse.push(ring)
+    }
     if (highlight.includes(id)) {
       const ring = new THREE.Mesh(new THREE.TorusGeometry(CLEARING_R + 0.18, 0.06, 8, 48), new THREE.MeshBasicMaterial({ color: '#fff36b' }))
       ring.rotation.x = Math.PI / 2
@@ -312,14 +323,22 @@ function buildPieces(view: PlayerView, highlight: number[]): THREE.Group {
     const p = where.kind === 'clearing' ? world(where.id).add(new THREE.Vector3(0.6, 0, 0.6)) : forestCentre(where.id)
     fig.position.set(p.x, (where.kind === 'clearing' ? 0.12 : groundHeight(p.x, p.z)), p.z)
     root.add(fig)
+    if (where.kind === 'clearing' && changed.includes(where.id)) pop.push(fig)
   }
-  return root
+  return { root, pop, pulse }
 }
+
+const POP_MS = 380, PULSE_MS = 1200
+/** Overshoots a little, then settles at 1 (easeOutBack). */
+const easeOutBack = (x: number) => 1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2
+
+
 
 // ── The view ───────────────────────────────────────────────────────────────────
 
 export interface Board3D {
-  update(view: PlayerView, highlight: number[]): void
+  /** Redraws the pieces; clearings in `changed` pulse once and their pieces pop in. */
+  update(view: PlayerView, highlight: number[], changed?: number[]): void
   dispose(): void
 }
 
@@ -356,6 +375,8 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
 
   const pickables = buildScenery(scene)
   let pieces: THREE.Group | null = null
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+  let anim: { start: number; pop: { o: THREE.Object3D; scale: number }[]; pulse: THREE.Mesh[] } | null = null
 
   const resize = () => {
     const w = host.clientWidth || 800, h = Math.max(360, Math.round(w * 0.72))
@@ -380,23 +401,42 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
     if (hit) onPick(hit.object.userData.clearing as number)
   })
 
+  function animate(ms: number) {
+    const a = anim!
+    const k = easeOutBack(Math.min(1, ms / POP_MS))
+    for (const { o, scale } of a.pop) o.scale.setScalar(scale * Math.max(0.05, k))
+    const f = Math.min(1, ms / PULSE_MS)
+    for (const ring of a.pulse) {
+      ring.scale.setScalar(1 + 0.45 * f)
+      ;(ring.material as THREE.MeshBasicMaterial).opacity = 1 - f
+      ring.visible = f < 1
+    }
+    if (ms >= Math.max(POP_MS, PULSE_MS)) anim = null
+  }
+
   let running = true
   const tick = () => {
     if (!running) return
     controls.update()
+    if (anim) animate(performance.now() - anim.start)
     renderer.render(scene, camera)
     requestAnimationFrame(tick)
   }
   tick()
 
   return {
-    update(view, highlight) {
+    update(view, highlight, changed = []) {
       if (pieces) {
         scene.remove(pieces)
         pieces.traverse(o => { if (o instanceof THREE.Mesh) o.geometry.dispose() })
       }
-      pieces = buildPieces(view, highlight)
+      const built = buildPieces(view, highlight, reduceMotion ? [] : changed)
+      pieces = built.root
       scene.add(pieces)
+      anim = built.pop.length || built.pulse.length
+        ? { start: performance.now(), pop: built.pop.map(o => ({ o, scale: o.scale.x })), pulse: built.pulse }
+        : null
+      if (anim) animate(0)
     },
     dispose() {
       running = false

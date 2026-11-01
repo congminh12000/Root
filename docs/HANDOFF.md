@@ -29,13 +29,18 @@ npm run typecheck && npm test && npm run audit:rules
 - Review toàn bộ điều khoản với p16: 140 điều `verified`. Sửa 2 lỗi: thời điểm xáo lại deck (§2.1) và Rest lật item ngửa (§9.6.1).
 - Golden scenario Walking Through Root (SRC-003): chơi lại ván mẫu 2 vòng, khớp sách từng bước. Xem `docs/06-qa/golden-scenarios/walking-through-root.md`.
 
+## Đã xong thêm (nhánh `feat/root2-polish`)
+
+- §1.1.3 / §4.3.6: Field Hospitals, Outrage và bỏ bớt supporter sinh ra cùng lúc thì người chọn được chọn thứ tự (`order.ts`, hành động `order-effects`). Trong battle, hit của cả hai bên được gỡ xong rồi mới xử lý hiệu ứng.
+- Bot chạy trong worker thread (`packages/server/src/bot-pool.ts`).
+- Khung xem chi tiết lá bài; hoạt ảnh ô thay đổi và điểm (2D và 3D).
+
 ## Còn lại
 
 | Việc | Ghi chú |
 |---|---|
-| §1.1.3 thứ tự hiệu ứng đồng thời | Người tới lượt phải được chọn thứ tự; engine đang dùng thứ tự cố định |
-| Bot chạy trong worker thread | Để bot `search` không chặn các trận khác |
-| Hoạt ảnh và xem chi tiết lá bài | |
+| Hoạt ảnh quân chạy theo đường, xúc xắc | Hiện chỉ có vòng sáng và quân bật lên ở ô thay đổi |
+| Thử với người chơi thật | Bot chưa được đo với người giỏi |
 
 ## Quy ước
 

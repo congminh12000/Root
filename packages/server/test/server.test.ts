@@ -7,6 +7,7 @@ import { WebSocket } from 'ws'
 import type { CreateGameResponse, ServerMessage } from '../src/protocol.ts'
 import { Room, type SavedGame } from '../src/room.ts'
 import { startServer } from '../src/server.ts'
+import { legalActions } from '@root/game-engine'
 
 const allBots = { seats: (['marquise', 'eyrie', 'alliance', 'vagabond'] as const).map(faction => ({ faction, kind: 'bot' as const, bot: 'simple' })) }
 
@@ -57,6 +58,35 @@ test('a human who runs out of time gets one decision made by a bot, then the clo
   assert.ok(room.saved.record.commands[0]!.command.actionId.startsWith('timeout-'))
   unsubscribe()
   room.close()
+})
+
+test('scheduled bot moves run in a worker thread: the server keeps answering while a bot searches', async () => {
+  const room = Room.create({ seats: (['marquise', 'eyrie'] as const).map(faction => ({ faction, kind: 'bot' as const, bot: 'search-fast' })) }, () => {}, { botDelayMs: 0 })
+  let last = Date.now(), worstGap = 0
+  const tick = setInterval(() => { const now = Date.now(); worstGap = Math.max(worstGap, now - last); last = now }, 10)
+  const unsubscribe = room.subscribe(null, () => {})
+  await new Promise(r => setTimeout(r, 2500))
+  clearInterval(tick)
+  unsubscribe()
+  room.close()
+  assert.ok(room.saved.record.commands.length >= 2, `bots moved (${room.saved.record.commands.length})`)
+  assert.ok(worstGap < 150, `the main thread was blocked for ${worstGap} ms`)
+})
+
+test('a timeout decision that arrives after the human already acted is dropped', async () => {
+  let release: () => void = () => {}
+  const slow = (job: { legal: unknown[] }) => new Promise<number>(r => { release = () => r(job.legal.length - 1) })
+  const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, { botDelayMs: 0, turnSeconds: 0.02, thinker: slow })
+  const unsubscribe = room.subscribe(null, () => {})
+  await new Promise(r => setTimeout(r, 60)) // the clock ran out; the stand-in bot is thinking
+  const revision = room.state.meta.revision
+  const own = legalActions(room.state, 'marquise')[0]!
+  assert.ok(room.submit('marquise', 'human-1', revision, own).ok)
+  release()
+  await new Promise(r => setTimeout(r, 20))
+  unsubscribe()
+  room.close()
+  assert.deepEqual(room.saved.record.commands.map(c => c.command.actionId), ['human-1'])
 })
 
 test('HTTP + WebSocket: create a game, join a seat, act, and see the update; the game file is saved', async () => {
