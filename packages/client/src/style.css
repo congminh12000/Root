@@ -225,3 +225,37 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .log-entry button { color: var(--ink); background: var(--paper-raised); display: block; width: 100%; text-align: left; white-space: normal; margin-top: var(--sp-2); }
 .log-entry button[aria-pressed="true"] { outline: 2px solid var(--ink); background: var(--gold-a35); }
 .log-entry button:disabled { opacity: 1; cursor: default; }
+
+/* Lake visual study: a wide diorama and a compact workshop, using the shared ink/paper tokens. */
+.lake-page { max-width: 1920px; margin: auto; padding: var(--sp-6); }
+.lake-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-4); margin-bottom: var(--sp-4); }
+.lake-heading h1 { margin: 0; font-size: var(--fs-xl); }
+.lake-heading h1 span { font-size: var(--fs-lg); color: var(--ink-soft); padding-left: var(--sp-3); }
+.lake-heading p { margin: var(--sp-2) 0; }
+.lake-eyebrow { letter-spacing: .14em; font-size: var(--fs-xs); color: var(--ink-soft); }
+.lake-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; align-items: start; gap: var(--sp-4); }
+.lake-stage { padding: var(--sp-2); min-width: 0; position: sticky; top: var(--sp-2); }
+.lake-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.lake-tools label { font-size: var(--fs-xs); }
+.lake-canvas { width: 100%; height: min(78vh, 900px); min-height: 520px; border-radius: var(--r-sm); overflow: hidden; }
+.lake-canvas canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.lake-caption { padding: var(--sp-2); margin: 0; }
+.lake-panel { display: grid; gap: var(--sp-3); }
+.lake-panel h2 { margin-top: 0; font-size: var(--fs-lg); }
+.lake-state { background: var(--paper); padding: var(--sp-3); border-radius: var(--r-sm); min-height: 60px; }
+.lake-samples { display: grid; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.lake-samples button { text-align: left; white-space: normal; }
+.lake-panel button[aria-pressed="true"] { background: var(--gold-a35); color: var(--ink); outline: 2px solid var(--ink); }
+.lake-slots { display: grid; gap: var(--sp-3); }
+.lake-slots > div > span { font-size: var(--fs-xs); color: var(--ink-soft); }
+.lake-slots > div > div { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-1); }
+.lake-slots button { padding: var(--sp-1) var(--sp-2); font-size: var(--fs-xs); }
+.lake-panel output { display: block; font-size: var(--fs-xs); margin-top: var(--sp-2); }
+@media (max-width: 1000px) {
+  .lake-page { padding: var(--sp-3); }
+  .lake-layout { grid-template-columns: minmax(0, 1fr); }
+  .lake-stage { position: static; }
+  .lake-canvas { height: 76vh; min-height: 420px; }
+  .lake-heading { flex-wrap: wrap; }
+  .lake-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

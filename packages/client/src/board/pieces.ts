@@ -42,7 +42,7 @@ function pawn(): THREE.Group {
   return outline(g, INK_W)
 }
 
-function building(type: string, f: FactionId): THREE.Group {
+export function building(type: string, f: FactionId): THREE.Group {
   const c = FACTION_COLOR[f]
   const g = new THREE.Group()
   if (type === 'roost') {
@@ -60,7 +60,7 @@ function building(type: string, f: FactionId): THREE.Group {
   return outline(g, INK_W)
 }
 
-function ruin(): THREE.Group {
+export function ruin(): THREE.Group {
   const g = new THREE.Group()
   g.add(part('pillar-a', cyl(0.07, 0.08, 0.36, 7), color.rock, [-0.1, 0.18, 0]), part('pillar-b', cyl(0.07, 0.08, 0.22, 7), color.rock, [0.1, 0.11, 0]),
     part('lintel', box(0.2, 0.06, 0.08), color.rock, [0.05, 0.03, 0.12], [0, 0.6, 0]))
