@@ -47,8 +47,10 @@ if (args.includes('--refresh') || !existsSync(snapshot) || Date.now() - lastChec
     writeFileSync(stamp, JSON.stringify({ checked: new Date().toISOString() }))
     console.log('rules:guard: refreshed the Rules Library p16 snapshot')
   } catch (e) {
-    if (!existsSync(snapshot)) fail('no Rules Library snapshot and it could not be fetched; run `npm run snapshot:rules` online')
-    console.warn(`rules:guard: could not refresh the snapshot (offline?); checking the local copy. ${String(e).split('\n')[0]}`)
+    // The snapshot script's own error (offline, or dependencies not installed) says why.
+    const why = String((e as { stderr?: Buffer }).stderr ?? e).trim().split('\n').find(l => /Error/.test(l)) ?? String(e).split('\n')[0]
+    if (!existsSync(snapshot)) fail(`no Rules Library snapshot and it could not be fetched (${why}); run \`npm install\` and \`npm run snapshot:rules\` online`)
+    console.warn(`rules:guard: could not refresh the snapshot (${why}); checking the local copy`)
   }
 }
 
