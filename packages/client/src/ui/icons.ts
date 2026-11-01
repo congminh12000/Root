@@ -9,9 +9,11 @@ export type IconName =
   | 'marquise' | 'eyrie' | 'alliance' | 'vagabond'
   | 'fox' | 'rabbit' | 'mouse' | 'bird'
   | 'close' | 'dice' | 'clock' | 'star' | 'card'
+  | 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
 
 const F = 'style="fill:var(--icon-fill,currentColor);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round"'
 const INK = 'style="fill:var(--ink)"'
+const FLAME = 'style="fill:var(--autumn-orange);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round"'
 const LINE = 'style="fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"'
 
 const SHAPES: Record<IconName, string> = {
@@ -38,6 +40,15 @@ const SHAPES: Record<IconName, string> = {
   clock: `<circle ${F} cx="12" cy="12" r="8.5"/><path ${LINE} d="M12 7.5 V12 L15 14"/>`,
   star: `<path ${F} d="M12 3 L14.6 8.6 L20.6 9.3 L16.1 13.4 L17.4 19.4 L12 16.4 L6.6 19.4 L7.9 13.4 L3.4 9.3 L9.4 8.6 Z"/>`,
   card: `<rect ${F} x="6" y="3" width="12" height="18" rx="2"/><path ${LINE} d="M9 8 H15 M9 11.5 H15 M9 15 H13"/>`,
+  // Vagabond items (§9.2.5): our own drawings.
+  boots: `<path ${F} d="M7 3.5 H12.5 V12.5 L18.5 14.5 C20 15 20.5 16 20.5 17.5 V19.5 H5.5 V12 C6.5 9 6.8 6 7 3.5 Z"/><path ${LINE} d="M5.5 17 H20.5"/>`,
+  sword: `<path ${F} d="M15.5 3.5 L20.5 3.5 L20.5 8.5 L10.5 18.5 L5.5 13.5 Z"/><path ${LINE} d="M4 12 L12 20 M6.5 17.5 L3.5 20.5"/>`,
+  crossbow: `<path ${LINE} d="M4 9 C8 4 16 4 20 9"/><path ${F} d="M11 6 H13 V20 H11 Z"/><path ${LINE} d="M4 9 L12 13 L20 9 M12 3 V6"/>`,
+  torch: `<path ${F} d="M10 11 H14 L13 21 H11 Z"/><path ${FLAME} d="M12 2.5 C15 5.5 16 8 14 11 H10 C8 8.5 9.5 6.5 11 6 C11 4.5 11.3 3.5 12 2.5 Z"/>`,
+  hammer: `<path ${F} d="M4.5 4.5 H14.5 V9.5 H4.5 Z"/><path ${F} d="M8.5 9.5 H10.5 V20.5 H8.5 Z"/><path ${LINE} d="M14.5 6 H19"/>`,
+  tea: `<path ${F} d="M4.5 9.5 H16.5 V14 C16.5 17.5 14 20 10.5 20 C7 20 4.5 17.5 4.5 14 Z"/><path ${LINE} d="M16.5 11 C19.5 11 19.5 15 16.5 15 M8 3.5 C7 5 9 6 8 7.5 M12 3.5 C11 5 13 6 12 7.5"/>`,
+  coin: `<circle ${F} cx="12" cy="12" r="8.5"/><circle ${LINE} cx="12" cy="12" r="5"/>`,
+  bag: `<path ${F} d="M9 4.5 H15 L13.5 8 C18 9 20 13 19.5 16.5 C19 19.5 16.5 20.5 12 20.5 C7.5 20.5 5 19.5 4.5 16.5 C4 13 6 9 10.5 8 Z"/><path ${LINE} d="M9.5 8 H14.5"/>`,
 }
 
 export const ICONS = Object.keys(SHAPES) as IconName[]
@@ -55,5 +66,5 @@ export function installIcons(doc: Document = document) {
 
 /** One icon as a standalone SVG image (for canvas labels on the 3D board), filled with `fill`, outlined in ink. */
 export function iconSvg(name: IconName, fill: string, size = 96): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" style="--icon-fill:${fill};--ink:${color.ink}">${SHAPES[name]}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" style="--icon-fill:${fill};--ink:${color.ink};--autumn-orange:${color.autumnOrange}">${SHAPES[name]}</svg>`
 }

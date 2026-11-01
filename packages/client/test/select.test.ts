@@ -65,3 +65,19 @@ test('clicks: select, go on to a destination, step back, deselect; stale stages 
   assert.deepEqual(stillValid(legal, path), path)
   assert.deepEqual(generalActions(legal).map(a => a.type), ['end-step'])
 })
+
+test('card actions: every legal action naming a card is found from that card', async () => {
+  const { actionsForCard } = await import('../src/interaction/cards.ts')
+  let found = 0
+  for (const legal of positions('cards', 1500)) {
+    for (const a of legal) {
+      const p = a.payload as Record<string, unknown>
+      for (const k of ['card', 'spend', 'dominance']) {
+        if (typeof p[k] !== 'string') continue
+        assert.ok(actionsForCard(legal, p[k] as string).some(b => key(b) === key(a)), `${a.type} via ${k}`)
+        found++
+      }
+    }
+  }
+  assert.ok(found > 200, `checked ${found}`)
+})

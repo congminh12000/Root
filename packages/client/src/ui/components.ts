@@ -1,6 +1,9 @@
 import { signal } from '@preact/signals'
-import type { FactionId, LastRoll } from '@root/game-engine'
+import type { Action, FactionId, ItemType, LastRoll } from '@root/game-engine'
+import { describe, GROUP } from '../describe.ts'
+import { actionsForCard } from '../interaction/cards.ts'
 import { html } from 'htm/preact'
+import type { ComponentChildren } from 'preact'
 import { useEffect } from 'preact/hooks'
 import { cardDesign, cardName, FACTION_NAME, ITEM_NAME, SUIT_COLOR, SUIT_NAME } from '../names.ts'
 import type { IconName } from './icons.ts'
@@ -60,8 +63,8 @@ export function CardDetail({ card, onClose }: { card: string; onClose?: () => vo
     <div class="note">${d.libraryId}</div>`
 }
 
-/** The open card's panel; closes on Escape or a click outside it. */
-export function CardDetailOverlay() {
+/** The open card's panel; closes on Escape or a click outside it. With `legal`, it offers what can be done with the card. */
+export function CardDetailOverlay({ legal = [], send }: { legal?: Action[]; send?: (a: Action) => void }) {
   const card = openCard.value
   useEffect(() => {
     if (!card) return
@@ -72,7 +75,10 @@ export function CardDetailOverlay() {
     document.addEventListener('click', click)
     return () => { document.removeEventListener('keydown', key); document.removeEventListener('click', click) }
   }, [card])
-  return card ? html`<div class="carddetail" role="dialog" aria-label=${cardName(card)}><${CardDetail} card=${card} onClose=${() => { openCard.value = null }} /></div>` : null
+  if (!card) return null
+  const uses = send ? actionsForCard(legal, card) : []
+  return html`<div class="carddetail" role="dialog" aria-label=${cardName(card)}><${CardDetail} card=${card} onClose=${() => { openCard.value = null }} />
+    ${uses.length > 0 && html`<div class="carduses">${uses.map(a => html`<button onClick=${() => { openCard.value = null; send!(a) }}>${GROUP[a.type] ?? a.type}${describe(a) === cardName(card) ? '' : `: ${describe(a)}`}</button>`)}</div>`}</div>`
 }
 
 /** The battle roll: both dice, then the hits each side deals (after the §4.3.3 cap). */
@@ -80,3 +86,30 @@ export const Dice = ({ roll: r }: { roll: LastRoll }) => html`
   <span class="die">${r.dice[0]}</span><span class="die">${r.dice[1]}</span>
   <div class="what"><${FactionChip} f=${r.attacker} /> đánh <${FactionChip} f=${r.defender} /> ở ô ${r.clearing + 1}<br />
     ${FACTION_NAME[r.attacker]} gây <b>${r.hits.attacker}</b> hit, ${FACTION_NAME[r.defender]} gây <b>${r.hits.defender}</b>${r.defender === 'alliance' ? ' (Guerrilla: Alliance lấy số cao)' : ''}</div>`
+
+/** An item, by its icon; exhausted items lie on their side, damaged ones are red (§9.2.5–9.2.7). */
+export const ItemIcon = ({ item, state }: { item: ItemType; state?: 'exhausted' | 'damaged' }) =>
+  html`<span class=${`item${state ? ` ${state}` : ''}`} title=${`${ITEM_NAME[item]}${state === 'exhausted' ? ' (úp)' : state === 'damaged' ? ' (hỏng)' : ''}`}>
+    <${Icon} name=${item} label=${ITEM_NAME[item]} /></span>`
+
+const KIND_TAG: Record<string, string> = { item: 'item', immediate: 'dùng ngay', persistent: 'lâu dài', ambush: 'ambush', dominance: 'dominance' }
+/** A card as a small card face for the hand: suit band, name, kind, crafting cost or item. Click for details. */
+export function MiniCard({ card, usable, style }: { card: string; usable?: boolean; style?: Record<string, string> }) {
+  const d = cardDesign(card)
+  return html`<button type="button" class=${`minicard${usable ? ' usable' : ''}`} style=${{ '--suit': SUIT_COLOR[d.suit], ...style }} data-card=${card}
+    aria-label=${`${cardName(card)}${usable ? ', dùng được' : ''}`} onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}>
+    <span class="band"><${SuitPip} suit=${d.suit} /></span>
+    <span class="name">${d.name}</span>
+    <span class="kind">${KIND_TAG[d.kind] ?? d.kind}</span>
+    ${d.kind === 'item' && d.item ? html`<span class="foot"><${ItemIcon} item=${d.item} /> +${d.vp ?? 0}</span>`
+      : d.cost.length > 0 ? html`<span class="foot">${d.cost.map(s => html`<${SuitPip} suit=${s} />`)}</span>` : null}
+  </button>`
+}
+
+export interface Space { top?: string; bottom?: string; filled: boolean; bonus?: boolean; current?: boolean }
+/** A row of spaces from a faction board: what still sits on the track is `filled`; `top`/`bottom` print costs and points. */
+export const Track = ({ label, spaces, color: c }: { label: ComponentChildren; spaces: Space[]; color: string }) => html`
+  <div class="track" style=${{ '--track': c }}><div class="track-label">${label}</div><div class="spaces">${spaces.map(s => html`
+    <span class=${`space${s.filled ? ' filled' : ''}${s.bonus ? ' bonus' : ''}${s.current ? ' current' : ''}`}>
+      ${s.top !== undefined && html`<small class="top">${s.top}</small>`}${s.bonus && html`<small class="plus" title="Rút thêm 1 lá">+1</small>`}
+      ${s.bottom !== undefined && html`<small class="bottom">${s.bottom}</small>`}</span>`)}</div></div>`

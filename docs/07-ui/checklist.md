@@ -33,7 +33,7 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Di chuyển: chọn ô đi → ô đến → số quân | Xong | UI-4 |
 | ★ | Đánh: chọn ô → chọn phe bị đánh | Xong | UI-4 |
 | ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Xong | UI-4 |
-| ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Chưa (danh sách) | UI-5 |
+| ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Một phần | UI-5 |
 | ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Xong | UI-4 |
 | ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Xong | UI-4 |
 | ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Xong | UI-2 |
@@ -43,15 +43,15 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Tay bài dạng quạt: chất, chi phí, đánh dấu lá dùng được | Một phần (chip tên) | UI-5 |
-| ★ | Xem chi tiết lá bài | Có | UI-5 (restyle) |
-| ★ | Play area (lá persistent đã chế tạo), dominance có thể lấy | Một phần | UI-5 |
-| ★ | Marquise: track sawmill/workshop/recruiter kèm điểm, kho gỗ, keep | Một phần (dạng chữ) | UI-5 |
-| ★ | Eyrie: decree 4 cột, leader, track roost, đánh dấu cột đã làm | Một phần | UI-5 |
-| ★ | Alliance: track sympathy kèm điểm, supporter, base, officer | Một phần | UI-5 |
-| ★ | Vagabond: túi item (tươi, úp, hỏng), track trà/tiền/túi, quan hệ, quest | Một phần | UI-5 |
-| ★ | Đối thủ: số lá trên tay, bảng phe thu gọn, bài được cho xem | Một phần | UI-5 |
-| | Item supply, quest đang mở, deck và chồng bỏ | Có | UI-5 |
+| ★ | Tay bài dạng quạt: chất, chi phí, đánh dấu lá dùng được | Xong | UI-5 |
+| ★ | Xem chi tiết lá bài | Xong | UI-5 (restyle) |
+| ★ | Play area (lá persistent đã chế tạo), dominance có thể lấy | Xong | UI-5 |
+| ★ | Marquise: track sawmill/workshop/recruiter kèm điểm, kho gỗ, keep | Xong | UI-5 |
+| ★ | Eyrie: decree 4 cột, leader, track roost, đánh dấu cột đã làm | Xong | UI-5 |
+| ★ | Alliance: track sympathy kèm điểm, supporter, base, officer | Xong | UI-5 |
+| ★ | Vagabond: túi item (tươi, úp, hỏng), track trà/tiền/túi, quan hệ, quest | Xong | UI-5 |
+| ★ | Đối thủ: số lá trên tay, bảng phe thu gọn, bài được cho xem | Xong | UI-5 |
+| | Item supply, quest đang mở, deck và chồng bỏ | Xong | UI-5 |
 
 ## E. Quyết định xen ngang
 
@@ -68,7 +68,7 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
 | ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Xong | UI-2 |
-| ★ | Bảng điểm (track 0–30), dominance, coalition | Một phần | UI-5 |
+| ★ | Bảng điểm (track 0–30), dominance, coalition | Xong | UI-5 |
 | ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Một phần | UI-8 |
 | ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Một phần (một dòng) | UI-8 |
 | | Khán giả xem trận | Xong | UI-2 |
