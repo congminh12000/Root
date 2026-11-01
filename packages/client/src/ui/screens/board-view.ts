@@ -5,15 +5,17 @@ import { renderBoard } from '../../board.ts'
 import type { Travel } from '../../motion.ts'
 import type { Changes } from '../../net/changes.ts'
 
-type Board3D = { update(v: PlayerView, h: number[], changed?: number[], travels?: Travel[]): void; dispose(): void }
+type Board3D = { update(v: PlayerView, h: number[], changed?: number[], travels?: Travel[]): void; resetCamera(): void; dispose(): void }
 export type BoardMode = '3d' | '2d'
 
 /**
  * The board: three.js (loaded on demand) or the SVG fallback, both drawn imperatively into a host Preact leaves
  * alone. Each update's animations run once (`changes.seq`); re-renders for a new highlight do not replay them.
  */
-export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL }: {
+export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL, cameraHome = 0 }: {
   view: PlayerView; highlight: number[]; changes: Changes; mode: BoardMode; onPick: (c: number) => void; onNoWebGL: () => void
+  /** Bump it to glide the 3D camera back to the default view. */
+  cameraHome?: number
 }) {
   const host = useRef<HTMLDivElement>(null)
   const board3d = useRef<Board3D | null>(null)
@@ -45,6 +47,8 @@ export function BoardView({ view, highlight, changes, mode, onPick, onNoWebGL }:
     if (mode === '3d') { board3d.current?.update(view, highlight, changed, travels); return }
     if (host.current) host.current.innerHTML = renderBoard(view, highlight, changed, travels)
   }, [view, highlight, changes, mode])
+
+  useEffect(() => { if (cameraHome) board3d.current?.resetCamera() }, [cameraHome])
 
   const click = (e: MouseEvent) => {
     if (mode !== '2d') return

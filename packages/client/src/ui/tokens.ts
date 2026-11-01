@@ -36,37 +36,6 @@ export const factionColor: Record<FactionId, string> = { marquise: '#d9772b', ey
 /** Card and clearing suits; bird is wild on cards (§2.2.2). */
 export const suitColor = { fox: '#d6453d', rabbit: '#e8c33a', mouse: '#e98a3c', bird: '#7cb2d8' } as const
 
-/**
- * Board materials and scenery. The current 3D/2D boards keep their look until UI-3 retunes them to the palette;
- * until then their colours live here, named by what they paint.
- */
-export const scene = {
-  backdrop: '#e7dcc0',
-  sky: '#fff6e0',
-  groundBounce: '#6d5a3a',
-  sun: '#ffe2b0',
-  table: '#6b4426',
-  ground: { grass: '#9db86b', dry: '#c9b26a', moss: '#7fa35a' },
-  path: '#a9825a',
-  pine: '#3d5a2a',
-  /** Order matters: the seeded scenery picks by index. */
-  leaves: ['#d9622b', '#e8a33a', '#b8452a', '#8a9a3c', '#f0c24b', '#5f8a3a'],
-  trunk: '#5b3a22',
-  label: '#ffffff',
-  crownBase: '#ffffff',
-  clearing: '#e3d3ad',
-  slot: '#f6efdc',
-  roof: '#7a3b22',
-  wall: '#6b4a2c',
-  ruin: '#9a9a92',
-  woodToken: '#8a5a2b',
-  skin: '#c8b08a',
-  pack: '#7a5a3a',
-  pulse: '#f2b705',
-  highlight: '#fff36b',
-  board2d: { felt: '#e9dfc4', forest: '#9fbf86', forestEdge: '#7fa36a', path: '#b8956a', slotEdge: '#555555', ruin: '#999999', pieceEdge: '#222222', lit: '#111111' },
-} as const
-
 export const font = {
   display: "'Pangolin', 'Be Vietnam Pro', system-ui, sans-serif",
   body: "'Be Vietnam Pro', system-ui, -apple-system, sans-serif",

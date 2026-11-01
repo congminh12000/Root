@@ -79,12 +79,13 @@ Mỗi mốc là một hoặc vài PR nhỏ, theo thứ tự; mốc sau dựa tr�
 
 - **UI-1 xong (01/11/2026):** `ui/tokens.ts` (mọi màu, chữ, khoảng cách, chuyển động; bàn 3D/2D giữ màu cũ trong nhóm `scene` tới UI-3), `ui/setup.ts` (font Latin + tiếng Việt, token, icon), `ui/icons.ts` (13 icon tự vẽ), `ui/parts.ts` (chip phe, pip chất, khung xúc xắc), `ui-kit.html`, `test/tokens.test.ts` (cấm mã màu ngoài token), Playwright `visual/` (ảnh gốc 1440 và 1280).
 - **UI-2 xong (01/11/2026):** sảnh và màn trận viết lại bằng Preact + `htm` (template trong file `.ts`, không cần bước JSX, test Node chạy thẳng) và `@preact/signals`. `net/` giữ WebSocket (`connection.ts`), API (`api.ts`) và phần tính thay đổi giữa hai cập nhật (`changes.ts`, có test). Component chung ở `ui/components.ts`; màn hình ở `ui/screens/`; bàn three.js/SVG vẫn vẽ bằng code cũ trong `BoardView`, hoạt ảnh chỉ chạy một lần mỗi cập nhật (`changes.seq`). Khung lá bài, vị trí cuộn và lựa chọn đang xem giữ nguyên qua các lần cập nhật.
+- **UI-3 xong (01/11/2026):** bàn 3D tách thành `board/geo.ts` (vị trí từ game-data), `board/toon.ts` (toon 3 nấc, viền mực inverted hull, cache geometry/vật liệu, nhãn có icon và font Pangolin), `board/scenery.ts` (nền vẽ tay trên canvas, thông 4 tầng và cây tròn instanced, đá, ô có viền mực và vòng màu chất), `board/pieces.ts` (quân phân biệt bằng hình). Camera mặc định nhìn cao như ảnh tham khảo, nút "Về góc mặc định". Bàn 2D cùng bảng màu, rừng thông nét mực, quân là icon phe. Nhóm màu tạm `scene` trong token đã bỏ. Trang `board-kit.html` dựng một vị trí cố định từ seed để so phong cách, đo hiệu năng (`board.measure(n)`) và chụp ảnh. Đo trên M1 Pro: khoảng 1 ms mỗi khung ở canvas 1912×1376.
 
 ### Lệnh
 
 ```bash
 npm run dev -w @root/client            # rồi mở /ui-kit.html
-npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so ảnh với visual/__screenshots__
+npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so ảnh ui-kit và bàn 2D; bàn 3D kiểm tra có vẽ đúng màu (WebGL phần mềm không cho hai khung giống hệt)
 npm run test:visual:update -w @root/client   # chỉ khi cố ý đổi hình; ghi lý do trong PR
 ```
 

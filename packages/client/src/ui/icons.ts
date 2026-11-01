@@ -1,3 +1,5 @@
+import { color } from './tokens.ts'
+
 /**
  * Our own icons (no official art, licensing.md), drawn on a 24×24 grid in the ink style of style-guide §3: a flat
  * fill (`--icon-fill`, else the text colour) with an ink outline. One hidden SVG sprite holds them all.
@@ -49,4 +51,9 @@ export function iconSprite(): string {
 export function installIcons(doc: Document = document) {
   if (doc.getElementById('i-close')) return
   doc.body.insertAdjacentHTML('afterbegin', iconSprite())
+}
+
+/** One icon as a standalone SVG image (for canvas labels on the 3D board), filled with `fill`, outlined in ink. */
+export function iconSvg(name: IconName, fill: string, size = 96): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" style="--icon-fill:${fill};--ink:${color.ink}">${SHAPES[name]}</svg>`
 }

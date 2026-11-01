@@ -10,9 +10,9 @@ export default defineConfig({
     },
   },
   // three.js is its own lazily loaded chunk (board3d.ts), so its size does not delay the page.
-  // ui-kit.html shows every shared piece in every state (docs/07-ui).
+  // ui-kit.html shows every shared piece in every state, board-kit.html the board alone (docs/07-ui).
   build: {
     outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 800,
-    rollupOptions: { input: { main: resolve(import.meta.dirname, 'index.html'), kit: resolve(import.meta.dirname, 'ui-kit.html') } },
+    rollupOptions: { input: { main: resolve(import.meta.dirname, 'index.html'), kit: resolve(import.meta.dirname, 'ui-kit.html'), board: resolve(import.meta.dirname, 'board-kit.html') } },
   },
 })

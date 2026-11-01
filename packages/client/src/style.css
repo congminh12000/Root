@@ -20,7 +20,7 @@ a { color: var(--wood); }
 .seats td, .seats th { padding: var(--sp-1) var(--sp-2); text-align: left; }
 
 /* ── Controls ─────────────────────────────────────────────────────────────── */
-button { font: 500 var(--fs-sm) var(--font-body); background: var(--wood); color: var(--paper); border: 2px solid var(--ink); border-radius: var(--r-sm);
+button { white-space: nowrap; font: 500 var(--fs-sm) var(--font-body); background: var(--wood); color: var(--paper); border: 2px solid var(--ink); border-radius: var(--r-sm);
   padding: 5px var(--sp-3); cursor: pointer; box-shadow: 0 2px 0 var(--ink); transition: transform 80ms, box-shadow 80ms, background 80ms; }
 button:hover, button.is-hover { background: var(--wood-light); }
 button:active, button.is-active { transform: translateY(2px); box-shadow: none; }
@@ -76,11 +76,12 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .board-tools button[aria-pressed="true"], button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--paper); }
 .map canvas { display: block; width: 100%; border-radius: var(--r-lg); border: 2px solid var(--ink); }
 .board { width: 100%; height: auto; }
-.forest-label { font-size: 14px; fill: var(--pine-light); font-weight: bold; }
-.clearing-no { font-size: 16px; font-weight: bold; fill: var(--white); }
-.glyph { font-size: 14px; font-weight: bold; fill: var(--white); }
-.chip { font-size: 15px; font-weight: bold; fill: var(--white); }
-.token { font-size: 11px; fill: var(--white); }
+.board text { pointer-events: none; }
+.forest-label { font: 15px var(--font-display); fill: var(--paper-raised); stroke: var(--pine); stroke-width: 4; paint-order: stroke; }
+.clearing-no { font: 18px var(--font-display); fill: var(--paper-raised); stroke: var(--ink); stroke-width: 3; paint-order: stroke; }
+.glyph { font: 15px var(--font-display); fill: var(--white); stroke: var(--ink); stroke-width: 3; paint-order: stroke; }
+.count { font: 700 12px var(--font-body); fill: var(--paper-raised); }
+.token { font-size: 11px; fill: var(--white); stroke: var(--ink); stroke-width: 2; paint-order: stroke; }
 .board .clearing { cursor: pointer; }
 .board .pulse { fill: none; stroke: var(--autumn-gold); stroke-width: 8; transform-box: fill-box; transform-origin: center; animation: pulse var(--motion-pulse) ease-out forwards; pointer-events: none; }
 .board .pop { transform-box: fill-box; transform-origin: center; animation: pop var(--motion-pop) cubic-bezier(.34,1.56,.64,1); }

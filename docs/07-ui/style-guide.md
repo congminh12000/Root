@@ -50,6 +50,7 @@ Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọ
 - **Đổ bóng kiểu hoạt hình (toon):** 3 nấc sáng (sáng, giữa, tối), không chuyển mượt. Bóng đổ mềm, màu `ink` 25%.
 - **Hình khối tròn, hơi phình**, không góc nhọn sắc; mái nhà và cây có phần chồng lớp như ảnh tham khảo.
 - **Kết cấu nhẹ:** cỏ có đốm sắc độ, đường đất có mép sẫm, nước có vệt gợn trắng ngắn. Kết cấu sinh bằng code và seed cố định, không dùng ảnh chụp.
+- **Rừng:** khoảng 80% thông nhiều tầng (`pine`/`pineLight`), còn lại cây tròn xanh và một ít cây thu (`autumnOrange`/`autumnGold`), như ảnh tham khảo.
 - **Mật độ:** rừng dày ở vùng rừng (forest) của bản đồ, thưa quanh ô; ô và đường luôn thoáng để đặt quân.
 
 ## 4. Ánh sáng và camera
