@@ -22,6 +22,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   /** Clearings lit on the board: the filter, or the option being looked at in a list. */
   const [preview, setPreview] = useState<number[] | null>(null)
   const [mode, setModeState] = useState<BoardMode>(storedMode)
+  const [cameraHome, setCameraHome] = useState(0)
   const setMode = (m: BoardMode) => { setModeState(m); try { localStorage.setItem('root-board', m) } catch { /* private mode */ } }
 
   const u = conn.update.value
@@ -38,9 +39,10 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       <div class="board-col">
         <div class="board-tools">
           ${(['3d', '2d'] as const).map(m => html`<button aria-pressed=${mode === m} onClick=${() => setMode(m)}>${m.toUpperCase()}</button>`)}
-          <span>Bấm vào một ô để lọc lựa chọn. Kéo để xoay, cuộn để phóng to.</span>
+          ${mode === '3d' && html`<button class="secondary" onClick=${() => setCameraHome(n => n + 1)}>Về góc mặc định</button>`}
+          <span>Bấm vào một ô để lọc lựa chọn.${mode === '3d' ? ' Kéo để xoay, cuộn để phóng to.' : ''}</span>
         </div>
-        <${BoardView} view=${v} highlight=${highlight} changes=${conn.changes.value} mode=${mode} onPick=${pick} onNoWebGL=${() => setModeState('2d')} />
+        <${BoardView} view=${v} highlight=${highlight} changes=${conn.changes.value} mode=${mode} onPick=${pick} onNoWebGL=${() => setModeState('2d')} cameraHome=${cameraHome} />
         <${DicePanel} changes=${conn.changes.value} />
       </div>
       <aside>

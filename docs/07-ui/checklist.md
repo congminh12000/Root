@@ -15,15 +15,15 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Ô (clearing) có chất, số ô, slot công trình, ruin | Có | UI-3 |
-| ★ | Đường đi, rừng (forest), Vagabond trong rừng | Có | UI-3 |
-| ★ | Quân, công trình, token của 4 phe phân biệt bằng màu và hình | Một phần (chỉ màu) | UI-3 |
+| ★ | Ô (clearing) có chất, số ô, slot công trình, ruin | Xong | UI-3 |
+| ★ | Đường đi, rừng (forest), Vagabond trong rừng | Xong | UI-3 |
+| ★ | Quân, công trình, token của 4 phe phân biệt bằng màu và hình | Xong | UI-3 |
 | ★ | Số quân rõ khi đông; hover/bấm ô xem chi tiết (ai cai quản, quân, token) | Một phần | UI-4 |
 | ★ | Cai quản (rule) của từng ô hiển thị được | Chưa | UI-4 |
 | ★ | Đánh dấu ô/quân có thể chọn cho hành động đang làm | Một phần (lọc theo ô) | UI-4 |
-| | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Một phần | UI-3 |
-| | Bàn 2D dự phòng cùng phong cách | Có (chưa theo style) | UI-3 |
-| | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Có | UI-3 (restyle) |
+| | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Xong | UI-3 |
+| | Bàn 2D dự phòng cùng phong cách | Xong | UI-3 |
+| | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Xong | UI-3 (restyle) |
 | ★ | Bản đồ Autumn theo phong cách đã chốt | Chưa (chờ tư liệu) | UI-7 |
 
 ## C. Thao tác
@@ -84,4 +84,4 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
 | ★ | Giảm chuyển động | Có | mọi mốc |
 | ★ | Desktop 1280–1920 px; tablet ngang dùng được | Một phần | UI-2 |
-| | ≥ 55 fps trên M1 ở 1440p | Chưa đo | UI-3 |
+| | ≥ 55 fps trên M1 ở 1440p | Xong | UI-3 |
