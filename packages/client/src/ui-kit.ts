@@ -5,6 +5,10 @@ import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
 import { ActionBar } from './ui/screens/action-bar.ts'
+import { FactionBoards } from './ui/screens/boards.ts'
+import { Hand, Scores } from './ui/screens/hand.ts'
+import { sampleView } from './dev/sample.ts'
+import { NO_CHANGES } from './net/changes.ts'
 import { ICONS } from './ui/icons.ts'
 import { color, factionColor, font, fontSize, motion, radius, space, suitColor } from './ui/tokens.ts'
 
@@ -24,6 +28,9 @@ const Item = ({ label, children }: { label: string; children: ComponentChildren 
 const roll: LastRoll = { revision: 1, clearing: 4, attacker: 'marquise', defender: 'eyrie', dice: [3, 1], hits: { attacker: 3, defender: 1 } }
 const guerrilla: LastRoll = { revision: 2, clearing: 8, attacker: 'eyrie', defender: 'alliance', dice: [2, 0], hits: { attacker: 0, defender: 2 } }
 const noop = () => {}
+const sample = sampleView('vagabond')
+const seats = (['marquise', 'eyrie', 'alliance', 'vagabond'] as FactionId[]).map((f, i) => ({ faction: f, kind: i ? 'bot' : 'human', name: 'Minh', connected: true }))
+const crafts = sample.hand.slice(0, 2).map(card => ({ type: 'craft', payload: { card } })) as Action[]
 const legal = [
   { type: 'move', payload: { from: 0, to: 4, warriors: 1 } }, { type: 'move', payload: { from: 0, to: 4, warriors: 2 } },
   { type: 'move', payload: { from: 0, to: 4, warriors: 3 } }, { type: 'move', payload: { from: 0, to: 9, warriors: 1 } },
@@ -98,6 +105,12 @@ const Kit = () => html`
     <div class="kit-grid">
       ${([{ kind: 'idle' }, { kind: 'at', clearing: 0 }, { kind: 'path', from: 0, to: 4 }] as const).map(stage =>
         html`<${ActionBar} legal=${legal} stage=${stage} setStage=${noop} onPreview=${noop} send=${noop} />`)}</div><//>
+
+  <${Section} title="Tay bài và điểm" note="Lá viền vàng là lá có hành động dùng được ngay; bấm để xem chi tiết và hành động. Ván mẫu cố định từ seed.">
+    <div class="kit-grid two"><${Hand} view=${sample} seat="vagabond" legal=${crafts} /><${Scores} view=${sample} seats=${seats} changes=${NO_CHANGES} /></div><//>
+
+  <${Section} title="Bảng phe" note="Mỗi tab một phe, lấy số từ game-data và view; tab Chung là kho item, quest, deck.">
+    <div class="kit-grid two">${(['marquise', 'eyrie', 'alliance', 'vagabond', 'shared'] as const).map(t => html`<${FactionBoards} view=${sample} seat="vagabond" initial=${t} />`)}</div><//>
 
   <${Section} title="Bảng">
     <div class="kit-grid">
