@@ -2,6 +2,7 @@ import type { Action, FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useEffect, useMemo, useState } from 'preact/hooks'
 import { describe, GROUP } from '../../describe.ts'
+import { decisionOf } from '../../interaction/decisions.ts'
 import { click, IDLE, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { PHASE_NAME, STEP_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
@@ -12,6 +13,7 @@ import { ActionBar } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
 import { Hand, Scores } from './hand.ts'
 import { ClearingInfo } from './clearing-info.ts'
+import { DecisionBar, DecisionDialog } from './decision.ts'
 import { BoardView, type BoardMode } from './board-view.ts'
 
 const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
@@ -29,22 +31,30 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const [cameraHome, setCameraHome] = useState(0)
   /** The clearing whose contents are shown under the board (the last one clicked). */
   const [inspect, setInspect] = useState<number | null>(null)
+  /** The decision dialog folded away to look at the board; it opens again with every new position. */
+  const [folded, setFolded] = useState(false)
   const setMode = (m: BoardMode) => { setModeState(m); try { localStorage.setItem('root-board', m) } catch { /* private mode */ } }
 
   const u = conn.update.value
   // A new position drops the preview; a chosen path falls back to its start clearing, if that still has actions.
   useEffect(() => {
     setPreview(null)
+    setFolded(false)
     if (u) setStage(s => stillValid(u.legal, s.kind === 'path' ? { kind: 'at', clearing: s.from } : s))
   }, [u?.view.revision])
   if (!u) return html`<p class="loading">Đang kết nối trận ${gameId}… ${conn.notice.value}</p>`
   const { view: v, legal, seats, seat } = u
   const board = viewOf(legal, stage)
+  const decision = decisionOf(v, legal)
+  const mine = !!decision && decision.player === seat && legal.length > 0
+  const dialog = mine && decision!.dialog
   const highlight = preview ?? board.selected
   const pick = (c: number) => { setPreview(null); setInspect(c); setStage(s => click(legal, s, c)) }
 
   return html`
     <${TopBar} gameId=${u.gameId} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value} />
+    ${decision && !(dialog && !folded) && html`<${DecisionBar} decision=${decision} mine=${mine} onOpen=${dialog ? () => setFolded(false) : undefined} />`}
+    ${dialog && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${legal} send=${conn.send} onFold=${() => setFolded(true)} />`}
     <div class="layout">
       <div class="board-col">
         <div class="board-tools">

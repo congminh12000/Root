@@ -6,6 +6,8 @@ import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
 import { ActionBar } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
+import { DecisionBar, DecisionDialog } from './ui/screens/decision.ts'
+import type { Decision } from './interaction/decisions.ts'
 import { Hand, Scores } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
 import { NO_CHANGES } from './net/changes.ts'
@@ -30,6 +32,14 @@ const guerrilla: LastRoll = { revision: 2, clearing: 8, attacker: 'eyrie', defen
 const noop = () => {}
 const sample = sampleView('vagabond')
 const seats = (['marquise', 'eyrie', 'alliance', 'vagabond'] as FactionId[]).map((f, i) => ({ faction: f, kind: i ? 'bot' : 'human', name: 'Minh', connected: true }))
+const decisions: [Decision, Action[]][] = [
+  [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true },
+    (['builder', 'charismatic', 'commander', 'despot'] as const).map(leader => ({ type: 'eyrie-choose-leader', payload: { leader } }))],
+  [{ player: 'marquise', kind: 'field-hospital', title: 'Field Hospitals: Marquise de Cat có thể trả một lá cùng chất ô 5 để đưa 2 chiến binh về Keep', rule: '§6.2.3', dialog: true },
+    [{ type: 'field-hospital', payload: { card: 'anvil#1' } }, { type: 'field-hospital', payload: { card: 'ambush-bird#1' } }, { type: 'decline-field-hospital', payload: {} }]],
+  [{ player: 'vagabond', kind: 'take-hits', title: 'Vagabond chọn quân chịu 2 hit ở ô 3', rule: '§4.3.6', dialog: true },
+    [{ type: 'take-hits', payload: { remove: { sword: 1, torch: 1 } } }, { type: 'take-hits', payload: { remove: { 'boots:exhausted': 2 } } }]],
+]
 const crafts = sample.hand.slice(0, 2).map(card => ({ type: 'craft', payload: { card } })) as Action[]
 const legal = [
   { type: 'move', payload: { from: 0, to: 4, warriors: 1 } }, { type: 'move', payload: { from: 0, to: 4, warriors: 2 } },
@@ -111,6 +121,11 @@ const Kit = () => html`
 
   <${Section} title="Bảng phe" note="Mỗi tab một phe, lấy số từ game-data và view; tab Chung là kho item, quest, deck.">
     <div class="kit-grid two">${(['marquise', 'eyrie', 'alliance', 'vagabond', 'shared'] as const).map(t => html`<${FactionBoards} view=${sample} seat="vagabond" initial=${t} />`)}</div><//>
+
+  <${Section} title="Quyết định" note="Hộp quyết định (ở trận thật nó nổi giữa màn, Esc thu lại), và dải thông báo khi đã thu lại hoặc khi người khác đang quyết định.">
+    <${DecisionBar} decision=${decisions[1]![0]} mine=${true} onOpen=${noop} />
+    <${DecisionBar} decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} />
+    ${decisions.map(([d, l]) => html`<div class="kit-dialog"><${DecisionDialog} decision=${d} view=${sample} legal=${l} send=${noop} onFold=${noop} /></div>`)}<//>
 
   <${Section} title="Bảng">
     <div class="kit-grid">
