@@ -51,7 +51,7 @@ HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ fac
 - Mọi hình đều do code tự dựng từ `game-data`, không dùng art chính thức: bàn gỗ, mặt đất, đường đất, cây theo từng khu rừng, viền clearing theo màu suit, quân, công trình và token. Ngẫu nhiên có seed cố định nên mọi máy thấy cùng một bàn.
 - Kéo để xoay, cuộn để phóng to. Bấm vào một ô (cả 2D và 3D) để lọc các lựa chọn liên quan tới ô đó; bấm lại để bỏ lọc.
 - Three.js nằm trong một chunk riêng, chỉ tải khi mở bàn 3D.
-- Hoạt ảnh: sau mỗi cập nhật, ô có quân thay đổi phát một vòng sáng lan ra và quân ở đó bật lên (2D và 3D); điểm vừa đổi nảy lên. Tắt khi trình duyệt bật "giảm chuyển động".
+- Hoạt ảnh: sau mỗi cập nhật, ô có quân thay đổi phát một vòng sáng lan ra và quân ở đó bật lên (2D và 3D); điểm vừa đổi nảy lên. Quân vừa di chuyển chạy dọc đường từ ô cũ tới ô mới (Vagabond cả khi vào/ra rừng); client đọc nước đi từ nhật ký công khai, không đoán từ trạng thái. Sau mỗi trận đánh, khung xúc xắc hiện hai mặt tung, bên nào gây bao nhiêu hit (sau giới hạn theo số chiến binh, §4.3.3), khoảng 3,5 giây. Tắt khi trình duyệt bật "giảm chuyển động".
 - Bấm vào tên một lá bài (trên tay, play area, supporter, dominance, bài được cho xem) để mở khung chi tiết: chất, loại, chi phí chế tạo, hiệu ứng, mã Card Library.
 
 ## Bot

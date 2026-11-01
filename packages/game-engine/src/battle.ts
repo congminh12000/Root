@@ -105,6 +105,7 @@ export function continueBattle(state: GameState, rng: Rng) {
         b.rolled.attacker = Math.min(guerrilla ? low : high, maxRolledHits(state, b.attacker, b.clearing))
         b.rolled.defender = Math.min(guerrilla ? high : low, maxRolledHits(state, b.defender, b.clearing))
         if (b.attacker === 'eyrie' && state.factions.eyrie!.leader === 'commander') b.extra.attacker += 1 // §7.8.3
+        state.lastRoll = { revision: state.meta.revision + 1, clearing: b.clearing, attacker: b.attacker, defender: b.defender, dice: [x, y], hits: { ...b.rolled } }
         b.step = 'effects-attacker'
         break
       }

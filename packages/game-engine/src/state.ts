@@ -148,6 +148,17 @@ export type PendingDecision =
 
 export type BattleSide = 'attacker' | 'defender'
 
+/** One battle roll as it landed (§4.3.3): both faces, and the rolled hits each side deals after the cap. */
+export interface LastRoll {
+  /** Revision of the command that rolled, so two equal rolls in a row are still told apart. */
+  revision: number
+  clearing: ClearingId
+  attacker: FactionId
+  defender: FactionId
+  dice: [number, number]
+  hits: Record<BattleSide, number>
+}
+
 /** A battle that is waiting on a decision (§4.3). Cleared when the battle ends. */
 export interface BattleState {
   clearing: ClearingId
@@ -228,5 +239,7 @@ export interface GameState {
 
   pending: PendingDecision[]
   battle: BattleState | null
+  /** The latest battle roll, public to everyone; only for showing the dice (absent in games saved before it existed). */
+  lastRoll?: LastRoll | null
   winner: { factions: FactionId[]; reason: 'points' | 'dominance' | 'coalition' } | null
 }

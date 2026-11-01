@@ -58,6 +58,7 @@ export function determinize(view: PlayerView, rng: Rng): GameState {
     reveals: [],
     pending: copy(view.pending),
     battle: copy(view.battle),
+    lastRoll: copy(view.lastRoll),
     winner: copy(view.winner),
   }
 }
