@@ -88,8 +88,11 @@ const ringGeo = (r: number, tube: number) => shape(`ring-${r}-${tube}`, () => ne
 const pulseMat = () => new THREE.MeshBasicMaterial({ color: color.autumnGold, transparent: true })
 const litMat = new THREE.MeshBasicMaterial({ color: color.autumnGold })
 
-/** Pieces for one view. Objects in `changed` clearings are listed in `pop`, plus one fading ring each in `pulse`. */
-export function buildPieces(view: PlayerView, highlight: number[], changed: number[]): { root: THREE.Group; pop: THREE.Object3D[]; pulse: THREE.Mesh[] } {
+/**
+ * Pieces for one view. `highlight` rings the chosen clearings, `targets` lightly marks those that can be clicked.
+ * Objects in `changed` clearings are listed in `pop`, plus one fading ring each in `pulse`.
+ */
+export function buildPieces(view: PlayerView, highlight: number[], changed: number[], targets: number[] = []): { root: THREE.Group; pop: THREE.Object3D[]; pulse: THREE.Mesh[] } {
   const root = new THREE.Group()
   const pop: THREE.Object3D[] = [], pulse: THREE.Mesh[] = []
   for (const [id, c] of view.map.clearings.entries()) {
@@ -129,6 +132,13 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
       obj.position.set(p.x + 1.05, 0.1, p.z - 0.35 + i * 0.5)
       add(obj)
     })
+    // Who rules the clearing (from the engine's view, §2.5): their icon opposite the clearing's number.
+    const lord = view.rulers?.[id]
+    if (lord) {
+      const mark = badge('', { bg: FACTION_COLOR[lord], icon: lord, iconFill: color.paperRaised, size: 0.42 })
+      mark.position.set(p.x + CLEARING_R * 0.8, 0.85, p.z - CLEARING_R * 0.8)
+      root.add(mark)
+    }
     if (fresh) {
       const ring = new THREE.Mesh(ringGeo(CLEARING_R, 0.09), pulseMat())
       ring.rotation.x = Math.PI / 2
@@ -141,6 +151,11 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
       ring.rotation.x = Math.PI / 2
       ring.position.set(p.x, 0.14, p.z)
       root.add(outline(ring, 0.03))
+    } else if (targets.includes(id)) {
+      const ring = new THREE.Mesh(ringGeo(CLEARING_R + 0.14, 0.035), litMat)
+      ring.rotation.x = Math.PI / 2
+      ring.position.set(p.x, 0.14, p.z)
+      root.add(ring)
     }
   }
   const where = view.factions.vagabond?.pawn

@@ -1,5 +1,6 @@
 import type { AllianceState, CardId, FactionId, FactionStates, GameState, ItemType, LastRoll } from './state.ts'
 import { currentActor } from './engine.ts'
+import { ruler } from './rules.ts'
 
 /**
  * What one seat may see (§1.2). Built by the engine from GameState; the server sends only this.
@@ -34,6 +35,8 @@ export interface PlayerView {
   stage: GameState['stage']
   seats: { faction: FactionId; kind: 'human' | 'bot' }[]
   battle: GameState['battle']
+  /** Who rules each clearing, by clearing id (§2.5, §7.2.2); public, so interfaces need not repeat the rule. */
+  rulers: (FactionId | null)[]
   lastRoll: LastRoll | null
   craftingUsed: GameState['craftingUsed']
   cardsUsed: GameState['cardsUsed']
@@ -87,6 +90,7 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     stage: state.stage,
     seats: state.seats.map(s => ({ faction: s.faction, kind: s.controller.kind })),
     battle: copy(state.battle),
+    rulers: state.map.clearings.map((_, c) => ruler(state, c)),
     lastRoll: copy(state.lastRoll ?? null),
     craftingUsed: [...state.craftingUsed],
     cardsUsed: [...state.cardsUsed],

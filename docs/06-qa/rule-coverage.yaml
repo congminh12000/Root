@@ -270,7 +270,7 @@ rules:
     page: 3
     status: verified
     spec: docs/02-rules-spec/map.md
-    implementation: [packages/game-engine/src/rules.ts]
+    implementation: [packages/game-engine/src/rules.ts, packages/game-engine/src/view.ts]
     tests: [packages/game-engine/test/rules.test.ts]
     review: {rules_verified: true, implementation_verified: true}
   - rule_id: ROOT-2.2.3

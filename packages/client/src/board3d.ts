@@ -21,7 +21,7 @@ const CAMERA_MS = 400
 
 export interface Board3D {
   /** Redraws the pieces; clearings in `changed` pulse once and their pieces pop in; `travels` hop along their paths. */
-  update(view: PlayerView, highlight: number[], changed?: number[], travels?: Travel[]): void
+  update(view: PlayerView, highlight: number[], changed?: number[], travels?: Travel[], targets?: number[]): void
   /** Glides the camera back to the default view. */
   resetCamera(): void
   /** Renders `frames` frames back to back while orbiting, waits for the GPU each time; average ms per frame (board-kit). */
@@ -129,9 +129,9 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
   tick()
 
   return {
-    update(view, highlight, changed = [], travels = []) {
+    update(view, highlight, changed = [], travels = [], targets = []) {
       if (pieces) { scene.remove(pieces); disposePieces(pieces) }
-      const built = buildPieces(view, highlight, reduceMotion ? [] : changed)
+      const built = buildPieces(view, highlight, reduceMotion ? [] : changed, targets)
       const movers = reduceMotion ? [] : buildMovers(travels)
       for (const m of movers) built.root.add(m.o)
       pieces = built.root

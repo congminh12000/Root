@@ -83,10 +83,10 @@ function travelGhost(t: Travel): string {
 }
 
 /**
- * Renders the board as an SVG string. `highlight` rings clearings an action is about; `changed` pulse once;
- * `travels` slide along their paths once.
+ * Renders the board as an SVG string. `highlight` rings the chosen clearings strongly, `targets` lightly (they can be
+ * clicked now); `changed` pulse once; `travels` slide along their paths once.
  */
-export function renderBoard(view: PlayerView, highlight: number[] = [], changed: number[] = [], travels: Travel[] = []): string {
+export function renderBoard(view: PlayerView, highlight: number[] = [], changed: number[] = [], travels: Travel[] = [], targets: number[] = []): string {
   const parts: string[] = []
   const pop = (id: number) => (changed.includes(id) ? { class: 'pop' } : {})
   parts.push(svg('rect', { x: 2, y: 2, width: W - 4, height: H - 4, rx: 18, fill: color.meadow, stroke: color.ink, 'stroke-width': 4 }))
@@ -108,6 +108,7 @@ export function renderBoard(view: PlayerView, highlight: number[] = [], changed:
     const [x, y] = pos(def.id)
     const c = view.map.clearings[def.id]!
     if (highlight.includes(def.id)) parts.push(svg('circle', { cx: x, cy: y, r: 60, fill: 'none', stroke: color.autumnGold, 'stroke-width': 9 }))
+    else if (targets.includes(def.id)) parts.push(svg('circle', { cx: x, cy: y, r: 58, fill: 'none', stroke: color.autumnGold, 'stroke-width': 4, 'stroke-dasharray': '10 7', class: 'target' }))
     parts.push(svg('circle', { cx: x, cy: y, r: 52, fill: color.meadowLight, stroke: color.ink, 'stroke-width': 3.5, 'data-clearing': def.id, class: 'clearing' }))
     parts.push(svg('circle', { cx: x, cy: y, r: 46, fill: 'none', stroke: SUIT_COLOR[def.suit], 'stroke-width': 5, 'pointer-events': 'none' }))
     if (changed.includes(def.id)) parts.push(svg('circle', { cx: x, cy: y, r: 52, class: 'pulse' }))
@@ -115,6 +116,9 @@ export function renderBoard(view: PlayerView, highlight: number[] = [], changed:
     parts.push(svg('rect', { x: x - 66, y: y - 58, width: 50, height: 26, rx: 13, fill: SUIT_COLOR[def.suit], stroke: color.ink, 'stroke-width': 2.5 }))
     parts.push(use(def.suit, x - 62, y - 56, 22, color.paperRaised))
     parts.push(svg('text', { x: x - 29, y: y - 39, 'text-anchor': 'middle', class: 'clearing-no' }, String(def.id + 1)))
+    // Who rules the clearing (§2.5, from the engine's view): their icon on the top of the rim.
+    const lord = view.rulers?.[def.id]
+    if (lord) parts.push(svg('circle', { cx: x + 4, cy: y - 52, r: 13, fill: FACTION_COLOR[lord], stroke: color.ink, 'stroke-width': 2.5 }) + use(lord, x - 5, y - 61, 18, color.paperRaised))
     // Slots along the bottom of the clearing.
     c.slots.forEach((slot, i) => {
       const sx = x - (c.slots.length - 1) * 15 + i * 30 - 12, sy = y + 16

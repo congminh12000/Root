@@ -118,7 +118,7 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
   let mat = labelCache.get(key)
   if (!mat) {
     const canvas = document.createElement('canvas')
-    const withIcon = !!opts.icon
+    const withIcon = !!opts.icon && text !== ''
     canvas.width = withIcon ? 224 : 128; canvas.height = 128
     const tex = new THREE.CanvasTexture(canvas)
     tex.colorSpace = THREE.SRGBColorSpace
@@ -132,7 +132,7 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
       g.beginPath()
       g.roundRect(8, 8, canvas.width - 16, 112, 56)
       g.fill(); g.stroke()
-      if (img) g.drawImage(img, 22, 16, 96, 96)
+      if (img) g.drawImage(img, withIcon ? 22 : 16, 16, 96, 96)
       g.fillStyle = opts.fg ?? color.ink
       g.font = `76px ${font.display}`
       g.textAlign = 'center'; g.textBaseline = 'middle'
@@ -146,7 +146,7 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
   }
   const sprite = new THREE.Sprite(mat)
   const s = opts.size ?? 0.6
-  sprite.scale.set(s * (opts.icon ? 224 / 128 : 1), s, 1)
+  sprite.scale.set(s * (opts.icon && text !== '' ? 224 / 128 : 1), s, 1)
   sprite.renderOrder = 10
   return sprite
 }

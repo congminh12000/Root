@@ -4,7 +4,7 @@ import { adjacent, mapOf, placeInSlot, placeWarriors, drawCards } from '../src/b
 import { canCraft, craft, payCost } from '../src/craft.ts'
 import { canMove, moveOptions, moveWarriors } from '../src/move.ts'
 import { award, checkDominanceVictory, checkVictory, discardCard, isBird, isEnemy, matchesSuit, ruler } from '../src/rules.ts'
-import { legalActions, seededRng } from '../src/index.ts'
+import { legalActions, seededRng, viewFor } from '../src/index.ts'
 import { answer, building, scenario, token, turnOf, types, warriors } from './helpers.ts'
 
 // Autumn, 0-based: fox 0 5 7 9, rabbit 1 3 8 11, mouse 2 4 6 10; corners 0 2 8 11.
@@ -74,6 +74,9 @@ test('§2.5 rule: most warriors + buildings; ties rule nobody; tokens and pawns 
   building(s, 4, 'alliance' as never, 'sawmill' as never) // any building counts
   assert.equal(ruler(s, 4), 'alliance')
   assert.equal(ruler(s, 6), null, 'empty clearing')
+  const v = viewFor(s, null)
+  assert.deepEqual(v.rulers, s.map.clearings.map((_, c) => ruler(s, c)), 'every view shows the same rulers as the engine')
+  assert.equal(v.rulers[4], 'alliance')
 })
 
 test('§7.2.2 Lords of the Forest: the Eyrie rule ties, but only with a piece there', () => {

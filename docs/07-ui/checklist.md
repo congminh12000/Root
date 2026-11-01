@@ -18,9 +18,9 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Ô (clearing) có chất, số ô, slot công trình, ruin | Xong | UI-3 |
 | ★ | Đường đi, rừng (forest), Vagabond trong rừng | Xong | UI-3 |
 | ★ | Quân, công trình, token của 4 phe phân biệt bằng màu và hình | Xong | UI-3 |
-| ★ | Số quân rõ khi đông; hover/bấm ô xem chi tiết (ai cai quản, quân, token) | Một phần | UI-4 |
-| ★ | Cai quản (rule) của từng ô hiển thị được | Chưa | UI-4 |
-| ★ | Đánh dấu ô/quân có thể chọn cho hành động đang làm | Một phần (lọc theo ô) | UI-4 |
+| ★ | Số quân rõ khi đông; hover/bấm ô xem chi tiết (ai cai quản, quân, token) | Xong | UI-4 |
+| ★ | Cai quản (rule) của từng ô hiển thị được | Xong | UI-4 |
+| ★ | Đánh dấu ô/quân có thể chọn cho hành động đang làm | Xong | UI-4 |
 | | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Xong | UI-3 |
 | | Bàn 2D dự phòng cùng phong cách | Xong | UI-3 |
 | | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Xong | UI-3 (restyle) |
@@ -30,14 +30,14 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Di chuyển: chọn ô đi → ô đến → số quân | Chưa (danh sách) | UI-4 |
-| ★ | Đánh: chọn ô → chọn phe bị đánh | Chưa (danh sách) | UI-4 |
-| ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Chưa (danh sách) | UI-4 |
+| ★ | Di chuyển: chọn ô đi → ô đến → số quân | Xong | UI-4 |
+| ★ | Đánh: chọn ô → chọn phe bị đánh | Xong | UI-4 |
+| ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Xong | UI-4 |
 | ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Chưa (danh sách) | UI-5 |
-| ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Một phần | UI-4 |
-| ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Có | UI-4 |
+| ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Xong | UI-4 |
+| ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Xong | UI-4 |
 | ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Xong | UI-2 |
-| | Phím tắt (Esc huỷ chọn, Enter xác nhận, số để chọn số quân) | Chưa | UI-4 |
+| | Phím tắt (Esc huỷ chọn, Enter xác nhận, số để chọn số quân) | Xong | UI-4 |
 
 ## D. Bài và bảng phe
 
