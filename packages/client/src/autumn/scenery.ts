@@ -1,5 +1,7 @@
 import * as THREE from 'three'
-import { badge, outline, part, toon } from '../board/toon.ts'
+import { badge, part, stickerOn } from '../board/toon.ts'
+import { resinWater } from '../map/apron.ts'
+import { mat, material } from '../board/look.ts'
 import { color, suitColor } from '../ui/tokens.ts'
 import {
   BRIDGES, CLEARINGS, CLEARING_RX, CLEARING_RY, CLIFFS, DEPTH, ITEMS, ITEM_ROW_Y, ITEM_STEP, ITEM_X0, LAKE, PATHS, PLOTS, PLOT_HALF,
@@ -14,7 +16,7 @@ export interface AutumnScenery {
   labels: THREE.Group
   earthMat: THREE.Material
   selectedMat: THREE.Material
-  /** Plants the forest when `deferTrees` was set (once); otherwise it is already planted and this does nothing. */
+  /** Plants the forest and pours the resin water when `deferTrees` was set (once); otherwise both are done already. */
   plantTrees(): void
   dispose(): void
 }
@@ -72,28 +74,17 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
   ctx.lineWidth = riverPx + 8; ctx.strokeStyle = color.rock; ctx.stroke()
   ctx.lineWidth = riverPx; ctx.strokeStyle = color.water; ctx.stroke()
   trace(LAKE, true); ctx.fillStyle = color.water; ctx.fill()
-  trace(RIVER); ctx.lineWidth = riverPx * .25; ctx.setLineDash([18, 26]); ctx.strokeStyle = color.waterShallow; ctx.stroke(); ctx.setLineDash([])
   const groundTex = new THREE.CanvasTexture(canvas); groundTex.colorSpace = THREE.SRGBColorSpace; groundTex.anisotropy = 8; textures.push(groundTex)
-  const groundMat = new THREE.MeshToonMaterial({ map: groundTex }); materials.push(groundMat)
+  const groundMat = mat('flock', color.white, { map: groundTex, repeat: 24 })
   const ground = addMesh(ownGeo(new THREE.PlaneGeometry(WIDTH, DEPTH)), groundMat, 0, 0, 0); ground.rotation.x = -Math.PI / 2
-  if (opts.slab) outline(addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), toon(color.wood), 0, -.26, 0), .035)
+  if (opts.slab) addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), material(color.wood), 0, -.26, 0)
 
-  // Lake ripples and two fishing boats.
-  const ripples: number[] = []
-  for (let i = 0; i < 160; i++) {
-    const p: Point = [rand() * .06, .5 + rand() * .25]
-    if (!inside(p, LAKE)) continue
-    const [x,, z] = world(p), len = .1 + rand() * .15
-    ripples.push(x, .025, z, x + len, .025, z + .02)
-  }
-  const ripplesGeo = ownGeo(new THREE.BufferGeometry()); ripplesGeo.setAttribute('position', new THREE.Float32BufferAttribute(ripples, 3))
-  const rippleMat = new THREE.LineBasicMaterial({ color: color.waterShallow }); materials.push(rippleMat)
-  scene.add(new THREE.LineSegments(ripplesGeo, rippleMat))
+  // Two fishing boats; the resin over the painted water comes with the trees (its shader is the costliest).
   for (const [i, p] of ([[.025, .58], [.03, .68]] as Point[]).entries()) {
     const [x,, z] = world(p), boat = new THREE.Group()
     boat.add(part('lake-hull', () => new THREE.CylinderGeometry(.16, .09, .10, 4), color.wood, [0, .06, 0], [0, Math.PI / 4, 0]),
       part('lake-seat', () => new THREE.BoxGeometry(.16, .025, .045), color.paperShade, [0, .12, 0]))
-    boat.scale.set(1.4, 1, .6); boat.rotation.y = i * .9 + .3; boat.position.set(x, .02, z); scene.add(outline(boat, .012))
+    boat.scale.set(1.4, 1, .6); boat.rotation.y = i * .9 + .3; boat.position.set(x, .02, z); scene.add(boat)
   }
 
   // Cliffs: stacked boulders inside each rock area.
@@ -104,14 +95,17 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
       const p: Point = [Math.min(...xs) + rand() * (Math.max(...xs) - Math.min(...xs)), Math.min(...ys) + rand() * (Math.max(...ys) - Math.min(...ys))]
       if (!inside(p, r)) continue
       const [x,, z] = world(p), s = .6 + rand() * 1.1
-      const rock = addMesh(boulder, toon(rand() < .3 ? color.inkSoft : color.rock), x, .1 * s, z)
+      const rock = addMesh(boulder, material(rand() < .3 ? color.inkSoft : color.rock), x, .1 * s, z)
       rock.scale.set(s, s * (.6 + rand() * .9), s); rock.rotation.set(rand(), rand() * 6, rand() * .5); rock.castShadow = true
-      outline(rock, .03)
+      rock
     }
   }
 
   // Trees come last of everything random, so planting them later (deferTrees) draws exactly the same forest.
   const plantTrees = () => {
+    // Resin poured over the painted river and lake (style-guide §3).
+    const toXZ = (p: Point) => { const [x,, z] = world(p); return [x, z] as const }
+    geometries.push(...resinWater(scene, [{ line: RIVER.map(toXZ), half: RIVER_HALF * WIDTH }], [LAKE.map(toXZ)], .015))
     // Trees: instanced pines and round trees. Round trees by a clearing take its suit colour, as in the reference.
     const trees: { x: number; z: number; scale: number; round: boolean; tint: string }[] = []
     for (let i = 0; i < 16000 && trees.length < 2300; i++) {
@@ -124,12 +118,12 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
     }
     const dummy = new THREE.Object3D()
     const instances = (list: typeof trees, geo: THREE.BufferGeometry, c: string, lift: number, tinted = false) => {
-      const mesh = new THREE.InstancedMesh(geo, toon(tinted ? color.white : c), list.length)
+      const mesh = new THREE.InstancedMesh(geo, mat('foam', tinted ? color.white : c, { repeat: 2 }), list.length)
       list.forEach((t, i) => {
         dummy.position.set(t.x, lift * t.scale, t.z); dummy.scale.setScalar(t.scale); dummy.rotation.set(0, i * 1.7, 0); dummy.updateMatrix()
         mesh.setMatrixAt(i, dummy.matrix); if (tinted) mesh.setColorAt(i, new THREE.Color(t.tint))
       })
-      mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, .012))
+      mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh)
     }
     const pines = trees.filter(t => !t.round), rounds = trees.filter(t => t.round)
     instances(trees, ownGeo(new THREE.CylinderGeometry(.035, .055, .6, 5)), color.wood, .3)
@@ -144,25 +138,26 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
     g.add(part('lake-house-wall', () => new THREE.BoxGeometry(.46, .34, .36), color.paperShade, [0, .17, 0]),
       part('lake-house-roof', () => new THREE.ConeGeometry(.38, .27, 4), c.id % 2 ? color.roofRed : color.roofBlue, [0, .45, 0], [0, Math.PI / 4, 0]),
       part('lake-house-door', () => new THREE.BoxGeometry(.10, .18, .018), color.wood, [0, .09, .19]))
-    g.position.set(x, .025, z); g.rotation.y = c.id * .4; scene.add(outline(g, .018))
+    g.position.set(x, .025, z); g.rotation.y = c.id * .4; scene.add(g)
   }
   // Plank bridges where a path crosses the river.
   for (const b of BRIDGES) {
     const [x,, z] = world(b.at), g = new THREE.Group(), span = RIVER_HALF * 2 * WIDTH + .5
     for (let i = 0; i < 7; i++) g.add(part('autumn-plank', () => new THREE.BoxGeometry(span / 7 - .02, .06, .5), i % 2 ? color.woodLight : color.wood, [-span / 2 + (i + .5) * span / 7, .07, 0]))
     for (const s of [-1, 1]) g.add(part('autumn-rail', () => new THREE.BoxGeometry(span, .05, .04), color.wood, [0, .2, s * .24]))
-    g.position.set(x, 0, z); g.rotation.y = -b.angle; scene.add(outline(g, .012))
+    g.position.set(x, 0, z); g.rotation.y = -b.angle; scene.add(g)
   }
   // The item supply (two printed rows) and the 0–30 score track, with our own icons.
   ITEMS.forEach((row, r) => row.forEach((icon, i) => {
     const [x,, z] = world([ITEM_X0 + i * ITEM_STEP, ITEM_ROW_Y[r]!])
-    addMesh(ownGeo(new THREE.BoxGeometry(.78, .06, .7)), toon(color.paperShade), x, .04, z)
-    const label = badge('', { icon, iconFill: color.ink, bg: color.paperRaised, size: .52 }); label.position.set(x, .16, z); scene.add(label)
+    addMesh(ownGeo(new THREE.BoxGeometry(.78, .06, .7)), material(color.paperShade), x, .04, z)
+    // Printed on the card, not floating: pieces standing on it stay visible.
+    const print = stickerOn(icon, .3, .07, color.woodLight); print.position.x = x; print.position.z = z; scene.add(print)
   }))
   for (let i = 0; i <= 30; i++) {
     const [x,, z] = world(scoreSpace(i))
-    addMesh(ownGeo(new THREE.BoxGeometry(.80, .05, .54)), toon(color.paperShade), x, .035, z)
-    const label = badge(String(i), { size: .52, bg: color.paperRaised }); label.position.set(x, .10, z); scene.add(label)
+    addMesh(ownGeo(new THREE.BoxGeometry(.80, .05, .54)), material(color.paperShade), x, .035, z)
+    const print = stickerOn(null, .25, .06, undefined, String(i)); print.position.x = x; print.position.z = z; scene.add(print)
   }
 
   // Slots: permanent earth footprints. The suit badge is always shown (it matters for play); numbers are optional.
@@ -170,7 +165,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
   scene.add(labels)
   const pads = new Map<string, THREE.Mesh>()
   const padGeo = ownGeo(new THREE.CircleGeometry(1, 8)), stoneGeo = ownGeo(new THREE.DodecahedronGeometry(.065, 0))
-  const earthMat = basic(color.path), selectedMat = basic(color.autumnGold)
+  const earthMat = material(color.path), selectedMat = basic(color.autumnGold)
   for (const plot of PLOTS) {
     const [x,, z] = world(plot.at)
     const pad = addMesh(padGeo, earthMat, x, .026, z); pad.rotation.x = -Math.PI / 2
@@ -179,7 +174,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
     for (let i = 0; i < 12; i++) {
       if (i === 2 || i === 3 || i === 4) continue // Open entrance at the front.
       const a = i / 12 * Math.PI * 2
-      addMesh(stoneGeo, toon(i % 3 ? color.pathEdge : color.paperShade), x + Math.cos(a) * .51, .065, z + Math.sin(a) * .45)
+      addMesh(stoneGeo, material(i % 3 ? color.pathEdge : color.paperShade), x + Math.cos(a) * .51, .065, z + Math.sin(a) * .45)
     }
     const label = badge(plot.id, { size: .36 }); label.position.set(x, .9, z); labels.add(label)
   }

@@ -1,10 +1,10 @@
-# Style guide: "Rừng thu vẽ tay"
+# Style guide: "Bàn cờ mô hình thật"
 
-Hợp đồng phong cách cho bàn cờ, quân, bảng và mọi màn hình. Nguồn cảm hứng: [reference/style-lakeside.jpg](reference/style-lakeside.jpg) (chỉ tham khảo phong cách). Khi có điều không rõ, so với ảnh đó trước. Muốn đổi mục nào trong file này thì cần người quản lý duyệt, sau đó cập nhật `tokens.ts` trong cùng thay đổi.
+Hợp đồng phong cách cho bàn cờ, quân, bảng và mọi màn hình. Từ 02/11/2026 hướng là **bàn cờ mô hình thật** (người quản lý duyệt trên ảnh demo, [reference/tabletop/](reference/tabletop/)). Bảng màu và cách phân biệt phe giữ từ bản "Rừng thu vẽ tay" ([reference/style-lakeside.jpg](reference/style-lakeside.jpg)). Muốn đổi mục nào trong file này thì cần người quản lý duyệt, sau đó cập nhật `tokens.ts` trong cùng thay đổi.
 
 ## 1. Tinh thần
 
-Tranh minh họa hoạt hình nhìn từ trên cao, như bản đồ trong sách truyện: ấm, rõ, nhiều chi tiết nhỏ nhưng không rối. Mọi thứ có **viền mực sẫm**, **màu phẳng chia 2–3 sắc độ**, ánh sáng dịu từ **góc trên bên trái**. Không dùng hiệu ứng ảnh thật (không phản chiếu gương, không bloom, không DOF mạnh).
+Như ảnh chụp cận một bàn Root thu nhỏ trên bàn thật, phong cách indie ấm áp: quân **gỗ sơn còn thấy vân**, bàn là **sa bàn** phủ cỏ rắc với đường cát nén, cây là **xốp mô hình**, nước là **nhựa đổ** bóng, lá bài và HUD là **bìa, giấy, gỗ**. Nắng chiều mềm từ góc trên bên trái, bóng tiếp xúc rõ, ống kính tilt-shift nhẹ làm cảnh trông tí hon. Rõ ràng để chơi vẫn đứng trước đẹp: quân, ô, nhãn luôn đọc được.
 
 ## 2. Bảng màu (giá trị gốc cho `tokens.ts`)
 
@@ -44,20 +44,37 @@ Màu lấy từ ảnh tham khảo. Mỗi màu có tên theo vai trò, không the
 
 Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọn = viền `ink` dày cộng ánh `autumn-gold`; không hợp lệ = giảm độ bão hòa 60%; lỗi = `roof-red`.
 
-## 3. Nét và hình
+## 3. Chất liệu và hình
 
-- **Viền mực:** quân và công trình dày bằng 4–6% chiều cao vật; thẻ và nút trong HTML viền 2 px màu `ink`. Trong 3D dùng viền "inverted hull" hoặc pass phát hiện cạnh, độ dày không đổi khi zoom.
-- **Đổ bóng kiểu hoạt hình (toon):** 3 nấc sáng (sáng, giữa, tối), không chuyển mượt. Bóng đổ mềm, màu `ink` 25%.
-- **Hình khối tròn, hơi phình**, không góc nhọn sắc; mái nhà và cây có phần chồng lớp như ảnh tham khảo.
-- **Kết cấu nhẹ:** cỏ có đốm sắc độ, đường đất có mép sẫm, nước có vệt gợn trắng ngắn. Kết cấu sinh bằng code và seed cố định, không dùng ảnh chụp.
-- **Rừng:** khoảng 80% thông nhiều tầng (`pine`/`pineLight`), còn lại cây tròn xanh và một ít cây thu (`autumnOrange`/`autumnGold`), như ảnh tham khảo.
-- **Mật độ:** rừng dày ở vùng rừng (forest) của bản đồ, thưa quanh ô; ô và đường luôn thoáng để đặt quân.
+Mọi vật 3D lấy vật liệu theo **vai trò** từ `board/look.ts` (`mat(role, màu)`), không tự tạo vật liệu riêng:
 
-## 4. Ánh sáng và camera
+| Vai trò | Dùng cho | Cảm giác |
+|---|---|---|
+| `painted-wood` | quân, công trình, token, mái nhà, vòng chất | sơn màu, vân gỗ mờ bên dưới, hơi bóng |
+| `raw-wood` | cầu, thuyền, khúc gỗ, thân cây | gỗ mộc, vân rõ, nhám |
+| `flock` | mặt sa bàn, cỏ | cỏ rắc, sần, không bóng |
+| `foam` | tán cây | xốp mô hình, sần mạnh |
+| `sand` | đường, ô, slot, bìa in | cát nén, hạt mịn |
+| `stone` | đá, vách, ruin | thạch cao sơn |
+| `resin` | sông, hồ | nhựa đổ trong, bóng, gợn |
+| `card` | lá bài, nhãn bìa | bìa có thớ |
 
-- Một nguồn sáng chính ấm (`#ffe2b0`) từ trên bên trái, ánh sáng nền bán cầu (trời ấm, đất nâu). Không dùng nhiều đèn màu.
-- Camera mặc định nhìn gần như từ trên xuống (nghiêng khoảng 55–65°), giống ảnh tham khảo; cho phép xoay và phóng to có giới hạn, có nút về góc mặc định.
-- Chuyển cảnh camera mượt, ngắn (≤ 400 ms).
+- **Kết cấu sinh bằng code** (`board/texture-gen.ts`, seed cố định), chạy trong worker; không dùng ảnh chụp, không tải từ mạng.
+- **Không còn viền mực** trong 3D. Độ rõ đến từ ánh sáng, bóng tiếp xúc và độ tương phản màu. Trong HTML, viền 2 px `ink` vẫn giữ cho thẻ và nút.
+- **Hình khối** bo tròn như đồ gỗ tiện, không góc sắc. Phe vẫn phân biệt bằng **hình** (tai mèo, mỏ chim, tai thỏ, áo choàng) cộng màu.
+- **Mật độ:** rừng dày ở vùng rừng, thưa quanh ô; ô và đường luôn thoáng để đặt quân.
+
+## 4. Ánh sáng, camera và hậu kỳ
+
+- **Ánh sáng** (`light` trong `tokens.ts`): nắng ấm `light.sun` thấp từ trên trái, bóng dài và mềm; ánh trời ấm; môi trường studio nhẹ cho độ bóng của sơn và nhựa; sương ấm che apron xa. Tone mapping ACES.
+- **Hậu kỳ** (`map/post.ts`, tham số `grade` trong `tokens.ts`):
+  - bóng tiếp xúc (GTAO);
+  - tilt-shift: mờ dần ra hai mép trên dưới, zoom càng gần càng mờ, tối đa `grade.tiltMax` px để quân và nhãn đọc được;
+  - chỉnh màu ấm, vignette, hạt nhẹ.
+  - Không bloom, không lens flare.
+- **Nhãn** (số ô, số quân, điểm) vẽ sau hậu kỳ, luôn sắc nét.
+- **Mức chất lượng** (`map/quality.ts`): `full` đủ hiệu ứng; `tablet` bỏ GTAO; `low` (máy không có GPU) không hậu kỳ. Hiệu ứng nạp sau khung hình đầu, không bao giờ làm chậm lúc mở trận.
+- **Camera** nhìn gần như từ trên xuống, cho phép xoay và phóng to có giới hạn, có nút về góc mặc định. Chuyển cảnh camera ≤ 400 ms.
 
 ## 5. Chữ
 
@@ -67,13 +84,14 @@ Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọ
 
 ## 6. Thành phần HTML
 
-- **Thẻ / bảng:** nền `paper-raised`, viền 2 px `ink`, bo góc 10 px, bóng `0 3px 0 ink 20%` (bóng lệch kiểu in).
-- **Nút chính:** nền `wood`, chữ `paper`, viền `ink`; khi hover sáng hơn một nấc; khi bấm lún 2 px.
+- **Thẻ / bảng:** giấy: nền `paper-raised` phủ thớ giấy (`--grain-paper`, nhiễu SVG sinh trong CSS), viền 2 px `ink`, bo góc 10 px, bóng mềm như giấy đặt trên bàn (`shadow.card`). Ngăn kéo và hộp quyết định có viền gỗ như khay.
+- **Nút chính:** gỗ có vân (`--grain-wood` trên chuyển sắc `wood-light` → `wood`), chữ `paper`, viền `ink`; hover sáng hơn một nấc; bấm lún 2 px. Nút phụ là giấy. Nút có kiểu riêng (neo ô, huy hiệu, dải bài) giữ kiểu của nó.
 - **Lá bài** (`ui/card-face.ts`): bố cục theo lá in, tỉ lệ 63:88, hai cỡ (`mini` 92 px cho tay bài và hộp quyết định, `full` 260 px cho khung chi tiết).
   - **Dải đầu màu chất:** huy hiệu tròn viền mực có icon chất bên trái; chi phí chế tạo bên phải, mỗi pip là ô gỗ có icon chất, `?` ba màu là bất kỳ. Quest để hai item yêu cầu ở chỗ này.
   - **Vùng tranh** (`ui/card-art.ts`): cảnh tự sinh bằng code, cùng nét mực và màu phẳng với bàn cờ, không dùng art chính thức. Nền theo chất (cáo: nông trại, thỏ: đồi và hang, chuột: ruộng và cối xay, chim: tán cây và trời). Vật chính theo loại: item trên bục, mắt trong bụi cho ambush, cờ phe có vương miện cho dominance, biểu tượng riêng (`MOTIF`) cho lá lâu dài và dùng ngay, bảng ghim hai item cho quest. Seed theo id lá; bản sao chẵn lật cảnh.
   - **Tấm gỗ** góc dưới trái: item và điểm, hoặc biểu tượng loại lá (lá = lâu dài, lửa = dùng ngay, mắt = ambush, vương miện = dominance, sao + lá = quest).
   - **Khung giấy** góc vát: tên gốc tiếng Anh bằng Pangolin; cỡ `mini` thêm một dòng loại lá, cỡ `full` thêm hiệu ứng tiếng Việt kèm điều khoản (`ui/card-text.ts`). Câu tiếng Anh in gốc xem trong "Bản in tiếng Anh" của khung chi tiết.
+  - **Chất liệu:** cả mặt lá phủ thớ bìa; tranh có ánh sáng từ trên, bóng dưới chân vật chính và vignette nhẹ; tấm gỗ có vân; rê chuột qua lá có vệt phản quang chạy ngang.
 - **Chip phe:** hình con vật + tên; luôn có cả màu và hình.
 - **Hộp quyết định:** quyết định gắn một ô (ambush, chia hit, Field Hospitals…) hiện thành callout ngay tại ô đó; chỉ lựa chọn không gắn ô (leader, nhân vật, bỏ bài) mới nổi giữa màn. Luôn có tiêu đề nói rõ ai đang quyết định gì và điều khoản luật liên quan (vd §4.3.1).
 

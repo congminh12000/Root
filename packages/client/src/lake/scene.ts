@@ -1,7 +1,10 @@
 import * as THREE from 'three'
+import { lightTable } from '../board/light.ts'
+import { loadSurfaces } from '../board/look.ts'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { building, ruin } from '../board/pieces.ts'
-import { badge, outline, part, toon } from '../board/toon.ts'
+import { badge, part } from '../board/toon.ts'
+import { material } from '../board/look.ts'
 import { color } from '../ui/tokens.ts'
 import { DOCKS, DEPTH, LAKE, PATHS, PLOTS, PLOT_HALF, VILLAGES, WIDTH, hasRuin, inside, treeAllowed, world, type DemoState, type Point } from './layout.ts'
 
@@ -29,13 +32,8 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
   controls.enablePan = false
   controls.minZoom = .8; controls.maxZoom = 2.8
   controls.minPolarAngle = .03; controls.maxPolarAngle = Math.PI * .43
-  scene.add(new THREE.HemisphereLight(color.paperRaised, color.wood, 2.1))
-  const sun = new THREE.DirectionalLight(color.paperRaised, 3)
-  sun.position.set(-12, 25, -12); sun.castShadow = true
-  sun.shadow.mapSize.set(2048, 2048)
-  Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 19, bottom: -19, near: 1, far: 65 })
-  sun.shadow.bias = -.001
-  scene.add(sun)
+  const table = lightTable(renderer, scene, { shadowSize: 2048, half: [22, 20] })
+  void loadSurfaces().then(() => draw())
   const geometries: THREE.BufferGeometry[] = [], materials: THREE.Material[] = [], textures: THREE.Texture[] = []
   const ownGeo = <T extends THREE.BufferGeometry>(g: T) => { geometries.push(g); return g }
   const basic = (c: string) => { const m = new THREE.MeshBasicMaterial({ color: c }); materials.push(m); return m }
@@ -75,11 +73,11 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
   const groundTex = new THREE.CanvasTexture(canvas); groundTex.colorSpace = THREE.SRGBColorSpace; groundTex.anisotropy = 8; textures.push(groundTex)
   const groundMat = new THREE.MeshToonMaterial({ map: groundTex }); materials.push(groundMat)
   const ground = addMesh(ownGeo(new THREE.PlaneGeometry(WIDTH, DEPTH)), groundMat, 0, 0, 0); ground.rotation.x = -Math.PI / 2
-  const slab = addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), toon(color.wood), 0, -.26, 0)
-  outline(slab, .035)
+  const slab = addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), material(color.wood), 0, -.26, 0)
+  slab
   // Water surface with hand-drawn, static ripples. No reflective post-processing.
   const water = new THREE.Shape(LAKE.map(p => { const w = world(p); return new THREE.Vector2(w[0], -w[2]) }))
-  const waterMesh = addMesh(ownGeo(new THREE.ShapeGeometry(water)), toon(color.water), 0, .012, 0); waterMesh.rotation.x = -Math.PI / 2
+  const waterMesh = addMesh(ownGeo(new THREE.ShapeGeometry(water)), material(color.water), 0, .012, 0); waterMesh.rotation.x = -Math.PI / 2
   const ripplePositions: number[] = []
   for (let i = 0; i < 450; i++) {
     const p: Point = [rand(), rand()]
@@ -95,7 +93,7 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
     const [x,,z] = world(p), boat = new THREE.Group()
     boat.add(part('lake-hull', () => new THREE.CylinderGeometry(.16,.09,.10,4),color.wood,[0,.06,0],[0,Math.PI/4,0]),
       part('lake-seat', () => new THREE.BoxGeometry(.16,.025,.045),color.paperShade,[0,.12,0]))
-    boat.scale.set(1.4,1,.6); boat.rotation.y=i*.7; boat.position.set(x,.02,z); scene.add(outline(boat,.012))
+    boat.scale.set(1.4,1,.6); boat.rotation.y=i*.7; boat.position.set(x,.02,z); scene.add(boat)
   }
   // Trees share geometry and are drawn in instances. Every exclusion is derived from the visual layout.
   const trees: { x: number; z: number; scale: number; autumn: boolean; round: boolean }[] = []
@@ -108,9 +106,9 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
   const dummy = new THREE.Object3D()
   const pine = trees.filter(t => !t.round), round = trees.filter(t => t.round)
   const instances = (list: typeof trees, geo: THREE.BufferGeometry, c: string, lift: number) => {
-    const mesh = new THREE.InstancedMesh(geo, toon(c), list.length)
+    const mesh = new THREE.InstancedMesh(geo, material(c), list.length)
     list.forEach((t, i) => { dummy.position.set(t.x, lift * t.scale, t.z); dummy.scale.setScalar(t.scale); dummy.rotation.set(0, i * 1.7, 0); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix) })
-    mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, .012))
+    mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh)
   }
   instances(trees, ownGeo(new THREE.CylinderGeometry(.035, .055, .6, 5)), color.wood, .3)
   for (let tier = 0; tier < 3; tier++) instances(pine, ownGeo(new THREE.ConeGeometry(.32 - tier * .065, .5, 7)), tier === 1 ? color.pineLight : color.pine, .5 + tier * .23)
@@ -122,27 +120,27 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
     g.add(part('lake-house-wall', () => new THREE.BoxGeometry(.46,.34,.36), color.paperShade, [0,.17,0]),
       part('lake-house-roof', () => new THREE.ConeGeometry(.38,.27,4), c.id % 2 ? color.roofRed : color.roofBlue, [0,.45,0], [0,Math.PI/4,0]),
       part('lake-house-door', () => new THREE.BoxGeometry(.10,.18,.018), color.wood, [0,.09,.19]))
-    g.position.set(x,.025,z); g.rotation.y = c.id * .4; scene.add(outline(g,.018))
+    g.position.set(x,.025,z); g.rotation.y = c.id * .4; scene.add(g)
   }
   // Wooden piers: all separate from the building plots.
   for (const d of DOCKS) {
     const [x,,z] = world(d.at), width = d.w * WIDTH
     for (let i = 0; i < 14; i++) {
-      const plank = addMesh(ownGeo(new THREE.BoxGeometry(width / 14 - .014,.06,d.h * DEPTH)), toon(i % 3 ? color.woodLight : color.wood), x - width / 2 + (i + .5) * width / 14,.06,z)
+      const plank = addMesh(ownGeo(new THREE.BoxGeometry(width / 14 - .014,.06,d.h * DEPTH)), material(i % 3 ? color.woodLight : color.wood), x - width / 2 + (i + .5) * width / 14,.06,z)
       plank.castShadow = true
     }
-    for (const dx of [-width*.4,width*.4]) addMesh(ownGeo(new THREE.CylinderGeometry(.035,.04,.28,6)), toon(color.wood),x+dx,.05,z)
+    for (const dx of [-width*.4,width*.4]) addMesh(ownGeo(new THREE.CylinderGeometry(.035,.04,.28,6)), material(color.wood),x+dx,.05,z)
   }
   // Modelled score spaces and two item rows, using our own icons.
   for (let i = 0; i <= 30; i++) {
     const [x,,z] = world([.035 + i * .031, .962])
-    addMesh(ownGeo(new THREE.BoxGeometry(.80,.05,.54)), toon(color.paperShade),x,.035,z)
+    addMesh(ownGeo(new THREE.BoxGeometry(.80,.05,.54)), material(color.paperShade),x,.035,z)
     const label = badge(String(i), { size: .52, bg: color.paperRaised }); label.position.set(x,.10,z); scene.add(label)
   }
   const items = ['bag','boots','crossbow','sword','tea','hammer'] as const
   for (let row = 0; row < 2; row++) items.forEach((icon, i) => {
     const [x,,z] = world([.17 + i * .035,.035 + row * .035])
-    addMesh(ownGeo(new THREE.BoxGeometry(.78,.06,.7)),toon(color.paperShade),x,.04,z)
+    addMesh(ownGeo(new THREE.BoxGeometry(.78,.06,.7)),material(color.paperShade),x,.04,z)
     const label = badge('',{ icon, iconFill: color.ink, bg: color.paperRaised, size: .52 }); label.position.set(x,.16,z); scene.add(label)
   })
   // Permanent earth footprints; changing demo contents never rebuilds or moves them.
@@ -160,7 +158,7 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
     for (let i = 0; i < 12; i++) {
       if (i === 2 || i === 3 || i === 4) continue // Open entrance at the front.
       const a = i / 12 * Math.PI * 2
-      addMesh(stoneGeo,toon(i % 3 ? color.pathEdge : color.paperShade), x + Math.cos(a) * .51,.065,z + Math.sin(a) * .45)
+      addMesh(stoneGeo,material(i % 3 ? color.pathEdge : color.paperShade), x + Math.cos(a) * .51,.065,z + Math.sin(a) * .45)
     }
     const label = badge(plot.id, { size: .36 }); label.position.set(x,.9,z); labels.add(label)
   }
@@ -241,7 +239,7 @@ export function mountLake(host: HTMLElement, select: (id: string) => void): Lake
       disposed = true; cancelAnimationFrame(frame); clearTimeout(iconsReady); observer.disconnect(); controls.removeEventListener('change',draw); controls.dispose()
       renderer.domElement.removeEventListener('pointerdown',down); renderer.domElement.removeEventListener('pointerup',up)
       geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose())
-      renderer.dispose(); renderer.domElement.remove()
+      table.dispose(); renderer.dispose(); renderer.domElement.remove()
     },
   }
 }

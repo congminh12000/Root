@@ -217,7 +217,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .hud-status .clock { margin-left: auto; }
 .hud-status .notice { margin-top: 4px; border-radius: var(--r-sm); }
 .hud-status button { margin-top: 4px; min-height: 36px; }
-.hud-menu { top: var(--sp-3); right: var(--sp-3); }
+.hud-menu { top: var(--sp-3); right: var(--sp-3); z-index: 9; }
 .hud-menu > button { min-width: 44px; min-height: 44px; font-size: var(--fs-lg); }
 .hud-menu-list { position: absolute; right: 0; top: calc(100% + 6px); display: flex; flex-direction: column; gap: 6px; width: 240px; background: var(--paper-a96); border: 2px solid var(--ink);
   border-radius: var(--r-md); box-shadow: var(--shadow-raised); padding: var(--sp-2); animation: rise var(--motion-dialog) ease-out; }
@@ -350,3 +350,22 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
   .lake-heading { flex-wrap: wrap; }
   .lake-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ── Tabletop materials (R6, style-guide §6): paper, card and wood instead of flat fills ───────────────────── */
+.card, .dialog, .carddetail, .map-menu, .map-bubble, .map-decision, .hud-status, .hud-menu-list, .hud-faction, .hud-hand, .hud-log,
+.hud-drawer, .cf-text, .cardchip, button.secondary, select, input:not([type=checkbox]), .notice { background-image: var(--grain-paper); }
+:root { background-image: var(--grain-paper); }
+/* Zero specificity: any button with its own background (anchors, badges, the hand strip, close) keeps it. */
+:where(button:not(.secondary):not(:disabled)) { background-image: var(--grain-wood), linear-gradient(var(--wood-light), var(--wood)); text-shadow: 0 1px 0 var(--ink-a25); }
+:where(button:not(.secondary):not(:disabled):hover) { background-image: var(--grain-wood), linear-gradient(var(--wood-light), var(--wood-light)); }
+/* Drawers slide out like wooden trays: a wood rim around the paper. */
+.hud-drawer { border: 3px solid var(--wood); outline: 2px solid var(--ink); outline-offset: 0; }
+.dialog { border-color: var(--wood); outline: 2px solid var(--ink); }
+/* Card stock: fibre over the whole face, a soft vignette over the picture, and a sheen that follows the hover. */
+.cardface::after { content: ''; position: absolute; inset: 0; background-image: var(--grain-paper); pointer-events: none; mix-blend-mode: multiply; opacity: .7; }
+.cf-art::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, transparent 55%, var(--ink-a25)); pointer-events: none; }
+.minicard .cardface::before, .questcard .cardface::before { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0;
+  background: linear-gradient(115deg, transparent 35%, var(--white-a30) 48%, transparent 60%); transition: opacity 160ms; }
+.minicard:hover .cardface::before, .minicard:focus-visible .cardface::before, .questcard:hover .cardface::before { opacity: 1; }
+.cf-plaque { background-image: var(--grain-wood), linear-gradient(var(--wood-light), var(--wood)); }
+@media (prefers-reduced-motion: reduce) { .minicard .cardface::before, .questcard .cardface::before { transition: none; } }

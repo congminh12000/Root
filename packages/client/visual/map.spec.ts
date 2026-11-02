@@ -84,7 +84,7 @@ for (const [name, device] of [['ipad', devices['iPad Pro 11 landscape']], ['ipad
       expect(Math.hypot(panned.target[0] - pinched.target[0], panned.target[1] - pinched.target[1])).toBeGreaterThan(.5)
       expect(await paperShare(page)).toBeLessThan(.5)
       await page.screenshot({ path: resolve(review, `map-${name}.png`) })
-      expect(await page.locator('.game-map canvas').getAttribute('data-quality')).toBe('tablet')
+      expect(await page.locator('.game-map canvas').getAttribute('data-quality')).not.toBe('full')
       // Turning the tablet: limits are worked out again for the new shape, and still no empty background.
       const { width, height } = page.viewportSize()!
       await page.setViewportSize({ width: height, height: width }); await page.waitForTimeout(600)

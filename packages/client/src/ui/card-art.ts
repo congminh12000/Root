@@ -104,7 +104,12 @@ function draw(key: string, suit: Suit, copy: number, s: Subject): string {
   const back = background(suit, rand)
   // Even copies mirror the setting; the subject stays the right way round.
   const mirrored = copy % 2 === 0 ? `<g transform="translate(120 0) scale(-1 1)">${back}</g>` : back
-  svg = `<svg class="cf-scene" viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${mirrored}${subject(s, suit)}</svg>`
+  // Painted light (style-guide §6): a warm glow from the top, shade towards the bottom, a soft shadow under the subject.
+  const light = `<defs><linearGradient id="cf-light" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--paper-raised);stop-opacity:.45"/>`
+    + `<stop offset=".45" style="stop-color:var(--paper-raised);stop-opacity:0"/><stop offset="1" style="stop-color:var(--ink);stop-opacity:.22"/></linearGradient></defs>`
+  const shadow = `<ellipse cx="62" cy="76" rx="20" ry="4.5" style="fill:var(--ink);fill-opacity:.22"/>`
+  svg = `<svg class="cf-scene" viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${light}${mirrored}${shadow}${subject(s, suit)}`
+    + `<rect width="120" height="90" style="fill:url(#cf-light)"/></svg>`
   cache.set(key, svg)
   return svg
 }

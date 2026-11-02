@@ -43,6 +43,7 @@ npm run typecheck && npm test && npm run audit:rules
 |---|---|
 | Giao diện theo phong cách mới | UI-1 → UI-6 xong; UI-7: bản dựng Autumn `/autumn-kit.html` chờ duyệt (`docs/07-ui/autumn-preview.md`); UI-8 đã triển khai (kết quả, nhật ký, hướng dẫn nhanh, âm thanh); còn thử với người mới. Lộ trình, quy trình, checklist ở `docs/07-ui/` |
 | Gameplay chỉ có map | G0–G7 xong: map full màn hình, mọi thao tác trên map, HUD nổi, chọn Autumn diorama hoặc bàn cổ điển, tablet, bỏ 2D. Xem `docs/07-ui/gameplay-map-only.md` |
+| Đồ hoạ bàn cờ mô hình thật | R0–R7 xong: vật liệu thật, nắng chiều, hậu kỳ, quân gỗ, nước nhựa, HUD giấy/gỗ. Xem `docs/07-ui/tabletop.md` |
 | Lake 3D — bản duyệt riêng | `/lake-kit.html`: cảnh và slot tương tác; bố cục và slot/Ruin đã được người quản lý duyệt; chưa nối vào game. Xem `docs/07-ui/lake-preview.md` |
 | Thử với người chơi thật | Bot chưa được đo với người giỏi |
 

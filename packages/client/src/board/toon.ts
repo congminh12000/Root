@@ -1,76 +1,12 @@
 import * as THREE from 'three'
-import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { color, font } from '../ui/tokens.ts'
 import { iconSvg, type IconName } from '../ui/icons.ts'
+import { material, printed } from './look.ts'
 
 /**
- * The hand-drawn look of style-guide §3: flat colour in three light steps (toon) and an ink outline that keeps its
- * width (an inverted hull pushed out along smoothed normals). Materials and hull geometries are cached, so pieces
- * rebuilt on every update allocate nothing new on the GPU.
+ * Shared pieces of the 3D board: cached shapes, parts made of the tabletop materials (board/look.ts) and the printed
+ * labels (number and icon badges) that always face the camera.
  */
-
-/** Three light steps, no smooth gradient. */
-const RAMP = (() => {
-  const t = new THREE.DataTexture(new Uint8Array([150, 205, 255]), 3, 1, THREE.RedFormat)
-  t.minFilter = t.magFilter = THREE.NearestFilter
-  t.generateMipmaps = false
-  t.needsUpdate = true
-  return t
-})()
-
-const toonCache = new Map<string, THREE.MeshToonMaterial>()
-/** A flat toon material in one colour (or white, for per-instance colours). */
-export function toon(c: string, opts: { map?: THREE.Texture } = {}): THREE.MeshToonMaterial {
-  const key = `${c}|${opts.map?.uuid ?? ''}`
-  let m = toonCache.get(key)
-  if (!m) toonCache.set(key, m = new THREE.MeshToonMaterial({ color: c, gradientMap: RAMP, map: opts.map ?? null }))
-  return m
-}
-
-const hullCache = new Map<number, THREE.MeshBasicMaterial>()
-/** Back faces in ink, pushed out by `width` object units along the normal. */
-function hullMaterial(width: number): THREE.MeshBasicMaterial {
-  let m = hullCache.get(width)
-  if (m) return m
-  m = new THREE.MeshBasicMaterial({ color: color.ink, side: THREE.BackSide })
-  m.onBeforeCompile = shader => {
-    shader.uniforms.outlineWidth = { value: width }
-    shader.vertexShader = `uniform float outlineWidth;\n${shader.vertexShader}`
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * outlineWidth;')
-  }
-  hullCache.set(width, m)
-  return m
-}
-
-const hullGeometry = new WeakMap<THREE.BufferGeometry, THREE.BufferGeometry>()
-/** The same shape with welded vertices and smooth normals, so the pushed-out hull has no cracks at hard edges. */
-function smoothed(g: THREE.BufferGeometry): THREE.BufferGeometry {
-  let h = hullGeometry.get(g)
-  if (!h) {
-    const copy = new THREE.BufferGeometry()
-    copy.setAttribute('position', g.getAttribute('position'))
-    if (g.index) copy.setIndex(g.index)
-    h = mergeVertices(copy, 1e-4)
-    h.computeVertexNormals()
-    hullGeometry.set(g, h)
-  }
-  return h
-}
-
-/** Gives every mesh under `root` an ink outline `width` object units thick (instanced meshes too). */
-export function outline<T extends THREE.Object3D>(root: T, width: number): T {
-  const meshes: THREE.Mesh[] = []
-  root.traverse(o => { if (o instanceof THREE.Mesh && !o.userData.hull) meshes.push(o) })
-  for (const m of meshes) {
-    const hull = m instanceof THREE.InstancedMesh
-      ? Object.assign(new THREE.InstancedMesh(smoothed(m.geometry), hullMaterial(width), m.count), { instanceMatrix: m.instanceMatrix, frustumCulled: false })
-      : new THREE.Mesh(smoothed(m.geometry), hullMaterial(width))
-    hull.userData.hull = true
-    hull.raycast = () => {}
-    m.add(hull)
-  }
-  return root
-}
 
 const geoCache = new Map<string, THREE.BufferGeometry>()
 /** One geometry per shape, built once. */
@@ -80,9 +16,9 @@ export function shape(key: string, build: () => THREE.BufferGeometry): THREE.Buf
   return g
 }
 
-/** A mesh from the shape cache in a toon colour, placed and casting a shadow. */
+/** A mesh from the shape cache in the material of its colour (look.ts), placed and casting a shadow. */
 export function part(key: string, build: () => THREE.BufferGeometry, c: string, at: [number, number, number] = [0, 0, 0], rot?: [number, number, number]): THREE.Mesh {
-  const m = new THREE.Mesh(shape(key, build), toon(c))
+  const m = new THREE.Mesh(shape(key, build), material(c))
   m.position.set(...at)
   if (rot) m.rotation.set(...rot)
   m.castShadow = true
@@ -107,6 +43,43 @@ function iconImage(name: IconName, fill: string): Promise<HTMLImageElement> {
   }
   return p
 }
+
+const stickerCache = new Map<string, THREE.MeshStandardMaterial>()
+/**
+ * A printed round sticker with an icon, as glued on the wooden pieces of the physical game (style-guide §3): paper
+ * disc, ink rim, the icon in `fill`. Lies flat on top of a piece; cached by icon and colour.
+ */
+export function sticker(icon: IconName | null, fill: string = color.ink, text = ''): THREE.MeshStandardMaterial {
+  const key = `${icon}|${fill}|${text}`
+  let mat = stickerCache.get(key)
+  if (mat) return mat
+  const canvas = document.createElement('canvas'); canvas.width = canvas.height = 128
+  const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4
+  const draw = (img?: HTMLImageElement) => {
+    const g = canvas.getContext('2d')!
+    g.clearRect(0, 0, 128, 128)
+    g.fillStyle = color.paperRaised; g.strokeStyle = color.ink; g.lineWidth = 6
+    g.beginPath(); g.arc(64, 64, 58, 0, Math.PI * 2); g.fill(); g.stroke()
+    if (img) g.drawImage(img, 18, 18, 92, 92)
+    if (text) { g.fillStyle = color.ink; g.font = `bold 84px ${font.display}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 64, 70) }
+    tex.needsUpdate = true
+  }
+  draw()
+  if (icon) void iconImage(icon, fill).then(draw)
+  if (text) void document.fonts.load(`bold 84px ${font.display}`, text).then(() => draw())
+  stickerCache.set(key, mat = printed(tex))
+  return mat
+}
+const stickerGeo = new THREE.CircleGeometry(1, 28).rotateX(-Math.PI / 2)
+/** A sticker of radius `r` lying on a top face at height `y`: an icon, or printed `text` such as a score. */
+export function stickerOn(icon: IconName | null, r: number, y: number, fill?: string, text?: string): THREE.Mesh {
+  const m = new THREE.Mesh(stickerGeo, sticker(icon, fill, text))
+  m.scale.setScalar(r); m.position.y = y + .002
+  return m
+}
+
+/** Labels live on their own layer, drawn after the photo treatment so they stay sharp (map/post.ts). */
+export const LABEL_LAYER = 1
 
 const labelCache = new Map<string, THREE.SpriteMaterial>()
 /**
@@ -142,11 +115,12 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
     draw()
     void document.fonts.load(`76px ${font.display}`, text).then(() => draw())
     if (opts.icon) void iconImage(opts.icon, opts.iconFill ?? color.paperRaised).then(img => { void document.fonts.load(`76px ${font.display}`, text).then(() => draw(img)) })
-    labelCache.set(key, mat = new THREE.SpriteMaterial({ map: tex, depthTest: false }))
+    labelCache.set(key, mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, toneMapped: false, fog: false }))
   }
   const sprite = new THREE.Sprite(mat)
   const s = opts.size ?? 0.6
   sprite.scale.set(s * (opts.icon && text !== '' ? 224 / 128 : 1), s, 1)
   sprite.renderOrder = 10
+  sprite.layers.set(LABEL_LAYER)
   return sprite
 }

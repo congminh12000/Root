@@ -4,67 +4,82 @@ import type { Spot, Travel } from '../motion.ts'
 import { FACTION_COLOR } from '../names.ts'
 import { color } from '../ui/tokens.ts'
 import { CLEARING_R, PIECE_SCALE, spotPoint, world } from './geo.ts'
-import { badge, outline, part, shape, toon } from './toon.ts'
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
+import type { IconName } from '../ui/icons.ts'
+import { badge, part, shape, stickerOn } from './toon.ts'
+import { material } from './look.ts'
 
 /**
- * Pieces in the board's toon style. Every faction reads by shape as well as colour (style-guide §2): cat ears,
- * a beak and crest, long ears, a hooded cloak; the three Marquise buildings differ by a saw, a chimney and a flag.
+ * The pieces as a wooden set (style-guide §3): meeples cut in each faction's animal outline, buildings and tokens as
+ * painted blocks and discs with printed stickers, score markers as discs on the printed track.
  */
 
-const INK_W = 0.022
 const cyl = (rt: number, rb: number, h: number, seg = 12) => () => new THREE.CylinderGeometry(rt, rb, h, seg)
-const cone = (r: number, h: number, seg = 10) => () => new THREE.ConeGeometry(r, h, seg)
-const ball = (r: number) => () => new THREE.SphereGeometry(r, 14, 10)
 const box = (x: number, y: number, z: number) => () => new THREE.BoxGeometry(x, y, z)
-const capsule = (r: number, l: number) => () => new THREE.CapsuleGeometry(r, l, 4, 8)
+
+/**
+ * A wooden meeple: the faction's animal outline, cut from a board and rounded at the edges, the way the physical game's
+ * pieces are made (style-guide §3). Outlines are drawn in a 0.4 × 0.8 box standing on y = 0; every faction reads by its
+ * outline as well as its colour (§2): cat ears, a beak and crest, long ears, a hood.
+ */
+const SILHOUETTE: Record<FactionId, (s: THREE.Shape) => void> = {
+  marquise: s => {
+    s.moveTo(-.17, 0); s.lineTo(.17, 0); s.quadraticCurveTo(.18, .2, .11, .3); s.quadraticCurveTo(.17, .36, .15, .44)
+    s.lineTo(.16, .6); s.lineTo(.07, .52); s.quadraticCurveTo(0, .55, -.07, .52); s.lineTo(-.16, .6); s.lineTo(-.15, .44)
+    s.quadraticCurveTo(-.17, .36, -.11, .3); s.quadraticCurveTo(-.18, .2, -.17, 0)
+  },
+  eyrie: s => {
+    s.moveTo(-.16, 0); s.lineTo(.16, 0); s.quadraticCurveTo(.18, .2, .11, .31); s.quadraticCurveTo(.15, .36, .15, .41)
+    s.lineTo(.27, .44); s.lineTo(.14, .49); s.quadraticCurveTo(.1, .57, .03, .57); s.lineTo(-.02, .66); s.lineTo(-.05, .56)
+    s.quadraticCurveTo(-.15, .52, -.14, .42); s.quadraticCurveTo(-.15, .35, -.11, .31); s.quadraticCurveTo(-.18, .2, -.16, 0)
+  },
+  alliance: s => {
+    s.moveTo(-.17, 0); s.lineTo(.17, 0); s.quadraticCurveTo(.18, .2, .11, .3); s.quadraticCurveTo(.16, .36, .14, .45)
+    s.quadraticCurveTo(.15, .7, .1, .76); s.quadraticCurveTo(.05, .7, .04, .52); s.lineTo(-.04, .52)
+    s.quadraticCurveTo(-.05, .7, -.1, .76); s.quadraticCurveTo(-.15, .7, -.14, .45); s.quadraticCurveTo(-.16, .36, -.11, .3)
+    s.quadraticCurveTo(-.18, .2, -.17, 0)
+  },
+  vagabond: s => {
+    s.moveTo(-.2, 0); s.lineTo(.2, 0); s.quadraticCurveTo(.16, .25, .11, .4); s.quadraticCurveTo(.17, .5, .13, .6)
+    s.quadraticCurveTo(.06, .72, 0, .72); s.quadraticCurveTo(-.06, .72, -.13, .6); s.quadraticCurveTo(-.17, .5, -.11, .4)
+    s.quadraticCurveTo(-.16, .25, -.2, 0)
+  },
+}
+const meeple = (f: FactionId) => () => {
+  const s = new THREE.Shape(); SILHOUETTE[f](s)
+  return new THREE.ExtrudeGeometry(s, { depth: .1, bevelEnabled: true, bevelThickness: .025, bevelSize: .022, bevelSegments: 3, curveSegments: 10 }).translate(0, 0, -.05)
+}
 
 function warrior(f: FactionId): THREE.Group {
-  const c = FACTION_COLOR[f]
   const g = new THREE.Group()
-  g.add(part('w-body', cyl(0.1, 0.15, 0.32), c, [0, 0.16, 0]), part('w-head', ball(0.115), c, [0, 0.42, 0]))
-  if (f === 'marquise') {
-    for (const s of [-1, 1]) g.add(part('cat-ear', cone(0.06, 0.15, 6), c, [s * 0.07, 0.56, 0], [0, 0, -s * 0.3]))
-  } else if (f === 'eyrie') {
-    g.add(part('beak', cone(0.04, 0.13, 8), color.autumnGold, [0, 0.41, 0.13], [Math.PI / 2, 0, 0]))
-    g.add(part('crest', cone(0.035, 0.12, 6), c, [0, 0.56, -0.03], [-0.4, 0, 0]))
-  } else {
-    for (const s of [-1, 1]) g.add(part('long-ear', capsule(0.03, 0.15), c, [s * 0.05, 0.62, -0.01], [0, 0, -s * 0.18]))
-  }
-  return outline(g, INK_W)
+  g.add(part(`meeple-${f}`, meeple(f), FACTION_COLOR[f], [0, .025, 0]))
+  return g
 }
 
 function pawn(): THREE.Group {
-  const c = FACTION_COLOR.vagabond
   const g = new THREE.Group()
-  g.add(part('cloak', cone(0.21, 0.56, 12), c, [0, 0.28, 0]), part('hood', ball(0.13), c, [0, 0.6, -0.01]),
-    part('face', ball(0.085), color.paperShade, [0, 0.6, 0.07]), part('pack', box(0.17, 0.19, 0.1), color.wood, [0, 0.36, -0.15]),
-    part('staff', cyl(0.018, 0.018, 0.78, 6), color.wood, [0.2, 0.39, 0.04], [0, 0, -0.08]))
-  return outline(g, INK_W)
+  g.add(part('meeple-vagabond', meeple('vagabond'), FACTION_COLOR.vagabond, [0, .025, 0]),
+    part('staff', cyl(0.018, 0.018, 0.78, 6), color.wood, [0.22, 0.39, 0.06], [0, 0, -0.08]),
+    part('pack', box(0.17, 0.19, 0.08), color.woodLight, [0, 0.36, -0.12]))
+  return g
 }
 
+/** Rounded wooden block (painted), the shape every building and token block shares. */
+const block = (w: number, h: number, d: number) => () => new RoundedBoxGeometry(w, h, d, 3, .035)
+const BUILDING_ICON: Record<string, IconName> = { sawmill: 'saw', workshop: 'hammer', recruiter: 'marquise', roost: 'eyrie', base: 'alliance' }
+
+/** A building: a painted wooden block with its printed sticker on top (§6.2.3 sawmill, workshop, recruiter; roost; base). */
 export function building(type: string, f: FactionId): THREE.Group {
-  const c = FACTION_COLOR[f]
   const g = new THREE.Group()
-  if (type === 'roost') {
-    g.add(part('stump', cyl(0.09, 0.12, 0.42, 8), color.wood, [0, 0.21, 0]))
-    g.add(part('nest', () => new THREE.TorusGeometry(0.17, 0.075, 8, 18), c, [0, 0.46, 0], [Math.PI / 2, 0, 0]))
-  } else if (type === 'base') {
-    g.add(part('tent', cone(0.3, 0.5, 4), c, [0, 0.25, 0], [0, Math.PI / 4, 0]))
-    g.add(part('pole', cyl(0.012, 0.012, 0.3, 5), color.wood, [0, 0.6, 0]), part('pennant', box(0.14, 0.08, 0.01), color.paperRaised, [0.07, 0.7, 0]))
-  } else {
-    g.add(part('walls', box(0.38, 0.27, 0.36), c, [0, 0.135, 0]), part('roof', cone(0.33, 0.24, 4), color.roofRed, [0, 0.39, 0], [0, Math.PI / 4, 0]))
-    if (type === 'sawmill') g.add(part('saw', cyl(0.12, 0.12, 0.03, 16), color.rock, [0, 0.14, 0.2], [Math.PI / 2, 0, 0]))
-    if (type === 'workshop') g.add(part('chimney', box(0.07, 0.2, 0.07), color.rock, [0.1, 0.45, 0.05]))
-    if (type === 'recruiter') g.add(part('pole', cyl(0.012, 0.012, 0.3, 5), color.wood, [0.12, 0.5, 0.1]), part('flag', box(0.13, 0.08, 0.01), c, [0.18, 0.6, 0.1]))
-  }
-  return outline(g, INK_W)
+  g.add(part('building-block', block(.4, .2, .4), FACTION_COLOR[f], [0, .1, 0]), stickerOn(BUILDING_ICON[type] ?? 'card', .15, .2, FACTION_COLOR[f]))
+  return g
 }
 
 export function ruin(): THREE.Group {
   const g = new THREE.Group()
   g.add(part('pillar-a', cyl(0.07, 0.08, 0.36, 7), color.rock, [-0.1, 0.18, 0]), part('pillar-b', cyl(0.07, 0.08, 0.22, 7), color.rock, [0.1, 0.11, 0]),
     part('lintel', box(0.2, 0.06, 0.08), color.rock, [0.05, 0.03, 0.12], [0, 0.6, 0]))
-  return outline(g, INK_W)
+  return g
 }
 
 function token(type: string, f: FactionId): THREE.Group {
@@ -75,12 +90,11 @@ function token(type: string, f: FactionId): THREE.Group {
       part('log', cyl(0.06, 0.06, 0.3, 8), color.woodLight, [0, 0.06, -0.08], [0, 0, Math.PI / 2]),
       part('log', cyl(0.06, 0.06, 0.3, 8), color.woodLight, [0, 0.16, -0.02], [0, 0, Math.PI / 2]))
   } else if (type === 'keep') {
-    g.add(part('tower', cyl(0.16, 0.19, 0.48, 10), c, [0, 0.24, 0]))
-    for (let i = 0; i < 4; i++) g.add(part('merlon', box(0.07, 0.08, 0.07), c, [Math.cos(i * Math.PI / 2) * 0.12, 0.52, Math.sin(i * Math.PI / 2) * 0.12]))
+    g.add(part('keep-block', block(.3, .42, .3), c, [0, .21, 0]), stickerOn('marquise', .12, .42, c))
   } else {
-    g.add(part('disc', cyl(0.17, 0.17, 0.06, 20), c, [0, 0.03, 0]), part('heart', ball(0.07), color.paperRaised, [0, 0.08, 0]))
+    g.add(part('disc', cyl(0.17, 0.17, 0.07, 24), c, [0, 0.035, 0]), stickerOn('alliance', .12, .07, c))
   }
-  return outline(g, INK_W)
+  return g
 }
 
 const slotGeo = () => shape('slot', () => new THREE.BoxGeometry(0.66, 0.04, 0.66))
@@ -138,14 +152,16 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
   for (const [id, c] of view.map.clearings.entries()) {
     const p = at.centre(id)
     const fresh = changed.includes(id)
-    const add = (o: THREE.Object3D) => { o.scale.setScalar(PIECE_SCALE); root.add(o); if (fresh) pop.push(o) }
+    // Pieces in a chosen clearing are lifted a hair off the board, as if picked up.
+    const lift = highlight.includes(id) ? .06 : 0
+    const add = (o: THREE.Object3D) => { o.scale.setScalar(PIECE_SCALE); o.position.y += lift; root.add(o); if (fresh) pop.push(o) }
     c.slots.forEach((slot, i) => {
       const s = at.slot(id, i, c.slots.length)
       if (at.pads) {
-        const pad = new THREE.Mesh(slotGeo(), toon(color.paperShade))
+        const pad = new THREE.Mesh(slotGeo(), material(color.paperShade))
         pad.position.set(s.x, s.y - 0.02, s.z)
         pad.receiveShadow = true
-        root.add(outline(pad, 0.03))
+        root.add(pad)
       }
       if (!slot) return
       const obj = slot.kind === 'ruin' ? ruin() : building(slot.type, slot.faction)
@@ -158,7 +174,10 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
       const base = at.warriors(id, gi, groups.length)
       for (let k = 0; k < Math.min(n, 4); k++) {
         const w = warrior(f)
-        w.position.set(base.x + (k % 2) * 0.36 - 0.18, base.y, base.z + Math.floor(k / 2) * 0.32 - 0.16)
+        // Two rows, the back row offset, each meeple turned a little as if set down by hand.
+        const row = Math.floor(k / 2)
+        w.position.set(base.x + (k % 2) * 0.44 - 0.22 + row * 0.12, base.y, base.z + row * 0.3 - 0.15)
+        w.rotation.y = ((k * 37 + id * 11) % 7 - 3) * 0.07
         add(w)
       }
       if (n > 1) {
@@ -185,7 +204,7 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
       root.add(ring)
       pulse.push(ring)
     }
-    if (highlight.includes(id)) root.add(outline(ellipseRing(p, at.ring, 0.16, 0.08, litMat), 0.03))
+    if (highlight.includes(id)) root.add(ellipseRing(p, at.ring, 0.16, 0.08, litMat))
     else if (targets.includes(id)) root.add(ellipseRing(p, at.ring, 0.14, 0.035, litMat))
   }
   const where = view.factions.vagabond?.pawn
@@ -203,8 +222,9 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
       if (typeof n !== 'number') continue
       const space = Math.min(30, n), stack = seen.get(space) ?? 0
       seen.set(space, stack + 1)
-      const mark = badge('', { bg: FACTION_COLOR[f], icon: f, iconFill: color.paperRaised, size: 0.5 })
-      mark.position.copy(at.score(space)).add(new THREE.Vector3(0, 0.45 + stack * 0.5, -stack * 0.12))
+      const mark = new THREE.Group()
+      mark.add(part('score-disc', cyl(.2, .2, .08, 24), FACTION_COLOR[f], [0, .04, 0]), stickerOn(f, .14, .08, FACTION_COLOR[f]))
+      mark.position.copy(at.score(space)).add(new THREE.Vector3(0, stack * .09, -stack * .06))
       root.add(mark)
     }
   }

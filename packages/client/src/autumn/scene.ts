@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { lightTable } from '../board/light.ts'
+import { loadSurfaces } from '../board/look.ts'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { building, ruin } from '../board/pieces.ts'
 import { badge } from '../board/toon.ts'
@@ -35,13 +37,8 @@ export function mountAutumn(host: HTMLElement, select: (id: string) => void): Au
   controls.enablePan = false
   controls.minZoom = .8; controls.maxZoom = 2.8
   controls.minPolarAngle = .03; controls.maxPolarAngle = Math.PI * .43
-  scene.add(new THREE.HemisphereLight(color.paperRaised, color.wood, 2.1))
-  const sun = new THREE.DirectionalLight(color.paperRaised, 3)
-  sun.position.set(-12, 25, -12); sun.castShadow = true
-  sun.shadow.mapSize.set(2048, 2048)
-  Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 19, bottom: -19, near: 1, far: 65 })
-  sun.shadow.bias = -.001
-  scene.add(sun)
+  const table = lightTable(renderer, scene, { shadowSize: 2048, half: [22, 20] })
+  void loadSurfaces().then(() => draw())
 
   const scenery = buildAutumnScenery(scene, { slab: true })
   const { picking, pads, labels, earthMat, selectedMat } = scenery
@@ -120,7 +117,7 @@ export function mountAutumn(host: HTMLElement, select: (id: string) => void): Au
       disposed = true; cancelAnimationFrame(frame); clearTimeout(iconsReady); observer.disconnect(); controls.removeEventListener('change', draw); controls.dispose()
       renderer.domElement.removeEventListener('pointerdown', down); renderer.domElement.removeEventListener('pointerup', up)
       scenery.dispose()
-      renderer.dispose(); renderer.domElement.remove()
+      table.dispose(); renderer.dispose(); renderer.domElement.remove()
     },
   }
 }

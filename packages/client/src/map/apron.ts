@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { outline, toon } from '../board/toon.ts'
+import { mat } from '../board/look.ts'
 import { alpha, color } from '../ui/tokens.ts'
 import type { Bounds } from './limits.ts'
 
@@ -28,6 +28,36 @@ const insidePoly = (x: number, z: number, poly: readonly XZ[]) => {
 const segDist = (x: number, z: number, a: XZ, b: XZ) => {
   const dx = b[0] - a[0], dz = b[1] - a[1], t = Math.max(0, Math.min(1, ((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz)))
   return Math.hypot(x - a[0] - t * dx, z - a[1] - t * dz)
+}
+
+/**
+ * Resin water (style-guide §3) over painted rivers and lakes: a ribbon `half` wide along each river line and a flat
+ * sheet over each lake outline, at height `y`, glossy with drifting ripples. UVs are world units, so ripples keep one
+ * size everywhere. Returns the meshes (added to `scene`) and their geometries to dispose.
+ */
+export function resinWater(scene: THREE.Object3D, rivers: { line: readonly XZ[]; half: number }[], lakes: readonly (readonly XZ[])[], y: number) {
+  const material = mat('resin', color.water, { repeat: .35 }), geometries: THREE.BufferGeometry[] = []
+  for (const { line, half } of rivers) {
+    const pos: number[] = [], uv: number[] = [], index: number[] = []
+    line.forEach(([x, z], i) => {
+      const [ax, az] = line[Math.max(0, i - 1)]!, [bx, bz] = line[Math.min(line.length - 1, i + 1)]!
+      const len = Math.hypot(bx - ax, bz - az) || 1, nx = -(bz - az) / len * half, nz = (bx - ax) / len * half
+      pos.push(x + nx, y, z + nz, x - nx, y, z - nz); uv.push(x + nx, z + nz, x - nx, z - nz)
+      if (i) { const k = i * 2; index.push(k - 2, k - 1, k, k - 1, k + 1, k) }
+    })
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
+    g.setIndex(index); g.computeVertexNormals(); geometries.push(g)
+  }
+  for (const lake of lakes) {
+    const shape = new THREE.Shape(lake.map(([x, z]) => new THREE.Vector2(x, -z)))
+    const g = new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2).translate(0, y, 0)
+    const p = g.attributes.position!, uv = g.attributes.uv!
+    for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i), p.getZ(i))
+    geometries.push(g)
+  }
+  for (const g of geometries) { const m = new THREE.Mesh(g, material); m.receiveShadow = true; scene.add(m) }
+  return geometries
 }
 
 /** True where the apron is water: a river channel or a lake. */
@@ -82,11 +112,13 @@ export function buildApron(scene: THREE.Scene, spec: ApronSpec, opts: { trees: n
     g.lineWidth = 6; g.strokeStyle = color.pathEdge; g.stroke(); g.fillStyle = color.water; g.fill()
   }
   const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4
-  const mat = new THREE.MeshToonMaterial({ map: tex }), plane = new THREE.PlaneGeometry(2 * R, 2 * R)
-  const ground = new THREE.Mesh(plane, mat); ground.rotation.x = -Math.PI / 2; ground.position.y = spec.ground ?? -.03; ground.receiveShadow = true
-  scene.add(ground); disposables.push(tex, mat, plane)
+  const groundMat = mat('flock', color.white, { map: tex, repeat: 90 }), plane = new THREE.PlaneGeometry(2 * R, 2 * R)
+  const ground = new THREE.Mesh(plane, groundMat); ground.rotation.x = -Math.PI / 2; ground.position.y = spec.ground ?? -.03; ground.receiveShadow = true
+  scene.add(ground); disposables.push(tex, plane)
 
-  // Trees: a dense outlined band at the board's edge, then sparser and plainer outwards.
+  disposables.push(...resinWater(scene, spec.rivers, spec.lakes, (spec.ground ?? -.03) + .015))
+
+  // Trees: a dense band at the board's edge, then sparser and plainer outwards.
   const near: { x: number; z: number; s: number; round: boolean }[] = [], far: typeof near = []
   for (let i = 0; i < opts.trees * 6 && near.length + far.length < opts.trees; i++) {
     const inBand = rand() < .45, reach = inBand ? 9 : R * .8
@@ -98,10 +130,10 @@ export function buildApron(scene: THREE.Scene, spec: ApronSpec, opts: { trees: n
   const plant = (list: typeof near, withInk: boolean) => {
     const pines = list.filter(t => !t.round), rounds = list.filter(t => t.round)
     const add = (items: typeof near, geo: THREE.BufferGeometry, c: string, lift: number) => {
-      const mesh = new THREE.InstancedMesh(geo, toon(c), items.length)
+      const mesh = new THREE.InstancedMesh(geo, mat('foam', c, { repeat: 2 }), items.length)
       items.forEach((t, i) => { dummy.position.set(t.x, (spec.ground ?? 0) + lift * t.s, t.z); dummy.scale.setScalar(t.s); dummy.rotation.set(0, i * 1.3, 0); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix) })
       mesh.castShadow = withInk; mesh.receiveShadow = true
-      scene.add(withInk ? outline(mesh, .012) : mesh); disposables.push(geo)
+      scene.add(withInk ? mesh : mesh); disposables.push(geo)
     }
     for (let tier = 0; tier < 3; tier++) add(pines, new THREE.ConeGeometry(.32 - tier * .065, .5, withInk ? 7 : 5), tier === 1 ? color.pineLight : color.pine, .5 + tier * .23)
     add(rounds, new THREE.IcosahedronGeometry(.36, withInk ? 1 : 0), withInk ? color.meadow : color.pineLight, .73)

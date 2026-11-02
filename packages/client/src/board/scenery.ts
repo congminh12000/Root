@@ -5,7 +5,8 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { SUIT_COLOR } from '../names.ts'
 import { alpha, color } from '../ui/tokens.ts'
 import { CLEARING_R, forestCentre, GROUND_X, GROUND_Z, groundHeight, nearClearing, nearPath, pointInPolygon, SPAN_X, SPAN_Z, world } from './geo.ts'
-import { badge, outline, toon } from './toon.ts'
+import { badge } from './toon.ts'
+import { mat, material } from './look.ts'
 
 /**
  * The static board, built once: a painted ground (meadow, forest floor, dirt paths), forests of pines and round
@@ -114,15 +115,15 @@ function plantTrees(rand: () => number): Tree[] {
 }
 
 function instanced(trees: Tree[], crown: THREE.BufferGeometry, scene: THREE.Object3D) {
-  const crowns = new THREE.InstancedMesh(crown, toon(color.white), trees.length)
-  const trunks = new THREE.InstancedMesh(trunkGeo(), toon(color.wood), trees.length)
+  const crowns = new THREE.InstancedMesh(crown, mat('foam', color.white, { repeat: 2 }), trees.length)
+  const trunks = new THREE.InstancedMesh(trunkGeo(), material(color.wood), trees.length)
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0)
   trees.forEach((t, i) => {
     m.compose(new THREE.Vector3(t.x, groundHeight(t.x, t.z), t.z), q.setFromAxisAngle(up, t.turn), new THREE.Vector3(t.s, t.s, t.s))
     crowns.setMatrixAt(i, m); trunks.setMatrixAt(i, m)
     crowns.setColorAt(i, new THREE.Color(t.tint))
   })
-  for (const mesh of [crowns, trunks]) { mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, 0.035)) }
+  for (const mesh of [crowns, trunks]) { mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh) }
 }
 
 function rocks(rand: () => number, scene: THREE.Object3D) {
@@ -130,12 +131,12 @@ function rocks(rand: () => number, scene: THREE.Object3D) {
   for (let k = 0, n = 0; k < 400 && n < 26; k++) {
     const x = (rand() - 0.5) * (SPAN_X + 1), z = (rand() - 0.5) * (SPAN_Z + 1)
     if (nearClearing(x, z) < CLEARING_R + 0.4 || nearPath(x, z) < 0.6) continue
-    const rock = new THREE.Mesh(geo, toon(color.rock))
+    const rock = new THREE.Mesh(geo, material(color.rock))
     rock.position.set(x, groundHeight(x, z) + 0.05, z)
     rock.scale.set(0.8 + rand() * 1.2, 0.5 + rand() * 0.6, 0.8 + rand() * 1.0)
     rock.rotation.y = rand() * Math.PI
     rock.castShadow = true; rock.receiveShadow = true
-    scene.add(outline(rock, 0.05))
+    scene.add(rock)
     n++
   }
 }
@@ -156,7 +157,7 @@ export function buildClassicScenery(parent: THREE.Scene): { picking: THREE.Mesh[
   const pos = ground.attributes.position!
   for (let i = 0; i < pos.count; i++) pos.setY(i, groundHeight(pos.getX(i), pos.getZ(i)))
   ground.computeVertexNormals()
-  const groundMesh = new THREE.Mesh(ground, toon(color.white, { map: paintGround(rand) }))
+  const groundMesh = new THREE.Mesh(ground, mat('flock', color.white, { map: paintGround(rand), repeat: 20 }))
   groundMesh.receiveShadow = true
   scene.add(groundMesh)
 
@@ -170,13 +171,13 @@ export function buildClassicScenery(parent: THREE.Scene): { picking: THREE.Mesh[
   const ringGeo = new THREE.TorusGeometry(CLEARING_R - 0.14, 0.07, 8, 56)
   for (const c of AUTUMN.clearings) {
     const p = world(c.id)
-    const floor = new THREE.Mesh(floorGeo, toon(color.meadowLight))
+    const floor = new THREE.Mesh(floorGeo, material(color.meadowLight))
     floor.position.set(p.x, 0.04, p.z)
     floor.receiveShadow = true
     floor.userData.clearing = c.id
-    scene.add(outline(floor, 0.045))
+    scene.add(floor)
     pickables.push(floor)
-    const ring = new THREE.Mesh(ringGeo, toon(SUIT_COLOR[c.suit]))
+    const ring = new THREE.Mesh(ringGeo, material(SUIT_COLOR[c.suit]))
     ring.rotation.x = Math.PI / 2
     ring.position.set(p.x, 0.1, p.z)
     scene.add(ring)
@@ -198,7 +199,7 @@ export function buildClassicScenery(parent: THREE.Scene): { picking: THREE.Mesh[
     picking: pickables,
     plantTrees: plant,
     dispose() {
-      // Materials are shared through toon()'s cache and stay; geometry and the painted ground go.
+      // Materials are shared through material()'s cache and stay; geometry and the painted ground go.
       scene.traverse(o => { if (!(o instanceof THREE.Sprite)) (o as THREE.Mesh).geometry?.dispose() })
       groundMesh.material.map?.dispose()
       parent.remove(scene)

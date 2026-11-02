@@ -51,4 +51,9 @@ test('quality tiers: a touch device draws fewer pixels, a smaller shadow map and
   assert.ok(tablet.pixelRatio < laptop.pixelRatio && tablet.shadowSize < laptop.shadowSize && tablet.apronTrees < laptop.apronTrees)
   assert.equal(qualityFor({ coarse: false, dpr: 3 }).pixelRatio, 2)
   assert.equal(qualityFor({ coarse: true, dpr: 1 }).pixelRatio, 1)
+  // Contact shadows only at full; a software renderer gets no post-processing; `force` wins (review pages, tests).
+  assert.ok(laptop.post && laptop.ao && tablet.post && !tablet.ao)
+  const soft = qualityFor({ coarse: false, dpr: 2, software: true })
+  assert.equal(soft.tier, 'low'); assert.ok(!soft.post)
+  assert.equal(qualityFor({ coarse: false, dpr: 2, software: true, force: 'full' }).tier, 'full')
 })

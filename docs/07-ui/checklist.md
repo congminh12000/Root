@@ -86,4 +86,5 @@ Trạng thái ngày 02/11/2026 (sau G1–G7, gameplay chỉ có map). **Xong** =
 | ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
 | ★ | Giảm chuyển động | Có | mọi mốc |
 | ★ | Desktop 1280–1920 px; tablet ngang và dọc (chạm, chụm, xoay máy, nút ≥ 44 px) | Xong | G6 |
-| | ≥ 55 fps trên M1 ở 1440p | Xong | UI-3 |
+| | ≥ 55 fps trên M1 ở 1440p (cả hậu kỳ): 67 fps ở 1440×900 Retina | Xong | UI-3, R7 |
+| ★ | Đồ hoạ bàn cờ mô hình thật: vật liệu, ánh sáng, hậu kỳ, quân gỗ, HUD giấy/gỗ | Xong | R0–R6 |
