@@ -242,6 +242,12 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
   .hud-drawer.right { right: var(--sp-3); width: min(440px, calc(100vw - 24px)); }
 }
 
+/* ── Map choice (G5) ─────────────────────────────────────────────────────── */
+.map-picker { border: 2px dashed var(--ink-a25); border-radius: var(--r-md); margin: var(--sp-2) 0; padding: 6px var(--sp-2); }
+.map-picker legend { font-weight: 700; padding: 0 4px; }
+.map-picker label { display: flex; align-items: center; gap: 6px; min-height: 40px; flex-wrap: wrap; }
+.hud-menu-list .map-picker { margin: 0; }
+
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
 .board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }

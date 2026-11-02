@@ -127,6 +127,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     ready = true
     renderer.render(scene, camera)
     performance.measure('map:first-frame', 'map:mount-start')
+    viewListeners.forEach(l => l())
     for (const task of built.later) {
       await new Promise(r => setTimeout(r, 0))
       if (disposed) return
@@ -218,6 +219,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     },
     resetCamera(top = false) { rig.home(top) },
     project(c) {
+      // The camera's matrices are otherwise only refreshed by a render, and the overlay may ask before the first one.
+      camera.updateMatrixWorld()
       projected.copy(theme.placement.centre(c)).project(camera)
       return [(projected.x + 1) / 2 * host.clientWidth, (1 - projected.y) / 2 * host.clientHeight]
     },

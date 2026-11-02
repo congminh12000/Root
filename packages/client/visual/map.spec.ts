@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { devices, expect, test, type Page } from '@playwright/test'
 import { DEPTH, WIDTH } from '../src/autumn/layout.ts'
+import { GROUND_X, GROUND_Z } from '../src/board/geo.ts'
 import { MAX_POLAR } from '../src/map/limits.ts'
 
 // The map-only game screen (docs/07-ui/gameplay-map-only.md): no empty background at any allowed camera, zoom and
@@ -22,18 +23,18 @@ async function paperShare(page: Page): Promise<number> {
     return n / all * 100
   }, png.toString('base64'))
 }
-async function open(page: Page) {
+async function open(page: Page, map = '') {
   const errors: string[] = []; page.on('pageerror', e => errors.push(String(e)))
-  await page.goto('/map-kit.html'); await page.evaluate(() => document.fonts.ready)
+  await page.goto(`/map-kit.html${map && `?map=${map}`}`); await page.evaluate(() => document.fonts.ready)
   await expect(page.locator('.game-map canvas')).toBeVisible(); await page.waitForTimeout(1500)
   await mkdir(review, { recursive: true })
   return errors
 }
 
-for (const [name, size] of [['1440', { width: 1440, height: 900 }], ['1280', { width: 1280, height: 800 }]] as const) {
+for (const [name, size, map] of [['1440', { width: 1440, height: 900 }, ''], ['1280', { width: 1280, height: 800 }, ''], ['classic-1440', { width: 1440, height: 900 }, 'classic']] as const) {
   test(`map fills the screen at every camera limit, desktop ${name}`, async ({ page }) => {
     await page.setViewportSize(size)
-    const errors = await open(page)
+    const errors = await open(page, map)
     const box = (await page.locator('.game-map canvas').boundingBox())!, cx = box.x + box.width / 2, cy = box.y + box.height / 2
     expect(await paperShare(page)).toBeLessThan(.5)
     for (let i = 0; i < 30; i++) { await page.mouse.move(cx, cy); await page.mouse.wheel(0, 500) }
@@ -46,7 +47,8 @@ for (const [name, size] of [['1440', { width: 1440, height: 900 }], ['1280', { w
     await page.waitForTimeout(300)
     c = await cam(page)
     expect(c.polar).toBeLessThanOrEqual(MAX_POLAR + 1e-3)
-    expect(Math.abs(c.target[0])).toBeLessThanOrEqual(WIDTH / 2 + 1e-6); expect(Math.abs(c.target[1])).toBeLessThanOrEqual(DEPTH / 2 + 1e-6)
+    const [halfW, halfD] = map ? [GROUND_X / 2, GROUND_Z / 2] : [WIDTH / 2, DEPTH / 2]
+    expect(Math.abs(c.target[0])).toBeLessThanOrEqual(halfW + 1e-6); expect(Math.abs(c.target[1])).toBeLessThanOrEqual(halfD + 1e-6)
     expect(await paperShare(page)).toBeLessThan(.5); await page.screenshot({ path: resolve(review, `map-${name}-tilted-corner.png`) })
     for (let i = 0; i < 40; i++) { await page.mouse.move(cx, cy); await page.mouse.wheel(0, -500) }
     await page.waitForTimeout(300)
@@ -89,9 +91,9 @@ for (const [name, device] of [['ipad', devices['iPad Pro 11 landscape']], ['ipad
 
 // Load budget (docs/07-ui/gameplay-map-only.md "Tốc độ tải"): what blocks the page while the map opens. Shader
 // compilation and the first frame are GPU work, measured on the real machine, not in software WebGL here.
-test('map loading stays within budget: short main-thread work, decoration after the first frame', async ({ page }) => {
+for (const map of ['', 'classic']) test(`map loading stays within budget: short main-thread work, decoration after the first frame${map && ` (${map})`}`, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/map-kit.html')
+  await page.goto(`/map-kit.html${map && `?map=${map}`}`)
   await page.waitForFunction(() => performance.getEntriesByName('map:complete').length > 0, null, { timeout: 60000 })
   const m = await page.evaluate(() => Object.fromEntries(performance.getEntriesByType('measure').map(e => [e.name, e.duration])))
   expect(m['map:build']!, 'scenery needed for play, before the first frame').toBeLessThan(120)

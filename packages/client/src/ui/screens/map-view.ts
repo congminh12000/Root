@@ -3,6 +3,7 @@ import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import type { Changes } from '../../net/changes.ts'
+import { loadTheme, type MapId } from '../../map/choice.ts'
 import type { MapStage } from '../../map/stage.ts'
 
 /** Screen position of a clearing on the map, for menus anchored to it; null until the map is ready. */
@@ -13,7 +14,9 @@ export type Project = (clearing: number) => [number, number] | null
  * an `overlay` of menus anchored to clearings that follows the camera. Each update's animations run once
  * (`changes.seq`); re-renders for a new highlight do not replay them.
  */
-export function MapView({ view, highlight, targets, draggable, changes, onPick, onDrag, onDragOver, onHover, onHold, cameraHome, overlay }: {
+export function MapView({ map, view, highlight, targets, draggable, changes, onPick, onDrag, onDragOver, onHover, onHold, cameraHome, overlay }: {
+  /** Which theme draws the map; changing it rebuilds the map in place. */
+  map: MapId
   view: PlayerView; highlight: number[]; targets: number[]; changes: Changes
   /** Clearings pieces can be dragged from. */
   draggable: number[]
@@ -39,10 +42,10 @@ export function MapView({ view, highlight, targets, draggable, changes, onPick, 
 
   useEffect(() => {
     let alive = true, unsubscribe = () => {}
-    void Promise.all([import('../../map/stage.ts'), import('../../map/autumn-theme.ts')]).then(([m, t]) => {
+    void Promise.all([import('../../map/stage.ts'), loadTheme(map)]).then(([m, theme]) => {
       if (!alive || !host.current) return
       if (!m.webglAvailable()) { setFailed(true); return }
-      const s = m.mountMap(host.current, t.AUTUMN_DIORAMA, {
+      const s = m.mountMap(host.current, theme, {
         pick: c => handlers.current.onPick(c),
         drag: (a, b) => handlers.current.onDrag(a, b),
         dragOver: (a, b) => handlers.current.onDragOver(a, b),
@@ -56,7 +59,7 @@ export function MapView({ view, highlight, targets, draggable, changes, onPick, 
       setMoves(n => n + 1)
     })
     return () => { alive = false; unsubscribe(); stage.current?.dispose(); stage.current = null }
-  }, [])
+  }, [map])
 
   useEffect(() => {
     const fresh = changes.seq !== shown.current

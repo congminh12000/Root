@@ -113,7 +113,7 @@ function plantTrees(rand: () => number): Tree[] {
   return trees
 }
 
-function instanced(trees: Tree[], crown: THREE.BufferGeometry, scene: THREE.Scene) {
+function instanced(trees: Tree[], crown: THREE.BufferGeometry, scene: THREE.Object3D) {
   const crowns = new THREE.InstancedMesh(crown, toon(color.white), trees.length)
   const trunks = new THREE.InstancedMesh(trunkGeo(), toon(color.wood), trees.length)
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0)
@@ -125,7 +125,7 @@ function instanced(trees: Tree[], crown: THREE.BufferGeometry, scene: THREE.Scen
   for (const mesh of [crowns, trunks]) { mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, 0.035)) }
 }
 
-function rocks(rand: () => number, scene: THREE.Scene) {
+function rocks(rand: () => number, scene: THREE.Object3D) {
   const geo = new THREE.DodecahedronGeometry(0.22, 0)
   for (let k = 0, n = 0; k < 400 && n < 26; k++) {
     const x = (rand() - 0.5) * (SPAN_X + 1), z = (rand() - 0.5) * (SPAN_Z + 1)
@@ -142,14 +142,29 @@ function rocks(rand: () => number, scene: THREE.Scene) {
 
 /** Builds the static board into `scene`; returns the clearing floors, which pick a clearing when clicked. */
 export function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
+  const built = buildClassicScenery(scene, { table: true })
+  built.plantTrees()
+  return built.picking
+}
+
+/**
+ * The classic board as parts: the table (left out on the map-only screen, where the apron surrounds the board),
+ * then the ground, rocks and clearings; `plantTrees` adds the forests' meshes later, after the first frame. Tree
+ * positions are drawn up front, so the board looks the same either way.
+ */
+export function buildClassicScenery(parent: THREE.Scene, opts: { table: boolean }): { picking: THREE.Mesh[]; plantTrees(): void; dispose(): void } {
   const rng = seededRng('autumn-scenery')
   const rand = () => rng.int(1_000_000) / 1_000_000
+  const scene = new THREE.Group()
+  parent.add(scene)
 
   // Table, then the ground: a gently rolling plane with the painted texture.
-  const table = new THREE.Mesh(new THREE.BoxGeometry(GROUND_X + 0.8, 0.6, GROUND_Z + 0.8), toon(color.wood))
-  table.position.y = -0.62
-  table.receiveShadow = true
-  scene.add(outline(table, 0.05))
+  if (opts.table) {
+    const table = new THREE.Mesh(new THREE.BoxGeometry(GROUND_X + 0.8, 0.6, GROUND_Z + 0.8), toon(color.wood))
+    table.position.y = -0.62
+    table.receiveShadow = true
+    scene.add(outline(table, 0.05))
+  }
   const ground = new THREE.PlaneGeometry(GROUND_X, GROUND_Z, 160, 130)
   ground.rotateX(-Math.PI / 2)
   const pos = ground.attributes.position!
@@ -159,9 +174,8 @@ export function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
   groundMesh.receiveShadow = true
   scene.add(groundMesh)
 
+  // Where trees stand is drawn now, in the original order of random numbers; their meshes come later.
   const trees = plantTrees(rand)
-  instanced(trees.filter(t => t.kind === 'pine'), pineCrown(), scene)
-  instanced(trees.filter(t => t.kind === 'round'), roundCrown(), scene)
   rocks(rand, scene)
 
   // Clearings: a trodden floor with an ink rim, a ring in the suit colour, and a badge with the suit and number.
@@ -190,5 +204,18 @@ export function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
     tag.position.set(c.x, 1.9, c.z)
     scene.add(tag)
   }
-  return pickables
+  const plant = () => {
+    instanced(trees.filter(t => t.kind === 'pine'), pineCrown(), scene)
+    instanced(trees.filter(t => t.kind === 'round'), roundCrown(), scene)
+  }
+  return {
+    picking: pickables,
+    plantTrees: plant,
+    dispose() {
+      // Materials are shared through toon()'s cache and stay; geometry and the painted ground go.
+      scene.traverse(o => { if (!(o instanceof THREE.Sprite)) (o as THREE.Mesh).geometry?.dispose() })
+      groundMesh.material.map?.dispose()
+      parent.remove(scene)
+    },
+  }
 }

@@ -15,6 +15,7 @@ import { DecisionCallout, DecisionDialog } from './decision.ts'
 import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
+import { MapPicker, mapChoice } from '../../map/choice.ts'
 
 /** One game: everything comes from the server's updates; the client never decides legality. */
 export function Game({ gameId, token }: { gameId: string; token: string | null }) {
@@ -64,7 +65,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const logPick = (l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }
 
   return html`<div class="game-screen">
-    <${MapView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
+    <${MapView} map=${mapChoice.value} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
       draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
       onDrag=${(from: number, to: number) => { setPreview(null); setStage(click(legal, click(legal, IDLE, from), to)) }}
       onDragOver=${(from: number, to: number | null) => setPreview(to === null ? [from] : [from, to])}
@@ -84,6 +85,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       ${legal.length > 0 && html`<button role="menuitem" class="secondary" data-close onClick=${() => setDrawer('all')}>Tất cả lựa chọn (${legal.length})</button>`}
       <button role="menuitem" class="secondary" data-close onClick=${() => setDrawer('guide')}>Hướng dẫn nhanh</button>
       <${SoundToggle} revision=${v.revision} />
+      <${MapPicker} />
     <//>
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
     ${seat && html`<${HandStrip} view=${v} legal=${legal} onOpen=${() => toggle('hand')} />`}

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { FACTION_NAME } from '../../names.ts'
 import { api, roomKey, setRoomKey } from '../../net/api.ts'
 import { FactionChip } from '../components.ts'
+import { MapPicker } from '../../map/choice.ts'
 
 interface Summary { id: string; createdAt: string; seats: { faction: FactionId; kind: string; name: string; connected: boolean }[]; turn: number; winner: FactionId[] | null }
 interface SeatForm { use: boolean; kind: 'human' | 'bot'; name: string; bot: string }
@@ -66,6 +67,7 @@ export function Lobby() {
                   ${BOTS.map(([v, label]) => html`<option value=${v}>${label}</option>`)}</select>`}</td>
           </tr>`)}
         </table>
+        <${MapPicker} />
         <button onClick=${create}>Tạo trận</button>
         ${error && html`<p class="error">${error}</p>`}
         ${created && html`<p>Trận <b>${created.id}</b>. Gửi mỗi đường dẫn cho đúng người (đường dẫn là quyền chơi ghế đó):</p><ul>

@@ -21,7 +21,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | Xong |
 | G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | Xong |
 | G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | Xong |
-| G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu | |
+| G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu  | Xong |
 | G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | |
 | G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | |
 
@@ -113,3 +113,11 @@ Mã ở `packages/client/src/ui/screens/hud.ts`, ghép trong `game.ts`.
 - "Tất cả lựa chọn" là đường dự phòng: liệt kê mọi phần tử của `legal`, gom theo loại.
 - Bong bóng hành động chung nằm giữa mép trên, giữa ô trạng thái và menu. Màn hẹp hơn 1100 px thì bong bóng xuống dưới ô trạng thái.
 
+
+## G5: chọn map
+
+- **Hai theme cài `MapTheme`:** `map/autumn-theme.ts` (Autumn diorama) và `map/classic-theme.ts` (bàn cổ điển UI-3, bỏ mặt bàn gỗ, rừng apron bao quanh; bàn này không có sông hồ nên apron chỉ có rừng và trảng cỏ). Cả hai dùng cùng topology `AUTUMN`.
+- **Cây của bàn cổ điển dựng sau khung hình đầu** như Autumn (`buildClassicScenery(...).plantTrees`); vị trí cây vẫn rút số ngẫu nhiên theo thứ tự cũ nên bàn trông như trước.
+- **Chọn map** ở sảnh (khung "Bản đồ" khi tạo trận) và trong menu ☰ giữa trận; đổi là map dựng lại tại chỗ. Lựa chọn lưu trong `localStorage` (`root-map`) của máy đó, không gửi server, không ảnh hưởng luật (`map/choice.ts`).
+- `map-kit.html?map=classic` mở bàn cổ điển cho test; `visual/map.spec.ts` kiểm tra không lộ nền và ngân sách tải cho cả hai map; `test/map.test.ts` kiểm tra hình học apron cho cả hai.
+- **Sửa lỗi:** neo HTML của ô (menu tại ô, phím) tính sai vị trí trước khung hình đầu vì ma trận camera chưa cập nhật; giờ `project` tự cập nhật và overlay vẽ lại ngay sau khung hình đầu.
