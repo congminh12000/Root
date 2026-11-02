@@ -46,6 +46,25 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 - **Màn trận:** map phủ toàn màn hình, thanh trạng thái nổi ở trên. Các bảng cũ tạm nằm trong ngăn nổi bên phải ("Hiện bảng"/"Ẩn bảng") cho tới G2–G4.
 - **`map-kit.html`:** map trên ván mẫu, không cần server, để kiểm tra và đo.
 
+### Tốc độ tải (yêu cầu bắt buộc của người quản lý)
+
+Đo trên M1 Pro, trang `map-kit.html`; các mốc `performance` có sẵn trong code: `map:build`, `map:scenery`, `map:apron`, `map:compile`, `map:first-frame`, `map:complete`.
+
+| Chỉ số | Trước | Sau sửa |
+|---|---|---|
+| Dựng phần chặn luồng chính (`map:build`) | ~100 ms | ~35–46 ms |
+| Khung hình đầu (tính từ lúc bắt đầu dựng map) | ~222 ms, có ~166 ms đứng hình do biên dịch shader | ~125–131 ms, shader biên dịch song song |
+| Map đầy đủ (cây, apron) | cùng lúc với khung đầu | thêm từng phần sau khung đầu |
+
+**Đã sửa:**
+- **Biên dịch shader bằng `compileAsync`,** không chặn trang.
+- **Cây và apron dựng sau khung đầu,** mỗi khung một phần và biên dịch trước khi hiện. Cây là phần dùng số ngẫu nhiên cuối cùng, nên rừng vẫn y hệt bản đã duyệt.
+- **Màn trận tải module map ngay khi mở trang,** song song với kết nối, thay vì đợi bản cập nhật đầu tiên.
+
+**Lưu ý khi đo:** trong khung trình duyệt tích hợp (bị ẩn) số đo trên trang trận dao động mạnh (50–180 ms). CPU profile trên Chromium sạch cho thấy dựng map trong trận (41 ms) ngang trang kit (34 ms).
+
+**Ngân sách kiểm tra tự động** (`visual/map.spec.ts`): `map:build` < 120 ms, `map:apron` < 80 ms, khung đầu xuất hiện trước khi map đầy đủ.
+
 ### Kiểm chứng G1
 
 - `visual/map.spec.ts`, 4 test:

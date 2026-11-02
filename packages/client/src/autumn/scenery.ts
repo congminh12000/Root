@@ -14,15 +14,18 @@ export interface AutumnScenery {
   labels: THREE.Group
   earthMat: THREE.Material
   selectedMat: THREE.Material
+  /** Plants the forest when `deferTrees` was set (once); otherwise it is already planted and this does nothing. */
+  plantTrees(): void
   dispose(): void
 }
 
 /**
  * The Autumn board's scenery in the approved Lake style (docs/07-ui/autumn-preview.md): painted ground, river,
- * lake, cliffs, trees, houses, bridges, item supply, score track and slot footprints. Used by the review page and
+ * lake, cliffs, trees, houses, bridges, item supply, score track and slot footprints. With `deferTrees` the forest is
+ * planted by a later call, so the game shows its first frame sooner. Used by the review page and
  * the game's map stage. `slab` adds the wooden board edge of the review page; the game blends into its apron instead.
  */
-export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean }): AutumnScenery {
+export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; deferTrees?: boolean }): AutumnScenery {
   const geometries: THREE.BufferGeometry[] = [], materials: THREE.Material[] = [], textures: THREE.Texture[] = []
   const ownGeo = <T extends THREE.BufferGeometry>(g: T) => { geometries.push(g); return g }
   const basic = (c: string) => { const m = new THREE.MeshBasicMaterial({ color: c }); materials.push(m); return m }
@@ -107,29 +110,33 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean }):
     }
   }
 
-  // Trees: instanced pines and round trees. Round trees by a clearing take its suit colour, as in the reference.
-  const trees: { x: number; z: number; scale: number; round: boolean; tint: string }[] = []
-  for (let i = 0; i < 16000 && trees.length < 2300; i++) {
-    const p: Point = [.008 + rand() * .984, .01 + rand() * .93]
-    if (!treeAllowed(p)) continue
-    const [x,, z] = world(p), suit = nearSuit(p)
-    const round = suit ? rand() < .55 : rand() < .05
-    const tint = suit && round ? suitColor[suit] : round ? color.pineLight : ''
-    trees.push({ x, z, scale: .6 + rand() * .6, round, tint })
+  // Trees come last of everything random, so planting them later (deferTrees) draws exactly the same forest.
+  const plantTrees = () => {
+    // Trees: instanced pines and round trees. Round trees by a clearing take its suit colour, as in the reference.
+    const trees: { x: number; z: number; scale: number; round: boolean; tint: string }[] = []
+    for (let i = 0; i < 16000 && trees.length < 2300; i++) {
+      const p: Point = [.008 + rand() * .984, .01 + rand() * .93]
+      if (!treeAllowed(p)) continue
+      const [x,, z] = world(p), suit = nearSuit(p)
+      const round = suit ? rand() < .55 : rand() < .05
+      const tint = suit && round ? suitColor[suit] : round ? color.pineLight : ''
+      trees.push({ x, z, scale: .6 + rand() * .6, round, tint })
+    }
+    const dummy = new THREE.Object3D()
+    const instances = (list: typeof trees, geo: THREE.BufferGeometry, c: string, lift: number, tinted = false) => {
+      const mesh = new THREE.InstancedMesh(geo, toon(tinted ? color.white : c), list.length)
+      list.forEach((t, i) => {
+        dummy.position.set(t.x, lift * t.scale, t.z); dummy.scale.setScalar(t.scale); dummy.rotation.set(0, i * 1.7, 0); dummy.updateMatrix()
+        mesh.setMatrixAt(i, dummy.matrix); if (tinted) mesh.setColorAt(i, new THREE.Color(t.tint))
+      })
+      mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, .012))
+    }
+    const pines = trees.filter(t => !t.round), rounds = trees.filter(t => t.round)
+    instances(trees, ownGeo(new THREE.CylinderGeometry(.035, .055, .6, 5)), color.wood, .3)
+    for (let tier = 0; tier < 3; tier++) instances(pines, ownGeo(new THREE.ConeGeometry(.32 - tier * .065, .5, 7)), tier === 1 ? color.pineLight : color.pine, .5 + tier * .23)
+    instances(rounds, ownGeo(new THREE.IcosahedronGeometry(.36, 1)), '', .73, true)
   }
-  const dummy = new THREE.Object3D()
-  const instances = (list: typeof trees, geo: THREE.BufferGeometry, c: string, lift: number, tinted = false) => {
-    const mesh = new THREE.InstancedMesh(geo, toon(tinted ? color.white : c), list.length)
-    list.forEach((t, i) => {
-      dummy.position.set(t.x, lift * t.scale, t.z); dummy.scale.setScalar(t.scale); dummy.rotation.set(0, i * 1.7, 0); dummy.updateMatrix()
-      mesh.setMatrixAt(i, dummy.matrix); if (tinted) mesh.setColorAt(i, new THREE.Color(t.tint))
-    })
-    mesh.castShadow = true; mesh.receiveShadow = true; scene.add(outline(mesh, .012))
-  }
-  const pines = trees.filter(t => !t.round), rounds = trees.filter(t => t.round)
-  instances(trees, ownGeo(new THREE.CylinderGeometry(.035, .055, .6, 5)), color.wood, .3)
-  for (let tier = 0; tier < 3; tier++) instances(pines, ownGeo(new THREE.ConeGeometry(.32 - tier * .065, .5, 7)), tier === 1 ? color.pineLight : color.pine, .5 + tier * .23)
-  instances(rounds, ownGeo(new THREE.IcosahedronGeometry(.36, 1)), '', .73, true)
+  if (!opts.deferTrees) plantTrees()
 
   // Decorative houses beside each clearing, never on a slot.
   for (const c of CLEARINGS) {
@@ -183,7 +190,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean }):
   }
 
   return {
-    picking, pads, labels, earthMat, selectedMat,
+    picking, pads, labels, earthMat, selectedMat, plantTrees: opts.deferTrees ? plantTrees : () => {},
     dispose() { geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose()) },
   }
 }

@@ -27,6 +27,7 @@ export interface MapStage {
  * (not dragging) a clearing or one of its slots calls `onPick`.
  */
 export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: number) => void): MapStage {
+  performance.mark('map:mount-start')
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
   renderer.shadowMap.enabled = true
@@ -47,10 +48,11 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
   scene.add(sun)
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 400)
-  let frame = 0, disposed = false
+  let frame = 0, disposed = false, ready = false
   const draw = () => { if (!disposed && !frame) frame = requestAnimationFrame(tick) }
   const rig = createRig(camera, renderer.domElement, theme.bounds, theme.clearingDepth, draw)
   const built = theme.build(scene)
+  performance.measure('map:build', 'map:mount-start')
 
   let pieces: THREE.Group | null = null
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -79,7 +81,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
     frame = 0
     if (disposed) return
     if (anim) { animate(performance.now() - anim.start); if (anim) draw() }
-    renderer.render(scene, camera)
+    if (ready) renderer.render(scene, camera)
   }
 
   const resize = () => {
@@ -92,6 +94,26 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
   observer.observe(host)
   rig.home()
   resize()
+  // Compile every shader off the main thread first (KHR_parallel_shader_compile where the browser has it), so opening
+  // a game never freezes the page; the first frame follows as soon as the programs are ready.
+  // Then decoration arrives one task per frame, each compiled the same way before it shows.
+  void (async () => {
+    await renderer.compileAsync(scene, camera)
+    if (disposed) return
+    performance.measure('map:compile', 'map:mount-start')
+    ready = true
+    renderer.render(scene, camera)
+    performance.measure('map:first-frame', 'map:mount-start')
+    for (const task of built.later) {
+      await new Promise(r => setTimeout(r, 0))
+      if (disposed) return
+      task()
+      await renderer.compileAsync(scene, camera)
+      if (disposed) return
+      draw()
+    }
+    performance.measure('map:complete', 'map:mount-start')
+  })()
   // Canvas labels redraw once their font and icons load.
   void document.fonts.ready.then(draw)
   const later = [300, 900, 1800].map(ms => setTimeout(draw, ms))

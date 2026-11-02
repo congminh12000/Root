@@ -15,6 +15,9 @@ export interface MapTheme {
   /** Colour behind everything, the same as the apron's forest, should any gap ever appear. */
   background: string
   placement: Placement
-  /** Builds scenery and apron into `scene`; `picking` meshes carry `userData.clearing`. */
-  build(scene: THREE.Scene): { picking: THREE.Object3D[]; dispose(): void }
+  /**
+   * Builds what play needs into `scene` (`picking` meshes carry `userData.clearing`); `later` adds decoration (trees,
+   * apron), one task per frame after the first frame, so opening a game never blocks the page for long.
+   */
+  build(scene: THREE.Scene): { picking: THREE.Object3D[]; later: (() => void)[]; dispose(): void }
 }

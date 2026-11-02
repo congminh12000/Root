@@ -42,9 +42,11 @@ export const AUTUMN_DIORAMA: MapTheme = {
   background: color.pine,
   placement,
   build(scene) {
-    const scenery = buildAutumnScenery(scene, { slab: false })
+    performance.mark('map:scenery-start')
+    const scenery = buildAutumnScenery(scene, { slab: false, deferTrees: true })
+    performance.measure('map:scenery', 'map:scenery-start')
     scenery.labels.visible = false
-    const disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 2611, rivers: [{ line: riverOn, half: RIVER_HALF * WIDTH }], lakes: [lakeOn] }, { trees: 7500 })
+    let disposeApron = () => {}
     // Clicking a clearing's open ground or one of its slots picks that clearing.
     const disc = new THREE.CircleGeometry(1, 40), hidden = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
     const picking: THREE.Object3D[] = CLEARINGS.map(c => {
@@ -53,6 +55,14 @@ export const AUTUMN_DIORAMA: MapTheme = {
       scene.add(m); return m
     })
     for (const pad of scenery.picking) { const plot = CLEARINGS.flatMap(c => c.plots).find(p => p.id === pad.userData.plotId)!; pad.userData.clearing = plot.clearing; picking.push(pad) }
-    return { picking, dispose() { scenery.dispose(); disposeApron(); disc.dispose(); hidden.dispose() } }
+    const later = [
+      () => {
+        performance.mark('map:apron-start')
+        disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 2611, rivers: [{ line: riverOn, half: RIVER_HALF * WIDTH }], lakes: [lakeOn] }, { trees: 7500 })
+        performance.measure('map:apron', 'map:apron-start')
+      },
+      () => scenery.plantTrees(),
+    ]
+    return { picking, later, dispose() { scenery.dispose(); disposeApron(); disc.dispose(); hidden.dispose() } }
   },
 }

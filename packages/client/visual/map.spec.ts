@@ -86,3 +86,15 @@ for (const [name, device] of [['ipad', devices['iPad Pro 11 landscape']], ['ipad
     })
   })
 }
+
+// Load budget (docs/07-ui/gameplay-map-only.md "Tốc độ tải"): what blocks the page while the map opens. Shader
+// compilation and the first frame are GPU work, measured on the real machine, not in software WebGL here.
+test('map loading stays within budget: short main-thread work, decoration after the first frame', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/map-kit.html')
+  await page.waitForFunction(() => performance.getEntriesByName('map:complete').length > 0, null, { timeout: 60000 })
+  const m = await page.evaluate(() => Object.fromEntries(performance.getEntriesByType('measure').map(e => [e.name, e.duration])))
+  expect(m['map:build']!, 'scenery needed for play, before the first frame').toBeLessThan(120)
+  expect(m['map:apron']!, 'apron, one later task').toBeLessThan(80)
+  expect(m['map:first-frame']!).toBeLessThan(m['map:complete']!)
+})
