@@ -36,7 +36,9 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
   border-radius: var(--r-pill); padding: 0 var(--sp-2) 0 3px; font-size: var(--fs-xs); font-weight: 600; white-space: nowrap; line-height: 20px; }
 .fchip .icon { width: 16px; height: 16px; }
 .pip { display: inline-flex; margin: 0 1px; vertical-align: middle; }
-.pip .icon { width: 20px; height: 20px; }
+.pip .icon, .pip .suit-badge { width: 20px; height: 20px; }
+.suit-badge { display: inline-block; line-height: 0; }
+.suit-badge svg { width: 100%; height: 100%; }
 .cardchip { display: inline-block; border: 2px solid; border-radius: var(--r-sm); padding: 1px 6px; margin: 2px; font-size: var(--fs-xs); background: var(--paper-raised);
   color: var(--ink); cursor: pointer; box-shadow: 0 2px 0 var(--ink-a25); }
 .cardchip:hover, .cardchip.is-hover { background: var(--gold-a35); }
@@ -129,12 +131,14 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
   background: linear-gradient(var(--suit) 0 17%, var(--meadow) 17%); }
 .cardface.full { --cf-w: 260px; border-width: 3px; border-radius: 14px; }
 .cf-head { position: absolute; inset: 0 0 auto; height: 17%; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; background: var(--suit); border-bottom: 2px solid var(--ink); z-index: 1; }
-.cf-badge { display: grid; place-items: center; width: 2.4em; height: 2.4em; border-radius: 50%; background: var(--paper-raised); border: 2px solid var(--ink); --icon-fill: var(--suit); transform: translateY(18%); }
-.cf-badge .icon { width: 1.9em; height: 1.9em; vertical-align: 0; }
+.cf-badge { display: grid; place-items: center; width: 2.6em; height: 2.6em; transform: translateY(18%); filter: drop-shadow(0 1px 1px var(--ink-a25)); }
+.cf-badge .suit-badge { width: 100%; height: 100%; }
 .cf-cost { display: flex; gap: .15em; }
 .cf-pip { display: grid; place-items: center; width: 1.45em; height: 1.45em; background: var(--wood-light); border: 1.5px solid var(--ink); border-radius: .25em; box-shadow: inset 0 -.12em 0 var(--wood); }
 .cf-pip .icon { width: 1.2em; height: 1.2em; vertical-align: 0; }
 .cf-pip.any { background: conic-gradient(var(--suit-fox) 0 33%, var(--suit-rabbit) 0 66%, var(--suit-mouse) 0); font: 1.1em/1 var(--font-display); color: var(--ink); }
+.cf-pip.suit { width: 1.6em; height: 1.6em; background: none; border: 0; box-shadow: none; }
+.cf-pip.suit .suit-badge { width: 100%; height: 100%; }
 .cf-pip.item { background: var(--paper-raised); --icon-fill: var(--paper-shade); }
 .cf-art { position: absolute; inset: 17% 0 32%; border-bottom: 1.5px solid var(--ink); }
 .cardface.full .cf-art { inset: 17% 0 36%; }
@@ -155,7 +159,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardface.full .cf-text p { margin: 0; font: .56em/1.32 var(--font-body); text-align: left; }
 .cardface.full .cf-plaque { left: 4%; bottom: 3%; width: 17%; height: 36%; flex-direction: column; font-size: .9em; }
 .cardchip-suit { display: inline-flex; margin-right: 3px; vertical-align: -3px; }
-.cardchip-suit .icon { width: 16px; height: 16px; }
+.cardchip-suit .suit-badge { width: 16px; height: 16px; }
 .carddetail .cardface { margin: 30px auto var(--sp-2); }
 .quest-row { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 4px 0; }
 .questcard { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 9px; white-space: normal; font: inherit; color: inherit; }

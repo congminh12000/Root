@@ -181,7 +181,7 @@ export function buildClassicScenery(parent: THREE.Scene): { picking: THREE.Mesh[
     ring.rotation.x = Math.PI / 2
     ring.position.set(p.x, 0.1, p.z)
     scene.add(ring)
-    const mark = badge(String(c.id + 1), { bg: SUIT_COLOR[c.suit], icon: c.suit, iconFill: color.paperRaised, size: 0.5 })
+    const mark = badge(String(c.id + 1), { suit: c.suit, size: 0.5 })
     mark.position.set(p.x - CLEARING_R * 0.78, 0.85, p.z - CLEARING_R * 0.78)
     scene.add(mark)
   }

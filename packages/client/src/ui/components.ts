@@ -8,6 +8,7 @@ import { useEffect } from 'preact/hooks'
 import { cardDesign, cardName, FACTION_NAME, ITEM_NAME, SUIT_COLOR, SUIT_NAME } from '../names.ts'
 import type { IconName } from './icons.ts'
 import { CardFace } from './card-face.ts'
+import { SuitBadge } from './suit-badge.ts'
 
 /** Shared pieces of the interface, used by the screens and shown in every state on ui-kit.html (docs/07-ui). */
 
@@ -21,12 +22,10 @@ export const FactionChip = ({ f }: { f: FactionId }) =>
   html`<span class="fchip" style=${{ '--chip': `var(--faction-${f})` }}><${Icon} name=${f} />${FACTION_NAME[f]}</span>`
 
 type CardSuit = keyof typeof SUIT_NAME
-/** A suit pip for crafting costs and card heads; `bird` is wild. */
+/** A suit in running text (clearing panel, faction boards): its badge; `bird` is wild, anything else reads "bất kỳ". */
 export function SuitPip({ suit }: { suit: string }) {
-  const known = suit in SUIT_NAME
-  const name = known ? SUIT_NAME[suit as CardSuit] : 'bất kỳ'
-  return html`<span class="pip" style=${{ '--icon-fill': known ? `var(--suit-${suit})` : 'var(--rock)' }} title=${name}>
-    <${Icon} name=${known ? suit as CardSuit : 'star'} label=${name} /></span>`
+  if (suit in SUIT_NAME) return html`<span class="pip"><${SuitBadge} suit=${suit as CardSuit} label=${SUIT_NAME[suit as CardSuit]} /></span>`
+  return html`<span class="pip" style=${{ '--icon-fill': 'var(--rock)' }} title="bất kỳ"><${Icon} name="star" label="bất kỳ" /></span>`
 }
 
 /** The card whose details are open; any CardChip opens it, CardDetailOverlay shows it. */
@@ -35,7 +34,7 @@ export const openCard = signal<string | null>(null)
 /** A clickable chip for one physical card, e.g. "anvil#1". */
 export const CardChip = ({ card, state }: { card: string; state?: string }) =>
   html`<button type="button" class=${`cardchip${state ? ` ${state}` : ''}`} data-card=${card} style=${{ borderColor: SUIT_COLOR[cardDesign(card).suit] }}
-    onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}><span class="cardchip-suit" style=${{ '--icon-fill': SUIT_COLOR[cardDesign(card).suit] }}><${Icon} name=${cardDesign(card).suit} /></span>${cardName(card)}</button>`
+    onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}><span class="cardchip-suit"><${SuitBadge} suit=${cardDesign(card).suit} /></span>${cardName(card)}</button>`
 
 const KIND: Record<string, string> = {
   item: 'Item: chế tạo để lấy item và điểm, rồi bỏ lá (§4.1.2)',

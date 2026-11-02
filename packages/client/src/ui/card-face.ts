@@ -5,6 +5,7 @@ import { cardDesign, ITEM_NAME, questDesign, SUIT_NAME } from '../names.ts'
 import { cardArt, questArt } from './card-art.ts'
 import { cardText, questText } from './card-text.ts'
 import { Icon } from './components.ts'
+import { SuitBadge } from './suit-badge.ts'
 import type { IconName } from './icons.ts'
 
 /**
@@ -17,16 +18,16 @@ import type { IconName } from './icons.ts'
 const KIND_NAME: Record<CardDef['kind'], string> = { item: 'item', immediate: 'dùng ngay', persistent: 'lâu dài', ambush: 'ambush', dominance: 'dominance' }
 const PLAQUE: Record<Exclude<CardDef['kind'], 'item'>, IconName> = { immediate: 'flame', persistent: 'card', ambush: 'eye', dominance: 'crown' }
 
-/** One crafting cost icon on its wooden tile; the three-colour "?" is any suit (§4.1.1). */
+/** One crafting cost as a suit badge; the three-colour "?" is any suit (§4.1.1). */
 const CostPip = ({ suit }: { suit: CardDef['cost'][number] }) => suit === 'any'
   ? html`<span class="cf-pip any" title="bất kỳ chất nào">?</span>`
-  : html`<span class="cf-pip" style=${{ '--icon-fill': `var(--suit-${suit})` }} title=${SUIT_NAME[suit]}><${Icon} name=${suit} /></span>`
+  : html`<span class="cf-pip suit"><${SuitBadge} suit=${suit} label=${SUIT_NAME[suit]} /></span>`
 
 function Frame({ suit, cost, art, plaque, name, sub, text, size, label }: {
   suit: CardDef['suit']; cost: ComponentChildren; art: string; plaque: ComponentChildren; name: string; sub: string; text: string; size: 'mini' | 'full'; label: string
 }) {
   return html`<div class=${`cardface ${size}`} style=${{ '--suit': `var(--suit-${suit})` }} role="img" aria-label=${label}>
-    <div class="cf-head"><span class="cf-badge" title=${SUIT_NAME[suit]}><${Icon} name=${suit} /></span><span class="cf-cost">${cost}</span></div>
+    <div class="cf-head"><span class="cf-badge"><${SuitBadge} suit=${suit} label=${SUIT_NAME[suit]} /></span><span class="cf-cost">${cost}</span></div>
     <div class="cf-art" dangerouslySetInnerHTML=${{ __html: art }}></div>
     <div class="cf-plaque">${plaque}</div>
     <div class="cf-text"><b class=${`cf-name${name.length > 18 ? ' long longer' : name.length > 13 ? ' long' : ''}`}>${name}</b>${size === 'mini' ? html`<small>${sub}</small>` : html`<p>${text}</p>`}</div>
