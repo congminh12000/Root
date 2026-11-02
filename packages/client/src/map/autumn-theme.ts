@@ -25,7 +25,7 @@ const placement: Placement = {
   token: (c, i) => centre(c).add(v(-.5 + i * .55, 0, RZ * .7)),
   spot: s => (s.kind === 'clearing' ? centre(s.id).add(v(RX * .64, 0, RZ * .5)) : forestCentre(s.id)),
   ring: [RX * 1.02, RZ * 1.02],
-  rulerOffset: v(RX * .82, 1.1, -RZ * .82),
+  rulerOffset: v(RX * .62, 0, -RZ * .55),
   pads: false,
   score: n => { const [x,, z] = world(scoreSpace(n)); return v(x, .1, z) },
 }

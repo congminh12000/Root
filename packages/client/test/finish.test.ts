@@ -32,3 +32,10 @@ test('log has empty and selected states and keeps hidden payloads absent', () =>
   assert.match(out, /ô 1 sang ô 5/)
   assert.match(render(html`<${QuickGuide} />`), /Hướng dẫn nhanh/)
 })
+
+
+test('new-player guide explains entry, waiting and the complete action fallback without assuming a legal move', () => {
+  const out = render(html`<${QuickGuide} />`)
+  for (const text of ['Ván đầu', 'ba ghế bot', 'đang chờ ai', 'Tất cả lựa chọn', 'Esc', 'bình minh']) assert.ok(out.includes(text), text)
+  assert.ok(!out.includes('undefined'))
+})

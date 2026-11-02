@@ -13,7 +13,7 @@ Ngày 02/11/2026. Làm theo quy trình của Lake ([lake-preview.md](lake-previe
 ## Mã
 
 - `packages/client/src/autumn/layout.ts`: bố cục. Clearing từ game-data; slot xếp ở nửa sau clearing để chừa chỗ cho quân; sông và hồ được vẽ vòng tránh mọi clearing; đường nối mép clearing theo `AUTUMN.paths`; cây quanh clearing nhuộm theo chất (cáo đỏ, chuột cam, thỏ vàng) như ảnh tham chiếu.
-- `packages/client/src/autumn/scene.ts`: cảnh cùng phong cách Lake (camera trực giao, toon, viền mực). Huy hiệu chất luôn hiện vì là thông tin chơi; số clearing/slot bật bằng ô chọn.
+- `packages/client/src/autumn/scene.ts`: cảnh dùng camera trực giao cùng vật liệu mô hình và ánh sáng `board/look.ts`, `board/light.ts`. Huy hiệu chất luôn hiện vì là thông tin chơi; số clearing/slot bật bằng ô chọn.
 - `packages/client/src/autumn/demo.ts`, `autumn-kit.html`: trang duyệt, cùng công cụ với `lake-kit.html`. Code Lake không bị sửa.
 
 ## Kiểm chứng
@@ -21,4 +21,7 @@ Ngày 02/11/2026. Làm theo quy trình của Lake ([lake-preview.md](lake-previe
 - `test/autumn.test.ts`: khớp game-data; slot nằm trên đất trống (không nước, sông, đá, đường, cây, nhà, không chồng nhau); sông và nhà tránh mọi clearing; đường chỉ chạm hai clearing của nó và không qua nước hoặc đá; có cầu ở chỗ đường cắt sông.
 - `visual/autumn.spec.ts`: 1440×900 và 1280×800, raycast chọn slot trên bàn, chọn bằng bàn phím, đặt/gỡ năm mẫu công trình, dọn Ruin, khôi phục, xoay/zoom, đo 30 khung. Ảnh duyệt ở [reference/autumn-review/](reference/autumn-review/).
 
-**Trạng thái:** chờ người quản lý duyệt hình. Sau khi duyệt: thay bàn 3D trong trận bằng bản này (giữ quân, vòng chọn, hoạt ảnh), PR riêng.
+**Trạng thái cập nhật 02/11/2026:** Autumn diorama đã là bàn mặc định trong trận từ G1–G7 (`map/autumn-theme.ts`, `map/choice.ts`). Bản xem thử `/autumn-kit.html` vẫn để duyệt bố cục và slot. Còn chờ người quản lý duyệt hình UI-7; không đánh dấu hoàn tất chỉ vì đã nối vào game. Ảnh kiểm tra mới được test tạo trong `packages/client/test-results/autumn-review/` (1440×900 và 1280×800); ảnh bàn trong trận và nhãn mới ở `test-results/map-review/`.
+
+
+Ảnh duyệt lưu cùng thay đổi: [Autumn 1440×900](reference/tabletop/labels-review/autumn-1440.png). Ảnh cận bàn trong trận có nhãn bìa mới: [Autumn](reference/tabletop/labels-review/labels-autumn-close.png). Chờ duyệt hình UI-7, chưa ghi nhận là đã được người quản lý chấp nhận.

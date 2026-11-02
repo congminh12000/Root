@@ -6,7 +6,7 @@ import { color } from '../ui/tokens.ts'
 import { CLEARING_R, PIECE_SCALE, spotPoint, world } from './geo.ts'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import type { IconName } from '../ui/icons.ts'
-import { badge, part, shape, stickerOn } from './toon.ts'
+import { placard, part, shape, stickerOn } from './toon.ts'
 import { material } from './look.ts'
 
 /**
@@ -114,7 +114,7 @@ export interface Placement {
   spot(s: Spot): THREE.Vector3
   /** Half-axes of the ring around a clearing. */
   ring: [number, number]
-  /** Where the ruler badge floats, relative to the centre. */
+  /** Horizontal offset of the ruler placard from the clearing centre; it rests at clearing height. */
   rulerOffset: THREE.Vector3
   /** Draw a pad under each slot (the classic board); the diorama paints its slots into the ground. */
   pads: boolean
@@ -130,7 +130,7 @@ export const CLASSIC: Placement = {
   token: (c, i) => { const p = world(c); return new THREE.Vector3(p.x + 1.05, 0.1, p.z - 0.35 + i * 0.5) },
   spot: s => (s.kind === 'clearing' ? world(s.id).add(new THREE.Vector3(0.6, 0.1, 0.6)) : spotPoint(s)),
   ring: [CLEARING_R, CLEARING_R],
-  rulerOffset: new THREE.Vector3(CLEARING_R * 0.8, 0.85, -CLEARING_R * 0.8),
+  rulerOffset: new THREE.Vector3(CLEARING_R * .62, 0, -CLEARING_R * .55),
   pads: true,
 }
 
@@ -181,8 +181,8 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
         add(w)
       }
       if (n > 1) {
-        const tag = badge(String(n), { bg: FACTION_COLOR[f], fg: color.white, size: 0.46 })
-        tag.position.set(base.x, 1.35, base.z)
+        const tag = placard(String(n), f, FACTION_COLOR[f])
+        tag.position.set(base.x, base.y, base.z + .25)
         root.add(tag)
       }
     })
@@ -194,8 +194,8 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
     // Who rules the clearing (from the engine's view, §2.5).
     const lord = view.rulers?.[id]
     if (lord) {
-      const mark = badge('', { bg: FACTION_COLOR[lord], icon: lord, iconFill: color.paperRaised, size: 0.42 })
-      mark.position.copy(p).add(at.rulerOffset)
+      const mark = placard('', lord, FACTION_COLOR[lord], .42)
+      mark.position.copy(p).add(at.rulerOffset).setY(p.y)
       root.add(mark)
     }
     if (fresh) {
@@ -239,8 +239,8 @@ export function buildMovers(travels: Travel[], at: Placement = CLASSIC): { o: TH
     fig.scale.setScalar(PIECE_SCALE * 1.15)
     o.add(fig)
     if (t.count > 1) {
-      const tag = badge(String(t.count), { bg: FACTION_COLOR[t.faction], fg: color.white, size: 0.46 })
-      tag.position.y = 1.3
+      const tag = placard(String(t.count), t.faction, FACTION_COLOR[t.faction])
+      tag.position.set(0, 0, .45)
       o.add(tag)
     }
     return { o, from: at.spot(t.from), to: at.spot(t.to) }

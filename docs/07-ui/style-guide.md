@@ -73,14 +73,14 @@ Mọi vật 3D lấy vật liệu theo **vai trò** từ `board/look.ts` (`mat(r
   - chỉnh màu ấm, vignette, hạt nhẹ.
   - Không bloom, không lens flare.
 - **Nhãn** (số ô, số quân, điểm) vẽ sau hậu kỳ, luôn sắc nét.
-- **Mức chất lượng** (`map/quality.ts`): `full` đủ hiệu ứng; `tablet` bỏ GTAO; `low` (máy không có GPU) không hậu kỳ. Hiệu ứng nạp sau khung hình đầu, không bao giờ làm chậm lúc mở trận.
+- **Mức chất lượng** (`map/quality.ts`): `full` đủ hiệu ứng; `tablet` bỏ GTAO; `low` (máy không có GPU) không hậu kỳ. Hiệu ứng nạp sau khung hình đầu, không bao giờ làm chậm lúc mở trận. Sau khi tải xong 5 giây, đo nhịp khung hình lúc đang thao tác hoặc hoạt ảnh: hai cửa sổ 2 giây liên tiếp dưới 45 fps hạ `full` → `tablet`, dưới 24 fps hạ `tablet` → `low`. Chờ 5 giây sau mỗi lần hạ; bỏ qua lúc đứng yên/tab ẩn. `?quality=` giữ cố định mức để duyệt hình.
 - **Camera** nhìn gần như từ trên xuống, cho phép xoay và phóng to có giới hạn, có nút về góc mặc định. Chuyển cảnh camera ≤ 400 ms.
 
 ## 5. Chữ
 
 - Tiêu đề, tên phe, số điểm: **Pangolin**. Chữ thường, bảng, nhật ký: **Be Vietnam Pro**. Cả hai đóng gói sẵn, chạy offline.
 - Cỡ chữ: 12 / 14 / 16 / 20 / 28 px. Số dùng `tabular-nums`.
-- Nhãn trên bàn 3D (số ô, số quân) là sprite có nền tròn và viền `ink`, luôn quay mặt về camera.
+- Số ô giữ huy hiệu sprite. Số quân và phe cai quản dùng thẻ bìa nhỏ nghiêng trên chân gỗ, mặt giấy có icon phe và chữ mực; quay quanh trục đứng theo camera. Mặt chữ vẽ sau hậu kỳ để luôn sắc nét.
 
 ## 6. Thành phần HTML
 

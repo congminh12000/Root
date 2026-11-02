@@ -57,3 +57,13 @@ test('quality tiers: a touch device draws fewer pixels, a smaller shadow map and
   assert.equal(soft.tier, 'low'); assert.ok(!soft.post)
   assert.equal(qualityFor({ coarse: false, dpr: 2, software: true, force: 'full' }).tier, 'full')
 })
+
+test('ruler placards rest inside each clearing, away from the surrounding tree canopy', async () => {
+  const { AUTUMN_DIORAMA } = await import('../src/map/autumn-theme.ts')
+  const { CLASSIC } = await import('../src/board/pieces.ts')
+  for (const at of [AUTUMN_DIORAMA.placement, CLASSIC]) {
+    const p = at.rulerOffset
+    assert.equal(p.y, 0, 'the foot rests at clearing height')
+    assert.ok((p.x / at.ring[0]) ** 2 + (p.z / at.ring[1]) ** 2 < .8, 'inside the open clearing ellipse')
+  }
+})
