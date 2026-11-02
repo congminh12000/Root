@@ -109,3 +109,8 @@ Màn trận chỉ còn map full màn hình, mọi thao tác trên map. Kế ho�
 ## Lake — bản duyệt riêng
 
 Theo kế hoạch người quản lý duyệt, `/lake-kit.html` là bản dựng hình Lake riêng, có 22 nền xây và 4 Ruin; bố cục và slot/Ruin đã được người quản lý duyệt. Lake chưa nối vào game hoặc thay thế UI-7 Autumn. Xem [thiết kế và trạng thái duyệt](lake-preview.md).
+
+
+## Hoàn thiện nhãn, chất lượng và UI-7/UI-8 (02/11/2026)
+
+Nhãn bìa và đo FPS thật: [tabletop.md](tabletop.md). UI-7: Autumn đã nối vào game, còn chờ duyệt hình; xem [autumn-preview.md](autumn-preview.md). UI-8: hướng dẫn nhanh bổ sung cách vào ván đầu, nhận biết đang chờ ai và tìm đủ lựa chọn khi chưa biết bấm đâu. Kịch bản cùng phiếu đánh giá người mới: [new-player-session.md](new-player-session.md); chưa có kết quả thử người dùng.

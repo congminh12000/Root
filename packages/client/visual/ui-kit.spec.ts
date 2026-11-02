@@ -23,3 +23,16 @@ test('quick guide explains map controls and results keep board access', async ({
   await expect(page.getByRole('region', { name: 'Kết quả trận' })).toContainText('Thắng bằng điểm')
   await expect(page.locator('.log-entry button')).toHaveAttribute('aria-pressed', 'true')
 })
+
+for (const [width, height] of [[1440, 900], [1280, 800], [1194, 834], [834, 1194]]) {
+  test(`new-player guide fits and stays readable ${width}×${height}`, async ({ page }) => {
+    await page.setViewportSize({ width: width!, height: height! })
+    await page.goto('/ui-kit.html'); await page.evaluate(() => document.fonts.ready)
+    const guide = page.locator('.guide')
+    await expect(guide).toContainText('Ván đầu')
+    await expect(guide).toContainText('đang chờ ai')
+    await expect(guide).toContainText('Tất cả lựa chọn')
+    expect(await guide.evaluate(e => e.scrollWidth <= e.clientWidth)).toBe(true)
+    await guide.screenshot({ path: `test-results/guide-${width}.png` })
+  })
+}

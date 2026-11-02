@@ -35,7 +35,7 @@ export const GradeShader = {
 /** Blur in px for a camera zoom (zoom 1 is the whole board). */
 export const tiltBlur = (zoom: number) => Math.min(grade.tiltMax, grade.tiltBase + grade.tiltPerZoom * zoom)
 
-export interface Post { render(): void; setSize(w: number, h: number): void; dispose(): void }
+export interface Post { render(): void; setSize(w: number, h: number): void; setAO(enabled: boolean): void; dispose(): void }
 
 export async function createPost(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.OrthographicCamera, quality: Quality): Promise<Post> {
   performance.mark('map:post-start')
@@ -76,7 +76,8 @@ export async function createPost(renderer: THREE.WebGLRenderer, scene: THREE.Sce
       renderer.render(scene, camera)
       scene.background = background; camera.layers.enableAll(); renderer.autoClear = true
     },
-    setSize(w, h) { composer.setSize(w, h); gtao?.setSize(w, h) },
-    dispose() { composer.dispose(); target.dispose(); gtao?.dispose() },
+    setAO(enabled) { if (gtao) gtao.enabled = enabled },
+    setSize(w, h) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); gtao?.setSize(w, h) },
+    dispose() { for (const pass of composer.passes) pass.dispose(); composer.dispose(); target.dispose() },
   }
 }

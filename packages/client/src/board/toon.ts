@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { color, font } from '../ui/tokens.ts'
 import { iconSvg, type IconName } from '../ui/icons.ts'
-import { material, printed } from './look.ts'
+import { mat, material, printed } from './look.ts'
 
 /**
  * Shared pieces of the 3D board: cached shapes, parts made of the tabletop materials (board/look.ts) and the printed
@@ -123,4 +123,56 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
   sprite.renderOrder = 10
   sprite.layers.set(LABEL_LAYER)
   return sprite
+}
+
+
+const placardCache = new Map<string, THREE.MeshBasicMaterial>()
+/** A printed cardboard tent label, with a wooden foot resting on the board. */
+export function placard(text: string, icon: IconName, fill: string, size = .46): THREE.Group {
+  const key = `${text}|${icon}|${fill}`
+  let face = placardCache.get(key)
+  if (!face) {
+    const canvas = document.createElement('canvas'); canvas.width = 224; canvas.height = 128
+    const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace
+    tex.anisotropy = 4
+    let image: HTMLImageElement | undefined
+    const draw = () => {
+      const g = canvas.getContext('2d')!
+      g.fillStyle = color.paperRaised; g.fillRect(0, 0, 224, 128)
+      g.strokeStyle = color.ink; g.lineWidth = 5; g.strokeRect(4, 4, 216, 120)
+      g.fillStyle = fill; g.fillRect(10, 10, 12, 108)
+      if (image) g.drawImage(image, text ? 28 : 64, 18, 92, 92)
+      if (text) {
+        g.fillStyle = color.ink; g.font = `76px ${font.display}`
+        g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, 162, 70, 100)
+      }
+      tex.needsUpdate = true
+    }
+    draw()
+    void iconImage(icon, fill).then(img => { image = img; draw() })
+    void document.fonts.load(`76px ${font.display}`, text).then(draw)
+    face = new THREE.MeshBasicMaterial({ map: tex, depthTest: false, toneMapped: false, fog: false })
+    placardCache.set(key, face)
+  }
+  const root = new THREE.Group(); root.userData.placard = true
+  const w = size * 1.75
+  const foot = new THREE.Mesh(shape('label-foot', () => new THREE.BoxGeometry(1, .07, .22)), mat('raw-wood', color.wood))
+  foot.scale.x = w * .8; foot.position.set(0, .035, Math.sin(.6) * size / 2); foot.castShadow = true
+  const card = new THREE.Group(); card.position.y = Math.cos(.6) * size / 2 + .065; card.rotation.x = -.6
+  const backing = new THREE.Mesh(shape('label-card', () => new THREE.BoxGeometry(1, 1, .035)), mat('card', color.paperShade))
+  backing.scale.set(w, size, 1); backing.castShadow = true
+  const front = new THREE.Mesh(shape('label-print', () => new THREE.PlaneGeometry(1, 1)), face)
+  front.scale.set(w, size, 1); front.position.z = .019
+  front.layers.set(LABEL_LAYER); front.renderOrder = 10
+  card.add(backing, front); root.add(foot, card)
+  return root
+}
+
+/** Keep each tent label standing on its foot, facing the viewer around the vertical axis. */
+export function facePlacards(root: THREE.Object3D, camera: THREE.Camera) {
+  root.traverse(o => {
+    if (!o.userData.placard) return
+    const p = o.getWorldPosition(new THREE.Vector3())
+    o.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z)
+  })
 }

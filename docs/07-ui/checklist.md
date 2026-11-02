@@ -74,7 +74,8 @@ Trạng thái ngày 02/11/2026 (sau G1–G7, gameplay chỉ có map). **Xong** =
 | ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Xong | UI-8 |
 | ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Xong | UI-8 |
 | | Khán giả xem trận | Xong | UI-2 |
-| | Hướng dẫn nhanh, chú giải ký hiệu | Xong | UI-8 |
+| | Hướng dẫn nhanh, chú giải ký hiệu; ván đầu, đang chờ ai và lối xem đủ lựa chọn | Xong | UI-8 |
+| ★ | Người mới tự chơi hết ván với bot, có phiếu thử thực tế | Chưa; kịch bản ở `new-player-session.md` | UI-8 |
 | | Âm thanh tùy chọn | Xong | UI-8 |
 
 ## G. Chất lượng chung

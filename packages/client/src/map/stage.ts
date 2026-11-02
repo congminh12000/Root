@@ -9,7 +9,8 @@ import { liveScene } from './live.ts'
 import { motion } from '../ui/tokens.ts'
 import { createRig } from './camera-rig.ts'
 import type { Post } from './post.ts'
-import { deviceQuality } from './quality.ts'
+import { facePlacards } from '../board/toon.ts'
+import { deviceQuality, frameQuality, qualityFor } from './quality.ts'
 import type { MapTheme } from './theme.ts'
 
 const easeInOut = (x: number) => (x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2)
@@ -58,7 +59,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   // The tabletop surfaces are generated off the main thread meanwhile (board/look.ts).
   const surfaces = loadSurfaces()
   const renderer = new THREE.WebGLRenderer({ antialias: true })
-  const quality = deviceQuality(renderer.getContext())
+  let quality = deviceQuality(renderer.getContext())
+  const monitor = frameQuality(quality.tier, ['full', 'tablet', 'low'].includes(new URLSearchParams(location.search).get('quality') ?? ''))
   renderer.setPixelRatio(quality.pixelRatio)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -74,10 +76,12 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 400)
   camera.layers.enableAll()
-  let frame = 0, disposed = false, ready = false, post: Post | null = null
-  const draw = () => { if (!disposed && !frame) frame = requestAnimationFrame(tick) }
+  let frame = 0, disposed = false, ready = false, dirty = true, post: Post | null = null
+  const schedule = () => { if (!disposed && !frame) frame = requestAnimationFrame(tick) }
+  const draw = () => { dirty = true; schedule() }
   const viewListeners = new Set<() => void>()
-  const viewChanged = () => { draw(); viewListeners.forEach(l => l()) }
+  let lastView = -Infinity, sampleAfter = Infinity, viewDirty = false, wasActive = false
+  const viewChanged = () => { lastView = performance.now(); viewDirty = true; draw(); viewListeners.forEach(l => l()) }
   const rig = createRig(camera, renderer.domElement, theme.bounds, theme.clearingDepth, viewChanged)
   const built = theme.build(scene, quality)
   performance.measure('map:build', 'map:mount-start')
@@ -110,18 +114,42 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   let live = false, lastLive = 0, complete = false
   // Never on the `low` tier: without a GPU every frame costs the whole machine.
   const stopLive = effect(() => { live = liveScene.value && !reduceMotion && quality.tier !== 'low'; draw() })
+  function lowerQuality(tier: 'tablet' | 'low') {
+    quality = qualityFor({ coarse: false, dpr: devicePixelRatio, force: tier })
+    renderer.domElement.dataset.quality = tier
+    renderer.setPixelRatio(quality.pixelRatio)
+    table.sun.shadow.mapSize.set(quality.shadowSize, quality.shadowSize)
+    table.sun.shadow.map?.dispose(); table.sun.shadow.map = null
+    if (!quality.post) { post?.dispose(); post = null }
+    else post?.setAO(false)
+    live = liveScene.value && !reduceMotion && tier !== 'low'
+    resize()
+    sampleAfter = performance.now() + 5000
+  }
   function tick() {
     frame = 0
     if (disposed) return
+    if (document.hidden) { monitor.reset(); return }
+    const now = performance.now()
+    const active = !!anim || live && complete || viewDirty || now - lastView < 150
+    viewDirty = false
+    // The interval ending now includes the previous frame's work, even if that work delayed input events.
+    const measuring = active || wasActive
+    wasActive = active
+    const next = monitor.sample(now, measuring && complete && now >= sampleAfter && !document.hidden)
+    if (next === 'tablet' || next === 'low') lowerQuality(next)
+    if (measuring && !document.hidden) schedule()
     if (live && complete) {
       const now = performance.now()
-      draw()
+      schedule()
       if (now - lastLive < 30) return
       lastLive = now
-      tickLook(now / 1000)
+      tickLook(now / 1000); dirty = true
     }
-    if (anim) { animate(performance.now() - anim.start); if (anim) draw() }
-    if (!ready) return
+    if (anim) { dirty = true; animate(performance.now() - anim.start); if (anim) schedule() }
+    if (!ready || !dirty) return
+    dirty = false
+    facePlacards(scene, camera)
     if (post) post.render(); else renderer.render(scene, camera)
   }
 
@@ -132,6 +160,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     rig.resize(w, h)
     viewChanged()
   }
+  const visibility = () => { monitor.reset(); wasActive = false; if (!document.hidden) draw() }
+  document.addEventListener('visibilitychange', visibility)
   const observer = new ResizeObserver(resize)
   observer.observe(host)
   rig.home()
@@ -146,6 +176,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     if (disposed) return
     performance.measure('map:compile', 'map:mount-start')
     ready = true
+    facePlacards(scene, camera)
     renderer.render(scene, camera)
     performance.measure('map:first-frame', 'map:mount-start')
     viewListeners.forEach(l => l())
@@ -165,7 +196,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       draw()
     }
     performance.measure('map:complete', 'map:mount-start')
-    complete = true; draw()
+    complete = true; sampleAfter = performance.now() + 5000; draw()
   })()
   // Canvas labels redraw once their font and icons load.
   void document.fonts.ready.then(draw)
@@ -269,12 +300,12 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       const gl = renderer.getContext(), axis = new THREE.Vector3(0, 1, 0), t0 = performance.now()
       for (let i = 0; i < frames; i++) {
         camera.position.sub(rig.controls.target).applyAxisAngle(axis, .02).add(rig.controls.target)
-        camera.lookAt(rig.controls.target); if (post) post.render(); else renderer.render(scene, camera); gl.finish()
+        camera.lookAt(rig.controls.target); facePlacards(scene, camera); if (post) post.render(); else renderer.render(scene, camera); gl.finish()
       }
       return (performance.now() - t0) / frames
     },
     dispose() {
-      disposed = true; cancelAnimationFrame(frame); later.forEach(clearTimeout); observer.disconnect(); rig.dispose()
+      disposed = true; document.removeEventListener('visibilitychange', visibility); cancelAnimationFrame(frame); later.forEach(clearTimeout); observer.disconnect(); rig.dispose()
       renderer.domElement.removeEventListener('pointerdown', press, { capture: true }); renderer.domElement.removeEventListener('pointermove', move)
       renderer.domElement.removeEventListener('pointerup', release); renderer.domElement.removeEventListener('pointerleave', leave)
       clearTimeout(holdTimer); viewListeners.clear()

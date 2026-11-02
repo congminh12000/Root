@@ -40,7 +40,7 @@ npm run typecheck && npm test && npm run audit:rules
 ## Trạng thái hiện tại (2/11/2026)
 
 - `main` đã gồm mọi việc trên, cộng PR #17 (gameplay chỉ có map, G0–G7), #18 (mặt lá bài) và #19 (đồ hoạ bàn cờ mô hình thật, R0–R7).
-- Không có nhánh dở hay PR mở. `npm run typecheck` và `npm test` đều qua trên `main`.
+- Bản giao diện bổ sung đang trên nhánh `feat/tabletop-labels-adaptive-quality`: nhãn bìa, tự hạ chất lượng theo FPS và chuẩn bị duyệt UI-7/thử UI-8. Chưa merge; chỉ merge sau khi người quản lý duyệt.
 - Mặt lá bài: 54 lá và 15 quest vẽ bằng code (`packages/client/src/ui/card-face.ts`, `card-art.ts`, `card-text.ts`). Tên lá giữ tiếng Anh, chữ hiệu ứng tiếng Việt kèm số điều khoản.
 - Đồ hoạ: vật liệu theo vai trò ở `board/look.ts`, kết cấu sinh trong worker (`board/texture-gen.ts`), ánh sáng `board/light.ts`, hậu kỳ `map/post.ts`, mức chất lượng `map/quality.ts` (`full`/`tablet`/`low`, ép bằng `?quality=`).
 
@@ -48,10 +48,10 @@ npm run typecheck && npm test && npm run audit:rules
 
 | Việc | Ghi chú |
 |---|---|
-| Nhãn bìa dựng đứng | Số quân và phe cai quản còn là sprite tròn nổi; kế hoạch là thẻ bìa nhỏ dựng đứng (`docs/07-ui/tabletop.md`, "Còn mở") |
-| Tự hạ chất lượng theo fps thật | Hiện chỉ dựa vào loại renderer (`map/quality.ts`); cần đo fps trong trận rồi hạ `full` → `tablet` → `low` |
+| Duyệt nhãn bìa | Đã dựng thẻ bìa cho số quân/cai quản (cả di chuyển); chờ duyệt ảnh trong PR |
+| Duyệt cơ chế tự hạ chất lượng | Đã đo lúc bàn hoạt động, hạ `full` → `tablet` → `low`; có cửa sổ đo và thời gian chờ, giữ mức khi ép `?quality=` |
 | Duyệt lại Lake | `/lake-kit.html` đã dùng vật liệu và ánh sáng mới nhưng chưa chụp ảnh cho người quản lý duyệt; chưa nối vào game (`docs/07-ui/lake-preview.md`) |
-| Giao diện | UI-7: bản dựng Autumn `/autumn-kit.html` chờ duyệt (`docs/07-ui/autumn-preview.md`); UI-8 còn thử với người mới. Lộ trình, checklist ở `docs/07-ui/` |
+| Giao diện | UI-7: bản dựng Autumn `/autumn-kit.html` chờ duyệt (`docs/07-ui/autumn-preview.md`); UI-8 đã bổ sung hướng dẫn ván đầu; còn thử với người mới theo `docs/07-ui/new-player-session.md`. Lộ trình, checklist ở `docs/07-ui/` |
 | Thử với người chơi thật | Bot chưa được đo với người giỏi |
 
 ## Ghi chú khi chuyển sang agent khác (Codex Local…)

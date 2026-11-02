@@ -32,3 +32,28 @@ export function deviceQuality(gl?: WebGLRenderingContext | WebGL2RenderingContex
     force: TIERS.find(t => t === asked) ?? null,
   })
 }
+
+
+/** A sustained slow window lowers one tier; idle time, hidden tabs and loading are never FPS samples. */
+export function frameQuality(initial: Quality['tier'], forced = false) {
+  let tier = initial, last: number | null = null, elapsed = 0, frames = 0, slow = 0
+  const reset = () => { last = null; elapsed = frames = slow = 0 }
+  return {
+    reset,
+    sample(now: number, active: boolean): Quality['tier'] | null {
+      if (forced || tier === 'low' || !active) { reset(); return null }
+      const dt = last === null ? 0 : now - last; last = now
+      // The caller resets on idle/hidden frames. Even very slow active frames must count.
+      if (dt <= 0) { elapsed = frames = slow = 0; return null }
+      elapsed += dt; frames++
+      if (elapsed < 2000) return null
+      const fps = frames * 1000 / elapsed
+      slow = fps < (tier === 'full' ? 45 : 24) ? slow + 1 : 0
+      elapsed = frames = 0
+      if (slow < 2) return null
+      tier = tier === 'full' ? 'tablet' : 'low'
+      reset()
+      return tier
+    },
+  }
+}

@@ -23,9 +23,12 @@ async function paperShare(page: Page): Promise<number> {
     return n / all * 100
   }, png.toString('base64'))
 }
-async function open(page: Page, map = '') {
+async function open(page: Page, map = '', quality = '') {
   const errors: string[] = []; page.on('pageerror', e => errors.push(String(e)))
-  await page.goto(`/map-kit.html${map && `?map=${map}`}`); await page.evaluate(() => document.fonts.ready)
+  const params = new URLSearchParams()
+  if (map) params.set('map', map)
+  if (quality) params.set('quality', quality)
+  await page.goto(`/map-kit.html?${params}`); await page.evaluate(() => document.fonts.ready)
   await expect(page.locator('.game-map canvas')).toBeVisible(); await page.waitForTimeout(1500)
   await mkdir(review, { recursive: true })
   return errors
@@ -107,4 +110,55 @@ for (const map of ['', 'classic']) test(`map loading stays within budget: short 
   expect(m['map:build']!, 'scenery needed for play, before the first frame').toBeLessThan(120)
   expect(m['map:apron']!, 'apron, one later task').toBeLessThan(80)
   expect(m['map:first-frame']!).toBeLessThan(m['map:complete']!)
+})
+
+for (const map of ['', 'classic']) test(`cardboard labels stay legible close up (${map || 'Autumn'})`, async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.addInitScript(() => localStorage.setItem('root-live-scene', '0'))
+  const errors = await open(page, map, 'full')
+  await page.waitForFunction(() => performance.getEntriesByName('map:complete').length > 0)
+  await page.evaluate(() => (window as unknown as { map: { look(c: number, z: number, p: number, a: number): void } }).map.look(3, 2.4, .65, .8))
+  await page.waitForTimeout(300)
+  await page.screenshot({ path: resolve(review, `labels-${map || 'autumn'}-close.png`) })
+  expect(errors).toEqual([])
+})
+
+test('sustained slow active frames lower quality in the actual renderer; a forced tier stays fixed', async ({ page }) => {
+  await page.setViewportSize({ width: 400, height: 300 })
+  await page.addInitScript(() => {
+    localStorage.setItem('root-live-scene', '0')
+    // Keep this test independent of the host's hardware classification. Render normally during loading;
+    // afterwards add a 65 ms delay to each requested frame, like a device missing its frame budget.
+    const proto = WebGL2RenderingContext.prototype, get = proto.getParameter
+    proto.getParameter = function (p: number) { return p === 37446 ? 'Test GPU' : get.call(this, p) }
+    const raf = window.requestAnimationFrame.bind(window)
+    window.requestAnimationFrame = callback => raf(time => {
+      if ((window as unknown as { slowFrames?: boolean }).slowFrames) {
+        const end = performance.now() + 65
+        while (performance.now() < end) { /* controlled slow frame */ }
+      }
+      callback(time)
+    })
+  })
+  for (const forced of [false, true]) {
+    const errors: string[] = []
+    const capture = (e: Error) => errors.push(String(e)); page.on('pageerror', capture)
+    await page.goto(`/map-kit.html${forced ? '?quality=full' : ''}`)
+    await page.waitForFunction(() => performance.getEntriesByName('map:complete').length > 0)
+    const canvas = page.locator('.game-map canvas')
+    await expect(canvas).toHaveAttribute('data-quality', 'full')
+    await page.evaluate(() => { (window as unknown as { slowFrames: boolean }).slowFrames = true })
+    // Camera changes keep the demand-driven map active. Idle frames are not a reason to lower quality.
+    await page.evaluate(async () => {
+      const map = (window as unknown as { map: { look(c: null, z: number, p: number, a: number): void } }).map
+      const start = performance.now()
+      while (performance.now() - start < 26000) {
+        map.look(null, 1, .5, Math.sin(performance.now() / 1000) * .2)
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+    })
+    await expect(canvas).toHaveAttribute('data-quality', forced ? 'full' : 'low')
+    expect(errors).toEqual([])
+    page.off('pageerror', capture)
+  }
 })
