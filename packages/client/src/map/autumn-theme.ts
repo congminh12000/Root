@@ -41,7 +41,7 @@ export const AUTUMN_DIORAMA: MapTheme = {
   clearingDepth: 2 * RZ,
   background: color.pine,
   placement,
-  build(scene) {
+  build(scene, quality) {
     performance.mark('map:scenery-start')
     const scenery = buildAutumnScenery(scene, { slab: false, deferTrees: true })
     performance.measure('map:scenery', 'map:scenery-start')
@@ -58,7 +58,7 @@ export const AUTUMN_DIORAMA: MapTheme = {
     const later = [
       () => {
         performance.mark('map:apron-start')
-        disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 2611, rivers: [{ line: riverOn, half: RIVER_HALF * WIDTH }], lakes: [lakeOn] }, { trees: 7500 })
+        disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 2611, rivers: [{ line: riverOn, half: RIVER_HALF * WIDTH }], lakes: [lakeOn] }, { trees: quality.apronTrees })
         performance.measure('map:apron', 'map:apron-start')
       },
       () => scenery.plantTrees(),

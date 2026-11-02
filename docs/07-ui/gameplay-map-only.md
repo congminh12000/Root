@@ -22,7 +22,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | Xong |
 | G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | Xong |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu  | Xong |
-| G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | |
+| G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | Xong |
 | G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | |
 
 ## G1: map full màn hình, không khoảng trống
@@ -121,3 +121,11 @@ Mã ở `packages/client/src/ui/screens/hud.ts`, ghép trong `game.ts`.
 - **Chọn map** ở sảnh (khung "Bản đồ" khi tạo trận) và trong menu ☰ giữa trận; đổi là map dựng lại tại chỗ. Lựa chọn lưu trong `localStorage` (`root-map`) của máy đó, không gửi server, không ảnh hưởng luật (`map/choice.ts`).
 - `map-kit.html?map=classic` mở bàn cổ điển cho test; `visual/map.spec.ts` kiểm tra không lộ nền và ngân sách tải cho cả hai map; `test/map.test.ts` kiểm tra hình học apron cho cả hai.
 - **Sửa lỗi:** neo HTML của ô (menu tại ô, phím) tính sai vị trí trước khung hình đầu vì ma trận camera chưa cập nhật; giờ `project` tự cập nhật và overlay vẽ lại ngay sau khung hình đầu.
+
+## G6: tablet
+
+- **Mức chất lượng tự động** (`map/quality.ts`): máy có con trỏ chính là ngón tay (`pointer: coarse`) dùng pixel ratio tối đa 1,5, bóng đổ 1024 và 4.500 cây apron; máy tính dùng tối đa 2, bóng 2048, 7.500 cây. Bàn, quân và mọi thứ thuộc lượt chơi giống nhau ở mọi mức. Canvas ghi mức ở `data-quality`.
+- **Vùng chạm ≥ 44 px** trên màn cảm ứng: nút trong menu tại ô, bong bóng, hộp quyết định, nút đóng, dòng nhật ký, chọn map. Script chơi thử iPad kiểm tra không còn nút nào nhỏ hơn.
+- **Xoay máy:** `ResizeObserver` tính lại khung nhìn và giới hạn zoom; test iPad xoay ngang ↔ dọc và kiểm tra vẫn không lộ nền.
+- **Chơi thử bằng chạm** (iPad Pro 11 giả lập, ngang rồi dọc): chạm ô, menu tại ô, bong bóng, quyết định tại ô; tới lượt 10, không lỗi console.
+- Xúc xắc tại ô được kẹp trong màn hình hẹp.

@@ -43,3 +43,12 @@ test('map choice: the diorama by default, every choice a known theme, kept witho
   chooseMap('classic')
   assert.equal(mapChoice.value, 'classic')
 })
+
+test('quality tiers: a touch device draws fewer pixels, a smaller shadow map and a thinner apron', async () => {
+  const { qualityFor } = await import('../src/map/quality.ts')
+  const tablet = qualityFor({ coarse: true, dpr: 2 }), laptop = qualityFor({ coarse: false, dpr: 2 })
+  assert.equal(tablet.tier, 'tablet'); assert.equal(laptop.tier, 'full')
+  assert.ok(tablet.pixelRatio < laptop.pixelRatio && tablet.shadowSize < laptop.shadowSize && tablet.apronTrees < laptop.apronTrees)
+  assert.equal(qualityFor({ coarse: false, dpr: 3 }).pixelRatio, 2)
+  assert.equal(qualityFor({ coarse: true, dpr: 1 }).pixelRatio, 1)
+})

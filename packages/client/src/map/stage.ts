@@ -4,6 +4,7 @@ import { buildMovers, buildPieces, disposePieces } from '../board/pieces.ts'
 import type { Travel } from '../motion.ts'
 import { color, motion } from '../ui/tokens.ts'
 import { createRig } from './camera-rig.ts'
+import { deviceQuality } from './quality.ts'
 import type { MapTheme } from './theme.ts'
 
 const easeInOut = (x: number) => (x < .5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2)
@@ -48,12 +49,14 @@ export interface MapHandlers {
 export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandlers): MapStage {
   performance.mark('map:mount-start')
   const renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
+  const quality = deviceQuality()
+  renderer.setPixelRatio(quality.pixelRatio)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.domElement.setAttribute('aria-label', `Bản đồ ${theme.name}: bấm một ô để chọn, kéo để di, cuộn hoặc chụm để phóng to`)
   renderer.domElement.style.touchAction = 'none'
+  renderer.domElement.dataset.quality = quality.tier
   host.append(renderer.domElement)
 
   const scene = new THREE.Scene()
@@ -61,7 +64,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   scene.add(new THREE.HemisphereLight(color.paperRaised, color.wood, 2.1))
   const sun = new THREE.DirectionalLight(color.paperRaised, 3)
   sun.position.set(-12, 25, -12); sun.castShadow = true
-  sun.shadow.mapSize.set(2048, 2048)
+  sun.shadow.mapSize.set(quality.shadowSize, quality.shadowSize)
   Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 20, bottom: -20, near: 1, far: 70 })
   sun.shadow.bias = -.001
   scene.add(sun)
@@ -72,7 +75,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   const viewListeners = new Set<() => void>()
   const viewChanged = () => { draw(); viewListeners.forEach(l => l()) }
   const rig = createRig(camera, renderer.domElement, theme.bounds, theme.clearingDepth, viewChanged)
-  const built = theme.build(scene)
+  const built = theme.build(scene, quality)
   performance.measure('map:build', 'map:mount-start')
 
   let pieces: THREE.Group | null = null

@@ -117,7 +117,7 @@ export function MapDice({ project, changes, below }: { project: Project; changes
   if (!roll || !at) return null
   // Keyed by revision so two rolls in a row both replay their entry animation.
   // Below the clearing when a decision callout already sits above it.
-  return html`<div class=${`dice map-dice${below === roll.clearing ? ' below' : ''}`} key=${roll.revision} role="status" style=${{ left: `${Math.min(Math.max(at[0], 200), innerWidth - 200)}px`, top: `${at[1]}px` }}><${Dice} roll=${roll} /></div>`
+  return html`<div class=${`dice map-dice${below === roll.clearing ? ' below' : ''}`} key=${roll.revision} role="status" style=${{ left: `${Math.min(Math.max(at[0], 236), innerWidth - 236)}px`, top: `${at[1]}px` }}><${Dice} roll=${roll} /></div>`
 }
 
 /** What is in a clearing, next to it on the map (hover with a mouse, hold with a finger). */

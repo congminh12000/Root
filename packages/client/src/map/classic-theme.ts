@@ -19,7 +19,7 @@ export const CLASSIC_BOARD: MapTheme = {
   clearingDepth: 2 * CLEARING_R,
   background: color.pine,
   placement: CLASSIC,
-  build(scene) {
+  build(scene, quality) {
     performance.mark('map:scenery-start')
     const scenery = buildClassicScenery(scene, { table: false })
     performance.measure('map:scenery', 'map:scenery-start')
@@ -28,7 +28,7 @@ export const CLASSIC_BOARD: MapTheme = {
       () => {
         performance.mark('map:apron-start')
         // The board's ground rolls down to about -0.2 (board/geo.ts), so the apron sits just below it.
-        disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 1907, rivers: [], lakes: [], ground: -.24 }, { trees: 7500 })
+        disposeApron = buildApron(scene, { bounds, radius: apronRadius(bounds), seed: 1907, rivers: [], lakes: [], ground: -.24 }, { trees: quality.apronTrees })
         performance.measure('map:apron', 'map:apron-start')
       },
       () => scenery.plantTrees(),
