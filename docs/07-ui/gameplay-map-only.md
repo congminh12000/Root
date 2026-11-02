@@ -20,7 +20,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G1 | Stage, camera có giới hạn, apron; màn trận full màn hình với quân thật | Xong, chờ duyệt |
 | G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | Xong |
 | G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | Xong |
-| G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | |
+| G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | Xong |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu | |
 | G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | |
 | G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | |
@@ -43,7 +43,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
   - Màu nền scene là màu rừng.
 - **`map/theme.ts`, `map/autumn-theme.ts`:** theme quyết định cảnh, apron và chỗ đứng của quân (`Placement` trong `board/pieces.ts`). Autumn: công trình đứng trên các slot đã duyệt, quân ở nửa trước clearing, token phía sau quân.
 - **`map/stage.ts`:** renderer, quân, vòng sáng, hoạt ảnh; chỉ vẽ khi có thay đổi.
-- **Màn trận:** map phủ toàn màn hình, thanh trạng thái nổi ở trên. Các bảng cũ tạm nằm trong ngăn nổi bên phải ("Hiện bảng"/"Ẩn bảng") cho tới G2–G4.
+- **Màn trận:** map phủ toàn màn hình, thanh trạng thái nổi ở trên. Từ G4 không còn cột bên; thông tin nằm ở HUD nổi (xem mục G4).
 - **`map-kit.html`:** map trên ván mẫu, không cần server, để kiểm tra và đo.
 
 ### Tốc độ tải (yêu cầu bắt buộc của người quản lý)
@@ -99,3 +99,17 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 **Kiểm chứng:**
 - Marquise, chỉ dùng map, tới lượt 30: Outrage và Field Hospitals ×4 hiện tại ô; bỏ bài ×3 ở giữa màn; rê chuột hiện thông tin ô; không lỗi.
 - Vagabond: chọn nhân vật và rừng ở giữa màn.
+
+## G4: HUD nổi
+
+Mã ở `packages/client/src/ui/screens/hud.ts`, ghép trong `game.ts`.
+
+- **Góc trên trái:** lượt, phase, bước, đồng hồ; "Đến lượt bạn" hoặc phe đang được chờ; tên quyết định của người khác kèm điều khoản; nút "Mở lại quyết định" khi bạn gập hộp quyết định; thông báo kết nối.
+- **Góc trên phải:** nút ☰ mở menu: về sảnh, mã trận, "Về góc mặc định", "Tất cả lựa chọn (n)", "Hướng dẫn nhanh", âm thanh.
+- **Mép phải:** huy hiệu bốn phe với điểm và số lá; phe đang tới lượt có viền vàng. Chạm để mở bảng phe đó, chạm lại để đóng.
+- **Mép dưới:** dải "Bài của bạn" (viền vàng khi có lá dùng được); chạm hoặc vuốt lên để mở quạt bài.
+- **Góc dưới trái:** chip "Nhật ký · n" mở ngăn nhật ký; bấm một dòng để đánh dấu ô trên map.
+- **Một ngăn mỗi lúc.** Chạm ra ngoài hoặc Esc là đóng; chạm nút HUD khác thì chuyển ngăn.
+- "Tất cả lựa chọn" là đường dự phòng: liệt kê mọi phần tử của `legal`, gom theo loại.
+- Bong bóng hành động chung nằm giữa mép trên, giữa ô trạng thái và menu. Màn hẹp hơn 1100 px thì bong bóng xuống dưới ô trạng thái.
+

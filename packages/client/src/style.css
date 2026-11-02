@@ -160,14 +160,6 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .game-map { position: absolute; inset: 0; }
 .game-map canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .map-fallback { position: absolute; inset: 30% 10% auto; background: var(--paper-raised); border: 2px solid var(--ink); border-radius: var(--r-md); padding: var(--sp-4); }
-.hud-top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; pointer-events: none; }
-.hud-top > * { pointer-events: auto; }
-.hud-top .bar { background: var(--ink-a85); backdrop-filter: blur(4px); }
-.panel-toggle { margin-left: auto; }
-.side-overlay { position: absolute; top: 52px; right: var(--sp-3); bottom: var(--sp-3); width: min(400px, calc(100vw - 24px)); overflow: auto; z-index: 9; overscroll-behavior: contain; }
-.side-overlay > .card:first-child, .side-overlay > * { margin-top: 0; }
-.side-overlay > * + * { margin-top: var(--sp-2); }
-.side-tools { display: flex; gap: var(--sp-2); align-items: center; justify-content: flex-end; }
 .game-screen .dice { top: 64px; left: 50%; }
 
 /* ── On-map menus (G2) ─────────────────────────────────────────────────────── */
@@ -186,7 +178,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .map-menu .counts { margin: 6px 0; }
 .map-menu .counts button { min-height: 44px; min-width: 44px; }
 .map-menu .hint { margin: 6px 0 0; font-size: var(--fs-xs); color: var(--ink-soft); }
-.map-bubble { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: min(760px, 92vw);
+.map-bubble { position: absolute; top: var(--sp-3); left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: min(760px, calc(100vw - 720px));
   background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); padding: 6px var(--sp-2); }
 .map-bubble .group { display: flex; flex-wrap: wrap; gap: 6px; }
 
@@ -207,6 +199,48 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .map-info { position: absolute; transform: translate(40px, -50%); width: min(320px, 80vw); }
 .map-info.left { transform: translate(calc(-100% - 40px), -50%); }
 .map-info .card { margin: 0; box-shadow: var(--shadow-raised); }
+
+/* ── Floating HUD (G4): status, menu, faction badges, hand strip, log, one drawer at a time ── */
+.hud-status, .hud-menu, .hud-factions, .hud-hand, .hud-log, .hud-drawer { position: absolute; z-index: 8; }
+.hud-status { top: var(--sp-3); left: var(--sp-3); width: 330px; max-width: calc(100vw - 96px); background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-md);
+  box-shadow: var(--shadow-card); padding: 6px var(--sp-3); font-size: var(--fs-sm); }
+.hud-status .line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 26px; }
+.hud-status .clock { margin-left: auto; }
+.hud-status .notice { margin-top: 4px; border-radius: var(--r-sm); }
+.hud-status button { margin-top: 4px; min-height: 36px; }
+.hud-menu { top: var(--sp-3); right: var(--sp-3); }
+.hud-menu > button { min-width: 44px; min-height: 44px; font-size: var(--fs-lg); }
+.hud-menu-list { position: absolute; right: 0; top: calc(100% + 6px); display: flex; flex-direction: column; gap: 6px; width: 240px; background: var(--paper-a96); border: 2px solid var(--ink);
+  border-radius: var(--r-md); box-shadow: var(--shadow-raised); padding: var(--sp-2); animation: rise var(--motion-dialog) ease-out; }
+.hud-menu-list > button, .hud-menu-list > a { min-height: 44px; text-align: left; display: flex; align-items: center; }
+.hud-menu-list > a { padding: 0 var(--sp-2); color: var(--ink); }
+.hud-factions { right: var(--sp-3); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: var(--sp-2); }
+.hud-faction { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: center; column-gap: 6px; min-width: 76px; min-height: 52px; padding: 4px 8px;
+  background: var(--paper-a96); color: var(--ink); border: 2px solid var(--ink); border-left: 6px solid var(--chip); border-radius: var(--r-md); box-shadow: var(--shadow-card); text-align: left; }
+.hud-faction .badge { grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--r-pill); background: var(--chip); color: var(--paper); }
+.hud-faction b { font: var(--fs-lg) var(--font-display); line-height: 1; }
+.hud-faction b.bump { animation: bump var(--motion-bump) ease-out; }
+.hud-faction small { font-size: 11px; color: var(--ink-soft); }
+.hud-faction.turn { outline: 3px solid var(--autumn-gold); outline-offset: 1px; }
+.hud-faction[aria-pressed="true"] { background: var(--autumn-gold); }
+.hud-hand { bottom: var(--sp-3); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--sp-2); min-height: 48px; padding: 4px var(--sp-4);
+  background: var(--paper-a96); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); touch-action: none; }
+.hud-hand.usable { border-color: var(--autumn-gold); }
+.hud-hand .cards { display: flex; }
+.hud-hand .cards i { display: block; width: 16px; height: 24px; margin-left: -8px; background: var(--paper-raised); border: 1.5px solid var(--ink); border-radius: 3px; transform: rotate(var(--turn)); }
+.hud-hand .gold { color: var(--wood); font-weight: 700; }
+.hud-log { bottom: var(--sp-3); left: var(--sp-3); min-height: 44px; box-shadow: var(--shadow-card); }
+.hud-drawer { z-index: 9; overflow: auto; overscroll-behavior: contain; background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-raised);
+  padding: var(--sp-2); animation: rise var(--motion-dialog) ease-out; }
+.hud-drawer > .close { position: sticky; top: 0; float: right; z-index: 1; min-width: 44px; min-height: 44px; }
+.hud-drawer .card, .hud-drawer .guide { margin: 0; box-shadow: none; border: 0; background: none; }
+.hud-drawer.right { top: 72px; right: 104px; max-height: calc(100dvh - 84px); width: min(440px, calc(100vw - 120px)); }
+.hud-drawer.left { bottom: 72px; left: var(--sp-3); max-height: calc(100dvh - 180px); width: min(380px, calc(100vw - 24px)); }
+.hud-drawer.bottom { bottom: 72px; left: 50%; transform: translateX(-50%); width: min(920px, calc(100vw - 24px)); max-height: 50vh; }
+@media (max-width: 1100px) {
+  .map-bubble { top: 120px; max-width: 92vw; }
+  .hud-drawer.right { right: var(--sp-3); width: min(440px, calc(100vw - 24px)); }
+}
 
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
@@ -254,6 +288,8 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .kit-item small { color: var(--ink-soft); font-size: var(--fs-xs); }
 .kit-icon { --icon-fill: var(--paper-raised); }
 .kit-icon .icon { width: 40px; height: 40px; }
+.kit-hud { position: relative; height: 420px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: hidden; }
+.kit-hud.short { height: 120px; }
 .kit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); align-items: start; }
 .kit-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .swatch { margin: 0; width: 112px; font-size: var(--fs-xs); }
@@ -264,7 +300,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop, .map-menu, .map-decision { animation: none; transition: none; }
+  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop, .map-menu, .map-decision, .hud-menu-list, .hud-drawer, .hud-faction b.bump { animation: none; transition: none; }
   .board .pulse, .board .travel { display: none; }
 }
 

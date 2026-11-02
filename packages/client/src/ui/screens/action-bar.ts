@@ -61,7 +61,7 @@ export function ActionBar({ legal, stage, setStage, onPreview, send }: {
 }
 
 /** Every legal action grouped by type, as before UI-4: the fallback that always shows everything. */
-function FullList({ legal, onPreview, send }: { legal: Action[]; onPreview: Preview; send: (a: Action) => void }) {
+export function FullList({ legal, onPreview, send }: { legal: Action[]; onPreview: Preview; send: (a: Action) => void }) {
   const groups = new Map<string, Action[]>()
   for (const a of legal) groups.set(a.type, [...(groups.get(a.type) ?? []), a])
   return html`${[...groups].map(([type, list]) => html`<${ActionGroup} key=${type} type=${type} list=${list} onPreview=${onPreview} send=${send} />`)}`

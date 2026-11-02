@@ -32,16 +32,17 @@ export function GameLog({ log, selected, onSelect }: { log: LogEntry[]; selected
         ${GROUP[l.type] ?? l.type}${l.detail ? `: ${describe({ type: l.type, payload: l.detail } as Action)}` : ''}</button>
     </div>`)}</div></section>`
 }
+/** Controls and legend for the map-only screen; opened from the HUD menu. */
 export function QuickGuide() {
-  return html`<details class="card guide"><summary>Hướng dẫn nhanh & chú giải</summary>
-    <ol><li>Ở sảnh, tạo trận: chọn một ghế người và bot cho các ghế còn lại. Giữ liên kết ghế để vào lại.</li>
-    <li>Xem “Đang chờ” ở đầu trang. Nếu là bạn, làm lựa chọn trong hộp quyết định hoặc bấm ô có viền vàng.</li>
-    <li>Di chuyển: chọn ô đi, ô đến, rồi nút số chiến binh. Bấm lá bài để xem chi tiết và các cách dùng hiện có.</li>
-    <li>Dùng nút kết thúc bước khi muốn chuyển tiếp. Mở danh sách đầy đủ ở thanh hành động để xem mọi lựa chọn hợp lệ.</li>
-    <li>Xem bảng phe, điểm và nhật ký để theo dõi trận. Đồng hồ hết giờ thì bot chọn thay một lần.</li></ol>
-    <p>Birdsong → Daylight → Evening là ba giai đoạn trong lượt. Hành động cụ thể và cách ghi điểm nằm ở bảng từng phe.</p>
+  return html`<section class="guide"><h3>Hướng dẫn nhanh & chú giải</h3>
+    <ol><li>Ô có viền vàng là nơi bạn làm được gì đó: chạm ô để mở menu ngay tại ô.</li>
+    <li>Di chuyển: kéo quân từ ô này sang ô khác, hoặc chạm ô đi rồi ô đến; chọn số chiến binh bằng chip số hay phím số, Enter để xác nhận.</li>
+    <li>Hành động không gắn ô (kết thúc bước, chế tạo…) nằm ở bong bóng phía trên. Chạm dải bài ở mép dưới để xem và dùng lá.</li>
+    <li>Quyết định trong trận đánh hiện ngay tại ô đang đánh. Rê chuột hoặc nhấn giữ một ô để xem trong ô có gì.</li>
+    <li>Huy hiệu phe ở mép phải có điểm và số lá; chạm để mở bảng phe. Nhật ký ở góc dưới trái; menu ☰ có “Tất cả lựa chọn”.</li></ol>
+    <p><b>Điều khiển:</b> kéo để di bản đồ, kéo chuột phải (hoặc Shift + kéo) để xoay, cuộn hoặc chụm hai ngón để phóng to; phím mũi tên, + − và 0 về góc mặc định.</p>
+    <p>Birdsong → Daylight → Evening là ba giai đoạn trong lượt. Hết giờ thì bot chọn thay bạn một lần.</p>
     <p>Chất ô / lá: ${['fox', 'rabbit', 'mouse', 'bird'].map(s => html`<${SuitPip} suit=${s} />`)} (cáo, thỏ, chuột, chim).
-    Viền vàng: có thể chọn; viền đậm: đang chọn. Quân có hình và màu riêng theo phe.</p>
-    <p>3D: kéo để xoay, cuộn để phóng to; “Về góc mặc định” đặt lại góc nhìn. Chuyển 2D nếu muốn bàn phẳng.
-    Âm thanh mặc định tắt; nút âm thanh phát tiếng gõ tự tổng hợp trên máy, không tải âm từ mạng.</p></details>`
+    Viền vàng: có thể chọn; viền đậm: đang chọn. Quân có hình và màu riêng theo phe.
+    Âm thanh mặc định tắt; tiếng gõ tự tổng hợp trên máy, không tải từ mạng.</p></section>`
 }

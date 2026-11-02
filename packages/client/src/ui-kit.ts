@@ -8,6 +8,7 @@ import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/com
 import { ActionBar } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionBar, DecisionDialog } from './ui/screens/decision.ts'
+import { HandStrip, HudFactions, HudStatus } from './ui/screens/hud.ts'
 import type { Decision } from './interaction/decisions.ts'
 import { Hand, Scores } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
@@ -105,10 +106,15 @@ const Kit = () => html`
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>
 
-  <${Section} title="Thanh trạng thái và thông báo">
-    <header class="bar"><a href="./">← Sảnh</a><span>Trận <b>a1b2c3</b></span><span>Lượt 7 · Daylight · Hành động</span><span>Đang chờ: <${FactionChip} f="eyrie" /></span>
-      <span class="clock"><${Icon} name="clock" /> 1:12</span><span class="clock urgent"><${Icon} name="clock" /> 0:09</span></header>
-    <div class="notice">Máy chủ từ chối: stale-revision</div>
+  <${Section} title="HUD nổi trên map" note="Góc trạng thái (của mình, của người khác), menu, huy hiệu phe, dải bài, chip nhật ký.">
+    <div class="kit-hud">
+      <${HudStatus} view=${{ ...sample, waitingOn: ['marquise'] }} seat="marquise" deadline=${null} notice="Máy chủ từ chối: stale-revision" decision=${null} mine=${false} onReopen=${noop} />
+      <${HudFactions} view=${sample} seats=${seats} seat="marquise" changes=${NO_CHANGES} open="eyrie" onOpen=${noop} />
+      <${HandStrip} view=${sample} legal=${crafts} onOpen=${noop} />
+      <button class="secondary hud-log">Nhật ký · 12</button>
+    </div>
+    <div class="kit-hud short"><${HudStatus} view=${sample} seat="marquise" deadline=${null} notice="" decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} /></div>
+    <div class="kit-row"><span class="clock"><${Icon} name="clock" /> 1:12</span><span class="clock urgent"><${Icon} name="clock" /> 0:09</span></div>
     <${GameResult} view=${{ ...sample, winner: { factions: ['alliance'], reason: 'points' } }} />
     <${GameLog} log=${[{ revision: 3, faction: 'marquise', type: 'move', detail: { from: 0, to: 4, warriors: 2 } }]} selected=${3} onSelect=${noop} />
     <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
