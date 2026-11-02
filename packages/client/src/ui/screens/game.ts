@@ -15,10 +15,9 @@ import { FactionBoards } from './boards.ts'
 import { Hand, Scores } from './hand.ts'
 import { ClearingInfo } from './clearing-info.ts'
 import { DecisionBar, DecisionDialog } from './decision.ts'
-import { BoardView, type BoardMode } from './board-view.ts'
+import { MapView } from './map-view.ts'
 
 const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
-const storedMode = (): BoardMode => { try { return localStorage.getItem('root-board') === '2d' ? '2d' : '3d' } catch { return '3d' } }
 
 /** One game: everything comes from the server's updates; the client never decides legality. */
 export function Game({ gameId, token }: { gameId: string; token: string | null }) {
@@ -29,13 +28,13 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   /** Clearings of the option the pointer or focus is on, lit over the chosen ones. */
   const [logSelection, setLogSelection] = useState<LogEntry | null>(null)
   const [preview, setPreview] = useState<number[] | null>(null)
-  const [mode, setModeState] = useState<BoardMode>(storedMode)
   const [cameraHome, setCameraHome] = useState(0)
   /** The clearing whose contents are shown under the board (the last one clicked). */
   const [inspect, setInspect] = useState<number | null>(null)
   /** The decision dialog folded away to look at the board; it opens again with every new position. */
   const [folded, setFolded] = useState(false)
-  const setMode = (m: BoardMode) => { setModeState(m); try { localStorage.setItem('root-board', m) } catch { /* private mode */ } }
+  /** The side panel floats over the map until G2–G4 move every action onto the map itself. */
+  const [panel, setPanel] = useState(() => innerWidth >= 1100)
 
   const u = conn.update.value
   // A new position drops the preview; a chosen path falls back to its start clearing, if that still has actions.
@@ -54,36 +53,33 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const highlight = preview ?? (logSelection ? logClearings(logSelection) : board.selected)
   const pick = (c: number) => { setPreview(null); setLogSelection(null); setInspect(c); setStage(s => click(legal, s, c)) }
 
-  return html`
-    <${TopBar} gameId=${u.gameId} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value} />
-    ${decision && !(dialog && !folded) && html`<${DecisionBar} decision=${decision} mine=${mine} onOpen=${dialog ? () => setFolded(false) : undefined} />`}
+  return html`<div class="game-screen">
+    <${MapView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome} />
+    <div class="hud-top">
+      <${TopBar} gameId=${u.gameId} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value}
+        panel=${panel} onPanel=${() => setPanel(p => !p)} />
+      ${decision && !(dialog && !folded) && html`<${DecisionBar} decision=${decision} mine=${mine} onOpen=${dialog ? () => setFolded(false) : undefined} />`}
+    </div>
     ${dialog && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${legal} send=${conn.send} onFold=${() => setFolded(true)} />`}
     <${GameResult} view=${v} />
     <${QuickGuide} />
-    <div class="layout">
-      <div class="board-col">
-        <div class="board-tools">
-          <${SoundToggle} revision=${v.revision} />
-          ${(['3d', '2d'] as const).map(m => html`<button aria-pressed=${mode === m} onClick=${() => setMode(m)}>${m.toUpperCase()}</button>`)}
-          ${mode === '3d' && html`<button class="secondary" onClick=${() => setCameraHome(n => n + 1)}>Về góc mặc định</button>`}
-          <span>${legal.length ? 'Bấm ô có viền vàng để chọn hành động.' : ''}${mode === '3d' ? ' Kéo để xoay, cuộn để phóng to.' : ''}</span>
-        </div>
-        <${BoardView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} mode=${mode} onPick=${pick} onNoWebGL=${() => setModeState('2d')} cameraHome=${cameraHome} />
-        <${DicePanel} changes=${conn.changes.value} />
-        ${inspect !== null && html`<${ClearingInfo} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}
-      </div>
-      <aside>
-        <${Scores} view=${v} seats=${seats} changes=${conn.changes.value} />
-        ${seat && html`<${Hand} view=${v} seat=${seat} legal=${legal} />`}
-        ${legal.length > 0 && html`<${ActionBar} legal=${legal} stage=${stage} setStage=${setStage} onPreview=${setPreview} send=${conn.send} />`}
-        <${FactionBoards} view=${v} seat=${seat} />
-        <${GameLog} log=${u.log} selected=${logSelection?.revision ?? null} onSelect=${(l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }} />
-      </aside>
-    </div>
-    <${CardDetailOverlay} legal=${legal} send=${conn.send} />`
+    <${DicePanel} changes=${conn.changes.value} />
+    <aside class="side-overlay" hidden=${!panel} aria-label="Bảng điều khiển">
+      <div class="side-tools"><${SoundToggle} revision=${v.revision} /><button class="secondary" onClick=${() => setCameraHome(n => n + 1)}>Về góc mặc định</button></div>
+      ${inspect !== null && html`<${ClearingInfo} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}
+      <${Scores} view=${v} seats=${seats} changes=${conn.changes.value} />
+      ${seat && html`<${Hand} view=${v} seat=${seat} legal=${legal} />`}
+      ${legal.length > 0 && html`<${ActionBar} legal=${legal} stage=${stage} setStage=${setStage} onPreview=${setPreview} send=${conn.send} />`}
+      <${FactionBoards} view=${v} seat=${seat} />
+      <${GameLog} log=${u.log} selected=${logSelection?.revision ?? null} onSelect=${(l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }} />
+    </aside>
+    <${CardDetailOverlay} legal=${legal} send=${conn.send} />
+  </div>`
 }
 
-function TopBar({ gameId, view: v, seat, deadline, notice }: { gameId: string; view: PlayerView; seat: FactionId | null; deadline: number | null; notice: string }) {
+function TopBar({ gameId, view: v, seat, deadline, notice, panel, onPanel }: {
+  gameId: string; view: PlayerView; seat: FactionId | null; deadline: number | null; notice: string; panel: boolean; onPanel: () => void
+}) {
   return html`
     <header class="bar">
       <a href="./">← Sảnh</a>
@@ -92,6 +88,7 @@ function TopBar({ gameId, view: v, seat, deadline, notice }: { gameId: string; v
       <span>Đang chờ: ${v.waitingOn.length ? v.waitingOn.map(f => html`<${Chip} f=${f} />`) : '—'}</span>
       <span>${seat ? html`Bạn là <${Chip} f=${seat} />` : 'Khán giả'}</span>
       <${Clock} deadline=${deadline} />
+      <button class="secondary panel-toggle" aria-expanded=${panel} onClick=${onPanel}>${panel ? 'Ẩn bảng' : 'Hiện bảng'}</button>
     </header>
     ${notice && html`<div class="notice" role="status">${notice}</div>`}`
 }

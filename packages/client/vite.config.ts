@@ -13,6 +13,6 @@ export default defineConfig({
   // ui-kit.html shows every shared piece in every state, board-kit.html the board alone (docs/07-ui).
   build: {
     outDir: 'dist', emptyOutDir: true, chunkSizeWarningLimit: 800,
-    rollupOptions: { input: { main: resolve(import.meta.dirname, 'index.html'), lake: resolve(import.meta.dirname, 'lake-kit.html'), autumn: resolve(import.meta.dirname, 'autumn-kit.html'), kit: resolve(import.meta.dirname, 'ui-kit.html'), board: resolve(import.meta.dirname, 'board-kit.html') } },
+    rollupOptions: { input: { main: resolve(import.meta.dirname, 'index.html'), lake: resolve(import.meta.dirname, 'lake-kit.html'), autumn: resolve(import.meta.dirname, 'autumn-kit.html'), map: resolve(import.meta.dirname, 'map-kit.html'), kit: resolve(import.meta.dirname, 'ui-kit.html'), board: resolve(import.meta.dirname, 'board-kit.html') } },
   },
 })

@@ -70,6 +70,7 @@ export function cssVariables(): Record<string, string> {
   for (const [k, v] of Object.entries(suitColor)) vars[`--suit-${k}`] = v
   vars['--ink-a10'] = alpha(color.ink, 0.1)
   vars['--ink-a25'] = alpha(color.ink, 0.25)
+  vars['--ink-a85'] = alpha(color.ink, 0.85)
   vars['--paper-a96'] = alpha(color.paperRaised, 0.96)
   vars['--gold-a35'] = alpha(color.autumnGold, 0.35)
   for (const [k, v] of Object.entries(font)) vars[`--font-${k}`] = v

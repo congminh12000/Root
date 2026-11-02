@@ -99,7 +99,7 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
     for (const { o, scale } of a.pop) o.scale.setScalar(scale * Math.max(0.05, k))
     const f = Math.min(1, ms / motion.pulse)
     for (const ring of a.pulse) {
-      ring.scale.setScalar(1 + 0.45 * f)
+      ring.scale.set(ring.userData.base[0] * (1 + 0.45 * f), ring.userData.base[1] * (1 + 0.45 * f), 1)
       ;(ring.material as THREE.MeshBasicMaterial).opacity = 1 - f
       ring.visible = f < 1
     }
@@ -134,6 +134,7 @@ export function mountBoard3D(host: HTMLElement, onPick: (clearing: number) => vo
       const built = buildPieces(view, highlight, reduceMotion ? [] : changed, targets)
       const movers = reduceMotion ? [] : buildMovers(travels)
       for (const m of movers) built.root.add(m.o)
+      for (const ring of built.pulse) ring.userData.base = [ring.scale.x, ring.scale.y]
       pieces = built.root
       scene.add(pieces)
       anim = built.pop.length || built.pulse.length || movers.length

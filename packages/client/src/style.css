@@ -155,6 +155,21 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .dialog .option.withcard .minicard { transform: none; margin: 0; }
 .dialog footer { display: flex; justify-content: flex-end; border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
 
+/* ── Map-only game screen (G1, docs/07-ui/gameplay-map-only.md) ─────────────── */
+.game-screen { position: fixed; inset: 0; overflow: hidden; background: var(--pine); }
+.game-map { position: absolute; inset: 0; }
+.game-map canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.map-fallback { position: absolute; inset: 30% 10% auto; background: var(--paper-raised); border: 2px solid var(--ink); border-radius: var(--r-md); padding: var(--sp-4); }
+.hud-top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; pointer-events: none; }
+.hud-top > * { pointer-events: auto; }
+.hud-top .bar { background: var(--ink-a85); backdrop-filter: blur(4px); }
+.panel-toggle { margin-left: auto; }
+.side-overlay { position: absolute; top: 52px; right: var(--sp-3); bottom: var(--sp-3); width: min(400px, calc(100vw - 24px)); overflow: auto; z-index: 9; overscroll-behavior: contain; }
+.side-overlay > .card:first-child, .side-overlay > * { margin-top: 0; }
+.side-overlay > * + * { margin-top: var(--sp-2); }
+.side-tools { display: flex; gap: var(--sp-2); align-items: center; justify-content: flex-end; }
+.game-screen .dice { top: 64px; left: 50%; }
+
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
 .board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }

@@ -1,9 +1,9 @@
 import type { FactionId, PlayerView } from '@root/game-engine'
 import * as THREE from 'three'
-import type { Travel } from '../motion.ts'
+import type { Spot, Travel } from '../motion.ts'
 import { FACTION_COLOR } from '../names.ts'
 import { color } from '../ui/tokens.ts'
-import { CLEARING_R, forestCentre, groundHeight, PIECE_SCALE, spotPoint, world } from './geo.ts'
+import { CLEARING_R, PIECE_SCALE, spotPoint, world } from './geo.ts'
 import { badge, outline, part, shape, toon } from './toon.ts'
 
 /**
@@ -88,82 +88,109 @@ const ringGeo = (r: number, tube: number) => shape(`ring-${r}-${tube}`, () => ne
 const pulseMat = () => new THREE.MeshBasicMaterial({ color: color.autumnGold, transparent: true })
 const litMat = new THREE.MeshBasicMaterial({ color: color.autumnGold })
 
+/** Where pieces stand on a particular map (map/theme.ts). The classic board uses CLASSIC below. */
+export interface Placement {
+  centre(c: number): THREE.Vector3
+  /** Building slot `i` of `n` in clearing `c`. */
+  slot(c: number, i: number, n: number): THREE.Vector3
+  /** Where warrior group `gi` of `groups` stands. */
+  warriors(c: number, gi: number, groups: number): THREE.Vector3
+  token(c: number, i: number): THREE.Vector3
+  /** The Vagabond in a clearing or a forest, or a moving piece's end (motion.ts). */
+  spot(s: Spot): THREE.Vector3
+  /** Half-axes of the ring around a clearing. */
+  ring: [number, number]
+  /** Where the ruler badge floats, relative to the centre. */
+  rulerOffset: THREE.Vector3
+  /** Draw a pad under each slot (the classic board); the diorama paints its slots into the ground. */
+  pads: boolean
+}
+
+/** The classic board (UI-3): slots on an arc at the back, warriors in front, tokens to the right. */
+export const CLASSIC: Placement = {
+  centre: c => world(c),
+  slot: (c, i, n) => { const p = world(c), a = Math.PI * (1.15 + (i + 0.5) / n * 0.7); return new THREE.Vector3(p.x + Math.cos(a) * 0.85, 0.13, p.z + Math.sin(a) * 0.85) },
+  warriors: (c, gi, groups) => { const p = world(c); return new THREE.Vector3(p.x - (groups - 1) * 0.5 + gi * 1.0, 0.1, p.z + 0.5) },
+  token: (c, i) => { const p = world(c); return new THREE.Vector3(p.x + 1.05, 0.1, p.z - 0.35 + i * 0.5) },
+  spot: s => (s.kind === 'clearing' ? world(s.id).add(new THREE.Vector3(0.6, 0.1, 0.6)) : spotPoint(s)),
+  ring: [CLEARING_R, CLEARING_R],
+  rulerOffset: new THREE.Vector3(CLEARING_R * 0.8, 0.85, -CLEARING_R * 0.8),
+  pads: true,
+}
+
+const ellipseRing = (at: THREE.Vector3, [rx, rz]: [number, number], grow: number, tube: number, mat: THREE.Material) => {
+  const ring = new THREE.Mesh(ringGeo(1, tube / Math.max(rx, rz)), mat)
+  ring.rotation.x = Math.PI / 2
+  ring.scale.set(rx + grow, rz + grow, 1)
+  ring.position.set(at.x, 0.14, at.z)
+  return ring
+}
+
 /**
- * Pieces for one view. `highlight` rings the chosen clearings, `targets` lightly marks those that can be clicked.
- * Objects in `changed` clearings are listed in `pop`, plus one fading ring each in `pulse`.
+ * Pieces for one view, placed by `at`. `highlight` rings the chosen clearings, `targets` lightly marks those that can
+ * be clicked. Objects in `changed` clearings are listed in `pop`, plus one fading ring each in `pulse`.
  */
-export function buildPieces(view: PlayerView, highlight: number[], changed: number[], targets: number[] = []): { root: THREE.Group; pop: THREE.Object3D[]; pulse: THREE.Mesh[] } {
+export function buildPieces(view: PlayerView, highlight: number[], changed: number[], targets: number[] = [], at: Placement = CLASSIC): { root: THREE.Group; pop: THREE.Object3D[]; pulse: THREE.Mesh[] } {
   const root = new THREE.Group()
   const pop: THREE.Object3D[] = [], pulse: THREE.Mesh[] = []
   for (const [id, c] of view.map.clearings.entries()) {
-    const p = world(id)
+    const p = at.centre(id)
     const fresh = changed.includes(id)
     const add = (o: THREE.Object3D) => { o.scale.setScalar(PIECE_SCALE); root.add(o); if (fresh) pop.push(o) }
-    // Slots on an arc at the back of the clearing.
     c.slots.forEach((slot, i) => {
-      const a = Math.PI * (1.15 + (i + 0.5) / c.slots.length * 0.7)
-      const sx = p.x + Math.cos(a) * 0.85, sz = p.z + Math.sin(a) * 0.85
-      const pad = new THREE.Mesh(slotGeo(), toon(color.paperShade))
-      pad.position.set(sx, 0.11, sz)
-      pad.receiveShadow = true
-      root.add(outline(pad, 0.03))
+      const s = at.slot(id, i, c.slots.length)
+      if (at.pads) {
+        const pad = new THREE.Mesh(slotGeo(), toon(color.paperShade))
+        pad.position.set(s.x, s.y - 0.02, s.z)
+        pad.receiveShadow = true
+        root.add(outline(pad, 0.03))
+      }
       if (!slot) return
       const obj = slot.kind === 'ruin' ? ruin() : building(slot.type, slot.faction)
-      obj.position.set(sx, 0.13, sz)
+      obj.position.copy(s)
       add(obj)
     })
     // Warriors in rows at the front; large groups become a stack with a count.
     const groups = Object.entries(c.warriors).filter(([, n]) => n && n > 0) as [FactionId, number][]
     groups.forEach(([f, n], gi) => {
-      const baseX = p.x - (groups.length - 1) * 0.5 + gi * 1.0, baseZ = p.z + 0.5
+      const base = at.warriors(id, gi, groups.length)
       for (let k = 0; k < Math.min(n, 4); k++) {
         const w = warrior(f)
-        w.position.set(baseX + (k % 2) * 0.36 - 0.18, 0.1, baseZ + Math.floor(k / 2) * 0.32 - 0.16)
+        w.position.set(base.x + (k % 2) * 0.36 - 0.18, base.y, base.z + Math.floor(k / 2) * 0.32 - 0.16)
         add(w)
       }
       if (n > 1) {
         const tag = badge(String(n), { bg: FACTION_COLOR[f], fg: color.white, size: 0.46 })
-        tag.position.set(baseX, 1.35, baseZ)
+        tag.position.set(base.x, 1.35, base.z)
         root.add(tag)
       }
     })
     c.tokens.forEach((t, i) => {
       const obj = token(t.type, t.faction)
-      obj.position.set(p.x + 1.05, 0.1, p.z - 0.35 + i * 0.5)
+      obj.position.copy(at.token(id, i))
       add(obj)
     })
-    // Who rules the clearing (from the engine's view, §2.5): their icon opposite the clearing's number.
+    // Who rules the clearing (from the engine's view, §2.5).
     const lord = view.rulers?.[id]
     if (lord) {
       const mark = badge('', { bg: FACTION_COLOR[lord], icon: lord, iconFill: color.paperRaised, size: 0.42 })
-      mark.position.set(p.x + CLEARING_R * 0.8, 0.85, p.z - CLEARING_R * 0.8)
+      mark.position.copy(p).add(at.rulerOffset)
       root.add(mark)
     }
     if (fresh) {
-      const ring = new THREE.Mesh(ringGeo(CLEARING_R, 0.09), pulseMat())
-      ring.rotation.x = Math.PI / 2
-      ring.position.set(p.x, 0.16, p.z)
+      const ring = ellipseRing(p, at.ring, 0, 0.09, pulseMat())
+      ring.position.y = 0.16
       root.add(ring)
       pulse.push(ring)
     }
-    if (highlight.includes(id)) {
-      const ring = new THREE.Mesh(ringGeo(CLEARING_R + 0.16, 0.08), litMat)
-      ring.rotation.x = Math.PI / 2
-      ring.position.set(p.x, 0.14, p.z)
-      root.add(outline(ring, 0.03))
-    } else if (targets.includes(id)) {
-      const ring = new THREE.Mesh(ringGeo(CLEARING_R + 0.14, 0.035), litMat)
-      ring.rotation.x = Math.PI / 2
-      ring.position.set(p.x, 0.14, p.z)
-      root.add(ring)
-    }
+    if (highlight.includes(id)) root.add(outline(ellipseRing(p, at.ring, 0.16, 0.08, litMat), 0.03))
+    else if (targets.includes(id)) root.add(ellipseRing(p, at.ring, 0.14, 0.035, litMat))
   }
   const where = view.factions.vagabond?.pawn
   if (where) {
     const fig = pawn()
     fig.scale.setScalar(PIECE_SCALE)
-    const p = where.kind === 'clearing' ? world(where.id).add(new THREE.Vector3(0.6, 0, 0.6)) : forestCentre(where.id)
-    fig.position.set(p.x, where.kind === 'clearing' ? 0.1 : groundHeight(p.x, p.z), p.z)
+    fig.position.copy(at.spot(where))
     root.add(fig)
     if (where.kind === 'clearing' && changed.includes(where.id)) pop.push(fig)
   }
@@ -171,7 +198,7 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
 }
 
 /** One figure per travel (with its count), hopping along the path; hidden once it lands. */
-export function buildMovers(travels: Travel[]): { o: THREE.Object3D; from: THREE.Vector3; to: THREE.Vector3 }[] {
+export function buildMovers(travels: Travel[], at: Placement = CLASSIC): { o: THREE.Object3D; from: THREE.Vector3; to: THREE.Vector3 }[] {
   return travels.map(t => {
     const o = new THREE.Group()
     const fig = t.pawn ? pawn() : warrior(t.faction)
@@ -182,7 +209,7 @@ export function buildMovers(travels: Travel[]): { o: THREE.Object3D; from: THREE
       tag.position.y = 1.3
       o.add(tag)
     }
-    return { o, from: spotPoint(t.from), to: spotPoint(t.to) }
+    return { o, from: at.spot(t.from), to: at.spot(t.to) }
   })
 }
 
