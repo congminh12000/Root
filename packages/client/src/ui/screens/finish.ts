@@ -38,7 +38,7 @@ export function QuickGuide() {
     <p><b>Ván đầu:</b> ở sảnh, chọn một ghế người và ba ghế bot. Mở liên kết của ghế mình; làm theo yêu cầu đặt quân hoặc chọn nhân vật ở đầu ván.</p>
     <ol><li>Ô có viền vàng là nơi bạn làm được gì đó: chạm ô để mở menu ngay tại ô.</li>
     <li>Di chuyển: kéo quân từ ô này sang ô khác, hoặc chạm ô đi rồi ô đến; chọn số chiến binh bằng chip số hay phím số, Enter để xác nhận.</li>
-    <li>Hành động không gắn ô (kết thúc bước, chế tạo…) nằm ở bong bóng phía trên. Chạm dải bài ở mép dưới để xem và dùng lá.</li>
+    <li>Hành động không gắn ô (kết thúc bước, chế tạo…) nằm ở bong bóng phía trên. Bài trên tay luôn hiện ở mép dưới. Chạm từng lá để xem và dùng; vuốt ngang nếu có nhiều lá.</li>
     <li>Quyết định trong trận đánh hiện ngay tại ô đang đánh. Rê chuột hoặc nhấn giữ một ô để xem trong ô có gì.</li>
     <li>Huy hiệu phe ở mép phải có điểm và số lá; chạm để mở bảng phe. Nhật ký ở góc dưới trái; menu ☰ có “Tất cả lựa chọn”.</li></ol>
     <p><b>Điều khiển:</b> kéo để di bản đồ, kéo chuột phải (hoặc Shift + kéo) để xoay, cuộn hoặc chụm hai ngón để phóng to; phím mũi tên, + − và 0 về góc mặc định.</p>
