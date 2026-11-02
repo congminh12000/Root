@@ -39,3 +39,18 @@ test('card scenes are seeded: the same card draws the same, its second copy diff
   }
   assert.notEqual(questArt(BASE_QUESTS[0]!), questArt(BASE_QUESTS[1]!))
 })
+
+test('ambush cards follow the printed layout: name in the band, where to play in italics, no cost or plaque (§4.3.1)', () => {
+  const where = { bird: 'ô bất kỳ', fox: 'ô cáo', rabbit: 'ô thỏ', mouse: 'ô chuột' }
+  for (const d of BASE_DECK.filter(c => c.kind === 'ambush')) {
+    const full = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
+    assert.match(full, /class="cf-head">.*<b class="cf-title">Ambush!<\/b>/s, d.id)
+    assert.ok(full.includes(`<i>Có thể ambush ở ${where[d.suit]}.</i>`), d.id)
+    assert.match(full, /<p>Đầu trận đánh.*khớp ô đó \(§4\.3\.1\)\.<\/p>/, d.id)
+    assert.ok(!full.includes('cf-plaque') && !full.includes('cf-cost'), d.id)
+    const mini = render(html`<${CardFace} card=${`${d.id}#1`} size="mini" />`)
+    assert.ok(mini.includes('<i>') && !mini.includes('<p>'), `${d.id} mini keeps only the italic line`)
+  }
+  const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
+  assert.ok(other.includes('cf-plaque') && !other.includes('cf-title'), 'other cards keep their layout')
+})
