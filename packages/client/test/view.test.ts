@@ -12,7 +12,7 @@ test('every card in the deck has a detail panel with its name, kind and cost or 
     const out = render(html`<${CardDetail} card=${`${c.id}#1`} />`)
     assert.ok(out.includes(c.name.replace(/&/g, '&amp;')), c.id)
     assert.ok(/Item|Dùng ngay|Lâu dài|Ambush|Dominance/.test(out), `kind for ${c.id}`)
-    if (c.kind === 'item') assert.ok(out.includes(`+${c.vp} điểm`), `points for ${c.id}`)
+    if (c.kind === 'item') assert.ok(out.includes(`+${c.vp}`) && out.includes(`${c.vp} điểm`), `points for ${c.id}`)
   }
   assert.ok(render(html`<${CardChip} card="anvil#1" />`).includes('data-card="anvil#1"'))
 })

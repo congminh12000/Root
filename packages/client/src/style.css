@@ -42,10 +42,8 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardchip:hover, .cardchip.is-hover { background: var(--gold-a35); }
 .carddetail { position: fixed; right: var(--sp-4); bottom: var(--sp-4); width: min(340px, calc(100vw - 32px)); background: var(--paper-raised); border: 2px solid var(--ink);
   border-radius: var(--r-md); padding: var(--sp-3); box-shadow: var(--shadow-raised); z-index: 10; animation: rise var(--motion-dialog) ease-out; }
-.carddetail.inline { position: static; }
-.carddetail-head { display: flex; align-items: baseline; gap: 6px; border-left: 6px solid; padding-left: var(--sp-2); margin-bottom: 6px; font: var(--fs-lg) var(--font-display); }
-.carddetail .close { margin-left: auto; background: none; color: var(--ink); border: 0; box-shadow: none; font-size: var(--fs-lg); padding: 0 4px; }
-.carddetail .effect { margin: var(--sp-2) 0; }
+.carddetail.inline { position: relative; right: auto; bottom: auto; }
+.carddetail > .close { position: absolute; top: 6px; right: 6px; z-index: 2; background: none; color: var(--ink); border: 0; box-shadow: none; font-size: var(--fs-lg); padding: 0 4px; }
 @keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 
 /* ── Game screen ──────────────────────────────────────────────────────────── */
@@ -66,17 +64,6 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Hand, faction boards, score track (UI-5) ─────────────────────────────── */
 .fan { display: flex; justify-content: center; padding: var(--sp-3) var(--sp-2) var(--sp-2); min-height: 140px; }
-.minicard { --turn: 0deg; --drop: 0px; flex: none; width: 92px; height: 124px; margin: 0 -3px; padding: 0; display: flex; flex-direction: column; align-items: stretch; text-align: center;
-  background: var(--paper-raised); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: 0 3px 0 var(--ink-a25);
-  transform: translateY(var(--drop)) rotate(var(--turn)); transform-origin: 50% 120%; transition: transform 120ms, box-shadow 120ms; white-space: normal; overflow: hidden; font: 600 11px/1.2 var(--font-body); }
-.minicard:hover, .minicard:focus-visible, .minicard.is-hover { transform: translateY(-14px) rotate(0deg); z-index: 2; background: var(--paper-raised); }
-.minicard.usable { box-shadow: 0 0 0 3px var(--autumn-gold), 0 3px 0 var(--ink-a25); }
-.minicard .band { background: var(--suit); border-bottom: 2px solid var(--ink); padding: 3px 0; }
-.minicard .band .icon { width: 22px; height: 22px; }
-.minicard .name { padding: 4px 4px 0; flex: 1; font: 13px/1.15 var(--font-display); }
-.minicard .kind { font-size: 10px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .03em; }
-.minicard .foot { display: flex; justify-content: center; align-items: center; gap: 1px; padding: 2px 0 5px; font-size: 12px; }
-.minicard .foot .icon { width: 16px; height: 16px; }
 .carduses { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--sp-2); border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
 .carduses button { white-space: normal; text-align: left; }
 .item { --icon-fill: var(--paper-raised); display: inline-flex; vertical-align: middle; margin: 0 1px; }
@@ -113,7 +100,6 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .level { border: 1.5px solid var(--ink-a25); border-radius: var(--r-sm); padding: 0 5px; font-size: 11px; }
 .level.on { background: var(--faction-vagabond); color: var(--paper-raised); border-color: var(--ink); }
 .level.hostile { background: var(--roof-red); }
-.quest { display: inline-flex; align-items: center; gap: 2px; margin-right: var(--sp-2); }
 
 /* ── Decisions (UI-6) ─────────────────────────────────────────────────────── */
 .rule { color: var(--ink-soft); font-size: var(--fs-xs); }
@@ -132,6 +118,51 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .dialog .option.withcard { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .dialog .option.withcard .minicard { transform: none; margin: 0; }
 .dialog footer { display: flex; justify-content: flex-end; border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
+
+/* ── Card faces (C, style-guide §6): the printed layout in our own drawing ─────── */
+.minicard { --turn: 0deg; --drop: 0px; flex: none; margin: 0 -3px; padding: 0; background: none; border: 0; box-shadow: none; border-radius: 9px;
+  transform: translateY(var(--drop)) rotate(var(--turn)); transform-origin: 50% 120%; transition: transform 120ms, box-shadow 120ms; }
+.minicard:hover, .minicard:focus-visible, .minicard.is-hover { transform: translateY(-14px) rotate(0deg); z-index: 2; background: none; }
+.minicard.usable { box-shadow: 0 0 0 3px var(--autumn-gold); }
+.cardface { --cf-w: 92px; position: relative; width: var(--cf-w); aspect-ratio: 63 / 88; font-size: calc(var(--cf-w) / 12); background: var(--suit); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 0 3px 0 var(--ink-a25); text-align: center; flex: none;
+  background: linear-gradient(var(--suit) 0 17%, var(--meadow) 17%); }
+.cardface.full { --cf-w: 260px; border-width: 3px; border-radius: 14px; }
+.cf-head { position: absolute; inset: 0 0 auto; height: 17%; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; background: var(--suit); border-bottom: 2px solid var(--ink); z-index: 1; }
+.cf-badge { display: grid; place-items: center; width: 2.4em; height: 2.4em; border-radius: 50%; background: var(--paper-raised); border: 2px solid var(--ink); --icon-fill: var(--suit); transform: translateY(18%); }
+.cf-badge .icon { width: 1.9em; height: 1.9em; vertical-align: 0; }
+.cf-cost { display: flex; gap: .15em; }
+.cf-pip { display: grid; place-items: center; width: 1.45em; height: 1.45em; background: var(--wood-light); border: 1.5px solid var(--ink); border-radius: .25em; box-shadow: inset 0 -.12em 0 var(--wood); }
+.cf-pip .icon { width: 1.2em; height: 1.2em; vertical-align: 0; }
+.cf-pip.any { background: conic-gradient(var(--suit-fox) 0 33%, var(--suit-rabbit) 0 66%, var(--suit-mouse) 0); font: 1.1em/1 var(--font-display); color: var(--ink); }
+.cf-pip.item { background: var(--paper-raised); --icon-fill: var(--paper-shade); }
+.cf-art { position: absolute; inset: 17% 0 32%; border-bottom: 1.5px solid var(--ink); }
+.cardface.full .cf-art { inset: 17% 0 36%; }
+.cf-art svg { display: block; width: 100%; height: 100%; }
+.cf-plaque { position: absolute; display: flex; align-items: center; justify-content: center; gap: .15em; color: var(--paper-raised); font: 1.2em/1 var(--font-display);
+  background: repeating-linear-gradient(0deg, var(--wood) 0 .45em, var(--wood-light) .45em .55em); border: 1.5px solid var(--ink); border-radius: .3em; box-shadow: 0 .12em 0 var(--ink-a25); }
+.cf-plaque .icon { width: 1.35em; height: 1.35em; vertical-align: 0; }
+.cf-text { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: .2em; background: var(--paper-raised); border: 1.5px solid var(--ink);
+  clip-path: polygon(.5em 0, calc(100% - .5em) 0, 100% .5em, 100% calc(100% - .5em), calc(100% - .5em) 100%, .5em 100%, 0 calc(100% - .5em), 0 .5em); padding: .25em .35em; }
+.cf-name { font: 1.42em/1.05 var(--font-display); overflow-wrap: anywhere; }
+.cardface.mini .cf-name.long { font-size: 1.12em; }
+.cardface.mini .cf-name.longer { font-size: 1em; letter-spacing: -.02em; }
+.cf-text small { font: 600 1.05em/1.1 var(--font-body); color: var(--ink-soft); }
+.cardface.mini .cf-text { inset: auto 4% 3% 4%; height: 31%; }
+.cardface.mini .cf-plaque { left: 4%; bottom: 33%; height: 15%; padding: 0 .35em; }
+.cardface.full .cf-text { inset: auto 4% 3% 24%; height: 36%; padding: .3em .45em; }
+.cardface.full .cf-name { font-size: 1.05em; }
+.cardface.full .cf-text p { margin: 0; font: .56em/1.32 var(--font-body); text-align: left; }
+.cardface.full .cf-plaque { left: 4%; bottom: 3%; width: 17%; height: 36%; flex-direction: column; font-size: .9em; }
+.cardchip-suit { display: inline-flex; margin-right: 3px; vertical-align: -3px; }
+.cardchip-suit .icon { width: 16px; height: 16px; }
+.carddetail .cardface { margin: 30px auto var(--sp-2); }
+.quest-row { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 4px 0; }
+.questcard { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 9px; white-space: normal; font: inherit; color: inherit; }
+.minicard { white-space: normal; }
+.questcard:hover { background: none; }
+.carddetail .printed summary { cursor: pointer; font-size: var(--fs-xs); color: var(--ink-soft); }
+.carddetail .printed p { margin: 4px 0; font-size: var(--fs-xs); font-style: italic; }
 
 /* ── Map-only game screen (G1, docs/07-ui/gameplay-map-only.md) ─────────────── */
 .game-screen { position: fixed; inset: 0; overflow: hidden; background: var(--pine); }
@@ -260,11 +291,13 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-icon .icon { width: 40px; height: 40px; }
 .kit-hud { position: relative; height: 420px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: hidden; }
 .kit-hud.short { height: 120px; }
+.kit-deck { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-2) 0; }
+.kit-deck .minicard { margin: 0; }
 .kit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); align-items: start; }
 .kit-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .swatch { margin: 0; width: 112px; font-size: var(--fs-xs); }
 .swatch span { display: block; height: 48px; border: 2px solid var(--ink); border-radius: var(--r-sm); margin-bottom: 4px; }
-.carddetail.inline { width: 220px; }
+.carddetail.inline { width: 290px; }
 .kit-dialog .dialog-backdrop { position: static; background: none; padding: 0; margin: var(--sp-3) 0; animation: none; }
 .kit-dialog .dialog { max-height: none; }
 

@@ -14,6 +14,7 @@ const QUESTS = new Map(BASE_QUESTS.map(q => [q.id, q]))
 
 export const cardDesign = (card: string) => CARDS.get(card.split('#')[0]!)!
 export const cardName = (card: string) => { const d = cardDesign(card); return `${d.name} (${SUIT_NAME[d.suit]})` }
+export const questDesign = (id: string) => QUESTS.get(id)
 export const questName = (id: string) => { const q = QUESTS.get(id); return q ? `${q.name} (${SUIT_NAME[q.suit]}: ${q.items.map(i => ITEM_NAME[i]).join(' + ')})` : id }
 
 /** Clearings are numbered from 1 for people (docs/03-data-spec/autumn.md). */

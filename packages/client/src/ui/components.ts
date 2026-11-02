@@ -7,6 +7,7 @@ import type { ComponentChildren } from 'preact'
 import { useEffect } from 'preact/hooks'
 import { cardDesign, cardName, FACTION_NAME, ITEM_NAME, SUIT_COLOR, SUIT_NAME } from '../names.ts'
 import type { IconName } from './icons.ts'
+import { CardFace } from './card-face.ts'
 
 /** Shared pieces of the interface, used by the screens and shown in every state on ui-kit.html (docs/07-ui). */
 
@@ -34,7 +35,7 @@ export const openCard = signal<string | null>(null)
 /** A clickable chip for one physical card, e.g. "anvil#1". */
 export const CardChip = ({ card, state }: { card: string; state?: string }) =>
   html`<button type="button" class=${`cardchip${state ? ` ${state}` : ''}`} data-card=${card} style=${{ borderColor: SUIT_COLOR[cardDesign(card).suit] }}
-    onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}>${cardName(card)}</button>`
+    onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}><span class="cardchip-suit" style=${{ '--icon-fill': SUIT_COLOR[cardDesign(card).suit] }}><${Icon} name=${cardDesign(card).suit} /></span>${cardName(card)}</button>`
 
 const KIND: Record<string, string> = {
   item: 'Item: chế tạo để lấy item và điểm, rồi bỏ lá (§4.1.2)',
@@ -44,22 +45,14 @@ const KIND: Record<string, string> = {
   dominance: 'Dominance: không chế tạo; kích hoạt để thắng theo điều kiện trên lá (§2.1.3, §3.3)',
 }
 
-/** Card details: game-data only, our own wording around the printed summary. */
+/** Card details: the full card face, then what kind of card it is, the printed English summary and its library id. */
 export function CardDetail({ card, onClose }: { card: string; onClose?: () => void }) {
   const d = cardDesign(card)
-  const effect = d.kind === 'item'
-    ? html`Nhận <b>${ITEM_NAME[d.item!]}</b>, +${d.vp ?? 0} điểm.`
-    : d.kind === 'ambush'
-      ? 'Phòng thủ: gây 2 hit ngay trước khi tung xúc xắc. Tấn công: chơi lá cùng chất để phá ambush của đối thủ.'
-      : d.text ?? ''
   return html`
-    <div class="carddetail-head" style=${{ borderColor: SUIT_COLOR[d.suit] }}>
-      <b>${d.name}</b> <span class="note">· ${SUIT_NAME[d.suit]}</span>
-      ${onClose && html`<button type="button" class="close" aria-label="Đóng" onClick=${onClose}><${Icon} name="close" /></button>`}
-    </div>
+    ${onClose && html`<button type="button" class="close" aria-label="Đóng" onClick=${onClose}><${Icon} name="close" /></button>`}
+    <${CardFace} card=${card} size="full" />
     <div class="note">${KIND[d.kind] ?? d.kind}</div>
-    ${d.cost.length > 0 && html`<div>Chi phí chế tạo: ${d.cost.map(s => html`<${SuitPip} suit=${s} />`)}</div>`}
-    <div class="effect">${effect}</div>
+    ${d.text && html`<details class="printed"><summary>Bản in tiếng Anh</summary><p lang="en">${d.text}</p></details>`}
     <div class="note">${d.libraryId}</div>`
 }
 
@@ -92,18 +85,11 @@ export const ItemIcon = ({ item, state }: { item: ItemType; state?: 'exhausted' 
   html`<span class=${`item${state ? ` ${state}` : ''}`} title=${`${ITEM_NAME[item]}${state === 'exhausted' ? ' (úp)' : state === 'damaged' ? ' (hỏng)' : ''}`}>
     <${Icon} name=${item} label=${ITEM_NAME[item]} /></span>`
 
-const KIND_TAG: Record<string, string> = { item: 'item', immediate: 'dùng ngay', persistent: 'lâu dài', ambush: 'ambush', dominance: 'dominance' }
-/** A card as a small card face for the hand: suit band, name, kind, crafting cost or item. Click for details. */
+/** A card at hand size: the card face as a button; usable cards are lit. Click for details. */
 export function MiniCard({ card, usable, style }: { card: string; usable?: boolean; style?: Record<string, string> }) {
-  const d = cardDesign(card)
-  return html`<button type="button" class=${`minicard${usable ? ' usable' : ''}`} style=${{ '--suit': SUIT_COLOR[d.suit], ...style }} data-card=${card}
+  return html`<button type="button" class=${`minicard${usable ? ' usable' : ''}`} style=${style} data-card=${card}
     aria-label=${`${cardName(card)}${usable ? ', dùng được' : ''}`} onClick=${(e: Event) => { e.stopPropagation(); openCard.value = card }}>
-    <span class="band"><${SuitPip} suit=${d.suit} /></span>
-    <span class="name">${d.name}</span>
-    <span class="kind">${KIND_TAG[d.kind] ?? d.kind}</span>
-    ${d.kind === 'item' && d.item ? html`<span class="foot"><${ItemIcon} item=${d.item} /> +${d.vp ?? 0}</span>`
-      : d.cost.length > 0 ? html`<span class="foot">${d.cost.map(s => html`<${SuitPip} suit=${s} />`)}</span>` : null}
-  </button>`
+    <${CardFace} card=${card} size="mini" /></button>`
 }
 
 export interface Space { top?: string; bottom?: string; filled: boolean; bonus?: boolean; current?: boolean }

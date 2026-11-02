@@ -4,7 +4,9 @@ import type { FactionId, LastRoll } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
-import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
+import { CardChip, CardDetail, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
+import { QuestFace } from './ui/card-face.ts'
+import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionDialog } from './ui/screens/decision.ts'
@@ -99,9 +101,25 @@ const Kit = () => html`
       <${Item} label="chim"><${CardChip} card="ambush-bird#1" /><//>
       <${Item} label="tên dài"><${CardChip} card="favor-of-the-foxes#1" /><//><//><//>
 
+  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. Tranh tự sinh: nền theo chất, vật chính theo loại lá; bản sao thứ hai lật cảnh.">
+    <${Row}>
+      <${Item} label="item"><${MiniCard} card="arms-trader#1" /><//>
+      <${Item} label="lâu dài, chi phí ?"><${MiniCard} card="royal-claim#1" /><//>
+      <${Item} label="dùng ngay"><${MiniCard} card="favor-of-the-foxes#1" /><//>
+      <${Item} label="ambush"><${MiniCard} card="ambush-mouse#1" /><//>
+      <${Item} label="dominance"><${MiniCard} card="dominance-rabbit#1" /><//>
+      <${Item} label="dùng được"><${MiniCard} card="tax-collector#1" usable /><//>
+      <${Item} label="bản sao 2"><${MiniCard} card="tax-collector#2" /><//>
+      <${Item} label="quest"><${QuestFace} quest="fend-off-a-bear-mouse" size="mini" /><//><//><//>
+
+  <${Section} title="Toàn bộ bộ bài" note="54 lá (mỗi bản sao một lá) và 15 quest, để duyệt tranh và tên dài.">
+    <div class="kit-deck">${BASE_DECK.flatMap(d => Array.from({ length: d.copies }, (_, i) => html`<${MiniCard} card=${`${d.id}#${i + 1}`} />`))}</div>
+    <div class="kit-deck">${BASE_QUESTS.map(q => html`<${QuestFace} quest=${q.id} size="mini" />`)}</div><//>
+
   <${Section} title="Chi tiết lá bài">
     <${Row}>${['arms-trader#1', 'ambush-bird#1', 'armorers#1', 'dominance-bird#1', 'favor-of-the-foxes#1'].map(c =>
-      html`<div class="carddetail inline"><${CardDetail} card=${c} onClose=${noop} /></div>`)}<//><//>
+      html`<div class="carddetail inline"><${CardDetail} card=${c} onClose=${noop} /></div>`)}
+      <div class="carddetail inline"><${QuestFace} quest="give-a-speech-fox" size="full" /></div><//><//>
 
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>
