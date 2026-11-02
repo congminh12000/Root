@@ -69,7 +69,11 @@ Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọ
 
 - **Thẻ / bảng:** nền `paper-raised`, viền 2 px `ink`, bo góc 10 px, bóng `0 3px 0 ink 20%` (bóng lệch kiểu in).
 - **Nút chính:** nền `wood`, chữ `paper`, viền `ink`; khi hover sáng hơn một nấc; khi bấm lún 2 px.
-- **Lá bài:** tỉ lệ 63:88, dải màu chất ở đầu, biểu tượng chất, tên, chi phí chế tạo bằng pip có hình, hiệu ứng tóm tắt. Không dùng art chính thức; vùng tranh là họa tiết chất tự vẽ.
+- **Lá bài** (`ui/card-face.ts`): bố cục theo lá in, tỉ lệ 63:88, hai cỡ (`mini` 92 px cho tay bài và hộp quyết định, `full` 260 px cho khung chi tiết).
+  - **Dải đầu màu chất:** huy hiệu tròn viền mực có icon chất bên trái; chi phí chế tạo bên phải, mỗi pip là ô gỗ có icon chất, `?` ba màu là bất kỳ. Quest để hai item yêu cầu ở chỗ này.
+  - **Vùng tranh** (`ui/card-art.ts`): cảnh tự sinh bằng code, cùng nét mực và màu phẳng với bàn cờ, không dùng art chính thức. Nền theo chất (cáo: nông trại, thỏ: đồi và hang, chuột: ruộng và cối xay, chim: tán cây và trời). Vật chính theo loại: item trên bục, mắt trong bụi cho ambush, cờ phe có vương miện cho dominance, biểu tượng riêng (`MOTIF`) cho lá lâu dài và dùng ngay, bảng ghim hai item cho quest. Seed theo id lá; bản sao chẵn lật cảnh.
+  - **Tấm gỗ** góc dưới trái: item và điểm, hoặc biểu tượng loại lá (lá = lâu dài, lửa = dùng ngay, mắt = ambush, vương miện = dominance, sao + lá = quest).
+  - **Khung giấy** góc vát: tên gốc tiếng Anh bằng Pangolin; cỡ `mini` thêm một dòng loại lá, cỡ `full` thêm hiệu ứng tiếng Việt kèm điều khoản (`ui/card-text.ts`). Câu tiếng Anh in gốc xem trong "Bản in tiếng Anh" của khung chi tiết.
 - **Chip phe:** hình con vật + tên; luôn có cả màu và hình.
 - **Hộp quyết định:** quyết định gắn một ô (ambush, chia hit, Field Hospitals…) hiện thành callout ngay tại ô đó; chỉ lựa chọn không gắn ô (leader, nhân vật, bỏ bài) mới nổi giữa màn. Luôn có tiêu đề nói rõ ai đang quyết định gì và điều khoản luật liên quan (vd §4.3.1).
 
