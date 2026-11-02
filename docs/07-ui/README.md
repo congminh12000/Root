@@ -98,6 +98,10 @@ Mốc UI-1 và UI-2 nên làm trước mọi thứ: nếu chưa có token và co
 
 - **UI-8 (01/11/2026):** `finish.ts`: kết quả từ `PlayerView.winner`, lý do tiếng Việt, điểm cuối cho mọi ghế và liên kết về sảnh; nhật ký công khai đầy đủ trong cửa sổ server gửi (tối đa 80 dòng), bấm để đánh dấu ô; hướng dẫn nhanh và chú giải gập được. `sound.ts`: tiếng gõ tự tổng hợp bằng Web Audio, mặc định tắt và chỉ bật sau thao tác người dùng; không dùng asset bên ngoài. Có test vị trí nhật ký, kết quả ba loại thắng, trạng thái rỗng và test bàn phím hướng dẫn. Chưa xác nhận tiêu chí người mới tự chơi hết ván bằng thử nghiệm người dùng.
 
+## Autumn — bản dựng chờ duyệt (UI-7)
+
+`/autumn-kit.html` dựng Autumn theo quy trình Lake: dữ liệu chơi từ game-data, cảnh trang trí đo theo ảnh tham chiếu giữ ngoài repo. Xem [autumn-preview.md](autumn-preview.md).
+
 ## Lake — bản duyệt riêng
 
 Theo kế hoạch người quản lý duyệt, `/lake-kit.html` là bản dựng hình Lake riêng, có 22 nền xây và 4 Ruin; bố cục và slot/Ruin đã được người quản lý duyệt. Lake chưa nối vào game hoặc thay thế UI-7 Autumn. Xem [thiết kế và trạng thái duyệt](lake-preview.md).

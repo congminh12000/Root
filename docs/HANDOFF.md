@@ -41,7 +41,7 @@ npm run typecheck && npm test && npm run audit:rules
 
 | Việc | Ghi chú |
 |---|---|
-| Giao diện theo phong cách mới | UI-1 → UI-6 xong; UI-7 chờ tư liệu bản đồ của người quản lý; UI-8 đã triển khai (kết quả, nhật ký, hướng dẫn nhanh, âm thanh); còn thử với người mới. Lộ trình, quy trình, checklist ở `docs/07-ui/` |
+| Giao diện theo phong cách mới | UI-1 → UI-6 xong; UI-7: bản dựng Autumn `/autumn-kit.html` chờ duyệt (`docs/07-ui/autumn-preview.md`); UI-8 đã triển khai (kết quả, nhật ký, hướng dẫn nhanh, âm thanh); còn thử với người mới. Lộ trình, quy trình, checklist ở `docs/07-ui/` |
 | Lake 3D — bản duyệt riêng | `/lake-kit.html`: cảnh và slot tương tác; bố cục và slot/Ruin đã được người quản lý duyệt; chưa nối vào game. Xem `docs/07-ui/lake-preview.md` |
 | Thử với người chơi thật | Bot chưa được đo với người giỏi |
 
