@@ -180,7 +180,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
   }
   for (const c of CLEARINGS) {
     const [x,, z] = world([c.at[0] - CLEARING_RX * .82, c.at[1] - CLEARING_RY * .82])
-    const suit = badge('', { icon: c.suit, iconFill: color.paperRaised, bg: suitColor[c.suit], size: .78 }); suit.position.set(x, 1.1, z); scene.add(suit)
+    const suit = badge('', { suit: c.suit, size: .78 }); suit.position.set(x, 1.1, z); scene.add(suit)
     const number = badge(String(c.id + 1), { size: .5, bg: color.autumnGold }); number.position.set(x + .8, 1.1, z); labels.add(number)
   }
 

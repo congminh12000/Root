@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { color, font } from '../ui/tokens.ts'
 import { iconSvg, type IconName } from '../ui/icons.ts'
+import { suitBadgeUrl, type BadgeSuit } from '../ui/suit-badge.ts'
 import { mat, material, printed } from './look.ts'
 
 /**
@@ -41,6 +42,14 @@ function iconImage(name: IconName, fill: string): Promise<HTMLImageElement> {
     })
     iconImages.set(key, p)
   }
+  return p
+}
+
+const suitImages = new Map<BadgeSuit, Promise<HTMLImageElement>>()
+/** A suit badge (ui/suit-badge.ts) as an image, for the clearing labels. */
+function suitImage(suit: BadgeSuit): Promise<HTMLImageElement> {
+  let p = suitImages.get(suit)
+  if (!p) suitImages.set(suit, p = new Promise((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = suitBadgeUrl(suit) }))
   return p
 }
 
@@ -86,12 +95,13 @@ const labelCache = new Map<string, THREE.SpriteMaterial>()
  * A camera-facing badge: an ink-bordered pill in `bg` with an optional icon and text in the display font. Redrawn
  * once the font and icon have loaded; cached by content.
  */
-export function badge(text: string, opts: { bg?: string; fg?: string; icon?: IconName; iconFill?: string; size?: number } = {}): THREE.Sprite {
-  const key = JSON.stringify([text, opts.bg, opts.fg, opts.icon, opts.iconFill])
+export function badge(text: string, opts: { bg?: string; fg?: string; icon?: IconName; iconFill?: string; suit?: BadgeSuit; size?: number } = {}): THREE.Sprite {
+  const key = JSON.stringify([text, opts.bg, opts.fg, opts.icon, opts.iconFill, opts.suit])
   let mat = labelCache.get(key)
   if (!mat) {
     const canvas = document.createElement('canvas')
-    const withIcon = !!opts.icon && text !== ''
+    const mark = opts.icon ?? opts.suit
+    const withIcon = !!mark && text !== ''
     canvas.width = withIcon ? 224 : 128; canvas.height = 128
     const tex = new THREE.CanvasTexture(canvas)
     tex.colorSpace = THREE.SRGBColorSpace
@@ -99,13 +109,15 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
     const draw = (img?: HTMLImageElement) => {
       const g = canvas.getContext('2d')!
       g.clearRect(0, 0, canvas.width, canvas.height)
+      // A suit badge alone is its own round label; with a number it sits at the left end of the paper pill.
+      if (opts.suit && !text) { if (img) g.drawImage(img, 0, 0, 128, 128); tex.needsUpdate = true; return }
       g.fillStyle = opts.bg ?? color.paperRaised
       g.strokeStyle = color.ink
       g.lineWidth = 10
       g.beginPath()
       g.roundRect(8, 8, canvas.width - 16, 112, 56)
       g.fill(); g.stroke()
-      if (img) g.drawImage(img, withIcon ? 22 : 16, 16, 96, 96)
+      if (img) opts.suit ? g.drawImage(img, 6, 6, 116, 116) : g.drawImage(img, withIcon ? 22 : 16, 16, 96, 96)
       g.fillStyle = opts.fg ?? color.ink
       g.font = `76px ${font.display}`
       g.textAlign = 'center'; g.textBaseline = 'middle'
@@ -114,12 +126,13 @@ export function badge(text: string, opts: { bg?: string; fg?: string; icon?: Ico
     }
     draw()
     void document.fonts.load(`76px ${font.display}`, text).then(() => draw())
-    if (opts.icon) void iconImage(opts.icon, opts.iconFill ?? color.paperRaised).then(img => { void document.fonts.load(`76px ${font.display}`, text).then(() => draw(img)) })
+    if (opts.suit) void suitImage(opts.suit).then(img => { void document.fonts.load(`76px ${font.display}`, text).then(() => draw(img)) })
+    else if (opts.icon) void iconImage(opts.icon, opts.iconFill ?? color.paperRaised).then(img => { void document.fonts.load(`76px ${font.display}`, text).then(() => draw(img)) })
     labelCache.set(key, mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, toneMapped: false, fog: false }))
   }
   const sprite = new THREE.Sprite(mat)
   const s = opts.size ?? 0.6
-  sprite.scale.set(s * (opts.icon && text !== '' ? 224 / 128 : 1), s, 1)
+  sprite.scale.set(s * ((opts.icon || opts.suit) && text !== '' ? 224 / 128 : 1), s, 1)
   sprite.renderOrder = 10
   sprite.layers.set(LABEL_LAYER)
   return sprite
