@@ -2,7 +2,7 @@ import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { usableCards } from '../../interaction/cards.ts'
+import { Hand } from './hand.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME, PHASE_NAME, STEP_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
@@ -14,7 +14,7 @@ import { FactionChip, Icon } from '../components.ts'
  * one drawer at a time, so the map always fills the screen.
  */
 
-export type DrawerId = 'hand' | 'log' | 'all' | 'guide' | FactionId
+export type DrawerId = 'log' | 'all' | 'guide' | FactionId
 
 /** Countdown for the human the game waits on; a bot decides once when it reaches zero. Ticks on its own. */
 function Clock({ deadline }: { deadline: number | null }) {
@@ -70,14 +70,9 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen }: {
     </button>`)}</nav>`
 }
 
-/** Bottom: your hand as a strip; tap or swipe up for the fan. */
-export function HandStrip({ view: v, legal, onOpen }: { view: PlayerView; legal: Action[]; onOpen: () => void }) {
-  const usable = usableCards(legal, v.hand).size
-  const start = useRef<number | null>(null)
-  return html`<button class=${`hud-hand${usable ? ' usable' : ''}`} onClick=${onOpen} aria-label=${`Bài của bạn: ${v.hand.length} lá${usable ? `, ${usable} lá dùng được` : ''}`}
-    onPointerDown=${(e: PointerEvent) => { start.current = e.clientY }} onPointerUp=${(e: PointerEvent) => { if (start.current !== null && start.current - e.clientY > 30) onOpen(); start.current = null }}>
-    <span class="cards">${v.hand.map((_, i) => html`<i key=${i} style=${{ '--turn': `${(i - (v.hand.length - 1) / 2) * 6}deg` }}></i>`)}</span>
-    <b>Bài của bạn</b> ${v.hand.length} lá${usable ? html` · <span class="gold">${usable} dùng được</span>` : ''}</button>`
+/** Bottom: cards stay visible and open their own detail/actions directly. */
+export function HandStrip({ view, legal, seat }: { view: PlayerView; legal: Action[]; seat: FactionId }) {
+  return html`<div class="hud-hand"><${Hand} view=${view} legal=${legal} seat=${seat} /></div>`
 }
 
 /** One drawer at a time; a press outside it (or Esc) closes it. */

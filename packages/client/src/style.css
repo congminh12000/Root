@@ -169,7 +169,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .carddetail .printed p { margin: 4px 0; font-size: var(--fs-xs); font-style: italic; }
 
 /* ── Map-only game screen (G1, docs/07-ui/gameplay-map-only.md) ─────────────── */
-.game-screen { position: fixed; inset: 0; overflow: hidden; background: var(--pine); }
+.game-screen { position: fixed; inset: 0; overflow: clip; background: var(--pine); }
 .game-map { position: absolute; inset: 0; }
 .game-map canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .map-fallback { position: absolute; inset: 30% 10% auto; background: var(--paper-raised); border: 2px solid var(--ink); border-radius: var(--r-md); padding: var(--sp-4); }
@@ -236,12 +236,37 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .hud-faction small { font-size: 11px; color: var(--ink-soft); }
 .hud-faction.turn { outline: 3px solid var(--autumn-gold); outline-offset: 1px; }
 .hud-faction[aria-pressed="true"] { background: var(--autumn-gold); }
-.hud-hand { bottom: var(--sp-3); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--sp-2); min-height: 48px; padding: 4px var(--sp-4);
-  background: var(--paper-a96); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); touch-action: none; }
-.hud-hand.usable { border-color: var(--autumn-gold); }
-.hud-hand .cards { display: flex; }
-.hud-hand .cards i { display: block; width: 16px; height: 24px; margin-left: -8px; background: var(--paper-raised); border: 1.5px solid var(--ink); border-radius: 3px; transform: rotate(var(--turn)); }
-.hud-hand .gold { color: var(--wood); font-weight: 700; }
+.hud-hand { bottom: -44px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 240px);
+  background: none; border: 0; box-shadow: none; pointer-events: none; }
+.hud-hand .hand { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+.hud-hand h3, .hud-hand .hand > p { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+.hud-hand .hand .fan { min-height: 0; padding: 56px 12px 0; gap: 8px; scrollbar-width: none; pointer-events: none; }
+.hud-hand .fan::-webkit-scrollbar { display: none; }
+.hud-hand .hand-slot { pointer-events: auto; }
+.hud-hand .hand-slot .cardface { transform: none; }
+.hud-hand .hand-slot .minicard:focus-visible .cardface { transform: translateY(-52px); }
+.hud-hand .hand-info { position: absolute; bottom: 100%; pointer-events: auto; }
+.hand .fan { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; gap: 8px; padding: 26px 12px 12px; }
+.hand-slot { display: block; flex: none; position: relative; }
+.hand-slot .minicard { display: block; margin: 0; transform: none; }
+.hand-slot .cardface { transform: translateY(var(--drop)) rotate(var(--turn)); transform-origin: 50% 100%;
+  transition: transform var(--motion-card) cubic-bezier(.2,.7,.2,1); }
+.hand-slot .minicard.usable { box-shadow: none; }
+.hand-slot .minicard.usable .cardface { box-shadow: 0 0 0 3px var(--autumn-gold); }
+.hand-slot:focus-within { z-index: 2; }
+.hand-slot .minicard:focus-visible .cardface { transform: translateY(-12px) rotate(0deg) scale(1.06); }
+@media (hover: hover) and (pointer: fine) {
+  .hand-slot:hover { z-index: 2; }
+  .hand-slot:hover .cardface { transform: translateY(-12px) rotate(0deg) scale(1.06); }
+  .hud-hand .hand-slot:hover .cardface { transform: translateY(-52px); }
+}
+@media (max-width: 600px) {
+  .hud-hand { max-width: calc(100% - 24px); }
+  .game-screen .hud-log, .kit-hud .hud-log { bottom: 156px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hand-slot .cardface { transition: none; }
+}
 .hud-log { bottom: var(--sp-3); left: var(--sp-3); min-height: 44px; box-shadow: var(--shadow-card); }
 .hud-drawer { z-index: 9; overflow: auto; overscroll-behavior: contain; background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-raised);
   padding: var(--sp-2); animation: rise var(--motion-dialog) ease-out; }
@@ -293,7 +318,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-item small { color: var(--ink-soft); font-size: var(--fs-xs); }
 .kit-icon { --icon-fill: var(--paper-raised); }
 .kit-icon .icon { width: 40px; height: 40px; }
-.kit-hud { position: relative; height: 420px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: hidden; }
+.kit-hud { position: relative; height: 420px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: clip; }
 .kit-hud.short { height: 120px; }
 .kit-deck { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-2) 0; }
 .kit-deck .minicard { margin: 0; }
@@ -356,7 +381,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 }
 
 /* ── Tabletop materials (R6, style-guide §6): paper, card and wood instead of flat fills ───────────────────── */
-.card, .dialog, .carddetail, .map-menu, .map-bubble, .map-decision, .hud-status, .hud-menu-list, .hud-faction, .hud-hand, .hud-log,
+.card, .dialog, .carddetail, .map-menu, .map-bubble, .map-decision, .hud-status, .hud-menu-list, .hud-faction, .hud-log,
 .hud-drawer, .cf-text, .cardchip, button.secondary, select, input:not([type=checkbox]), .notice { background-image: var(--grain-paper); }
 :root { background-image: var(--grain-paper); }
 /* Zero specificity: any button with its own background (anchors, badges, the hand strip, close) keeps it. */

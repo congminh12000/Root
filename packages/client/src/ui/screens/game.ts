@@ -10,7 +10,6 @@ import type { LogEntry } from '../../motion.ts'
 import { CardDetailOverlay } from '../components.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
-import { Hand } from './hand.ts'
 import { DecisionCallout, DecisionDialog } from './decision.ts'
 import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
@@ -90,9 +89,8 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       <${MapPicker} />
     <//>
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
-    ${seat && html`<${HandStrip} view=${v} legal=${legal} onOpen=${() => toggle('hand')} />`}
+    ${seat && html`<${HandStrip} view=${v} legal=${legal} seat=${seat} />`}
     <button class="secondary hud-log" aria-pressed=${drawer === 'log'} onClick=${() => toggle('log')}>Nhật ký${u.log.length ? ` · ${u.log.length}` : ''}</button>
-    ${drawer === 'hand' && seat && html`<${Drawer} side="bottom" label="Bài của bạn" onClose=${close}><${Hand} view=${v} seat=${seat} legal=${legal} /><//>`}
     ${drawer === 'log' && html`<${Drawer} side="left" label="Nhật ký" onClose=${close}><${GameLog} log=${u.log} selected=${logSelection?.revision ?? null} onSelect=${logPick} /><//>`}
     ${drawer === 'all' && legal.length > 0 && html`<${Drawer} side="right" label="Tất cả lựa chọn" onClose=${close}><section class="card"><h3>Tất cả lựa chọn <small class="note">${legal.length}</small></h3><${FullList} legal=${legal} onPreview=${setPreview} send=${(a: Action) => { close(); conn.send(a) }} /></section><//>`}
     ${drawer === 'guide' && html`<${Drawer} side="right" label="Hướng dẫn nhanh" onClose=${close}><${QuickGuide} /><//>`}
