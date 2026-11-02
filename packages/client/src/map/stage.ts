@@ -2,8 +2,11 @@ import type { PlayerView } from '@root/game-engine'
 import * as THREE from 'three'
 import { buildMovers, buildPieces, disposePieces } from '../board/pieces.ts'
 import type { Travel } from '../motion.ts'
-import { color, motion } from '../ui/tokens.ts'
+import { lightTable } from '../board/light.ts'
+import { loadSurfaces } from '../board/look.ts'
+import { motion } from '../ui/tokens.ts'
 import { createRig } from './camera-rig.ts'
+import type { Post } from './post.ts'
 import { deviceQuality } from './quality.ts'
 import type { MapTheme } from './theme.ts'
 
@@ -23,6 +26,8 @@ export interface MapStage {
   setDraggable(clearings: number[]): void
   /** The camera now, for tests and the review page: zoom with its limits, tilt from vertical, look-at point. */
   camera(): { zoom: number; min: number; max: number; polar: number; target: [number, number] }
+  /** Points the camera at a clearing (or the middle) with a zoom, tilt and turn, within the usual limits (review pages). */
+  look(clearing: number | null, zoom: number, polar: number, azimuth?: number): void
   /** Renders `frames` frames back to back while orbiting, waiting for the GPU each time; average ms per frame. */
   measure(frames: number): number
   dispose(): void
@@ -48,8 +53,10 @@ export interface MapHandlers {
 
 export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandlers): MapStage {
   performance.mark('map:mount-start')
+  // The tabletop surfaces are generated off the main thread meanwhile (board/look.ts).
+  const surfaces = loadSurfaces()
   const renderer = new THREE.WebGLRenderer({ antialias: true })
-  const quality = deviceQuality()
+  const quality = deviceQuality(renderer.getContext())
   renderer.setPixelRatio(quality.pixelRatio)
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -61,16 +68,11 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
 
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(theme.background)
-  scene.add(new THREE.HemisphereLight(color.paperRaised, color.wood, 2.1))
-  const sun = new THREE.DirectionalLight(color.paperRaised, 3)
-  sun.position.set(-12, 25, -12); sun.castShadow = true
-  sun.shadow.mapSize.set(quality.shadowSize, quality.shadowSize)
-  Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 20, bottom: -20, near: 1, far: 70 })
-  sun.shadow.bias = -.001
-  scene.add(sun)
+  const table = lightTable(renderer, scene, { shadowSize: quality.shadowSize, half: [26, 24], fog: true })
 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 400)
-  let frame = 0, disposed = false, ready = false
+  camera.layers.enableAll()
+  let frame = 0, disposed = false, ready = false, post: Post | null = null
   const draw = () => { if (!disposed && !frame) frame = requestAnimationFrame(tick) }
   const viewListeners = new Set<() => void>()
   const viewChanged = () => { draw(); viewListeners.forEach(l => l()) }
@@ -105,12 +107,14 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     frame = 0
     if (disposed) return
     if (anim) { animate(performance.now() - anim.start); if (anim) draw() }
-    if (ready) renderer.render(scene, camera)
+    if (!ready) return
+    if (post) post.render(); else renderer.render(scene, camera)
   }
 
   const resize = () => {
     const w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight
     renderer.setSize(w, h, false)
+    post?.setSize(w, h)
     rig.resize(w, h)
     viewChanged()
   }
@@ -131,10 +135,17 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     renderer.render(scene, camera)
     performance.measure('map:first-frame', 'map:mount-start')
     viewListeners.forEach(l => l())
-    for (const task of built.later) {
+    void surfaces.then(draw)
+    // The photo treatment comes after the first frame, its shaders compiled off the main thread (map/post.ts).
+    const decoration = [...built.later, ...(quality.post ? [async () => {
+      const m = await import('./post.ts')
+      const p = await m.createPost(renderer, scene, camera, quality)
+      if (disposed) p.dispose(); else post = p
+    }] : [])]
+    for (const task of decoration) {
       await new Promise(r => setTimeout(r, 0))
       if (disposed) return
-      task()
+      await task()
       await compile()
       if (disposed) return
       draw()
@@ -221,6 +232,12 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       draw()
     },
     resetCamera(top = false) { rig.home(top) },
+    look(clearing, zoom, polar, azimuth = 0) {
+      const t = clearing === null ? new THREE.Vector3() : theme.placement.centre(clearing).setY(0)
+      rig.controls.target.copy(t)
+      camera.position.copy(t).add(new THREE.Vector3().setFromSphericalCoords(60, polar, azimuth))
+      rig.setZoom(zoom); rig.controls.update(); viewChanged()
+    },
     project(c) {
       // The camera's matrices are otherwise only refreshed by a render, and the overlay may ask before the first one.
       camera.updateMatrixWorld()
@@ -247,6 +264,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       renderer.domElement.removeEventListener('pointerup', release); renderer.domElement.removeEventListener('pointerleave', leave)
       clearTimeout(holdTimer); viewListeners.clear()
       if (pieces) disposePieces(pieces)
+      post?.dispose(); table.dispose()
       built.dispose(); renderer.dispose(); renderer.domElement.remove()
     },
   }

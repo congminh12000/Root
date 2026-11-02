@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { outline, toon } from '../board/toon.ts'
+import { mat } from '../board/look.ts'
 import { alpha, color } from '../ui/tokens.ts'
 import type { Bounds } from './limits.ts'
 
@@ -82,9 +82,9 @@ export function buildApron(scene: THREE.Scene, spec: ApronSpec, opts: { trees: n
     g.lineWidth = 6; g.strokeStyle = color.pathEdge; g.stroke(); g.fillStyle = color.water; g.fill()
   }
   const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4
-  const mat = new THREE.MeshToonMaterial({ map: tex }), plane = new THREE.PlaneGeometry(2 * R, 2 * R)
-  const ground = new THREE.Mesh(plane, mat); ground.rotation.x = -Math.PI / 2; ground.position.y = spec.ground ?? -.03; ground.receiveShadow = true
-  scene.add(ground); disposables.push(tex, mat, plane)
+  const groundMat = mat('flock', color.white, { map: tex, repeat: 90 }), plane = new THREE.PlaneGeometry(2 * R, 2 * R)
+  const ground = new THREE.Mesh(plane, groundMat); ground.rotation.x = -Math.PI / 2; ground.position.y = spec.ground ?? -.03; ground.receiveShadow = true
+  scene.add(ground); disposables.push(tex, plane)
 
   // Trees: a dense outlined band at the board's edge, then sparser and plainer outwards.
   const near: { x: number; z: number; s: number; round: boolean }[] = [], far: typeof near = []
@@ -98,10 +98,10 @@ export function buildApron(scene: THREE.Scene, spec: ApronSpec, opts: { trees: n
   const plant = (list: typeof near, withInk: boolean) => {
     const pines = list.filter(t => !t.round), rounds = list.filter(t => t.round)
     const add = (items: typeof near, geo: THREE.BufferGeometry, c: string, lift: number) => {
-      const mesh = new THREE.InstancedMesh(geo, toon(c), items.length)
+      const mesh = new THREE.InstancedMesh(geo, mat('foam', c, { repeat: 2 }), items.length)
       items.forEach((t, i) => { dummy.position.set(t.x, (spec.ground ?? 0) + lift * t.s, t.z); dummy.scale.setScalar(t.s); dummy.rotation.set(0, i * 1.3, 0); dummy.updateMatrix(); mesh.setMatrixAt(i, dummy.matrix) })
       mesh.castShadow = withInk; mesh.receiveShadow = true
-      scene.add(withInk ? outline(mesh, .012) : mesh); disposables.push(geo)
+      scene.add(withInk ? mesh : mesh); disposables.push(geo)
     }
     for (let tier = 0; tier < 3; tier++) add(pines, new THREE.ConeGeometry(.32 - tier * .065, .5, withInk ? 7 : 5), tier === 1 ? color.pineLight : color.pine, .5 + tier * .23)
     add(rounds, new THREE.IcosahedronGeometry(.36, withInk ? 1 : 0), withInk ? color.meadow : color.pineLight, .73)

@@ -51,6 +51,29 @@ export const shadow = {
   pressed: `inset 0 2px 0 ${alpha(color.ink, 0.25)}`,
   die: `inset 0 -4px 0 ${alpha(color.ink, 0.3)}`,
 } as const
+/**
+ * The tabletop look (style-guide §3–4): late-afternoon light on a model board, then the photo treatment. Colours are
+ * linear-free hex like the palette; numbers are what the renderer and the post-processing shaders read.
+ */
+export const light = {
+  sun: '#ffd29a',
+  sky: '#fff1d8',
+  ground: '#3a2a1a',
+  /** Sun intensity and direction (from the upper left, low enough for long soft shadows). */
+  sunIntensity: 4.2, sunAt: [-22, 17, -12] as const,
+  skyIntensity: .9, envIntensity: .45, exposure: 1.05,
+  /** Far apron fades into warm haze (world units from the camera). */
+  fogNear: 70, fogFar: 150, fogMix: .25,
+} as const
+export const grade = {
+  /** Warm print: per-channel gain, then saturation. */
+  warm: [1.06, 1, .9] as const, saturation: 1.12,
+  /** Vignette: brightness left at the corners, and where it starts. */
+  vignette: .62, vignetteFrom: .35,
+  grain: .025,
+  /** Tilt-shift blur in px at zoom 1, more per zoom step, never above `tiltMax` so pieces and labels stay readable. */
+  tiltBase: 1.2, tiltPerZoom: .9, tiltMax: 5,
+} as const
 /** Durations in ms (style-guide §7). */
 export const motion = { dialog: 180, dice: 700, travel: 750, pop: 380, pulse: 1200, bump: 600 } as const
 
