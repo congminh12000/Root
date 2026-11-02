@@ -11,31 +11,14 @@ npm run snapshot:rules    # Rules Library p16 + FAQ, nguồn luật chính (deci
 npm run typecheck && npm test && npm run audit:rules
 ```
 
-## Đã xong (nhánh `feat/root2-foundation`)
+## Đã có
 
-- Nguồn luật, dữ liệu (bản đồ Autumn, 54 lá, quest, faction board, xúc xắc), đặc tả `docs/02-rules-spec/`. Không còn vấn đề mở về luật.
-- Bước 1: khung engine. Bước 2: luật chung (rule, move, craft, battle, ghi điểm, thắng, dominance, Field Hospitals).
-- Bước 3–6: luồng lượt và lượt đầy đủ của Marquise, Eyrie, Alliance, Vagabond (`turn.ts`, `factions/*.ts`). Outrage, mất base, quan hệ/Hostile/Infamy, chiến binh Allied, coalition.
-- Hiệu ứng 7 lá persistent ngoài battle (`cards.ts`).
-- Bước 7 (một phần): bot ngẫu nhiên chơi trọn trận trong `npm test`, kiểm tra bảo toàn quân và bài sau mỗi command, và replay. Đã chạy 2.000 trận ngẫu nhiên: 0 lỗi.
-- Multiplayer LAN: `packages/server` (HTTP + WebSocket, token ghế, lưu và dựng lại trận), `packages/client` (sảnh, bản đồ SVG, bảng chọn hành động), `packages/bots` (`random`, `simple`). Xem `docs/05-product-spec/multiplayer.md`.
-
-## Đã xong thêm (nhánh `feat/root2-next`)
-
-- Thời hạn 90 giây cho mỗi lựa chọn của người chơi; hết giờ thì bot `search-fast` chọn thay một lần.
-- Mật khẩu phòng (`--password`) và giới hạn số trận (`--max-games`).
-- Bot `search`: tìm kiếm Monte Carlo trên thông tin ẩn được đoán, chỉ dùng `PlayerView`.
-- Bàn chơi 3D bằng Three.js, bấm vào ô để lọc lựa chọn; vẫn giữ bản 2D.
-- Review toàn bộ điều khoản với p16: 140 điều `verified`. Sửa 2 lỗi: thời điểm xáo lại deck (§2.1) và Rest lật item ngửa (§9.6.1).
-- Golden scenario Walking Through Root (SRC-003): chơi lại ván mẫu 2 vòng, khớp sách từng bước. Xem `docs/06-qa/golden-scenarios/walking-through-root.md`.
-
-## Đã xong thêm (nhánh `feat/root2-polish`)
-
-- §1.1.3 / §4.3.6: Field Hospitals, Outrage và bỏ bớt supporter sinh ra cùng lúc thì người chọn được chọn thứ tự (`order.ts`, hành động `order-effects`). Trong battle, hit của cả hai bên được gỡ xong rồi mới xử lý hiệu ứng.
-- Bot chạy trong worker thread (`packages/server/src/bot-pool.ts`).
-- Khung xem chi tiết lá bài; hoạt ảnh ô thay đổi và điểm (2D và 3D).
-- Quân chạy dọc đường khi di chuyển (2D trượt, 3D nhảy vòng cung); khung xúc xắc hiện mặt tung và số hit mỗi bên.
-- Dùng được với model khác: `AGENTS.md` là nguồn hướng dẫn duy nhất; `rules:guard` (chạy trong `ship` và pre-commit) bắt buộc kiểm tra bản chụp luật khi đụng tới luật; `rules:clause` in điều khoản; `pack:context` gói ngữ cảnh cho chat web.
+- Nguồn luật, dữ liệu (bản đồ Autumn, 54 lá, quest, faction board, xúc xắc), đặc tả `docs/02-rules-spec/`. Không còn vấn đề mở về luật; 140 điều đã `verified` với p16.
+- Engine đủ luật chung và lượt đầy đủ của bốn phe; thứ tự hiệu ứng đồng thời (`order.ts`); golden scenario Walking Through Root khớp sách.
+- Bot `random`, `simple`, `search` (Monte Carlo chỉ trên `PlayerView`), chạy trong worker thread; 2.000 trận ngẫu nhiên không lỗi.
+- Multiplayer LAN (`packages/server`): token ghế, lưu trận, mật khẩu phòng, hạn 90 giây mỗi lựa chọn. Xem `docs/05-product-spec/multiplayer.md`.
+- Hàng rào cho mọi model: `rules:guard`, `rules:clause`, `audit:rules`, `pack:context`.
+- Chi tiết từng bước nằm trong git log và các PR đã merge.
 
 ## Trạng thái hiện tại (2/11/2026)
 

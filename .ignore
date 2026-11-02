@@ -1,0 +1,14 @@
+# Search tools used by AI agents (ripgrep: Claude Code, Codex…) skip these; the files stay in git and can still be opened
+# directly. Keeps searches on the current TypeScript code (AGENTS.md, docs/LEGACY.md).
+# Legacy prototype (Python, React/PixiJS) and its training data
+backend/
+web/
+data/
+# Generated or binary, never useful as search hits
+package-lock.json
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.pt
+packages/client/visual/__screenshots__/
