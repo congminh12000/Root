@@ -10,6 +10,7 @@ export type IconName =
   | 'fox' | 'rabbit' | 'mouse' | 'bird'
   | 'close' | 'dice' | 'clock' | 'star' | 'card'
   | 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
+  | 'crown' | 'eye' | 'flame' | 'shield' | 'pick' | 'mace' | 'throne' | 'scales' | 'chest' | 'horn' | 'spyglass' | 'map' | 'mask'
 
 const F = 'style="fill:var(--icon-fill,currentColor);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round"'
 const INK = 'style="fill:var(--ink)"'
@@ -49,6 +50,20 @@ const SHAPES: Record<IconName, string> = {
   tea: `<path ${F} d="M4.5 9.5 H16.5 V14 C16.5 17.5 14 20 10.5 20 C7 20 4.5 17.5 4.5 14 Z"/><path ${LINE} d="M16.5 11 C19.5 11 19.5 15 16.5 15 M8 3.5 C7 5 9 6 8 7.5 M12 3.5 C11 5 13 6 12 7.5"/>`,
   coin: `<circle ${F} cx="12" cy="12" r="8.5"/><circle ${LINE} cx="12" cy="12" r="5"/>`,
   bag: `<path ${F} d="M9 4.5 H15 L13.5 8 C18 9 20 13 19.5 16.5 C19 19.5 16.5 20.5 12 20.5 C7.5 20.5 5 19.5 4.5 16.5 C4 13 6 9 10.5 8 Z"/><path ${LINE} d="M9.5 8 H14.5"/>`,
+  // Card kinds and card motifs (card faces, docs/07-ui/style-guide.md §6): our own drawings.
+  crown: `<path ${F} d="M3.5 8 L8 12 L12 5 L16 12 L20.5 8 L19 18.5 H5 Z"/><path ${LINE} d="M5.5 15.5 H18.5"/>`,
+  eye: `<path ${F} d="M2.5 12 C6 6.5 18 6.5 21.5 12 C18 17.5 6 17.5 2.5 12 Z"/><circle ${INK} cx="12" cy="12" r="2.8"/>`,
+  flame: `<path ${FLAME} d="M12 2.5 C17 7 19.5 11 18 15.5 C17 18.5 14.8 20.5 12 20.5 C9.2 20.5 7 18.5 6 15.5 C5 12.5 7 10 8.5 9 C8.8 11 9.8 12 11 12.3 C10 9 10.5 5.5 12 2.5 Z"/>`,
+  shield: `<path ${F} d="M12 3 L19.5 5.5 V11 C19.5 15.5 16.5 19 12 21 C7.5 19 4.5 15.5 4.5 11 V5.5 Z"/><path ${LINE} d="M12 6 V18 M7.5 10.5 H16.5"/>`,
+  pick: `<path ${F} d="M3.5 8 C8 3.5 16 3.5 20.5 8 C16 6.5 8 6.5 3.5 8 Z"/><path ${F} d="M11 6 H13 V21 H11 Z"/>`,
+  mace: `<circle ${F} cx="15" cy="9" r="4.5"/><path ${LINE} d="M15 2.5 V4.5 M21.5 9 H19.5 M19.6 4.4 L18.2 5.8 M12 13 L5 20"/>`,
+  throne: `<path ${F} d="M7 3.5 H17 V12 H7 Z"/><path ${F} d="M5 12 H19 V15 H5 Z"/><path ${LINE} d="M6.5 15 V21 M17.5 15 V21 M9.5 6.5 L12 5 L14.5 6.5"/>`,
+  scales: `<path ${LINE} d="M12 4 V20 M8 20 H16 M5 7 H19 M5 7 L3 13 M5 7 L7 13 M19 7 L17 13 M19 7 L21 13"/><path ${F} d="M2.5 13 H7.5 C7.5 15 2.5 15 2.5 13 Z M16.5 13 H21.5 C21.5 15 16.5 15 16.5 13 Z"/>`,
+  chest: `<path ${F} d="M4 10 H20 V19.5 H4 Z"/><path ${F} d="M4 10 C4 5 20 5 20 10 Z"/><path ${F} d="M10.5 11.5 H13.5 V15 H10.5 Z"/>`,
+  horn: `<path ${F} d="M3.5 14.5 L5.5 10.5 C11 11 16 8 19.5 4 C21 8 20.5 15 15 18 C11 20 7 18 3.5 14.5 Z"/><path ${LINE} d="M7 12.5 L9 16.5"/>`,
+  spyglass: `<path ${F} d="M3 16 L14.5 7.5 L17.5 11.5 L6 20 Z"/><path ${F} d="M14 5.5 L18 3 L21.5 7.5 L18 10.5 Z"/><path ${LINE} d="M9 13 L11 16"/>`,
+  map: `<path ${F} d="M3.5 6 L9 4 L15 6 L20.5 4 V18 L15 20 L9 18 L3.5 20 Z"/><path ${LINE} d="M9 4 V18 M15 6 V20"/><path ${LINE} d="M5.5 14 C8 12 10.5 15 13 12 L17.5 9"/>`,
+  mask: `<path ${F} d="M2.5 9 C6 7 18 7 21.5 9 C21.5 13.5 18 16 15 14.5 L12 13 L9 14.5 C6 16 2.5 13.5 2.5 9 Z"/><ellipse ${INK} cx="7.5" cy="10.8" rx="1.8" ry="1.2"/><ellipse ${INK} cx="16.5" cy="10.8" rx="1.8" ry="1.2"/>`,
 }
 
 export const ICONS = Object.keys(SHAPES) as IconName[]

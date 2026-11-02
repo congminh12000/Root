@@ -1,8 +1,9 @@
-import { ALLIANCE, BASE_QUESTS, EYRIE, MARQUISE, VAGABOND } from '@root/game-data'
+import { ALLIANCE, EYRIE, MARQUISE, VAGABOND } from '@root/game-data'
 import type { FactionId, ItemType, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 import { clearing, FACTION_NAME, ITEM_NAME, questName } from '../../names.ts'
+import { QuestFace } from '../card-face.ts'
 import { CardChip, FactionChip, ItemIcon, SuitPip, Track, type Space } from '../components.ts'
 
 /**
@@ -11,6 +12,12 @@ import { CardChip, FactionChip, ItemIcon, SuitPip, Track, type Space } from '../
  */
 
 const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
+/** A quest at hand size; click (or Enter) for its full face with the text. */
+function QuestCard({ quest }: { quest: string }) {
+  const [open, setOpen] = useState(false)
+  return html`<button type="button" class="questcard" aria-expanded=${open} aria-label=${questName(quest)} onClick=${() => setOpen(o => !o)}>
+    <${QuestFace} quest=${quest} size=${open ? 'full' : 'mini'} /></button>`
+}
 const Cards = ({ cards }: { cards: string[] }) => cards.length ? html`${cards.map(c => html`<${CardChip} key=${c} card=${c} />`)}` : html`—`
 const Items = ({ items }: { items: ItemType[] }) => items.length ? html`${items.map(i => html`<${ItemIcon} item=${i} />`)}` : html`—`
 const Stat = ({ label, value }: { label: string; value: unknown }) => html`<span class="stat"><small>${label}</small><b>${value}</b></span>`
@@ -79,16 +86,14 @@ function Vagabond({ v }: { v: PlayerView }) {
       ${(Object.entries(g.relationships) as [FactionId, number | 'hostile'][]).map(([f, r]) => html`<div class="relation"><${Chip} f=${f} />
         <span class="levels">${r === 'hostile' ? html`<span class="level on hostile">Hostile</span>` : RELATION.map((name, i) => html`<span class=${`level${i === r ? ' on' : ''}`}>${name}</span>`)}</span>
         ${g.aidThisTurn[f] ? html`<small>Aid lượt này: ${g.aidThisTurn[f]}</small>` : null}</div>`)}</div>
-    <div>Quest đã xong: ${g.completedQuests.length ? g.completedQuests.map(q => html`<span class="stat">${questName(q)}</span>`) : '—'}</div></div>`
+    <div>Quest đã xong: ${g.completedQuests.length ? html`<div class="quest-row">${g.completedQuests.map(q => html`<${QuestCard} quest=${q} />`)}</div>` : '—'}</div></div>`
 }
 
 function Shared({ v }: { v: PlayerView }) {
-  const quests = new Map(BASE_QUESTS.map(q => [q.id, q]))
   return html`<div class="fboard">
     <div class="stats"><${Stat} label="Deck" value=${`${v.deckCount} lá`} /><${Stat} label="Chồng bỏ" value=${`${v.discard.length} lá`} /><${Stat} label="Quest còn trong deck" value=${v.questDeckCount} /></div>
     <div class="satchel">Item supply: ${(Object.entries(v.itemSupply) as [ItemType, number][]).map(([k, n]) => html`<span class="stat"><${ItemIcon} item=${k} /> ×${n}</span>`)}</div>
-    <div>Quest đang mở: ${v.questsAvailable.map(id => { const q = quests.get(id); return q
-      ? html`<span class="quest"><${SuitPip} suit=${q.suit} /> ${q.name} <${ItemIcon} item=${q.items[0]} /><${ItemIcon} item=${q.items[1]} /></span>` : html`<span>${id}</span>` })}</div>
+    <div>Quest đang mở: <div class="quest-row">${v.questsAvailable.map(id => html`<${QuestCard} key=${id} quest=${id} />`)}</div></div>
     <div>Dominance có thể lấy: <${Cards} cards=${v.availableDominance} /></div>
     ${v.discard.length > 0 && html`<details><summary>Chồng bỏ (${v.discard.length})</summary><${Cards} cards=${v.discard} /></details>`}</div>`
 }

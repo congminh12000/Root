@@ -46,6 +46,7 @@ Trạng thái ngày 02/11/2026 (sau G1–G7, gameplay chỉ có map). **Xong** =
 |---|---|---|---|
 | ★ | Tay bài dạng quạt: chất, chi phí, đánh dấu lá dùng được | Xong | UI-5 |
 | ★ | Xem chi tiết lá bài | Xong | UI-5 (restyle) |
+| ★ | Mặt lá theo bố cục lá in (dải chất, chi phí, tranh tự sinh, tấm gỗ, khung chữ tiếng Việt), cả 54 lá và 15 quest | Xong | C1–C3 |
 | ★ | Play area (lá persistent đã chế tạo), dominance có thể lấy | Xong | UI-5 |
 | ★ | Marquise: track sawmill/workshop/recruiter kèm điểm, kho gỗ, keep | Xong | UI-5 |
 | ★ | Eyrie: decree 4 cột, leader, track roost, đánh dấu cột đã làm | Xong | UI-5 |
