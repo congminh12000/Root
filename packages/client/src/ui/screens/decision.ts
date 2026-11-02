@@ -1,5 +1,5 @@
 import { EYRIE, VAGABOND } from '@root/game-data'
-import type { Action, FactionId, PlayerView } from '@root/game-engine'
+import type { Action, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useEffect, useRef } from 'preact/hooks'
 import { describe, GROUP } from '../../describe.ts'
@@ -92,11 +92,4 @@ export function DecisionDialog({ decision, view, legal, send, onFold }: {
     <${DecisionBody} decision=${decision} view=${view} legal=${legal} send=${send} />
     <footer><button class="secondary" onClick=${onFold}>Xem bàn cờ (Esc)</button></footer>
   </div></div>`
-}
-
-/** A folded dialog, or someone else's decision: who the game waits on and why. */
-export function DecisionBar({ decision, mine, onOpen }: { decision: Decision; mine: boolean; onOpen?: () => void }) {
-  return html`<div class=${`decisionbar${mine ? ' mine' : ''}`} role="status">
-    <${FactionChip} f=${decision.player as FactionId} /> <span>${mine ? 'Bạn cần quyết định: ' : 'Đang chờ: '}${decision.title}</span> <small class="rule">${decision.rule}</small>
-    ${onOpen && html`<button onClick=${onOpen}>Mở lại</button>`}</div>`
 }

@@ -23,7 +23,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | Xong |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu  | Xong |
 | G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | Xong |
-| G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | |
+| G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | Xong |
 
 ## G1: map full màn hình, không khoảng trống
 
@@ -129,3 +129,13 @@ Mã ở `packages/client/src/ui/screens/hud.ts`, ghép trong `game.ts`.
 - **Xoay máy:** `ResizeObserver` tính lại khung nhìn và giới hạn zoom; test iPad xoay ngang ↔ dọc và kiểm tra vẫn không lộ nền.
 - **Chơi thử bằng chạm** (iPad Pro 11 giả lập, ngang rồi dọc): chạm ô, menu tại ô, bong bóng, quyết định tại ô; tới lượt 10, không lỗi console.
 - Xúc xắc tại ô được kẹp trong màn hình hẹp.
+
+## G7: bỏ 2D, dọn code cũ
+
+- **Đã xoá:** bàn 2D SVG (`board.ts`), `board-view.ts`, bàn 3D cũ có mặt gỗ (`board3d.ts`), trang `board-kit.html` và test của nó (ảnh gốc `board-2d.png`). Bàn cổ điển giờ chỉ còn dạng theme (`map/classic-theme.ts`), kiểm tra bằng `map-kit.html?map=classic`.
+- **Đã gỡ khỏi màn trận:** `ActionBar` (chỉ giữ `FullList` cho "Tất cả lựa chọn"), `DecisionBar` (thay bằng góc trạng thái), `Scores` (thay bằng huy hiệu phe và quân điểm trên track), CSS của bố cục cột và bàn SVG.
+- `changedClearings` chuyển sang `net/changes.ts`.
+- **Quân điểm trên track in của Autumn diorama** (`Placement.score`, `autumn/layout.ts` `scoreSpace`); phe cùng ô điểm xếp chồng; dominance rời track. Bàn cổ điển không in track nên điểm chỉ ở huy hiệu.
+- **Không có WebGL:** thông báo rõ và HUD vẫn chạy, nên vẫn theo dõi và chơi được bằng danh sách (menu ☰ → "Tất cả lựa chọn", nhật ký, bảng phe).
+- **Tốc độ tải** sau G4–G7, đo trên M1 Pro (Chromium Playwright, GPU, trung vị 5 lần, ms từ lúc mount): Autumn build 41, khung đầu 123, xong hết 233; bản G3 cùng cách đo: 40 / 121 / 235. Bàn cổ điển: build 50, khung đầu 101, xong hết 162.
+

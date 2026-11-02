@@ -49,32 +49,17 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 @keyframes rise { from { transform: translateY(8px); opacity: 0; } }
 
 /* ── Game screen ──────────────────────────────────────────────────────────── */
-.bar { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: center; padding: var(--sp-2) var(--sp-4); background: var(--ink); color: var(--paper); font-size: var(--fs-sm); }
-.bar a { color: var(--paper); }
 .winner { background: var(--pine-light); color: var(--white); padding: var(--sp-3) var(--sp-4); font: var(--fs-lg) var(--font-display); }
 .notice { background: var(--autumn-gold); padding: 6px var(--sp-4); }
-.layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr); gap: var(--sp-3); padding: var(--sp-3); }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-.score { margin: 3px 0; font-size: var(--fs-sm); }
-.score b { font: var(--fs-md) var(--font-display); font-variant-numeric: tabular-nums; }
 .group { margin: 6px 0; }
 .group label { display: block; font-size: var(--fs-xs); color: var(--ink-soft); margin-bottom: 2px; }
 .group select { width: 100%; margin-bottom: 4px; }
-.act { border-width: 3px; }
-.act .prompt { margin: 0 0 var(--sp-2); color: var(--ink-soft); }
-.act .stage { display: flex; align-items: center; gap: var(--sp-2); justify-content: space-between; background: var(--gold-a35); border-radius: var(--r-sm); padding: var(--sp-1) var(--sp-2); margin-bottom: var(--sp-2); font: var(--fs-md) var(--font-display); }
-.act .stage button { font-size: var(--fs-xs); }
-.group.buttons { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.group.buttons > label { flex-basis: 100%; }
-.group.buttons button { white-space: normal; text-align: left; }
 .counts { display: flex; gap: 6px; margin-bottom: var(--sp-2); }
 .counts button { min-width: 36px; font: var(--fs-md) var(--font-display); }
 .clearinginfo .head { display: flex; justify-content: space-between; align-items: center; }
 .clearinginfo .head h3 { margin: 0; }
 .clearinginfo > div { margin: 4px 0; }
 .clearinginfo .pieces { display: inline-flex; align-items: center; gap: 4px; margin-right: var(--sp-2); }
-.fulllist { margin-top: var(--sp-3); border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); }
-.fulllist summary { cursor: pointer; color: var(--ink-soft); font-size: var(--fs-xs); }
 .log { max-height: 280px; overflow: auto; font-size: var(--fs-xs); }
 .clock { font-variant-numeric: tabular-nums; font-weight: 700; }
 .clock.urgent { color: var(--autumn-gold); }
@@ -129,15 +114,8 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .level.on { background: var(--faction-vagabond); color: var(--paper-raised); border-color: var(--ink); }
 .level.hostile { background: var(--roof-red); }
 .quest { display: inline-flex; align-items: center; gap: 2px; margin-right: var(--sp-2); }
-.scoretrack { position: relative; height: 44px; margin: 4px 10px 10px; border-bottom: 3px solid var(--ink); background: linear-gradient(90deg, var(--paper-shade) 0 1px, transparent 1px) 0 100% / calc(100% / 30) 8px repeat-x; }
-.scoretrack .tick { position: absolute; bottom: -18px; transform: translateX(-50%); font-size: 10px; color: var(--ink-soft); }
-.scoretrack .marker { --stack: 0; position: absolute; bottom: calc(4px + var(--stack) * 6px); transform: translateX(calc(-50% + var(--stack) * 11px)); width: 24px; height: 24px; border-radius: 50%; background: var(--chip); border: 2px solid var(--ink); display: grid; place-items: center; --icon-fill: var(--paper-raised); transition: left var(--motion-travel) ease-in-out; }
-.scoretrack .marker .icon { width: 16px; height: 16px; vertical-align: 0; }
 
 /* ── Decisions (UI-6) ─────────────────────────────────────────────────────── */
-.decisionbar { display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; padding: 6px var(--sp-4); background: var(--gold-a35); border-bottom: 2px solid var(--ink-a25); }
-.decisionbar.mine { background: var(--autumn-gold); }
-.decisionbar button { margin-left: auto; }
 .rule { color: var(--ink-soft); font-size: var(--fs-xs); }
 .dialog-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: var(--sp-4); background: var(--ink-a25); animation: rise var(--motion-dialog) ease-out; }
 .dialog { width: min(780px, 100%); max-height: 86vh; overflow: auto; background: var(--paper-raised); border: 3px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-raised); padding: var(--sp-4); }
@@ -244,7 +222,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Touch (G6): every control at least 44 px, no hover-only affordance ──────── */
 @media (pointer: coarse) {
-  .hud-status button, .map-menu header .close, .map-info button, .carddetail .close, .log-entry button, .hud-menu-list label, .dialog .option, .decisionbar button { min-height: 44px; min-width: 44px; }
+  .hud-status button, .map-menu header .close, .map-info button, .carddetail .close, .log-entry button, .hud-menu-list label, .dialog .option { min-height: 44px; min-width: 44px; }
   .map-bubble button, .map-menu .acts button { min-height: 48px; }
   .hud-faction { min-height: 56px; }
 }
@@ -255,30 +233,9 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .map-picker label { display: flex; align-items: center; gap: 6px; min-height: 40px; flex-wrap: wrap; }
 .hud-menu-list .map-picker { margin: 0; }
 
-/* ── Board ────────────────────────────────────────────────────────────────── */
-.board-col { min-width: 0; position: relative; }
-.board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }
-.board-tools button { background: var(--paper-raised); color: var(--ink); }
-.board-tools button[aria-pressed="true"], button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--paper); }
-.map canvas { display: block; width: 100%; border-radius: var(--r-lg); border: 2px solid var(--ink); }
-.board { width: 100%; height: auto; }
-.board text { pointer-events: none; }
-.forest-label { font: 15px var(--font-display); fill: var(--paper-raised); stroke: var(--pine); stroke-width: 4; paint-order: stroke; }
-.clearing-no { font: 18px var(--font-display); fill: var(--paper-raised); stroke: var(--ink); stroke-width: 3; paint-order: stroke; }
-.glyph { font: 15px var(--font-display); fill: var(--white); stroke: var(--ink); stroke-width: 3; paint-order: stroke; }
-.count { font: 700 12px var(--font-body); fill: var(--paper-raised); }
-.token { font-size: 11px; fill: var(--white); stroke: var(--ink); stroke-width: 2; paint-order: stroke; }
-.board .clearing { cursor: pointer; }
-.board .target { animation: march 1.6s linear infinite; pointer-events: none; }
-@keyframes march { to { stroke-dashoffset: -34; } }
-.board .pulse { fill: none; stroke: var(--autumn-gold); stroke-width: 8; transform-box: fill-box; transform-origin: center; animation: pulse var(--motion-pulse) ease-out forwards; pointer-events: none; }
-.board .pop { transform-box: fill-box; transform-origin: center; animation: pop var(--motion-pop) cubic-bezier(.34,1.56,.64,1); }
-@keyframes pulse { from { transform: scale(1); opacity: 1; } to { transform: scale(1.45); opacity: 0; } }
-@keyframes pop { from { transform: scale(.4); } }
-.score.bump b { animation: bump var(--motion-bump) ease-out; display: inline-block; }
+/* ── Pressed toggles ──────────────────────────────────────────────────────── */
+button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--paper); }
 @keyframes bump { 30% { transform: scale(1.6); color: var(--pine-light); } }
-.board .travel { pointer-events: none; opacity: 0; animation: travel var(--motion-travel) ease-in-out; }
-@keyframes travel { from { transform: translate(calc(var(--dx) * 1px), calc(var(--dy) * 1px)); opacity: 1; } 80% { opacity: 1; } to { transform: none; opacity: 0; } }
 
 /* ── Dice panel ───────────────────────────────────────────────────────────── */
 .dice { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4);
@@ -313,8 +270,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop, .map-menu, .map-decision, .hud-menu-list, .hud-drawer, .hud-faction b.bump { animation: none; transition: none; }
-  .board .pulse, .board .travel { display: none; }
+  .carddetail, .dice, .dice .die, button, .dialog-backdrop, .map-menu, .map-decision, .hud-menu-list, .hud-drawer, .hud-faction b.bump { animation: none; transition: none; }
 }
 
 .result { margin: var(--sp-3); border-top: 6px solid var(--autumn-gold); }

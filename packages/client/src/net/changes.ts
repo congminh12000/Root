@@ -1,5 +1,4 @@
-import type { FactionId, LastRoll } from '@root/game-engine'
-import { changedClearings } from '../board.ts'
+import type { FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { freshRoll, travelsSince, type Travel } from '../motion.ts'
 import type { Update } from './types.ts'
 
@@ -18,4 +17,13 @@ export function changesBetween(prev: Update | null, next: Update, seq: number): 
     travels: travelsSince(prev.view, next.log),
     roll: freshRoll(prev.view, next.view),
   }
+}
+
+/** Clearings whose pieces differ between two views, including where the Vagabond pawn left or arrived. */
+export function changedClearings(prev: PlayerView, next: PlayerView): number[] {
+  const out = new Set<number>()
+  next.map.clearings.forEach((c, i) => { if (JSON.stringify(c) !== JSON.stringify(prev.map.clearings[i])) out.add(i) })
+  const a = prev.factions.vagabond?.pawn, b = next.factions.vagabond?.pawn
+  if (JSON.stringify(a) !== JSON.stringify(b)) for (const p of [a, b]) if (p?.kind === 'clearing') out.add(p.id)
+  return [...out].sort((x, y) => x - y)
 }

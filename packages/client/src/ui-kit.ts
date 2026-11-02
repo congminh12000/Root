@@ -5,12 +5,12 @@ import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
-import { ActionBar } from './ui/screens/action-bar.ts'
+import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
-import { DecisionBar, DecisionDialog } from './ui/screens/decision.ts'
+import { DecisionDialog } from './ui/screens/decision.ts'
 import { HandStrip, HudFactions, HudStatus } from './ui/screens/hud.ts'
 import type { Decision } from './interaction/decisions.ts'
-import { Hand, Scores } from './ui/screens/hand.ts'
+import { Hand } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
 import { NO_CHANGES } from './net/changes.ts'
 import { ICONS } from './ui/icons.ts'
@@ -120,20 +120,16 @@ const Kit = () => html`
     <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
     <p class="error">Không tạo được trận</p><//>
 
-  <${Section} title="Thanh hành động" note="Chọn trên bàn cờ: chưa chọn ô, đã chọn ô 1, đã chọn đường ô 1 → ô 5 (chọn số chiến binh).">
-    <div class="kit-grid">
-      ${([{ kind: 'idle' }, { kind: 'at', clearing: 0 }, { kind: 'path', from: 0, to: 4 }] as const).map(stage =>
-        html`<${ActionBar} legal=${legal} stage=${stage} setStage=${noop} onPreview=${noop} send=${noop} />`)}</div><//>
+  <${Section} title="Tất cả lựa chọn" note="Ngăn dự phòng mở từ menu ☰: mọi hành động hợp lệ, gom theo loại.">
+    <div class="kit-grid two"><section class="card"><h3>Tất cả lựa chọn</h3><${FullList} legal=${legal} onPreview=${noop} send=${noop} /></section></div><//>
 
-  <${Section} title="Tay bài và điểm" note="Lá viền vàng là lá có hành động dùng được ngay; bấm để xem chi tiết và hành động. Ván mẫu cố định từ seed.">
-    <div class="kit-grid two"><${Hand} view=${sample} seat="vagabond" legal=${crafts} /><${Scores} view=${sample} seats=${seats} changes=${NO_CHANGES} /></div><//>
+  <${Section} title="Tay bài" note="Lá viền vàng là lá có hành động dùng được ngay; bấm để xem chi tiết và hành động. Ván mẫu cố định từ seed.">
+    <div class="kit-grid two"><${Hand} view=${sample} seat="vagabond" legal=${crafts} /></div><//>
 
   <${Section} title="Bảng phe" note="Mỗi tab một phe, lấy số từ game-data và view; tab Chung là kho item, quest, deck.">
     <div class="kit-grid two">${(['marquise', 'eyrie', 'alliance', 'vagabond', 'shared'] as const).map(t => html`<${FactionBoards} view=${sample} seat="vagabond" initial=${t} />`)}</div><//>
 
-  <${Section} title="Quyết định" note="Hộp quyết định (ở trận thật nó nổi giữa màn, Esc thu lại), và dải thông báo khi đã thu lại hoặc khi người khác đang quyết định.">
-    <${DecisionBar} decision=${decisions[1]![0]} mine=${true} onOpen=${noop} />
-    <${DecisionBar} decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} />
+  <${Section} title="Quyết định" note="Hộp quyết định không gắn ô (ở trận thật nó nổi giữa màn, Esc thu lại; gập lại thì góc trạng thái có nút mở lại).">
     ${decisions.map(([d, l]) => html`<div class="kit-dialog"><${DecisionDialog} decision=${d} view=${sample} legal=${l} send=${noop} onFold=${noop} /></div>`)}<//>
 
   <${Section} title="Bảng">

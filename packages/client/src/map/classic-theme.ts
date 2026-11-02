@@ -21,7 +21,7 @@ export const CLASSIC_BOARD: MapTheme = {
   placement: CLASSIC,
   build(scene, quality) {
     performance.mark('map:scenery-start')
-    const scenery = buildClassicScenery(scene, { table: false })
+    const scenery = buildClassicScenery(scene)
     performance.measure('map:scenery', 'map:scenery-start')
     let disposeApron = () => {}
     const later = [

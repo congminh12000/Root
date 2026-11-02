@@ -13,7 +13,7 @@ Tài liệu gốc cho mọi việc giao diện, dùng chung cho mọi model (AGE
 | Phần | Chọn | Lý do |
 |---|---|---|
 | Bàn cờ | **three.js** (đang dùng, 0.170) | Đã có bàn 3D chạy được, miễn phí, chạy tốt trên M1. Phong cách tham khảo là tranh minh họa nhìn từ trên xuống: dựng bằng camera nghiêng cao, đổ bóng kiểu hoạt hình (toon) và viền mực, không cần engine khác. |
-| Bàn 2D dự phòng | SVG (đang có) | Cho máy không có WebGL và để test; cùng token màu. |
+| Bàn 2D dự phòng | Đã bỏ (G7) | Màn trận chỉ có map 3D; máy không có WebGL thấy thông báo và vẫn chơi được bằng HUD (menu ☰ → Tất cả lựa chọn, nhật ký, bảng phe). |
 | Phần HTML (tay bài, bảng phe, hộp quyết định, sảnh) | **Preact + @preact/signals**, viết bằng `htm` | Hiện giao diện dựng lại bằng chuỗi `innerHTML` mỗi lần cập nhật nên mất focus, mất vị trí cuộn, khó làm kéo thả và hộp thoại. Preact chỉ ~4 KB, MIT, viết JSX bằng TypeScript, không đổi cách build (Vite). |
 | Màu, cỡ chữ, khoảng cách | **Design token** trong `packages/client/src/ui/tokens.ts` | Một nguồn duy nhất cho CSS (biến `--…`) và vật liệu three.js. |
 | Font | Tự đóng gói qua `@fontsource` (OFL, chạy offline): **Pangolin** cho tiêu đề, **Be Vietnam Pro** cho chữ thường | Cả hai có đủ dấu tiếng Việt; Pangolin hợp nét vẽ tay. |
@@ -51,7 +51,7 @@ Nguyên tắc giữ nguyên: client không chứa luật. Mọi thao tác cuối
 - [ ] Chỉ dùng token; `npm test` có kiểm tra tự động không có mã màu hex ngoài `tokens.ts`.
 - [ ] Theo style-guide: viền mực, bảng màu, ánh sáng, font, icon.
 - [ ] Đủ trạng thái trong ui-kit; ảnh Playwright khớp (hoặc cập nhật có chủ đích, ghi lý do).
-- [ ] Ảnh chụp ở 1440×900 và 1280×800; bàn 3D và 2D.
+- [ ] Ảnh chụp ở 1440×900 và 1280×800, cả hai map (Autumn diorama, bàn cổ điển); tablet iPad ngang và dọc.
 - [ ] Bàn phím dùng được (Tab, Enter, Esc); có `aria-label` cho nút chỉ có icon.
 - [ ] Phân biệt phe và chất bằng **cả màu lẫn hình** (không chỉ màu).
 - [ ] Tắt hoạt ảnh khi bật "giảm chuyển động".
@@ -88,7 +88,7 @@ Mỗi mốc là một hoặc vài PR nhỏ, theo thứ tự; mốc sau dựa tr�
 
 ```bash
 npm run dev -w @root/client            # rồi mở /ui-kit.html
-npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so ảnh ui-kit và bàn 2D; bàn 3D kiểm tra có vẽ đúng màu (WebGL phần mềm không cho hai khung giống hệt)
+npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so ảnh ui-kit; map-kit kiểm tra giới hạn camera, không lộ nền, cảm ứng và ngân sách tải cho cả hai map (WebGL phần mềm không cho hai khung giống hệt nên không so từng điểm ảnh). Test đo GPU chạy `--workers=1`
 npm run test:visual:update -w @root/client   # chỉ khi cố ý đổi hình; ghi lý do trong PR
 ```
 

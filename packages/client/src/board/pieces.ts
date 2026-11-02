@@ -104,6 +104,8 @@ export interface Placement {
   rulerOffset: THREE.Vector3
   /** Draw a pad under each slot (the classic board); the diorama paints its slots into the ground. */
   pads: boolean
+  /** Space `points` (0–30) of a score track printed on the map, if the map has one. */
+  score?: (points: number) => THREE.Vector3
 }
 
 /** The classic board (UI-3): slots on an arc at the back, warriors in front, tokens to the right. */
@@ -193,6 +195,18 @@ export function buildPieces(view: PlayerView, highlight: number[], changed: numb
     fig.position.copy(at.spot(where))
     root.add(fig)
     if (where.kind === 'clearing' && changed.includes(where.id)) pop.push(fig)
+  }
+  // Score markers on the printed track (§3.1); factions on the same space stack upwards. Dominance players leave it.
+  if (at.score) {
+    const seen = new Map<number, number>()
+    for (const [f, n] of Object.entries(view.score) as [FactionId, number | null][]) {
+      if (typeof n !== 'number') continue
+      const space = Math.min(30, n), stack = seen.get(space) ?? 0
+      seen.set(space, stack + 1)
+      const mark = badge('', { bg: FACTION_COLOR[f], icon: f, iconFill: color.paperRaised, size: 0.5 })
+      mark.position.copy(at.score(space)).add(new THREE.Vector3(0, 0.45 + stack * 0.5, -stack * 0.12))
+      root.add(mark)
+    }
   }
   return { root, pop, pulse }
 }

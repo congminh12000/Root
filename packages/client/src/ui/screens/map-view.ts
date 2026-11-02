@@ -70,6 +70,6 @@ export function MapView({ map, view, highlight, targets, draggable, changes, onP
   useEffect(() => { if (cameraHome) stage.current?.resetCamera() }, [cameraHome])
 
   const project: Project = c => (stage.current ? stage.current.project(c) : null)
-  return html`<div class="game-map" ref=${host}>${failed && html`<p class="map-fallback" role="alert">Trình duyệt này không chạy được WebGL 2 nên không vẽ được bản đồ. Hãy mở trận bằng Chrome, Edge, Safari hoặc Firefox bản mới.</p>`}</div>
+  return html`<div class="game-map" ref=${host}>${failed && html`<p class="map-fallback" role="alert">Trình duyệt này không chạy được WebGL 2 nên không vẽ được bản đồ. Hãy mở trận bằng Chrome, Edge, Safari hoặc Firefox bản mới. Trong lúc đó vẫn theo dõi và chơi được bằng danh sách: menu ☰ → “Tất cả lựa chọn”, nhật ký và bảng phe.</p>`}</div>
     ${stage.current && html`<div class="map-overlay">${overlay(project)}</div>`}`
 }

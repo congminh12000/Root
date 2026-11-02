@@ -71,7 +71,17 @@ Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọ
 - **Nút chính:** nền `wood`, chữ `paper`, viền `ink`; khi hover sáng hơn một nấc; khi bấm lún 2 px.
 - **Lá bài:** tỉ lệ 63:88, dải màu chất ở đầu, biểu tượng chất, tên, chi phí chế tạo bằng pip có hình, hiệu ứng tóm tắt. Không dùng art chính thức; vùng tranh là họa tiết chất tự vẽ.
 - **Chip phe:** hình con vật + tên; luôn có cả màu và hình.
-- **Hộp quyết định:** nổi giữa màn, chặn thao tác khác, có tiêu đề nói rõ ai đang quyết định gì và điều khoản luật liên quan (vd §4.3.1).
+- **Hộp quyết định:** quyết định gắn một ô (ambush, chia hit, Field Hospitals…) hiện thành callout ngay tại ô đó; chỉ lựa chọn không gắn ô (leader, nhân vật, bỏ bài) mới nổi giữa màn. Luôn có tiêu đề nói rõ ai đang quyết định gì và điều khoản luật liên quan (vd §4.3.1).
+
+### 6.1 HUD trên màn trận (G4)
+
+Màn trận chỉ có map, full màn hình (`gameplay-map-only.md`). Mọi thông tin khác là lớp nổi nhỏ ở mép, không bao giờ thành cột cố định:
+
+- **Vị trí cố định:** trạng thái ở góc trên trái, menu ☰ góc trên phải, huy hiệu phe dọc mép phải, dải "Bài của bạn" giữa mép dưới, chip nhật ký góc dưới trái. Bong bóng hành động chung ở giữa mép trên (màn hẹp: ngay dưới ô trạng thái).
+- **Vẻ ngoài:** nền `paper-a96`, viền 2 px `ink`, bo `r-md`, bóng `shadow-card`; ngăn đang mở dùng `shadow-raised`. Huy hiệu phe có viền trái màu phe và icon phe (không chỉ màu); phe đang tới lượt có viền `autumn-gold`.
+- **Một ngăn mỗi lúc:** tay bài (dưới), bảng phe / tất cả lựa chọn / hướng dẫn (phải), nhật ký (trái). Chạm ra ngoài hoặc Esc là đóng; chạm nút HUD khác thì chuyển ngăn. Ngăn cao theo nội dung, không phủ hết màn.
+- **Menu và callout gắn ô** (menu tại ô, quyết định, xúc xắc, thông tin ô) bám theo ô khi camera di chuyển, lật xuống dưới ô khi gần mép trên, và được kẹp trong màn hình.
+- **Cảm ứng:** mọi nút ≥ 44 px khi con trỏ là ngón tay; không có thao tác chỉ làm được bằng hover (thông tin ô: rê chuột hoặc nhấn giữ).
 
 ## 7. Chuyển động
 

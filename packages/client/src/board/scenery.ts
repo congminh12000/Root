@@ -140,31 +140,17 @@ function rocks(rand: () => number, scene: THREE.Object3D) {
   }
 }
 
-/** Builds the static board into `scene`; returns the clearing floors, which pick a clearing when clicked. */
-export function buildScenery(scene: THREE.Scene): THREE.Mesh[] {
-  const built = buildClassicScenery(scene, { table: true })
-  built.plantTrees()
-  return built.picking
-}
-
 /**
- * The classic board as parts: the table (left out on the map-only screen, where the apron surrounds the board),
- * then the ground, rocks and clearings; `plantTrees` adds the forests' meshes later, after the first frame. Tree
- * positions are drawn up front, so the board looks the same either way.
+ * The classic board (map/classic-theme.ts): the ground, rocks and clearings; `plantTrees` adds the forests' meshes
+ * later, after the first frame. Tree positions are drawn up front, in the original order of random numbers.
  */
-export function buildClassicScenery(parent: THREE.Scene, opts: { table: boolean }): { picking: THREE.Mesh[]; plantTrees(): void; dispose(): void } {
+export function buildClassicScenery(parent: THREE.Scene): { picking: THREE.Mesh[]; plantTrees(): void; dispose(): void } {
   const rng = seededRng('autumn-scenery')
   const rand = () => rng.int(1_000_000) / 1_000_000
   const scene = new THREE.Group()
   parent.add(scene)
 
-  // Table, then the ground: a gently rolling plane with the painted texture.
-  if (opts.table) {
-    const table = new THREE.Mesh(new THREE.BoxGeometry(GROUND_X + 0.8, 0.6, GROUND_Z + 0.8), toon(color.wood))
-    table.position.y = -0.62
-    table.receiveShadow = true
-    scene.add(outline(table, 0.05))
-  }
+  // The ground: a gently rolling plane with the painted texture.
   const ground = new THREE.PlaneGeometry(GROUND_X, GROUND_Z, 160, 130)
   ground.rotateX(-Math.PI / 2)
   const pos = ground.attributes.position!

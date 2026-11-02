@@ -3,7 +3,7 @@ import { badge, outline, part, toon } from '../board/toon.ts'
 import { color, suitColor } from '../ui/tokens.ts'
 import {
   BRIDGES, CLEARINGS, CLEARING_RX, CLEARING_RY, CLIFFS, DEPTH, ITEMS, ITEM_ROW_Y, ITEM_STEP, ITEM_X0, LAKE, PATHS, PLOTS, PLOT_HALF,
-  RIVER, RIVER_HALF, SCORE_Y, WIDTH, inside, nearSuit, treeAllowed, world, type Point,
+  RIVER, RIVER_HALF, scoreSpace, WIDTH, inside, nearSuit, treeAllowed, world, type Point,
 } from './layout.ts'
 
 export interface AutumnScenery {
@@ -160,7 +160,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
     const label = badge('', { icon, iconFill: color.ink, bg: color.paperRaised, size: .52 }); label.position.set(x, .16, z); scene.add(label)
   }))
   for (let i = 0; i <= 30; i++) {
-    const [x,, z] = world([.035 + i * .031, SCORE_Y])
+    const [x,, z] = world(scoreSpace(i))
     addMesh(ownGeo(new THREE.BoxGeometry(.80, .05, .54)), toon(color.paperShade), x, .035, z)
     const label = badge(String(i), { size: .52, bg: color.paperRaised }); label.position.set(x, .10, z); scene.add(label)
   }

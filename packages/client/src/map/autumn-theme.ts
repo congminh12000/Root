@@ -1,7 +1,7 @@
 import { AUTUMN } from '@root/game-data'
 import * as THREE from 'three'
 import type { Placement } from '../board/pieces.ts'
-import { CLEARINGS, CLEARING_RX, CLEARING_RY, DEPTH, RIVER, RIVER_HALF, WIDTH, world } from '../autumn/layout.ts'
+import { CLEARINGS, CLEARING_RX, CLEARING_RY, DEPTH, RIVER, RIVER_HALF, scoreSpace, WIDTH, world } from '../autumn/layout.ts'
 import { buildAutumnScenery } from '../autumn/scenery.ts'
 import { color } from '../ui/tokens.ts'
 import { buildApron, type XZ } from './apron.ts'
@@ -27,6 +27,7 @@ const placement: Placement = {
   ring: [RX * 1.02, RZ * 1.02],
   rulerOffset: v(RX * .82, 1.1, -RZ * .82),
   pads: false,
+  score: n => { const [x,, z] = world(scoreSpace(n)); return v(x, .1, z) },
 }
 
 /** Beyond the board the river keeps climbing north and the lake opens out to the west (world units). */

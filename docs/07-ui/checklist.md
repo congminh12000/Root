@@ -1,6 +1,6 @@
 # Checklist giao diện để chơi được
 
-Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm tra; **Có** = dùng được nhưng chưa theo style-guide; **Một phần** = có nhưng thiếu; **Chưa** = chưa có. Cột "Mốc" ứng với lộ trình trong [README.md](README.md). Mục đánh dấu ★ là **bắt buộc** để một người chơi trọn ván với bot mà không cần danh sách thả xuống chung.
+Trạng thái ngày 02/11/2026 (sau G1–G7, gameplay chỉ có map). **Xong** = đã theo style-guide và đã kiểm tra; **Có** = dùng được nhưng chưa theo style-guide; **Một phần** = có nhưng thiếu; **Chưa** = chưa có. Cột "Mốc" ứng với lộ trình trong [README.md](README.md). Mục đánh dấu ★ là **bắt buộc** để một người chơi trọn ván với bot mà không cần danh sách thả xuống chung.
 
 ## A. Vào trận
 
@@ -21,8 +21,9 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Số quân rõ khi đông; hover/bấm ô xem chi tiết (ai cai quản, quân, token) | Xong | UI-4 |
 | ★ | Cai quản (rule) của từng ô hiển thị được | Xong | UI-4 |
 | ★ | Đánh dấu ô/quân có thể chọn cho hành động đang làm | Xong | UI-4 |
-| | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Xong | UI-3 |
-| | Bàn 2D dự phòng cùng phong cách | Xong | UI-3 |
+| | Camera: góc mặc định, xoay, phóng to có giới hạn, không lộ nền, nút về góc mặc định | Xong | G1 |
+| ★ | Map full màn hình, rừng/sông/hồ phủ quanh bàn; chọn Autumn diorama hoặc bàn cổ điển | Xong | G1, G5 |
+| | Bàn 2D dự phòng | Đã bỏ; không có WebGL thì chơi bằng HUD | G7 |
 | | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Xong | UI-3 (restyle) |
 | ★ | Bản đồ Autumn theo phong cách đã chốt | Chờ duyệt (`/autumn-kit.html`) | UI-7 |
 
@@ -30,12 +31,12 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Di chuyển: chọn ô đi → ô đến → số quân | Xong | UI-4 |
+| ★ | Di chuyển: kéo quân sang ô khác, hoặc chạm ô đi → ô đến → chip số quân | Xong | G2 |
 | ★ | Đánh: chọn ô → chọn phe bị đánh | Xong | UI-4 |
 | ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Xong | UI-4 |
 | ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Một phần | UI-5 |
-| ★ | Thanh hành động theo ngữ cảnh: bước hiện tại, nút kết thúc bước | Xong | UI-4 |
-| ★ | Luôn có lối xem đủ mọi hành động hợp lệ (danh sách đầy đủ, gập lại) | Xong | UI-4 |
+| ★ | Menu tại ô và bong bóng hành động chung trên map (thay thanh hành động) | Xong | G2 |
+| ★ | Luôn có lối xem đủ mọi hành động hợp lệ (menu ☰ → Tất cả lựa chọn) | Xong | G4 |
 | ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Xong | UI-2 |
 | | Phím tắt (Esc huỷ chọn, Enter xác nhận, số để chọn số quân) | Xong | UI-4 |
 
@@ -67,8 +68,8 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 
 | | Mục | Hiện tại | Mốc |
 |---|---|---|---|
-| ★ | Thanh lượt: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Xong | UI-2 |
-| ★ | Bảng điểm (track 0–30), dominance, coalition | Xong | UI-5 |
+| ★ | Góc trạng thái: lượt mấy, phase, bước, đang chờ ai, đồng hồ | Xong | G4 |
+| ★ | Điểm: quân điểm trên track in của Autumn diorama và huy hiệu phe; dominance, coalition | Xong | G4, G7 |
 | ★ | Nhật ký dễ đọc, bấm một dòng thì đánh dấu ô liên quan | Xong | UI-8 |
 | ★ | Màn kết thúc: ai thắng, vì sao, điểm cuối | Xong | UI-8 |
 | | Khán giả xem trận | Xong | UI-2 |
@@ -83,5 +84,5 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | ★ | Mọi chữ tiếng Việt, thuật ngữ luật giữ tên gốc khi cần | Có | mọi mốc |
 | ★ | Dùng bằng bàn phím, có nhãn cho trình đọc màn hình | Một phần | mọi mốc |
 | ★ | Giảm chuyển động | Có | mọi mốc |
-| ★ | Desktop 1280–1920 px; tablet ngang dùng được | Một phần | UI-2 |
+| ★ | Desktop 1280–1920 px; tablet ngang và dọc (chạm, chụm, xoay máy, nút ≥ 44 px) | Xong | G6 |
 | | ≥ 55 fps trên M1 ở 1440p | Xong | UI-3 |
