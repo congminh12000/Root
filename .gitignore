@@ -30,3 +30,5 @@ context-pack/
 # Playwright output (screenshots baselines live in packages/client/visual/__screenshots__)
 packages/client/test-results/
 packages/client/playwright-report/
+# Official map art kept on this machine only, as a layout reference for UI-7 (licensing.md)
+docs/01-official-sources/map-art/

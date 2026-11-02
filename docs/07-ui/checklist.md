@@ -24,7 +24,7 @@ Trạng thái ngày 01/11/2026. **Xong** = đã theo style-guide và đã kiểm
 | | Camera: góc mặc định, xoay, phóng to, nút về góc mặc định | Xong | UI-3 |
 | | Bàn 2D dự phòng cùng phong cách | Xong | UI-3 |
 | | Hoạt ảnh quân đi theo đường, ô thay đổi, xúc xắc | Xong | UI-3 (restyle) |
-| ★ | Bản đồ Autumn theo phong cách đã chốt | Chưa (chờ tư liệu) | UI-7 |
+| ★ | Bản đồ Autumn theo phong cách đã chốt | Chờ duyệt (`/autumn-kit.html`) | UI-7 |
 
 ## C. Thao tác
 
