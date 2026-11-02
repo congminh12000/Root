@@ -108,7 +108,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   // The live scene (map/live.ts) keeps a frame every 1/30 s once the map has finished loading, so it never competes
   // with opening a game; otherwise the map draws only on change.
   let live = false, lastLive = 0, complete = false
-  const stopLive = effect(() => { live = liveScene.value && !reduceMotion; draw() })
+  // Never on the `low` tier: without a GPU every frame costs the whole machine.
+  const stopLive = effect(() => { live = liveScene.value && !reduceMotion && quality.tier !== 'low'; draw() })
   function tick() {
     frame = 0
     if (disposed) return
@@ -268,7 +269,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       const gl = renderer.getContext(), axis = new THREE.Vector3(0, 1, 0), t0 = performance.now()
       for (let i = 0; i < frames; i++) {
         camera.position.sub(rig.controls.target).applyAxisAngle(axis, .02).add(rig.controls.target)
-        camera.lookAt(rig.controls.target); renderer.render(scene, camera); gl.finish()
+        camera.lookAt(rig.controls.target); if (post) post.render(); else renderer.render(scene, camera); gl.finish()
       }
       return (performance.now() - t0) / frames
     },
