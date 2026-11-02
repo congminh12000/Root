@@ -92,7 +92,7 @@ npm run test:visual -w @root/client    # build, chạy trên 127.0.0.1:4317, so 
 npm run test:visual:update -w @root/client   # chỉ khi cố ý đổi hình; ghi lý do trong PR
 ```
 
-Lần đầu trên máy mới: `npx playwright install chromium` (tải một lần, miễn phí). Ảnh gốc chụp trên macOS; máy khác có thể lệch font, khi đó tạo ảnh gốc riêng chứ không nới ngưỡng.
+Lần đầu trên máy mới: `npx playwright install chromium` (tải một lần, miễn phí). Ảnh gốc phải chụp trên máy phát triển của dự án (macOS, Chromium của Playwright đã cài ở đó). Agent chạy trong môi trường khác (sandbox, CI) đừng ghi đè ảnh gốc: các ô nhập gốc của trình duyệt vẽ lệch vài điểm ảnh, như lần ảnh ui-kit 01/11 phải chụp lại. Không nới ngưỡng.
 
 Mốc UI-1 và UI-2 nên làm trước mọi thứ: nếu chưa có token và component chung, các phần sau sẽ lệch phong cách.
 
