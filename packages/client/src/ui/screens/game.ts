@@ -16,6 +16,7 @@ import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, type DrawerId } fro
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
+import { liveScene, setLiveScene } from '../../map/live.ts'
 
 /** One game: everything comes from the server's updates; the client never decides legality. */
 export function Game({ gameId, token }: { gameId: string; token: string | null }) {
@@ -85,6 +86,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       ${legal.length > 0 && html`<button role="menuitem" class="secondary" data-close onClick=${() => setDrawer('all')}>Tất cả lựa chọn (${legal.length})</button>`}
       <button role="menuitem" class="secondary" data-close onClick=${() => setDrawer('guide')}>Hướng dẫn nhanh</button>
       <${SoundToggle} revision=${v.revision} />
+      <button role="menuitemcheckbox" class="secondary" aria-checked=${liveScene.value} onClick=${() => setLiveScene(!liveScene.value)}>Cảnh động: ${liveScene.value ? 'bật' : 'tắt'}</button>
       <${MapPicker} />
     <//>
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />

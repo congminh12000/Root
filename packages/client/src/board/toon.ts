@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { color, font } from '../ui/tokens.ts'
 import { iconSvg, type IconName } from '../ui/icons.ts'
-import { material } from './look.ts'
+import { material, printed } from './look.ts'
 
 /**
  * Shared pieces of the 3D board: cached shapes, parts made of the tabletop materials (board/look.ts) and the printed
@@ -67,7 +67,7 @@ export function sticker(icon: IconName | null, fill: string = color.ink, text = 
   draw()
   if (icon) void iconImage(icon, fill).then(draw)
   if (text) void document.fonts.load(`bold 84px ${font.display}`, text).then(() => draw())
-  stickerCache.set(key, mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, alphaTest: .5, roughness: .7 }))
+  stickerCache.set(key, mat = printed(tex))
   return mat
 }
 const stickerGeo = new THREE.CircleGeometry(1, 28).rotateX(-Math.PI / 2)

@@ -68,6 +68,31 @@ export function loadSurfaces(): Promise<void> {
   return pending
 }
 
+// ── Motion ───────────────────────────────────────────────────────────────────────────────────────────────────────
+/** Shared clock for the live scene (map/live.ts): foam crowns sway around their trunk, resin ripples drift. */
+const time = { value: 0 }
+/** Bends a tree crown with height, each instance out of step with its neighbours; still when the clock stands. */
+function sway(m: THREE.MeshStandardMaterial) {
+  m.onBeforeCompile = shader => {
+    shader.uniforms.uTime = time
+    shader.vertexShader = `uniform float uTime;\n${shader.vertexShader}`.replace('#include <begin_vertex>', `#include <begin_vertex>
+      #ifdef USE_INSTANCING
+        vec3 rootAt = instanceMatrix[3].xyz;
+      #else
+        vec3 rootAt = vec3(0.0);
+      #endif
+      float bend = max(0.0, position.y) * 0.05;
+      transformed.x += sin(uTime * 1.3 + rootAt.x * 0.7 + rootAt.z * 0.4) * bend;
+      transformed.z += cos(uTime * 1.1 + rootAt.z * 0.6) * bend * 0.6;`)
+  }
+  m.customProgramCacheKey = () => 'foam-sway'
+}
+/** Advances the live scene to `seconds`. */
+export function tickLook(seconds: number) {
+  time.value = seconds
+  for (const t of textures) if (t.surface === 'ripple' && t.kind === 'normal') t.tex.offset.set(seconds * .012, seconds * .007)
+}
+
 // ── Materials ─────────────────────────────────────────────────────────────────────────────────────────────────────
 const cache = new Map<string, THREE.MeshStandardMaterial>()
 
@@ -88,8 +113,17 @@ export function mat(role: Role, c: string = color.white, opts: { map?: THREE.Tex
   m = role === 'resin'
     ? new THREE.MeshPhysicalMaterial({ ...base, color: new THREE.Color(c).multiplyScalar(.75), clearcoat: 1, clearcoatRoughness: .04 })
     : new THREE.MeshStandardMaterial(base)
+  if (role === 'foam') sway(m)
   cache.set(key, m)
   return m
+}
+
+/**
+ * A printed surface (stickers, the printed track): its own picture on card stock. Same shader as every other
+ * material here, so printing adds no program to compile before the first frame.
+ */
+export function printed(map: THREE.Texture): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({ map, normalMap: surfaceTexture('card', 'normal', 1), normalScale: new THREE.Vector2(BUMP.card, BUMP.card), roughness: ROUGH.card })
 }
 
 const hex = (c: string) => c.toLowerCase()

@@ -16,7 +16,7 @@ export interface AutumnScenery {
   labels: THREE.Group
   earthMat: THREE.Material
   selectedMat: THREE.Material
-  /** Plants the forest when `deferTrees` was set (once); otherwise it is already planted and this does nothing. */
+  /** Plants the forest and pours the resin water when `deferTrees` was set (once); otherwise both are done already. */
   plantTrees(): void
   dispose(): void
 }
@@ -79,9 +79,7 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
   const ground = addMesh(ownGeo(new THREE.PlaneGeometry(WIDTH, DEPTH)), groundMat, 0, 0, 0); ground.rotation.x = -Math.PI / 2
   if (opts.slab) addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), material(color.wood), 0, -.26, 0)
 
-  // Resin poured over the painted river and lake (style-guide §3), then two fishing boats.
-  const toXZ = (p: Point) => { const [x,, z] = world(p); return [x, z] as const }
-  geometries.push(...resinWater(scene, [{ line: RIVER.map(toXZ), half: RIVER_HALF * WIDTH }], [LAKE.map(toXZ)], .015))
+  // Two fishing boats; the resin over the painted water comes with the trees (its shader is the costliest).
   for (const [i, p] of ([[.025, .58], [.03, .68]] as Point[]).entries()) {
     const [x,, z] = world(p), boat = new THREE.Group()
     boat.add(part('lake-hull', () => new THREE.CylinderGeometry(.16, .09, .10, 4), color.wood, [0, .06, 0], [0, Math.PI / 4, 0]),
@@ -105,6 +103,9 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
 
   // Trees come last of everything random, so planting them later (deferTrees) draws exactly the same forest.
   const plantTrees = () => {
+    // Resin poured over the painted river and lake (style-guide §3).
+    const toXZ = (p: Point) => { const [x,, z] = world(p); return [x, z] as const }
+    geometries.push(...resinWater(scene, [{ line: RIVER.map(toXZ), half: RIVER_HALF * WIDTH }], [LAKE.map(toXZ)], .015))
     // Trees: instanced pines and round trees. Round trees by a clearing take its suit colour, as in the reference.
     const trees: { x: number; z: number; scale: number; round: boolean; tint: string }[] = []
     for (let i = 0; i < 16000 && trees.length < 2300; i++) {
