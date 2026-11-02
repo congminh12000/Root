@@ -13,7 +13,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 1. [docs/00-governance/source-manifest.yaml](docs/00-governance/source-manifest.yaml): nguồn chính thức. Tải PDF bằng `npm run fetch:sources`, tạo bản chụp Rules Library bằng `npm run snapshot:rules`.
 2. [docs/00-governance/rule-precedence.md](docs/00-governance/rule-precedence.md): xử lý khi luật xung đột.
 3. [docs/00-governance/open-questions.md](docs/00-governance/open-questions.md): những gì chưa được phép đoán.
-4. [docs/06-qa/rule-coverage.yaml](docs/06-qa/rule-coverage.yaml): mọi điều khoản trong phạm vi và trạng thái của chúng.
+4. [docs/06-qa/rule-coverage.yaml](docs/06-qa/rule-coverage.yaml): mọi điều khoản trong phạm vi và trạng thái của chúng. File dài (khoảng 160 mục); đừng đọc cả file, chỉ tra mục cần sửa, ví dụ `grep -n -A10 'rule_id: ROOT-4.3.3$' docs/06-qa/rule-coverage.yaml`. Kiểm tra toàn bộ đã có `npm run audit:rules`.
 5. [docs/04-engine-spec/game-state.md](docs/04-engine-spec/game-state.md): trạng thái trận, thông tin ẩn, bất biến.
 6. [docs/02-rules-spec/](docs/02-rules-spec/README.md): đặc tả từng điều khoản. Code gameplay phải khớp mục `ROOT-<section>` tương ứng.
 
@@ -46,7 +46,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 - **Không tự mở server, huấn luyện hay việc chạy lâu** trừ khi được yêu cầu. Được phép kiểm tra ngắn trên `127.0.0.1` với thư mục dữ liệu thử, rồi tắt server và xoá dữ liệu thử, và báo lại.
 - **Kiểm tra trước khi báo xong:** `npm run typecheck`, `npm test`, `npm run audit:rules`; thay đổi giao diện thì xem thật trên trình duyệt. Báo trung thực phần chưa kiểm chứng được.
 - **Bot và AI không có quyền đặc biệt:** chỉ `PlayerView` + hành động hợp lệ; không đọc state gốc, bài đối thủ, thứ tự bộ bài hay seed.
-- **Bản cũ** (`backend/`, `web/`) chỉ để tham khảo; mô tả ở [docs/LEGACY.md](docs/LEGACY.md). Không tự nâng model neural cũ thành mặc định; chỉ nạp checkpoint PyTorch từ nguồn tin cậy.
+- **Bản cũ** (`backend/`, `web/`, `data/`) chỉ để tham khảo; mô tả ở [docs/LEGACY.md](docs/LEGACY.md). File `.ignore` loại chúng khỏi kết quả tìm kiếm của agent; chỉ mở khi cần đối chiếu. Không tự nâng model neural cũ thành mặc định; chỉ nạp checkpoint PyTorch từ nguồn tin cậy.
 - **Không hardcode đường dẫn máy.** Máy phát triển: MacBook Pro M1 Pro 16 GB; mọi thứ chạy offline trên máy hoặc LAN.
 
 ## Dùng với model khác (ChatGPT, Grok…)
