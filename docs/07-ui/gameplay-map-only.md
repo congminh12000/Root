@@ -18,7 +18,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 |---|---|---|
 | G0 | Merge Autumn (PR #15), sửa ảnh gốc ui-kit (PR #16) | Xong |
 | G1 | Stage, camera có giới hạn, apron; màn trận full màn hình với quân thật | Xong, chờ duyệt |
-| G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | |
+| G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | Xong |
 | G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | |
 | G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu | |
@@ -73,3 +73,15 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 - Ảnh duyệt ở [reference/map-review/](reference/map-review/).
 - Đo trên M1 Pro: 3,2–3,6 ms mỗi khung ở canvas 2880×1800 (khung 1440×900, mật độ ×2).
 - Test này chạy chậm trong Chromium không đầu (WebGL bằng CPU, khoảng 1,3 phút mỗi test desktop); không dùng số đo đó làm hiệu năng thật.
+
+## G2: thao tác trên map
+
+- **`map/stage.ts`:** chiếu ô ra tọa độ màn hình (`project`), báo khi camera đổi (`onView`), kéo quân (`setDraggable`; bắt đầu kéo trên ô có quân đi được thì camera bỏ qua cử chỉ đó, thả lên ô khác thì báo nước đi).
+- **`ui/screens/map-view.ts`:** lớp phủ `overlay` bám theo camera.
+- **`ui/screens/callouts.ts`:**
+  - Nút ô cho bàn phím và trình đọc màn hình. Chuột và cảm ứng đi xuyên xuống map.
+  - Menu tại ô (hoặc tại ô đến khi di chuyển): hành động ở ô, gợi ý ô đến, chip số quân 44 px, phím Esc, phím số, Enter.
+  - Bong bóng hành động chung ở mép trên; nhóm lớn gập lại; ẩn khi hộp quyết định đang mở.
+- Phím tắt chuyển từ `ActionBar` sang menu tại ô để không gửi hai lần.
+
+**Kiểm chứng:** chơi Marquise trên server thử chỉ bằng map (ngăn bên đóng): tới lượt 22 với 12 lần kéo quân (8 lần qua chip số quân + Enter), 11 hành động tại ô, 9 hành động chung, 13 hộp quyết định; không lỗi, không bị server từ chối.

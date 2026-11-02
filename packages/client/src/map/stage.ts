@@ -14,6 +14,12 @@ export interface MapStage {
   /** Redraws the pieces; clearings in `changed` pulse once and their pieces pop in; `travels` hop along their paths. */
   update(view: PlayerView, highlight: number[], changed?: number[], travels?: Travel[], targets?: number[]): void
   resetCamera(top?: boolean): void
+  /** Screen position (px from the host's top left) of a clearing's centre, to anchor menus on the map. */
+  project(clearing: number): [number, number]
+  /** Called whenever the view moves (camera or size), so anchored menus follow. Returns an unsubscribe. */
+  onView(listener: () => void): () => void
+  /** Clearings a drag may start from (they have moves); a drag from one of them moves pieces instead of panning. */
+  setDraggable(clearings: number[]): void
   /** The camera now, for tests and the review page: zoom with its limits, tilt from vertical, look-at point. */
   camera(): { zoom: number; min: number; max: number; polar: number; target: [number, number] }
   /** Renders `frames` frames back to back while orbiting, waiting for the GPU each time; average ms per frame. */
@@ -26,7 +32,16 @@ export interface MapStage {
  * current view, and a camera that never shows empty background. It draws only when something changes. Clicking
  * (not dragging) a clearing or one of its slots calls `onPick`.
  */
-export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: number) => void): MapStage {
+export interface MapHandlers {
+  /** A click or tap (not a drag) on a clearing or one of its slots. */
+  pick(clearing: number): void
+  /** Pieces dragged from one clearing and dropped on another (only from `setDraggable` clearings). */
+  drag?(from: number, to: number): void
+  /** While dragging: the clearing under the pointer, or null. */
+  dragOver?(from: number, to: number | null): void
+}
+
+export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandlers): MapStage {
   performance.mark('map:mount-start')
   const renderer = new THREE.WebGLRenderer({ antialias: true })
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2))
@@ -50,7 +65,9 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 400)
   let frame = 0, disposed = false, ready = false
   const draw = () => { if (!disposed && !frame) frame = requestAnimationFrame(tick) }
-  const rig = createRig(camera, renderer.domElement, theme.bounds, theme.clearingDepth, draw)
+  const viewListeners = new Set<() => void>()
+  const viewChanged = () => { draw(); viewListeners.forEach(l => l()) }
+  const rig = createRig(camera, renderer.domElement, theme.bounds, theme.clearingDepth, viewChanged)
   const built = theme.build(scene)
   performance.measure('map:build', 'map:mount-start')
 
@@ -88,7 +105,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
     const w = host.clientWidth || innerWidth, h = host.clientHeight || innerHeight
     renderer.setSize(w, h, false)
     rig.resize(w, h)
-    draw()
+    viewChanged()
   }
   const observer = new ResizeObserver(resize)
   observer.observe(host)
@@ -118,21 +135,52 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
   void document.fonts.ready.then(draw)
   const later = [300, 900, 1800].map(ms => setTimeout(draw, ms))
 
-  // A click or tap (not a drag) picks the clearing under it.
+  // A click or tap (not a drag) picks the clearing under it. A drag that starts on a draggable clearing moves pieces:
+  // the camera ignores that gesture, and dropping on another clearing reports the move.
   const ray = new THREE.Raycaster(), pointer = new THREE.Vector2()
-  let down: [number, number] | null = null
-  const press = (e: PointerEvent) => { down = [e.clientX, e.clientY] }
-  const release = (e: PointerEvent) => {
-    if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) { down = null; return }
-    down = null
+  const clearingAt = (e: PointerEvent): number | null => {
     const r = renderer.domElement.getBoundingClientRect()
     pointer.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1)
     ray.setFromCamera(pointer, camera)
     const hit = ray.intersectObjects(built.picking, false)[0]
-    if (hit) onPick(hit.object.userData.clearing as number)
+    return hit ? hit.object.userData.clearing as number : null
   }
-  renderer.domElement.addEventListener('pointerdown', press)
+  let draggable = new Set<number>(), dragging: { from: number; over: number | null; id: number } | null = null
+  let down: [number, number] | null = null
+  const press = (e: PointerEvent) => {
+    down = [e.clientX, e.clientY]
+    if (e.button !== 0 || !handlers.drag) return
+    const from = clearingAt(e)
+    if (from === null || !draggable.has(from)) return
+    dragging = { from, over: null, id: e.pointerId }
+    rig.controls.enabled = false
+    renderer.domElement.setPointerCapture(e.pointerId)
+  }
+  const move = (e: PointerEvent) => {
+    if (!dragging || e.pointerId !== dragging.id || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) < 6) return
+    const over = clearingAt(e), next = over === dragging.from ? null : over
+    if (next !== dragging.over) { dragging.over = next; handlers.dragOver?.(dragging.from, next) }
+  }
+  const release = (e: PointerEvent) => {
+    const moved = !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6
+    down = null
+    if (dragging) {
+      const d = dragging; dragging = null; rig.controls.enabled = true
+      if (moved) {
+        handlers.dragOver?.(d.from, null)
+        const to = clearingAt(e)
+        if (to !== null && to !== d.from) handlers.drag?.(d.from, to)
+        return
+      }
+    }
+    if (moved) return
+    const c = clearingAt(e)
+    if (c !== null) handlers.pick(c)
+  }
+  renderer.domElement.addEventListener('pointerdown', press, { capture: true })
+  renderer.domElement.addEventListener('pointermove', move)
   renderer.domElement.addEventListener('pointerup', release)
+  const projected = new THREE.Vector3()
 
   return {
     update(view, highlight, changed = [], travels = [], targets = []) {
@@ -150,6 +198,12 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
       draw()
     },
     resetCamera(top = false) { rig.home(top) },
+    project(c) {
+      projected.copy(theme.placement.centre(c)).project(camera)
+      return [(projected.x + 1) / 2 * host.clientWidth, (1 - projected.y) / 2 * host.clientHeight]
+    },
+    onView(listener) { viewListeners.add(listener); return () => viewListeners.delete(listener) },
+    setDraggable(clearings) { draggable = new Set(clearings) },
     camera() {
       const c = rig.controls
       return { zoom: camera.zoom, min: c.minZoom, max: c.maxZoom, polar: c.getPolarAngle(), target: [c.target.x, c.target.z] }
@@ -164,7 +218,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, onPick: (clearing: 
     },
     dispose() {
       disposed = true; cancelAnimationFrame(frame); later.forEach(clearTimeout); observer.disconnect(); rig.dispose()
-      renderer.domElement.removeEventListener('pointerdown', press); renderer.domElement.removeEventListener('pointerup', release)
+      renderer.domElement.removeEventListener('pointerdown', press, { capture: true }); renderer.domElement.removeEventListener('pointermove', move)
+      renderer.domElement.removeEventListener('pointerup', release); viewListeners.clear()
       if (pieces) disposePieces(pieces)
       built.dispose(); renderer.dispose(); renderer.domElement.remove()
     },

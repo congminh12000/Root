@@ -9,7 +9,6 @@ const label = (a: Action) => {
   const bare = a.type === 'end-step' || a.type.startsWith('decline') || a.type === 'end-battle-cards' || a.type === 'outrage-reveal' || a.type === 'marquise-end-march'
   return bare ? GROUP[a.type] ?? a.type : describe(a)
 }
-const typing = (e: KeyboardEvent) => e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement
 
 /** A button for one legal action; hovering it lights the clearings it is about. */
 function ActButton({ a, send, onPreview, text, primary }: { a: Action; send: (a: Action) => void; onPreview: Preview; text?: string; primary?: boolean }) {
@@ -20,7 +19,7 @@ function ActButton({ a, send, onPreview, text, primary }: { a: Action; send: (a:
 /**
  * The actions of the moment, chosen on the board first (interaction/select.ts): click a lit clearing, then a
  * destination and a count for moves. Actions with no clearing are buttons. Every legal action also stays in the
- * full list below. Keys: Esc deselects, a digit picks how many warriors, Enter confirms the move.
+ * full list below. Keys belong to the menu on the map (callouts.ts).
  */
 export function ActionBar({ legal, stage, setStage, onPreview, send }: {
   legal: Action[]; stage: Stage; setStage: (s: Stage) => void; onPreview: Preview; send: (a: Action) => void
@@ -32,18 +31,6 @@ export function ActionBar({ legal, stage, setStage, onPreview, send }: {
   useEffect(() => setCount(counts ? counts[counts.length - 1]! : 0), [pathKey, counts?.join()])
   const chosen = counts ? v.along.find(a => (a.payload as { warriors: number }).warriors === count) : undefined
 
-  useEffect(() => {
-    const key = (e: KeyboardEvent) => {
-      if (typing(e) || (e.target instanceof Element && !!e.target.closest('button, a, summary, [role="button"]')) || e.metaKey || e.ctrlKey || e.altKey) return
-      if (e.key === 'Escape' && stage.kind !== 'idle') { setStage(IDLE); e.preventDefault() }
-      if (counts && /^[1-9]$/.test(e.key) && counts.includes(Number(e.key))) setCount(Number(e.key))
-      if (e.key === 'Enter' && stage.kind === 'path' && (chosen ?? (v.along.length === 1 ? v.along[0] : undefined))) {
-        e.preventDefault(); send((chosen ?? v.along[0])!)
-      }
-    }
-    document.addEventListener('keydown', key)
-    return () => document.removeEventListener('keydown', key)
-  }, [stage, count, legal])
 
   const general = generalActions(legal)
   const groups = new Map<string, Action[]>()

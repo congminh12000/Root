@@ -170,6 +170,26 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .side-tools { display: flex; gap: var(--sp-2); align-items: center; justify-content: flex-end; }
 .game-screen .dice { top: 64px; left: 50%; }
 
+/* ── On-map menus (G2) ─────────────────────────────────────────────────────── */
+.map-overlay { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.map-overlay > :not(.map-anchor) { pointer-events: auto; }
+.map-anchor { position: absolute; width: 56px; height: 56px; padding: 0; transform: translate(-50%, -50%); border-radius: var(--r-pill); background: none; border: 0; box-shadow: none; pointer-events: none; }
+.map-anchor:hover { background: none; }
+.map-anchor:focus-visible { outline: 4px solid var(--autumn-gold); outline-offset: 2px; background: var(--gold-a35); }
+.map-menu { position: absolute; transform: translate(-50%, calc(-100% - 40px)); width: max-content; min-width: 220px; max-width: min(360px, 92vw); background: var(--paper-a96);
+  border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-raised); padding: var(--sp-2) var(--sp-3); animation: rise var(--motion-dialog) ease-out; }
+.map-menu.below { transform: translate(-50%, 40px); }
+.map-menu header { display: flex; align-items: center; gap: 6px; font: var(--fs-md) var(--font-display); }
+.map-menu header .close { margin-left: auto; min-height: 32px; min-width: 32px; padding: 0 8px; }
+.map-menu .acts { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.map-menu .acts button, .map-menu > button, .map-bubble button { min-height: 44px; white-space: normal; text-align: left; }
+.map-menu .counts { margin: 6px 0; }
+.map-menu .counts button { min-height: 44px; min-width: 44px; }
+.map-menu .hint { margin: 6px 0 0; font-size: var(--fs-xs); color: var(--ink-soft); }
+.map-bubble { position: absolute; top: 96px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: min(760px, 92vw);
+  background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); padding: 6px var(--sp-2); }
+.map-bubble .group { display: flex; flex-wrap: wrap; gap: 6px; }
+
 /* ── Board ────────────────────────────────────────────────────────────────── */
 .board-col { min-width: 0; position: relative; }
 .board-tools { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; font-size: var(--fs-xs); color: var(--ink-soft); }
@@ -226,7 +246,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop { animation: none; transition: none; }
+  .board .pulse, .board .pop, .board .target, .score.bump b, .carddetail, .dice, .dice .die, button, .scoretrack .marker, .dialog-backdrop, .map-menu { animation: none; transition: none; }
   .board .pulse, .board .travel { display: none; }
 }
 

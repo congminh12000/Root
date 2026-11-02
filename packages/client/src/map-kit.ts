@@ -11,6 +11,6 @@ const host = document.getElementById('app')!
 host.className = 'game-screen'
 host.innerHTML = '<div class="game-map"></div>'
 const view = sampleView()
-const stage = mountMap(host.querySelector<HTMLElement>('.game-map')!, AUTUMN_DIORAMA, c => stage.update(view, [c]))
+const stage = mountMap(host.querySelector<HTMLElement>('.game-map')!, AUTUMN_DIORAMA, { pick: c => stage.update(view, [c]) })
 stage.update(view, [])
 ;(window as unknown as { map: typeof stage }).map = stage

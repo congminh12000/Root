@@ -4,7 +4,7 @@ import { html } from 'htm/preact'
 import { useEffect, useMemo, useState } from 'preact/hooks'
 import { GameResult, GameLog, QuickGuide, logClearings } from './finish.ts'
 import { decisionOf } from '../../interaction/decisions.ts'
-import { click, IDLE, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
+import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { PHASE_NAME, STEP_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
 import { connectGame } from '../../net/connection.ts'
@@ -15,7 +15,8 @@ import { FactionBoards } from './boards.ts'
 import { Hand, Scores } from './hand.ts'
 import { ClearingInfo } from './clearing-info.ts'
 import { DecisionBar, DecisionDialog } from './decision.ts'
-import { MapView } from './map-view.ts'
+import { MapOverlay } from './callouts.ts'
+import { MapView, type Project } from './map-view.ts'
 
 const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
 
@@ -54,7 +55,12 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const pick = (c: number) => { setPreview(null); setLogSelection(null); setInspect(c); setStage(s => click(legal, s, c)) }
 
   return html`<div class="game-screen">
-    <${MapView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome} />
+    <${MapView} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
+      draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
+      onDrag=${(from: number, to: number) => { setPreview(null); setStage(click(legal, click(legal, IDLE, from), to)) }}
+      onDragOver=${(from: number, to: number | null) => setPreview(to === null ? [from] : [from, to])}
+      overlay=${(project: Project) => legal.length > 0 && html`<${MapOverlay} project=${project} view=${v} legal=${legal} stage=${stage} setStage=${setStage}
+        send=${conn.send} onPreview=${setPreview} onPick=${pick} bubble=${!(dialog && !folded)} />`} />
     <div class="hud-top">
       <${TopBar} gameId=${u.gameId} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value}
         panel=${panel} onPanel=${() => setPanel(p => !p)} />
