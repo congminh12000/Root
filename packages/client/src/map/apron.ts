@@ -30,6 +30,36 @@ const segDist = (x: number, z: number, a: XZ, b: XZ) => {
   return Math.hypot(x - a[0] - t * dx, z - a[1] - t * dz)
 }
 
+/**
+ * Resin water (style-guide §3) over painted rivers and lakes: a ribbon `half` wide along each river line and a flat
+ * sheet over each lake outline, at height `y`, glossy with drifting ripples. UVs are world units, so ripples keep one
+ * size everywhere. Returns the meshes (added to `scene`) and their geometries to dispose.
+ */
+export function resinWater(scene: THREE.Object3D, rivers: { line: readonly XZ[]; half: number }[], lakes: readonly (readonly XZ[])[], y: number) {
+  const material = mat('resin', color.water, { repeat: .35 }), geometries: THREE.BufferGeometry[] = []
+  for (const { line, half } of rivers) {
+    const pos: number[] = [], uv: number[] = [], index: number[] = []
+    line.forEach(([x, z], i) => {
+      const [ax, az] = line[Math.max(0, i - 1)]!, [bx, bz] = line[Math.min(line.length - 1, i + 1)]!
+      const len = Math.hypot(bx - ax, bz - az) || 1, nx = -(bz - az) / len * half, nz = (bx - ax) / len * half
+      pos.push(x + nx, y, z + nz, x - nx, y, z - nz); uv.push(x + nx, z + nz, x - nx, z - nz)
+      if (i) { const k = i * 2; index.push(k - 2, k - 1, k, k - 1, k + 1, k) }
+    })
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
+    g.setIndex(index); g.computeVertexNormals(); geometries.push(g)
+  }
+  for (const lake of lakes) {
+    const shape = new THREE.Shape(lake.map(([x, z]) => new THREE.Vector2(x, -z)))
+    const g = new THREE.ShapeGeometry(shape).rotateX(-Math.PI / 2).translate(0, y, 0)
+    const p = g.attributes.position!, uv = g.attributes.uv!
+    for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i), p.getZ(i))
+    geometries.push(g)
+  }
+  for (const g of geometries) { const m = new THREE.Mesh(g, material); m.receiveShadow = true; scene.add(m) }
+  return geometries
+}
+
 /** True where the apron is water: a river channel or a lake. */
 export function apronWater(spec: ApronSpec, x: number, z: number, margin = 0): boolean {
   return spec.lakes.some(l => insidePoly(x, z, l)) || spec.rivers.some(r => r.line.slice(1).some((b, i) => segDist(x, z, r.line[i]!, b) < r.half + margin))
@@ -86,7 +116,9 @@ export function buildApron(scene: THREE.Scene, spec: ApronSpec, opts: { trees: n
   const ground = new THREE.Mesh(plane, groundMat); ground.rotation.x = -Math.PI / 2; ground.position.y = spec.ground ?? -.03; ground.receiveShadow = true
   scene.add(ground); disposables.push(tex, plane)
 
-  // Trees: a dense outlined band at the board's edge, then sparser and plainer outwards.
+  disposables.push(...resinWater(scene, spec.rivers, spec.lakes, (spec.ground ?? -.03) + .015))
+
+  // Trees: a dense band at the board's edge, then sparser and plainer outwards.
   const near: { x: number; z: number; s: number; round: boolean }[] = [], far: typeof near = []
   for (let i = 0; i < opts.trees * 6 && near.length + far.length < opts.trees; i++) {
     const inBand = rand() < .45, reach = inBand ? 9 : R * .8

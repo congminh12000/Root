@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { badge, part, stickerOn } from '../board/toon.ts'
+import { resinWater } from '../map/apron.ts'
 import { mat, material } from '../board/look.ts'
 import { color, suitColor } from '../ui/tokens.ts'
 import {
@@ -73,23 +74,14 @@ export function buildAutumnScenery(scene: THREE.Scene, opts: { slab: boolean; de
   ctx.lineWidth = riverPx + 8; ctx.strokeStyle = color.rock; ctx.stroke()
   ctx.lineWidth = riverPx; ctx.strokeStyle = color.water; ctx.stroke()
   trace(LAKE, true); ctx.fillStyle = color.water; ctx.fill()
-  trace(RIVER); ctx.lineWidth = riverPx * .25; ctx.setLineDash([18, 26]); ctx.strokeStyle = color.waterShallow; ctx.stroke(); ctx.setLineDash([])
   const groundTex = new THREE.CanvasTexture(canvas); groundTex.colorSpace = THREE.SRGBColorSpace; groundTex.anisotropy = 8; textures.push(groundTex)
   const groundMat = mat('flock', color.white, { map: groundTex, repeat: 24 })
   const ground = addMesh(ownGeo(new THREE.PlaneGeometry(WIDTH, DEPTH)), groundMat, 0, 0, 0); ground.rotation.x = -Math.PI / 2
   if (opts.slab) addMesh(ownGeo(new THREE.BoxGeometry(WIDTH + .18, .4, DEPTH + .18)), material(color.wood), 0, -.26, 0)
 
-  // Lake ripples and two fishing boats.
-  const ripples: number[] = []
-  for (let i = 0; i < 160; i++) {
-    const p: Point = [rand() * .06, .5 + rand() * .25]
-    if (!inside(p, LAKE)) continue
-    const [x,, z] = world(p), len = .1 + rand() * .15
-    ripples.push(x, .025, z, x + len, .025, z + .02)
-  }
-  const ripplesGeo = ownGeo(new THREE.BufferGeometry()); ripplesGeo.setAttribute('position', new THREE.Float32BufferAttribute(ripples, 3))
-  const rippleMat = new THREE.LineBasicMaterial({ color: color.waterShallow }); materials.push(rippleMat)
-  scene.add(new THREE.LineSegments(ripplesGeo, rippleMat))
+  // Resin poured over the painted river and lake (style-guide §3), then two fishing boats.
+  const toXZ = (p: Point) => { const [x,, z] = world(p); return [x, z] as const }
+  geometries.push(...resinWater(scene, [{ line: RIVER.map(toXZ), half: RIVER_HALF * WIDTH }], [LAKE.map(toXZ)], .015))
   for (const [i, p] of ([[.025, .58], [.03, .68]] as Point[]).entries()) {
     const [x,, z] = world(p), boat = new THREE.Group()
     boat.add(part('lake-hull', () => new THREE.CylinderGeometry(.16, .09, .10, 4), color.wood, [0, .06, 0], [0, Math.PI / 4, 0]),
