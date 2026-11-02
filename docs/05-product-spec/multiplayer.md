@@ -47,7 +47,7 @@ HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ fac
 
 ## Bàn chơi 3D
 
-- Mặc định trang trận hiện bàn 3D vẽ bằng Three.js (`packages/client/src/board3d.ts`). Nút 2D chuyển sang bản đồ SVG; nếu trình duyệt không có WebGL thì tự dùng 2D. Lựa chọn 2D/3D được nhớ trong trình duyệt.
+- Trang trận chỉ có map 3D full màn hình (Three.js, `packages/client/src/map/stage.ts`) và HUD nổi; xem `docs/07-ui/gameplay-map-only.md`. Người chơi chọn Autumn diorama hoặc bàn cổ điển; lựa chọn lưu trong trình duyệt, không gửi server. Không có WebGL thì vẫn chơi được bằng HUD (menu ☰ → Tất cả lựa chọn).
 - Mọi hình đều do code tự dựng từ `game-data`, không dùng art chính thức: bàn gỗ, mặt đất, đường đất, cây theo từng khu rừng, viền clearing theo màu suit, quân, công trình và token. Ngẫu nhiên có seed cố định nên mọi máy thấy cùng một bàn.
 - Kéo để xoay, cuộn để phóng to. Bấm vào một ô (cả 2D và 3D) để lọc các lựa chọn liên quan tới ô đó; bấm lại để bỏ lọc.
 - Three.js nằm trong một chunk riêng, chỉ tải khi mở bàn 3D.

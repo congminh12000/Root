@@ -102,6 +102,8 @@ test('decisions: every pending decision is worded, names who decides, and cites 
         assert.ok(mine.title.length > 10 && !mine.title.includes('undefined') && /^§/.test(mine.rule), JSON.stringify(mine))
         if (!legal.some(a => a.type === 'order-effects')) assert.equal(watching!.title, mine.title, 'spectators see the same decision')
         assert.equal(watching!.dialog, false, 'never a dialog for someone who is not deciding')
+        if (['ambush', 'battle-effects', 'take-hits', 'field-hospital', 'outrage'].includes(mine.kind)) assert.equal(typeof mine.clearing, 'number', `${mine.kind} happens in a clearing`)
+        if (mine.kind === 'setup' && legal.some(a => a.type === 'eyrie-choose-leader')) assert.equal(mine.clearing, null)
       }
       s = applyCommand(s, { gameId: seed, playerId: f, expectedRevision: s.meta.revision, actionId: `${n}`, ...legal[rng.int(legal.length)]! }, rng).state
     }

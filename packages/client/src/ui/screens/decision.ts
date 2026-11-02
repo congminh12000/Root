@@ -1,5 +1,5 @@
 import { EYRIE, VAGABOND } from '@root/game-data'
-import type { Action, FactionId, PlayerView } from '@root/game-engine'
+import type { Action, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useEffect, useRef } from 'preact/hooks'
 import { describe, GROUP } from '../../describe.ts'
@@ -48,6 +48,32 @@ function BattleLine({ view: v }: { view: PlayerView }) {
     ${rolled ? html` · hit tung được: ${FACTION_NAME[b.attacker]} ${b.rolled.attacker}${b.extra.attacker ? ` + ${b.extra.attacker}` : ''}, ${FACTION_NAME[b.defender]} ${b.rolled.defender}${b.extra.defender ? ` + ${b.extra.defender}` : ''}` : ''}</p>`
 }
 
+/** Title, clause, the battle around it and every legal option as a button: shared by the dialog and the map callout. */
+function DecisionBody({ decision, view, legal, send }: { decision: Decision; view: PlayerView; legal: Action[]; send: (a: Action) => void }) {
+  const choices: Action[] = legal.filter(a => a.type === 'eyrie-choose-leader' || a.type === 'vagabond-choose-character')
+  const cards = legal.filter(a => !choices.includes(a) && (typeof (a.payload as { card?: unknown }).card === 'string' || a.type === 'take-dominance'))
+  const rest = legal.filter(a => !choices.includes(a) && !cards.includes(a))
+  return html`<header><${FactionChip} f=${decision.player} /><h2 id="decision-title">${decision.title}</h2><small class="rule">${decision.rule}</small></header>
+    <${BattleLine} view=${view} />
+    ${choices.length > 0 && html`<div class="options choices">${choices.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}
+    ${cards.length > 0 && html`<div class="options cards">${cards.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}
+    ${rest.length > 0 && html`<div class="options">${rest.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}`
+}
+
+/**
+ * A decision that happens in a clearing (ambush, hits, Field Hospitals, Outrage…), shown at that clearing on the map
+ * (docs/07-ui/gameplay-map-only.md §3) instead of over the whole screen, so the battle stays in view.
+ */
+export function DecisionCallout({ decision, view, legal, send, at }: {
+  decision: Decision; view: PlayerView; legal: Action[]; send: (a: Action) => void; at: [number, number]
+}) {
+  const box = useRef<HTMLElement>(null)
+  useEffect(() => { box.current?.querySelector<HTMLElement>('button.option, .option button')?.focus({ preventScroll: true }) }, [decision.title, legal.length])
+  const below = at[1] < 320, x = Math.min(Math.max(at[0], 240), innerWidth - 240)
+  return html`<section class=${`map-decision${below ? ' below' : ''}`} style=${{ left: `${x}px`, top: `${at[1]}px` }} role="dialog" aria-labelledby="decision-title" ref=${box}>
+    <${DecisionBody} decision=${decision} view=${view} legal=${legal} send=${send} /></section>`
+}
+
 /**
  * A decision only you can take, as a dialog over the game (style-guide §6): who decides what and the clause, the
  * battle around it, and every legal option as a button. "Xem bàn cờ" folds it into a bar to look at the board first.
@@ -62,22 +88,8 @@ export function DecisionDialog({ decision, view, legal, send, onFold }: {
     document.addEventListener('keydown', key)
     return () => document.removeEventListener('keydown', key)
   }, [onFold])
-  const choices: Action[] = legal.filter(a => a.type === 'eyrie-choose-leader' || a.type === 'vagabond-choose-character')
-  const cards = legal.filter(a => !choices.includes(a) && (typeof (a.payload as { card?: unknown }).card === 'string' || a.type === 'take-dominance'))
-  const rest = legal.filter(a => !choices.includes(a) && !cards.includes(a))
   return html`<div class="dialog-backdrop"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="decision-title" ref=${box}>
-    <header><${FactionChip} f=${decision.player} /><h2 id="decision-title">${decision.title}</h2><small class="rule">${decision.rule}</small></header>
-    <${BattleLine} view=${view} />
-    ${choices.length > 0 && html`<div class="options choices">${choices.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}
-    ${cards.length > 0 && html`<div class="options cards">${cards.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}
-    ${rest.length > 0 && html`<div class="options">${rest.map(a => html`<${Option} a=${a} send=${send} />`)}</div>`}
+    <${DecisionBody} decision=${decision} view=${view} legal=${legal} send=${send} />
     <footer><button class="secondary" onClick=${onFold}>Xem bàn cờ (Esc)</button></footer>
   </div></div>`
-}
-
-/** A folded dialog, or someone else's decision: who the game waits on and why. */
-export function DecisionBar({ decision, mine, onOpen }: { decision: Decision; mine: boolean; onOpen?: () => void }) {
-  return html`<div class=${`decisionbar${mine ? ' mine' : ''}`} role="status">
-    <${FactionChip} f=${decision.player as FactionId} /> <span>${mine ? 'Bạn cần quyết định: ' : 'Đang chờ: '}${decision.title}</span> <small class="rule">${decision.rule}</small>
-    ${onOpen && html`<button onClick=${onOpen}>Mở lại</button>`}</div>`
 }

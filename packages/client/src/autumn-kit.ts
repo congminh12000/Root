@@ -40,7 +40,7 @@ function AutumnKit() {
   return html`<main class="lake-page">
     <header class="lake-heading"><div><p class="lake-eyebrow">XƯỞNG BẢN ĐỒ · 02</p><h1>Autumn <span>Rừng mùa thu</span></h1>
       <p>Bản dựng chờ duyệt · ${AUTUMN.clearings.length} clearing · ${PLOTS.length} slot · ${PLOTS.filter(p => p.ruin).length} Ruin · ${AUTUMN.paths.length} đường, đúng dữ liệu game</p></div>
-      <nav aria-label="Trang xem thử"><a href="./">Sảnh</a> · <a href="./lake-kit.html">Lake</a> · <a href="./board-kit.html">Bàn hiện tại</a> · <a href="./ui-kit.html">UI kit</a></nav></header>
+      <nav aria-label="Trang xem thử"><a href="./">Sảnh</a> · <a href="./lake-kit.html">Lake</a> · <a href="./map-kit.html">Map trong trận</a> · <a href="./map-kit.html?map=classic">Bàn cổ điển</a> · <a href="./ui-kit.html">UI kit</a></nav></header>
     <div class="lake-layout"><section class="lake-stage card" aria-label="Bàn Autumn">
       <div class="lake-tools"><button class="secondary" onClick=${() => scene.current?.home()}>Về góc mặc định</button>
         <button class="secondary" onClick=${() => scene.current?.home(true)}>Nhìn từ trên</button>

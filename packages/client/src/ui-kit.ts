@@ -5,11 +5,12 @@ import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, Dice, FactionChip, Icon, SuitPip } from './ui/components.ts'
-import { ActionBar } from './ui/screens/action-bar.ts'
+import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
-import { DecisionBar, DecisionDialog } from './ui/screens/decision.ts'
+import { DecisionDialog } from './ui/screens/decision.ts'
+import { HandStrip, HudFactions, HudStatus } from './ui/screens/hud.ts'
 import type { Decision } from './interaction/decisions.ts'
-import { Hand, Scores } from './ui/screens/hand.ts'
+import { Hand } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
 import { NO_CHANGES } from './net/changes.ts'
 import { ICONS } from './ui/icons.ts'
@@ -34,11 +35,11 @@ const noop = () => {}
 const sample = sampleView('vagabond')
 const seats = (['marquise', 'eyrie', 'alliance', 'vagabond'] as FactionId[]).map((f, i) => ({ faction: f, kind: i ? 'bot' : 'human', name: 'Minh', connected: true }))
 const decisions: [Decision, Action[]][] = [
-  [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true },
+  [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true, clearing: null },
     (['builder', 'charismatic', 'commander', 'despot'] as const).map(leader => ({ type: 'eyrie-choose-leader', payload: { leader } }))],
-  [{ player: 'marquise', kind: 'field-hospital', title: 'Field Hospitals: Marquise de Cat có thể trả một lá cùng chất ô 5 để đưa 2 chiến binh về Keep', rule: '§6.2.3', dialog: true },
+  [{ player: 'marquise', kind: 'field-hospital', title: 'Field Hospitals: Marquise de Cat có thể trả một lá cùng chất ô 5 để đưa 2 chiến binh về Keep', rule: '§6.2.3', dialog: true, clearing: 4 },
     [{ type: 'field-hospital', payload: { card: 'anvil#1' } }, { type: 'field-hospital', payload: { card: 'ambush-bird#1' } }, { type: 'decline-field-hospital', payload: {} }]],
-  [{ player: 'vagabond', kind: 'take-hits', title: 'Vagabond chọn quân chịu 2 hit ở ô 3', rule: '§4.3.6', dialog: true },
+  [{ player: 'vagabond', kind: 'take-hits', title: 'Vagabond chọn quân chịu 2 hit ở ô 3', rule: '§4.3.6', dialog: true, clearing: 2 },
     [{ type: 'take-hits', payload: { remove: { sword: 1, torch: 1 } } }, { type: 'take-hits', payload: { remove: { 'boots:exhausted': 2 } } }]],
 ]
 const crafts = sample.hand.slice(0, 2).map(card => ({ type: 'craft', payload: { card } })) as Action[]
@@ -105,29 +106,30 @@ const Kit = () => html`
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>
 
-  <${Section} title="Thanh trạng thái và thông báo">
-    <header class="bar"><a href="./">← Sảnh</a><span>Trận <b>a1b2c3</b></span><span>Lượt 7 · Daylight · Hành động</span><span>Đang chờ: <${FactionChip} f="eyrie" /></span>
-      <span class="clock"><${Icon} name="clock" /> 1:12</span><span class="clock urgent"><${Icon} name="clock" /> 0:09</span></header>
-    <div class="notice">Máy chủ từ chối: stale-revision</div>
+  <${Section} title="HUD nổi trên map" note="Góc trạng thái (của mình, của người khác), menu, huy hiệu phe, dải bài, chip nhật ký.">
+    <div class="kit-hud">
+      <${HudStatus} view=${{ ...sample, waitingOn: ['marquise'] }} seat="marquise" deadline=${null} notice="Máy chủ từ chối: stale-revision" decision=${null} mine=${false} onReopen=${noop} />
+      <${HudFactions} view=${sample} seats=${seats} seat="marquise" changes=${NO_CHANGES} open="eyrie" onOpen=${noop} />
+      <${HandStrip} view=${sample} legal=${crafts} onOpen=${noop} />
+      <button class="secondary hud-log">Nhật ký · 12</button>
+    </div>
+    <div class="kit-hud short"><${HudStatus} view=${sample} seat="marquise" deadline=${null} notice="" decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} /></div>
+    <div class="kit-row"><span class="clock"><${Icon} name="clock" /> 1:12</span><span class="clock urgent"><${Icon} name="clock" /> 0:09</span></div>
     <${GameResult} view=${{ ...sample, winner: { factions: ['alliance'], reason: 'points' } }} />
     <${GameLog} log=${[{ revision: 3, faction: 'marquise', type: 'move', detail: { from: 0, to: 4, warriors: 2 } }]} selected=${3} onSelect=${noop} />
     <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
     <p class="error">Không tạo được trận</p><//>
 
-  <${Section} title="Thanh hành động" note="Chọn trên bàn cờ: chưa chọn ô, đã chọn ô 1, đã chọn đường ô 1 → ô 5 (chọn số chiến binh).">
-    <div class="kit-grid">
-      ${([{ kind: 'idle' }, { kind: 'at', clearing: 0 }, { kind: 'path', from: 0, to: 4 }] as const).map(stage =>
-        html`<${ActionBar} legal=${legal} stage=${stage} setStage=${noop} onPreview=${noop} send=${noop} />`)}</div><//>
+  <${Section} title="Tất cả lựa chọn" note="Ngăn dự phòng mở từ menu ☰: mọi hành động hợp lệ, gom theo loại.">
+    <div class="kit-grid two"><section class="card"><h3>Tất cả lựa chọn</h3><${FullList} legal=${legal} onPreview=${noop} send=${noop} /></section></div><//>
 
-  <${Section} title="Tay bài và điểm" note="Lá viền vàng là lá có hành động dùng được ngay; bấm để xem chi tiết và hành động. Ván mẫu cố định từ seed.">
-    <div class="kit-grid two"><${Hand} view=${sample} seat="vagabond" legal=${crafts} /><${Scores} view=${sample} seats=${seats} changes=${NO_CHANGES} /></div><//>
+  <${Section} title="Tay bài" note="Lá viền vàng là lá có hành động dùng được ngay; bấm để xem chi tiết và hành động. Ván mẫu cố định từ seed.">
+    <div class="kit-grid two"><${Hand} view=${sample} seat="vagabond" legal=${crafts} /></div><//>
 
   <${Section} title="Bảng phe" note="Mỗi tab một phe, lấy số từ game-data và view; tab Chung là kho item, quest, deck.">
     <div class="kit-grid two">${(['marquise', 'eyrie', 'alliance', 'vagabond', 'shared'] as const).map(t => html`<${FactionBoards} view=${sample} seat="vagabond" initial=${t} />`)}</div><//>
 
-  <${Section} title="Quyết định" note="Hộp quyết định (ở trận thật nó nổi giữa màn, Esc thu lại), và dải thông báo khi đã thu lại hoặc khi người khác đang quyết định.">
-    <${DecisionBar} decision=${decisions[1]![0]} mine=${true} onOpen=${noop} />
-    <${DecisionBar} decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} />
+  <${Section} title="Quyết định" note="Hộp quyết định không gắn ô (ở trận thật nó nổi giữa màn, Esc thu lại; gập lại thì góc trạng thái có nút mở lại).">
     ${decisions.map(([d, l]) => html`<div class="kit-dialog"><${DecisionDialog} decision=${d} view=${sample} legal=${l} send=${noop} onFold=${noop} /></div>`)}<//>
 
   <${Section} title="Bảng">

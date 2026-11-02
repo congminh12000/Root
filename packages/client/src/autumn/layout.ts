@@ -61,6 +61,8 @@ export const CLIFFS: Point[][] = [
 export const ITEM_ROW_Y = [.03, .068] as const
 export const ITEM_X0 = .225, ITEM_STEP = .036
 export const SCORE_Y = .978
+/** Space `n` (0–30) of the printed score track, in map coordinates. */
+export const scoreSpace = (n: number): Point => [.035 + n * .031, SCORE_Y]
 
 // ── Game-data: clearings, slots, ruins, paths ──────────────────────────────────────────────────────────────
 const SUPPLY_ORDER: ItemType[][] = [['bag', 'boots', 'crossbow', 'sword', 'tea', 'coin'], ['bag', 'boots', 'hammer', 'sword', 'tea', 'coin']]

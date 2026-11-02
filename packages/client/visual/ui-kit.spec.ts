@@ -15,14 +15,11 @@ for (const [width, height] of [[1440, 900], [1280, 800]] as const) {
   })
 }
 
-test('quick guide opens with keyboard and results keep board access', async ({ page }) => {
+test('quick guide explains map controls and results keep board access', async ({ page }) => {
   await page.goto('/ui-kit.html')
   const guide = page.locator('.guide')
-  await expect(guide).not.toHaveAttribute('open', '')
-  await guide.locator('summary').focus()
-  await page.keyboard.press('Enter')
-  await expect(guide).toHaveAttribute('open', '')
-  await expect(guide).toContainText('chọn ô đi, ô đến')
+  await expect(guide).toContainText('kéo quân từ ô này sang ô khác')
+  await expect(guide).toContainText('chụm hai ngón')
   await expect(page.getByRole('region', { name: 'Kết quả trận' })).toContainText('Thắng bằng điểm')
   await expect(page.locator('.log-entry button')).toHaveAttribute('aria-pressed', 'true')
 })

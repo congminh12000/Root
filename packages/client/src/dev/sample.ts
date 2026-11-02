@@ -1,7 +1,7 @@
 import { applyCommand, createGame, currentActor, legalActions, seededRng, viewFor, type FactionId, type GameState } from '@root/game-engine'
 
 /**
- * A fixed mid-game position from seeded random play, for board-kit.html and ui-kit.html. It leans towards building
+ * A fixed mid-game position from seeded random play, for ui-kit.html and map-kit.html (the seed name is historical; changing it changes the sample). It leans towards building
  * and moving so every kind of piece shows. Never used in a real game.
  */
 export function sampleGame(turns = 9): GameState {
