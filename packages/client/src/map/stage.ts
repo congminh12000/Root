@@ -39,6 +39,10 @@ export interface MapHandlers {
   drag?(from: number, to: number): void
   /** While dragging: the clearing under the pointer, or null. */
   dragOver?(from: number, to: number | null): void
+  /** Mouse resting over a clearing (null when it leaves every clearing). */
+  hover?(clearing: number | null): void
+  /** Touch held still on a clearing for half a second; the following release does not pick. */
+  hold?(clearing: number): void
 }
 
 export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandlers): MapStage {
@@ -114,8 +118,10 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   // Compile every shader off the main thread first (KHR_parallel_shader_compile where the browser has it), so opening
   // a game never freezes the page; the first frame follows as soon as the programs are ready.
   // Then decoration arrives one task per frame, each compiled the same way before it shows.
+  // A game update can swap the pieces while programs compile; that only means the next frame compiles what is left.
+  const compile = async () => { try { await renderer.compileAsync(scene, camera) } catch { /* scene changed mid-compile */ } }
   void (async () => {
-    await renderer.compileAsync(scene, camera)
+    await compile()
     if (disposed) return
     performance.measure('map:compile', 'map:mount-start')
     ready = true
@@ -125,7 +131,7 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
       await new Promise(r => setTimeout(r, 0))
       if (disposed) return
       task()
-      await renderer.compileAsync(scene, camera)
+      await compile()
       if (disposed) return
       draw()
     }
@@ -146,9 +152,13 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     return hit ? hit.object.userData.clearing as number : null
   }
   let draggable = new Set<number>(), dragging: { from: number; over: number | null; id: number } | null = null
-  let down: [number, number] | null = null
+  let down: [number, number] | null = null, holdTimer = 0, held = false, hovered: number | null = null, lastHover = 0
   const press = (e: PointerEvent) => {
-    down = [e.clientX, e.clientY]
+    down = [e.clientX, e.clientY]; held = false; clearTimeout(holdTimer)
+    if (e.pointerType !== 'mouse' && handlers.hold) {
+      const c = clearingAt(e)
+      if (c !== null) holdTimer = window.setTimeout(() => { if (down) { held = true; handlers.hold!(c) } }, 500)
+    }
     if (e.button !== 0 || !handlers.drag) return
     const from = clearingAt(e)
     if (from === null || !draggable.has(from)) return
@@ -157,13 +167,20 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     renderer.domElement.setPointerCapture(e.pointerId)
   }
   const move = (e: PointerEvent) => {
+    if (down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) clearTimeout(holdTimer)
+    if (e.pointerType === 'mouse' && e.buttons === 0 && handlers.hover && e.timeStamp - lastHover > 60) {
+      lastHover = e.timeStamp
+      const c = clearingAt(e)
+      if (c !== hovered) { hovered = c; handlers.hover(c) }
+    }
     if (!dragging || e.pointerId !== dragging.id || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) < 6) return
     const over = clearingAt(e), next = over === dragging.from ? null : over
     if (next !== dragging.over) { dragging.over = next; handlers.dragOver?.(dragging.from, next) }
   }
   const release = (e: PointerEvent) => {
     const moved = !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6
-    down = null
+    down = null; clearTimeout(holdTimer)
+    if (held) { held = false; return }
     if (dragging) {
       const d = dragging; dragging = null; rig.controls.enabled = true
       if (moved) {
@@ -180,6 +197,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
   renderer.domElement.addEventListener('pointerdown', press, { capture: true })
   renderer.domElement.addEventListener('pointermove', move)
   renderer.domElement.addEventListener('pointerup', release)
+  const leave = () => { if (hovered !== null) { hovered = null; handlers.hover?.(null) } }
+  renderer.domElement.addEventListener('pointerleave', leave)
   const projected = new THREE.Vector3()
 
   return {
@@ -219,7 +238,8 @@ export function mountMap(host: HTMLElement, theme: MapTheme, handlers: MapHandle
     dispose() {
       disposed = true; cancelAnimationFrame(frame); later.forEach(clearTimeout); observer.disconnect(); rig.dispose()
       renderer.domElement.removeEventListener('pointerdown', press, { capture: true }); renderer.domElement.removeEventListener('pointermove', move)
-      renderer.domElement.removeEventListener('pointerup', release); viewListeners.clear()
+      renderer.domElement.removeEventListener('pointerup', release); renderer.domElement.removeEventListener('pointerleave', leave)
+      clearTimeout(holdTimer); viewListeners.clear()
       if (pieces) disposePieces(pieces)
       built.dispose(); renderer.dispose(); renderer.domElement.remove()
     },

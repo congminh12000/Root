@@ -1,11 +1,13 @@
 import { AUTUMN } from '@root/game-data'
-import type { Action, PlayerView } from '@root/game-engine'
+import type { Action, LastRoll, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { useEffect, useState } from 'preact/hooks'
 import { clearingsOf, describe, GROUP } from '../../describe.ts'
 import { generalActions, IDLE, viewOf, warriorCounts, type Stage } from '../../interaction/select.ts'
 import { SUIT_NAME } from '../../names.ts'
-import { FactionChip, SuitPip } from '../components.ts'
+import type { Changes } from '../../net/changes.ts'
+import { Dice, FactionChip, SuitPip } from '../components.ts'
+import { ClearingInfo } from './clearing-info.ts'
 import type { Project } from './map-view.ts'
 
 /**
@@ -100,4 +102,29 @@ export function MapOverlay({ project, view, legal, stage, setStage, send, onPrev
     <${Anchors} project=${project} clearings=${[...new Set([...b.targets, ...b.selected])]} selected=${b.selected} onPick=${onPick} />
     <${ClearingMenu} project=${project} view=${view} legal=${legal} stage=${stage} setStage=${setStage} send=${send} onPreview=${onPreview} />
     ${bubble && html`<${ActionBubble} legal=${legal} send=${send} onPreview=${onPreview} />`}`
+}
+
+/** The latest battle roll, at the clearing it was rolled in, for a few seconds. */
+export function MapDice({ project, changes, below }: { project: Project; changes: Changes; below?: number | null }) {
+  const [roll, setRoll] = useState<LastRoll | null>(null)
+  useEffect(() => {
+    if (!changes.roll) return
+    setRoll(changes.roll)
+    const id = setTimeout(() => setRoll(null), 3500)
+    return () => clearTimeout(id)
+  }, [changes.seq])
+  const at = roll && project(roll.clearing)
+  if (!roll || !at) return null
+  // Keyed by revision so two rolls in a row both replay their entry animation.
+  // Below the clearing when a decision callout already sits above it.
+  return html`<div class=${`dice map-dice${below === roll.clearing ? ' below' : ''}`} key=${roll.revision} role="status" style=${{ left: `${Math.min(Math.max(at[0], 200), innerWidth - 200)}px`, top: `${at[1]}px` }}><${Dice} roll=${roll} /></div>`
+}
+
+/** What is in a clearing, next to it on the map (hover with a mouse, hold with a finger). */
+export function MapInfo({ project, view, clearing, onClose }: { project: Project; view: PlayerView; clearing: number; onClose: () => void }) {
+  const at = project(clearing)
+  if (!at) return null
+  const right = at[0] < innerWidth - 360
+  return html`<div class=${`map-info${right ? '' : ' left'}`} style=${{ left: `${at[0]}px`, top: `${Math.min(Math.max(at[1], 250), innerHeight - 160)}px` }}>
+    <${ClearingInfo} view=${view} clearing=${clearing} onClose=${onClose} /></div>`
 }

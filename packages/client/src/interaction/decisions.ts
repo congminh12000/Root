@@ -10,6 +10,8 @@ export interface Decision {
   rule: string
   /** Shown as a dialog to the deciding player: every option is a button, nothing to pick on the board. */
   dialog: boolean
+  /** The clearing it happens in (a battle, a removal), so the map can show it there; none for setup choices and discards. */
+  clearing: number | null
 }
 
 const at = (c: number) => `ô ${c + 1}`
@@ -29,7 +31,8 @@ export function decisionOf(v: PlayerView, legal: Action[]): Decision | null {
   if (!player || !p) return null
   const name = FACTION_NAME[player]
   const dialog = legal.length > 0 && legal.every(a => anchorOf(a).kind === 'none')
-  const d = (kind: string, title: string, rule: string): Decision => ({ player, kind, title, rule, dialog })
+  const clearing = 'clearing' in p ? p.clearing : v.battle ? v.battle.clearing : null
+  const d = (kind: string, title: string, rule: string): Decision => ({ player, kind, title, rule, dialog, clearing })
   if (legal.some(a => a.type === 'order-effects')) {
     return d('order-effects', `${name} chọn hiệu ứng nào xử lý trước`, '§1.1.3, §4.3.6')
   }

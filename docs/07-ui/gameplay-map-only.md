@@ -19,7 +19,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G0 | Merge Autumn (PR #15), sửa ảnh gốc ui-kit (PR #16) | Xong |
 | G1 | Stage, camera có giới hạn, apron; màn trận full màn hình với quân thật | Xong, chờ duyệt |
 | G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | Xong |
-| G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | |
+| G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | Xong |
 | G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu | |
 | G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | |
@@ -85,3 +85,17 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 - Phím tắt chuyển từ `ActionBar` sang menu tại ô để không gửi hai lần.
 
 **Kiểm chứng:** chơi Marquise trên server thử chỉ bằng map (ngăn bên đóng): tới lượt 22 với 12 lần kéo quân (8 lần qua chip số quân + Enter), 11 hành động tại ô, 9 hành động chung, 13 hộp quyết định; không lỗi, không bị server từ chối.
+
+## G3: quyết định, thông tin và xúc xắc tại ô
+
+- **`interaction/decisions.ts`:** `Decision.clearing` là ô nơi quyết định diễn ra, lấy từ pending hoặc trận đánh đang diễn ra. Test: Ambush, chọn lá battle, chịu hit, Field Hospitals, Outrage luôn có ô; chọn leader thì không.
+- **`DecisionCallout`** (`decision.ts`): cùng nội dung với hộp quyết định (tiêu đề, điều khoản, dòng battle, lá bài, nút), nhưng neo tại ô và không che map. Hộp giữa màn chỉ còn cho lựa chọn không gắn ô: leader, nhân vật, rừng cho pawn, bỏ bài.
+- **Thông tin ô:**
+  - Rê chuột lên ô khoảng 0,45 giây, hoặc nhấn giữ 0,5 giây trên cảm ứng; khung hiện cạnh ô.
+  - Nhấn giữ thì không tính là chạm chọn.
+- **Xúc xắc** hiện tại ô đang đánh; nếu ô đó đang có khung quyết định thì xúc xắc nằm dưới ô.
+- **Sửa lỗi:** `compileAsync` có thể báo lỗi khi bản cập nhật ván thay quân giữa lúc biên dịch. Lỗi được bắt lại; khung kế tiếp tự biên dịch phần còn thiếu.
+
+**Kiểm chứng:**
+- Marquise, chỉ dùng map, tới lượt 30: Outrage và Field Hospitals ×4 hiện tại ô; bỏ bài ×3 ở giữa màn; rê chuột hiện thông tin ô; không lỗi.
+- Vagabond: chọn nhân vật và rừng ở giữa màn.

@@ -34,11 +34,11 @@ const noop = () => {}
 const sample = sampleView('vagabond')
 const seats = (['marquise', 'eyrie', 'alliance', 'vagabond'] as FactionId[]).map((f, i) => ({ faction: f, kind: i ? 'bot' : 'human', name: 'Minh', connected: true }))
 const decisions: [Decision, Action[]][] = [
-  [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true },
+  [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true, clearing: null },
     (['builder', 'charismatic', 'commander', 'despot'] as const).map(leader => ({ type: 'eyrie-choose-leader', payload: { leader } }))],
-  [{ player: 'marquise', kind: 'field-hospital', title: 'Field Hospitals: Marquise de Cat có thể trả một lá cùng chất ô 5 để đưa 2 chiến binh về Keep', rule: '§6.2.3', dialog: true },
+  [{ player: 'marquise', kind: 'field-hospital', title: 'Field Hospitals: Marquise de Cat có thể trả một lá cùng chất ô 5 để đưa 2 chiến binh về Keep', rule: '§6.2.3', dialog: true, clearing: 4 },
     [{ type: 'field-hospital', payload: { card: 'anvil#1' } }, { type: 'field-hospital', payload: { card: 'ambush-bird#1' } }, { type: 'decline-field-hospital', payload: {} }]],
-  [{ player: 'vagabond', kind: 'take-hits', title: 'Vagabond chọn quân chịu 2 hit ở ô 3', rule: '§4.3.6', dialog: true },
+  [{ player: 'vagabond', kind: 'take-hits', title: 'Vagabond chọn quân chịu 2 hit ở ô 3', rule: '§4.3.6', dialog: true, clearing: 2 },
     [{ type: 'take-hits', payload: { remove: { sword: 1, torch: 1 } } }, { type: 'take-hits', payload: { remove: { 'boots:exhausted': 2 } } }]],
 ]
 const crafts = sample.hand.slice(0, 2).map(card => ({ type: 'craft', payload: { card } })) as Action[]

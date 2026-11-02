@@ -13,13 +13,15 @@ export type Project = (clearing: number) => [number, number] | null
  * an `overlay` of menus anchored to clearings that follows the camera. Each update's animations run once
  * (`changes.seq`); re-renders for a new highlight do not replay them.
  */
-export function MapView({ view, highlight, targets, draggable, changes, onPick, onDrag, onDragOver, cameraHome, overlay }: {
+export function MapView({ view, highlight, targets, draggable, changes, onPick, onDrag, onDragOver, onHover, onHold, cameraHome, overlay }: {
   view: PlayerView; highlight: number[]; targets: number[]; changes: Changes
   /** Clearings pieces can be dragged from. */
   draggable: number[]
   onPick: (c: number) => void
   onDrag: (from: number, to: number) => void
   onDragOver: (from: number, to: number | null) => void
+  onHover: (c: number | null) => void
+  onHold: (c: number) => void
   /** Bump it to send the camera back to the default view. */
   cameraHome: number
   overlay: (project: Project) => ComponentChildren
@@ -27,8 +29,8 @@ export function MapView({ view, highlight, targets, draggable, changes, onPick, 
   const host = useRef<HTMLDivElement>(null)
   const stage = useRef<MapStage | null>(null)
   const shown = useRef(0)
-  const handlers = useRef({ onPick, onDrag, onDragOver })
-  handlers.current = { onPick, onDrag, onDragOver }
+  const handlers = useRef({ onPick, onDrag, onDragOver, onHover, onHold })
+  handlers.current = { onPick, onDrag, onDragOver, onHover, onHold }
   const latest = useRef({ view, highlight, targets, draggable })
   latest.current = { view, highlight, targets, draggable }
   const [failed, setFailed] = useState(false)
@@ -44,6 +46,8 @@ export function MapView({ view, highlight, targets, draggable, changes, onPick, 
         pick: c => handlers.current.onPick(c),
         drag: (a, b) => handlers.current.onDrag(a, b),
         dragOver: (a, b) => handlers.current.onDragOver(a, b),
+        hover: c => handlers.current.onHover(c),
+        hold: c => handlers.current.onHold(c),
       })
       stage.current = s
       s.update(latest.current.view, latest.current.highlight, [], [], latest.current.targets)
