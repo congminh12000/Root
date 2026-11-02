@@ -42,6 +42,8 @@ Màu lấy từ ảnh tham khảo. Mỗi màu có tên theo vai trò, không the
 
 **Icon** (`ui/icons.ts`): phe là đầu mèo, đầu chim, lá cờ khởi nghĩa (Alliance; không dùng tai thỏ để khỏi trùng icon chất thỏ), người áo choàng; chất là mặt cáo, thỏ, chuột, chim. Mảng phẳng màu `--icon-fill` cộng viền mực.
 
+**Huy hiệu chất** (`ui/suit-badge.ts`, `SuitBadge`): đĩa màu chất trong vòng viền nhạt cùng màu, mép mực mảnh; con vật là bóng mực đặc, mắt khoét lộ màu đĩa, thu nhỏ để chừa khoảng trống tới viền. Cáo, thỏ, chuột là chất của ô (§2.2); chim là mặt chim nhìn thẳng, chỉ có trên lá (wild, §2.2.2). Tự vẽ, không đồ lại dấu chất in của Leder. Dùng ở dải đầu và chi phí lá bài, chip lá, pip chất, nhãn ô trên cả hai bản đồ; một chuỗi SVG cho cả HTML và sprite canvas.
+
 Màu cho trạng thái giao diện: chọn được = `autumn-gold`; đang chọn = viền `ink` dày cộng ánh `autumn-gold`; không hợp lệ = giảm độ bão hòa 60%; lỗi = `roof-red`.
 
 ## 3. Chất liệu và hình
@@ -87,7 +89,7 @@ Mọi vật 3D lấy vật liệu theo **vai trò** từ `board/look.ts` (`mat(r
 - **Thẻ / bảng:** giấy: nền `paper-raised` phủ thớ giấy (`--grain-paper`, nhiễu SVG sinh trong CSS), viền 2 px `ink`, bo góc 10 px, bóng mềm như giấy đặt trên bàn (`shadow.card`). Ngăn kéo và hộp quyết định có viền gỗ như khay.
 - **Nút chính:** gỗ có vân (`--grain-wood` trên chuyển sắc `wood-light` → `wood`), chữ `paper`, viền `ink`; hover sáng hơn một nấc; bấm lún 2 px. Nút phụ là giấy. Nút có kiểu riêng (neo ô, huy hiệu, dải bài) giữ kiểu của nó.
 - **Lá bài** (`ui/card-face.ts`): bố cục theo lá in, tỉ lệ 63:88, hai cỡ (`mini` 92 px cho tay bài và hộp quyết định, `full` 260 px cho khung chi tiết).
-  - **Dải đầu màu chất:** huy hiệu tròn viền mực có icon chất bên trái; chi phí chế tạo bên phải, mỗi pip là ô gỗ có icon chất, `?` ba màu là bất kỳ. Quest để hai item yêu cầu ở chỗ này.
+  - **Dải đầu màu chất:** huy hiệu chất bên trái; chi phí chế tạo bên phải, mỗi chi phí là một huy hiệu chất nhỏ, `?` ba màu trên ô gỗ là bất kỳ. Quest để hai item yêu cầu ở chỗ này.
   - **Vùng tranh** (`ui/card-art.ts`): cảnh tự sinh bằng code, cùng nét mực và màu phẳng với bàn cờ, không dùng art chính thức. Nền theo chất (cáo: nông trại, thỏ: đồi và hang, chuột: ruộng và cối xay, chim: tán cây và trời). Vật chính theo loại: item trên bục, mắt trong bụi cho ambush, cờ phe có vương miện cho dominance, biểu tượng riêng (`MOTIF`) cho lá lâu dài và dùng ngay, bảng ghim hai item cho quest. Seed theo id lá; bản sao chẵn lật cảnh.
   - **Tấm gỗ** góc dưới trái: item và điểm, hoặc biểu tượng loại lá (lá = lâu dài, lửa = dùng ngay, mắt = ambush, vương miện = dominance, sao + lá = quest).
   - **Khung giấy** góc vát: tên gốc tiếng Anh bằng Pangolin; cỡ `mini` thêm một dòng loại lá, cỡ `full` thêm hiệu ứng tiếng Việt kèm điều khoản (`ui/card-text.ts`). Câu tiếng Anh in gốc xem trong "Bản in tiếng Anh" của khung chi tiết.
