@@ -88,7 +88,7 @@ export const grain = {
   wood: noiseUrl('.012 .35', 3, [.25, .15, .08], .45, 260),
 }
 /** Durations in ms (style-guide §7). */
-export const motion = { dialog: 180, dice: 700, travel: 750, pop: 380, pulse: 1200, bump: 600 } as const
+export const motion = { dialog: 180, card: 240, dice: 700, travel: 750, pop: 380, pulse: 1200, bump: 600 } as const
 
 /** `#rrggbb` at an opacity, as an rgba() string. */
 export function alpha(hex: string, a: number): string {

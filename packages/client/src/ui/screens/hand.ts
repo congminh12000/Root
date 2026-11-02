@@ -9,9 +9,9 @@ const Chip = ({ f }: { f: FactionId }) => html`<${FactionChip} f=${f} />`
 export function Hand({ view: v, seat, legal }: { view: PlayerView; seat: FactionId; legal: Action[] }) {
   const usable = usableCards(legal, v.hand)
   const mid = (v.hand.length - 1) / 2
-  return html`<section class="card hand"><h3>Bài của bạn <small class="note">${v.hand.length} lá${usable.size ? ` · ${usable.size} lá dùng được ngay` : ''}</small></h3>
-    ${v.hand.length ? html`<div class="fan">${v.hand.map((c, i) => html`<${MiniCard} key=${c} card=${c} usable=${usable.has(c)}
-      style=${{ '--turn': `${(i - mid) * 3.5}deg`, '--drop': `${Math.abs(i - mid) * 3}px` }} />`)}</div>` : html`<p class="note">Không có lá nào.</p>`}
+  return html`<section class="card hand" aria-label="Bài của bạn"><h3>Bài của bạn <small class="note">${v.hand.length} lá${usable.size ? ` · ${usable.size} lá dùng được ngay` : ''}</small></h3>
+    ${v.hand.length ? html`<div class="fan" tabindex="0" role="group" aria-label="Các lá bài trên tay — cuộn ngang để xem thêm">${v.hand.map((c, i) => html`<span class="hand-slot" key=${c}><${MiniCard} card=${c} usable=${usable.has(c)}
+      style=${{ '--turn': `${Math.max(-3, Math.min(3, i - mid)) * 2}deg`, '--drop': `${Math.min(3, Math.abs(i - mid)) * 2}px` }} /></span>`)}</div>` : html`<p class="note">Không có lá nào.</p>`}
     ${v.playAreas[seat]?.length ? html`<div>Play area: ${v.playAreas[seat]!.map(c => html`<${CardChip} card=${c} />`)}</div>` : null}
     ${v.revealed.map(r => html`<div>Bài của <${Chip} f=${r.of} />: ${r.cards.length ? r.cards.map(c => html`<${CardChip} card=${c} />`) : '—'}</div>`)}</section>`
 }

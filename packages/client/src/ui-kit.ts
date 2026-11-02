@@ -4,7 +4,7 @@ import type { FactionId, LastRoll } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
-import { CardChip, CardDetail, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
+import { CardChip, CardDetail, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
 import { QuestFace } from './ui/card-face.ts'
 import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
@@ -128,7 +128,7 @@ const Kit = () => html`
     <div class="kit-hud">
       <${HudStatus} view=${{ ...sample, waitingOn: ['marquise'] }} seat="marquise" deadline=${null} notice="Máy chủ từ chối: stale-revision" decision=${null} mine=${false} onReopen=${noop} />
       <${HudFactions} view=${sample} seats=${seats} seat="marquise" changes=${NO_CHANGES} open="eyrie" onOpen=${noop} />
-      <${HandStrip} view=${sample} legal=${crafts} onOpen=${noop} />
+      <${HandStrip} view=${sample} legal=${crafts} seat="vagabond" />
       <button class="secondary hud-log">Nhật ký · 12</button>
     </div>
     <div class="kit-hud short"><${HudStatus} view=${sample} seat="marquise" deadline=${null} notice="" decision=${{ ...decisions[2]![0], dialog: false }} mine=${false} /></div>
@@ -157,6 +157,6 @@ const Kit = () => html`
 
   <${Section} title="Token khác">
     <p class="note">Khoảng cách ${Object.values(space).join(' / ')} px · bo góc ${Object.values(radius).join(' / ')} px · chuyển động ${Object.entries(motion).map(([k, v]) => `${k} ${v} ms`).join(', ')}</p><//>
-</main>`
+<${CardDetailOverlay} legal=${crafts} send=${noop} /></main>`
 
 render(html`<${Kit} />`, document.getElementById('app')!)

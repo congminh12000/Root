@@ -7,7 +7,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 - **Mọi thao tác diễn ra trên map.**
 
 **Đã chốt:**
-- **Thông tin phụ:** tay bài, bảng phe, nhật ký, đồng hồ là lớp nổi thu gọn được.
+- **Thông tin phụ:** tay bài luôn hiện ở mép dưới; bảng phe và nhật ký mở trong ngăn kéo, đồng hồ nằm ở góc trạng thái.
 - **Chọn map:** người chơi chọn giữa Autumn diorama (UI-7) và bàn cổ điển (UI-3).
 - **Bỏ bàn 2D.**
 - **Thiết bị:** máy tính và tablet cảm ứng ngang hàng.
@@ -20,7 +20,7 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 | G1 | Stage, camera có giới hạn, apron; màn trận full màn hình với quân thật | Xong, chờ duyệt |
 | G2 | Menu tại ô, chọn slot, đi bằng chạm hoặc kéo, chọn số quân, bong bóng hành động chung | Xong |
 | G3 | Callout quyết định gắn ô, thông tin ô bằng nhấn giữ, xúc xắc tại ô | Xong |
-| G4 | HUD nổi (góc trạng thái, menu, ngăn tay bài, bảng phe, nhật ký); bỏ cột bên | Xong |
+| G4 | HUD nổi (góc trạng thái, menu, khay bài luôn hiện, bảng phe, nhật ký); bỏ cột bên | Xong |
 | G5 | Theme bàn cổ điển cài `MapTheme`; chọn map ở sảnh và trong menu  | Xong |
 | G6 | Tablet: kích thước chạm, mức chất lượng, xoay máy | Xong |
 | G7 | Bỏ 2D, dọn code cũ, cập nhật style guide và checklist | Xong |

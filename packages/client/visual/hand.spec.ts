@@ -1,0 +1,35 @@
+import { expect, test } from '@playwright/test'
+
+for (const width of [1440, 834, 390]) {
+  test(`hand is visible and directly usable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/ui-kit.html')
+    const hand = page.locator('.hud-hand')
+    await hand.scrollIntoViewIfNeeded()
+    const cards = hand.locator('.minicard')
+    expect(await cards.count()).toBeGreaterThan(0)
+    const bounds = await hand.boundingBox()
+    expect(bounds!.x).toBeGreaterThanOrEqual(0)
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width)
+    await cards.last().scrollIntoViewIfNeeded()
+    await cards.last().click()
+    await expect(page.locator('.carddetail:not(.inline)')).toBeVisible()
+    await page.locator('.carddetail:not(.inline)').evaluate(async el => {
+      await Promise.all(el.getAnimations().map(animation => animation.finished))
+    })
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.carddetail:not(.inline)')).toHaveCount(0)
+    await expect(hand).toBeVisible()
+    await cards.first().scrollIntoViewIfNeeded()
+    const before = await cards.first().boundingBox()
+    await page.mouse.move(before!.x + before!.width / 2, before!.y + before!.height / 2)
+    await expect(cards.first()).toHaveCSS('transform', 'none')
+    await expect.poll(() => cards.first().boundingBox()).toEqual(before)
+    await hand.screenshot({ path: `test-results/hand-${width}.png` })
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await expect(cards.first().locator('.cardface')).toHaveCSS('transform', 'none')
+    await cards.first().focus()
+    await page.keyboard.press('Enter')
+    await expect(page.locator('.carddetail:not(.inline)')).toBeVisible()
+  })
+}

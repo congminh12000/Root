@@ -232,12 +232,30 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .hud-faction small { font-size: 11px; color: var(--ink-soft); }
 .hud-faction.turn { outline: 3px solid var(--autumn-gold); outline-offset: 1px; }
 .hud-faction[aria-pressed="true"] { background: var(--autumn-gold); }
-.hud-hand { bottom: var(--sp-3); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--sp-2); min-height: 48px; padding: 4px var(--sp-4);
-  background: var(--paper-a96); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); touch-action: none; }
-.hud-hand.usable { border-color: var(--autumn-gold); }
-.hud-hand .cards { display: flex; }
-.hud-hand .cards i { display: block; width: 16px; height: 24px; margin-left: -8px; background: var(--paper-raised); border: 1.5px solid var(--ink); border-radius: 3px; transform: rotate(var(--turn)); }
-.hud-hand .gold { color: var(--wood); font-weight: 700; }
+.hud-hand { bottom: var(--sp-3); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 240px);
+  background: var(--paper-a96); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); }
+.hud-hand .hand { margin: 0; padding: 8px 12px; border: 0; background: none; box-shadow: none; }
+.hud-hand h3 { margin: 0; font-size: var(--fs-sm); }
+.hand .fan { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; gap: 8px; padding: 26px 12px 12px; }
+.hand-slot { display: block; flex: none; position: relative; }
+.hand-slot .minicard { margin: 0; transform: none; }
+.hand-slot .cardface { transform: translateY(var(--drop)) rotate(var(--turn)); transform-origin: 50% 100%;
+  transition: transform var(--motion-card) cubic-bezier(.2,.7,.2,1); }
+.hand-slot .minicard.usable { box-shadow: none; }
+.hand-slot .minicard.usable .cardface { box-shadow: 0 0 0 3px var(--autumn-gold); }
+.hand-slot:focus-within { z-index: 2; }
+.hand-slot .minicard:focus-visible .cardface { transform: translateY(-12px) rotate(0deg) scale(1.06); }
+@media (hover: hover) and (pointer: fine) {
+  .hand-slot:hover { z-index: 2; }
+  .hand-slot:hover .cardface { transform: translateY(-12px) rotate(0deg) scale(1.06); }
+}
+@media (max-width: 600px) {
+  .hud-hand { bottom: 64px; max-width: calc(100% - 24px); }
+  .hud-hand .hand { padding: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hand-slot .cardface { transition: none; transform: none !important; }
+}
 .hud-log { bottom: var(--sp-3); left: var(--sp-3); min-height: 44px; box-shadow: var(--shadow-card); }
 .hud-drawer { z-index: 9; overflow: auto; overscroll-behavior: contain; background: var(--paper-a96); border: 2px solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-raised);
   padding: var(--sp-2); animation: rise var(--motion-dialog) ease-out; }
