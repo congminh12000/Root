@@ -41,7 +41,7 @@ npm run typecheck && npm test && npm run audit:rules
 
 - `main` đã gồm mọi việc trên, cộng PR #17 (gameplay chỉ có map, G0–G7), #18 (mặt lá bài) và #19 (đồ hoạ bàn cờ mô hình thật, R0–R7).
 - PR #21 (nhãn bìa và tự hạ chất lượng theo FPS) đã merge theo yêu cầu người quản lý.
-- Nhánh `feat/visible-hand-cards`: tay bài luôn hiện ở mép dưới, cuộn ngang khi dài; hover/focus nâng mặt lá trong 240 ms, vùng bấm cố định và hỗ trợ giảm chuyển động. Đã qua typecheck, test, audit luật, build và kiểm tra trình duyệt 1440/834/390 px. Hai ảnh UI kit cập nhật do thay bố cục tay bài và hướng dẫn. Chưa merge.
+- Nhánh `feat/visible-hand-cards`: tay bài không khung/tiêu đề, 1/3 lá nằm dưới mép màn hình; cuộn ngang khi dài, hover/focus nâng riêng lá đó trong 240 ms. Vùng bấm cố định; giảm chuyển động chuyển vị trí tức thì. Đã qua typecheck, test, audit luật, build và kiểm tra trình duyệt 1440/834/390 px. Hai ảnh UI kit cập nhật do thay bố cục tay bài và hướng dẫn. Chưa merge.
 - Mặt lá bài: 54 lá và 15 quest vẽ bằng code (`packages/client/src/ui/card-face.ts`, `card-art.ts`, `card-text.ts`). Tên lá giữ tiếng Anh, chữ hiệu ứng tiếng Việt kèm số điều khoản.
 - Đồ hoạ: vật liệu theo vai trò ở `board/look.ts`, kết cấu sinh trong worker (`board/texture-gen.ts`), ánh sáng `board/light.ts`, hậu kỳ `map/post.ts`, mức chất lượng `map/quality.ts` (`full`/`tablet`/`low`, ép bằng `?quality=`).
 

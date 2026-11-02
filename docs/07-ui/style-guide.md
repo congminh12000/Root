@@ -101,7 +101,7 @@ Màn trận chỉ có map, full màn hình (`gameplay-map-only.md`). Mọi thôn
 
 - **Vị trí cố định:** trạng thái ở góc trên trái, menu ☰ góc trên phải, huy hiệu phe dọc mép phải, dải "Bài của bạn" giữa mép dưới, chip nhật ký góc dưới trái. Bong bóng hành động chung ở giữa mép trên (màn hẹp: ngay dưới ô trạng thái).
 - **Vẻ ngoài:** nền `paper-a96`, viền 2 px `ink`, bo `r-md`, bóng `shadow-card`; ngăn đang mở dùng `shadow-raised`. Huy hiệu phe có viền trái màu phe và icon phe (không chỉ màu); phe đang tới lượt có viền `autumn-gold`.
-- **Tay bài luôn hiện:** khay bài ở mép dưới, bấm từng lá để xem chi tiết/hành động; tay bài dài cuộn ngang. Hover nâng mặt lá trong 240 ms trên vùng bấm cố định; bàn phím có cùng phản hồi, giảm chuyển động thì tắt nâng lá.
+- **Tay bài luôn hiện:** chỉ các lá bài ở mép dưới, không khung hay tiêu đề; khoảng 1/3 chiều cao lá nằm ngoài màn hình. Hover/focus đưa riêng lá đó lên đủ mặt lá. Bấm từng lá để xem chi tiết/hành động; tay bài dài cuộn ngang. Hover nâng mặt lá trong 240 ms trên vùng bấm cố định; bàn phím có cùng phản hồi, giảm chuyển động thì đổi vị trí tức thì, không chạy transition.
 - **Một ngăn mỗi lúc:** bảng phe / tất cả lựa chọn / hướng dẫn (phải), nhật ký (trái). Chạm ra ngoài hoặc Esc là đóng; chạm nút HUD khác thì chuyển ngăn. Ngăn cao theo nội dung, không phủ hết màn.
 - **Menu và callout gắn ô** (menu tại ô, quyết định, xúc xắc, thông tin ô) bám theo ô khi camera di chuyển, lật xuống dưới ô khi gần mép trên, và được kẹp trong màn hình.
 - **Cảm ứng:** mọi nút ≥ 44 px khi con trỏ là ngón tay; không có thao tác chỉ làm được bằng hover (thông tin ô: rê chuột hoặc nhấn giữ).
