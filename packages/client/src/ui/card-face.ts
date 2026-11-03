@@ -11,8 +11,8 @@ import type { IconName } from './icons.ts'
 /**
  * A card face in the layout of the printed cards (docs/07-ui/style-guide.md §6), drawn in our style: the suit band
  * with its round badge and the crafting cost, a scene in the middle (card-art.ts), a wooden plaque with what the card
- * gives, and a paper box with the name and, at full size, the effect. `mini` is the hand and decision size, `full`
- * the detail panel.
+ * gives, and a paper box with the name and, at full size, the effect. All deck cards show their full effect, including in the hand and decisions.
+ * Quest faces retain their compact variant.
  */
 
 const KIND_NAME: Record<CardDef['kind'], string> = { item: 'item', immediate: 'dùng ngay', persistent: 'lâu dài', ambush: 'ambush', dominance: 'dominance' }
@@ -57,7 +57,8 @@ function AmbushFrame({ d, copy, size }: { d: CardDef; copy: number; size: 'mini'
 const copyOf = (card: string) => Number(card.split('#')[1] ?? 1)
 
 /** A physical card, e.g. "armorers#2". */
-export function CardFace({ card, size }: { card: string; size: 'mini' | 'full' }) {
+export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
+  const size = 'full'
   const d = cardDesign(card)
   if (d.kind === 'ambush') return html`<${AmbushFrame} d=${d} copy=${copyOf(card)} size=${size} />`
   const plaque = d.kind === 'item'

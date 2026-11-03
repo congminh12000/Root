@@ -42,7 +42,7 @@ export function cardText(d: CardDef): string {
  */
 export const ambushText = (d: CardDef) => ({
   where: `Có thể ambush ở ${d.suit === 'bird' ? 'ô bất kỳ' : `ô ${SUIT_NAME[d.suit]}`}.`,
-  effect: `Đầu trận đánh, bên phòng thủ có thể chơi lá này để gây ngay 2 hit, rồi bỏ lá. Bị huỷ nếu bên tấn công cũng chơi một lá ambush khớp ô đó (${KIND_RULE.ambush}).`,
+  effect: `Đầu trận đánh: phòng thủ bỏ lá này, gây ngay 2 hit. Tấn công có thể chặn bằng Ambush khớp ô (${KIND_RULE.ambush}).`,
 })
 
 /** A quest's text (§9.5.5): the two items to exhaust, then points or cards. */
