@@ -5,7 +5,7 @@ import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
-import { CardFace, QuestFace } from './ui/card-face.ts'
+import { QuestFace } from './ui/card-face.ts'
 import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
@@ -111,10 +111,6 @@ const Kit = () => html`
       <${Item} label="dùng được"><${MiniCard} card="tax-collector#1" usable /><//>
       <${Item} label="bản sao 2"><${MiniCard} card="tax-collector#2" /><//>
       <${Item} label="quest"><${QuestFace} quest="fend-off-a-bear-mouse" size="mini" /><//><//><//>
-
-  <${Section} title="Ambush — bốn chất" note="Tranh indie đã duyệt: chim, thỏ, cáo, chuột; cả hai lá chim dùng chung tranh.">
-    <div class="kit-row kit-ambush">${(['bird', 'rabbit', 'fox', 'mouse'] as const).map(suit =>
-      html`<${CardFace} card=${`ambush-${suit}#1`} size="full" />`)}</div><//>
 
   ${([
     ['ambush', 'Bài Ambush'], ['item', 'Bài chế tạo vật phẩm'],

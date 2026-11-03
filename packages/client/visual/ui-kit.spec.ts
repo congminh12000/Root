@@ -42,21 +42,21 @@ test('Ambush paintings load locally with the correct suit and fill the card art'
   const response = page.waitForResponse(r => /ambush-woodland.*\.png/.test(r.url()))
   await page.goto('/ui-kit.html')
   expect((await response).ok()).toBe(true)
-  const paintings = page.locator('.kit-ambush .cf-ambush-art')
-  await expect(paintings).toHaveCount(4)
-  expect(await paintings.evaluateAll(nodes => nodes.map(n => n.getAttribute('data-suit')))).toEqual(['bird', 'rabbit', 'fox', 'mouse'])
+  const paintings = page.locator('.kit-deck .cf-ambush-art')
+  await expect(paintings).toHaveCount(5)
+  expect(await paintings.evaluateAll(nodes => [...new Set(nodes.map(n => n.getAttribute('data-suit')))].sort())).toEqual(['bird', 'fox', 'mouse', 'rabbit'])
   expect(await paintings.evaluateAll(nodes => new Set(nodes.map(n => n.getAttribute('viewBox'))).size)).toBe(4)
+  await page.locator('.kit-deck').first().screenshot({ path: 'test-results/ambush-deck.png' })
   for (const painting of await paintings.all()) {
     const box = await painting.boundingBox()
     const parent = await painting.locator('..').boundingBox()
     expect(box!.height).toBeCloseTo(parent!.height, 0)
   }
-  await page.locator('.kit-ambush').screenshot({ path: 'test-results/ambush-four-suits.png' })
 })
 
 test('card typography hides citations and uses thin borders with regular effect copy', async ({ page }) => {
   await page.goto('/ui-kit.html')
-  const card = page.locator('.kit-ambush .cardface').first()
+  const card = page.locator('.kit-deck .cardface.ambush').first()
   await expect(card).toHaveCSS('border-top-width', '1px')
   await expect(card.locator('.cf-title')).toHaveCSS('font-weight', '400')
   await expect(card.locator('.cf-text p')).toHaveCSS('font-weight', '400')
@@ -64,8 +64,8 @@ test('card typography hides citations and uses thin borders with regular effect 
   await expect(card.locator('.cf-paper-edge')).toBeVisible()
   const title = await card.locator('.cf-title').boundingBox()
   const bounds = await card.boundingBox()
-  expect(title!.y - bounds!.y).toBeGreaterThan(3)
-  expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(8)
+  expect(title!.y - bounds!.y).toBeGreaterThan(bounds!.width * .01)
+  expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(bounds!.width * .025)
 })
 
 test('UI kit groups compact cards and keeps copies together', async ({ page }) => {
@@ -74,8 +74,7 @@ test('UI kit groups compact cards and keeps copies together', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Chi tiết lá bài', exact: true })).toHaveCount(0)
   await expect(page.locator('.kit-copies .cardface')).toHaveCount(54)
   await expect(page.locator('.kit-quests .cardface')).toHaveCount(15)
-  const ambush = await page.locator('.kit-ambush .cardface').evaluateAll(nodes => nodes.map(n => n.getBoundingClientRect().top))
-  expect(new Set(ambush).size).toBe(1)
+  await expect(page.getByRole('heading', { name: 'Ambush — bốn chất', exact: true })).toHaveCount(0)
   for (const group of await page.locator('.kit-copies').all()) {
     const cards = await group.locator('.minicard').evaluateAll(nodes => nodes.map(n => ({
       id: n.getAttribute('data-card')!.split('#')[0], top: n.getBoundingClientRect().top,
@@ -87,6 +86,5 @@ test('UI kit groups compact cards and keeps copies together', async ({ page }) =
   }
   await page.setViewportSize({ width: 390, height: 900 })
   expect(await page.locator('.kit-copies').evaluateAll(nodes => nodes.every(n => n.getBoundingClientRect().right <= 390))).toBe(true)
-  const mobileRows = await page.locator('.kit-ambush .cardface').evaluateAll(nodes => nodes.map(n => n.getBoundingClientRect().top))
-  expect(new Set(mobileRows).size).toBe(2)
+
 })
