@@ -1,7 +1,5 @@
 # Hướng dẫn cho AI coding agent
 
-> Đang tiếp tục dở dang? Đọc [docs/HANDOFF.md](docs/HANDOFF.md) để biết đã xong gì và làm tiếp từ đâu.
-
 Áp dụng cho mọi agent và mọi model (Claude, ChatGPT/Codex, Grok, Gemini…) làm việc trong repo này. Đây là nguồn hướng dẫn duy nhất; `CLAUDE.md` chỉ trỏ về đây. Đọc hết trước khi sửa code gameplay.
 
 ## Mục tiêu
@@ -49,22 +47,15 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 - **Bản cũ** (`backend/`, `web/`, `data/`) chỉ để tham khảo; mô tả ở [docs/LEGACY.md](docs/LEGACY.md). File `.ignore` loại chúng khỏi kết quả tìm kiếm của agent; chỉ mở khi cần đối chiếu. Không tự nâng model neural cũ thành mặc định; chỉ nạp checkpoint PyTorch từ nguồn tin cậy.
 - **Không hardcode đường dẫn máy.** Máy phát triển: MacBook Pro M1 Pro 16 GB; mọi thứ chạy offline trên máy hoặc LAN.
 
-## Dùng với model khác (ChatGPT, Grok…)
+## Tiết kiệm token (áp dụng mỗi phiên)
 
-### Tiết kiệm ngữ cảnh và công cụ (áp dụng mỗi phiên)
-
-- Dùng hướng dẫn đã được cung cấp trong phiên; chỉ đọc lại khi thiếu, bị rút gọn hoặc file đã đổi. Khi tiếp tục việc cũ, đọc `docs/HANDOFF.md`, kiểm tra branch/status và diff liên quan trước khi sửa.
-- Khoanh vùng bằng `rg`/`rg --files`, rồi đọc đúng đoạn cần thiết. Không mặc định đọc toàn repo, toàn bộ spec, coverage hoặc lịch sử chat. Việc gameplay vẫn phải theo thứ tự nguồn và `rules:guard` ở trên.
-- Gom các lượt đọc/tìm kiếm độc lập. Đầu ra công cụ chỉ lấy trường cần dùng; giới hạn khoảng 1.000–2.000 token mỗi lượt thông thường, mở rộng khi có lý do. Không in nguyên metadata PR, danh mục công cụ hoặc log thành công dài.
-- Với test/build, lưu log dài vào file tạm, trả mã thoát và tóm tắt. Khi lỗi, đọc đoạn lỗi cùng ngữ cảnh cần thiết; không che lỗi bằng `tail` hay pipeline làm mất mã thoát.
-- Trong lúc sửa, chạy kiểm tra đúng phần bị ảnh hưởng. Cuối task chạy đủ kiểm tra bắt buộc một lượt. Chỉ chạy lại khi code, dependency, môi trường hoặc base merge thay đổi có thể làm kết quả cũ mất hiệu lực, hay còn lỗi/chưa đủ bằng chứng. Không cập nhật ảnh chuẩn chỉ để làm test qua.
-- Chỉ tải ảnh/chụp màn hình cần cho quyết định hiện tại; tái sử dụng kết quả đã xem nếu trạng thái chưa đổi. Chọn ít skill/công cụ phù hợp, tránh khảo sát thêm khi đã đủ bằng chứng hoàn thành.
-- Giữ `HANDOFF.md` ngắn: nhánh/PR, trạng thái đã xác minh, việc còn lại, kiểm tra đã chạy và bước tiếp theo. Thay thông tin cũ; không nối dài nhật ký, chép log, lặp hướng dẫn hoặc lưu token/secret. Chi tiết xem git/PR và tài liệu chuyên đề.
-- Sau khi xong một nhóm việc, cập nhật bàn giao để người dùng có thể mở chat mới trong cùng project. Không tự tạo chat, không yêu cầu đổi chat giữa việc đang làm và không hứa tránh hoàn toàn việc dùng token. Quy tắc này chỉ áp dụng trong repo; không thay đổi hạn mức tài khoản hay ngữ cảnh hệ thống của công cụ.
-
-- Công cụ đọc được repo (Codex, Cursor, Claude Code, Grok CLI…): chỉ cần trỏ vào file này; nhiều công cụ tự đọc `AGENTS.md`.
-- Chat trên web không đọc được repo: chạy `npm run pack:context` rồi đưa file `context-pack/root-context.md` (gitignored) cho model. Thêm `--full-specs` để kèm mọi spec luật, `--with <file>` để kèm file code cần sửa. Gói không chứa tài liệu chính thức của Leder; dán điều khoản cần thiết bằng `npm run rules:clause -- <số>`.
-- Model nào cũng phải qua cùng hàng rào: test, `audit:rules`, `rules:guard`. Code từ chat web phải được chạy kiểm tra trên máy trước khi commit.
+- File này đã được công cụ nạp sẵn vào phiên; không `cat` lại. Trạng thái việc dở xem bằng `git status`, `git log -5`, nhánh và PR đang mở; không có file bàn giao.
+- Khoanh vùng bằng `rg`/`rg --files`, rồi đọc đúng đoạn cần (`sed -n`). Không đọc cả file tài liệu dài (style guide, `docs/07-ui/README.md`, spec, coverage) khi chỉ cần một mục; không đọc skill hay tài liệu không liên quan tới task.
+- Đầu ra công cụ giữ ngắn (khoảng 1.000–2.000 token mỗi lượt). Log test/build dài ghi ra file tạm, chỉ báo mã thoát và đoạn lỗi.
+- Ảnh chụp tốn nhiều token và nằm lại trong ngữ cảnh tới hết phiên: chỉ chụp khi cần quyết định, chụp vùng nhỏ hoặc thu nhỏ (rộng ≤ 1000 px), không chụp lại khi giao diện chưa đổi, không mở lại ảnh đã xem.
+- Chạy kiểm tra đúng phần bị ảnh hưởng trong lúc sửa; cuối task chạy đủ kiểm tra bắt buộc một lượt.
+- Mỗi task một chat mới. Ngữ cảnh cộng dồn qua mọi lượt, nên làm nhiều task trong một chat tốn gấp nhiều lần.
+- Model nào cũng phải qua cùng hàng rào: test, `audit:rules`, `rules:guard`.
 
 ## Cấu trúc
 
@@ -82,7 +73,7 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 | `packages/bots/` | Bot chỉ nhận `PlayerView` + danh sách hợp lệ (`random`, `simple`) |
 | `packages/server/` | Server LAN: HTTP + WebSocket, giữ trạng thái gốc, token ghế, lưu trận (`docs/05-product-spec/multiplayer.md`) |
 | `packages/client/` | Giao diện web (Vite, Preact + htm, three.js, SVG tự vẽ); không chứa luật. Kế hoạch và style guide ở `docs/07-ui/` |
-| `scripts/` | `fetch-sources`, `audit-rule-coverage`, `snapshot-rules`, `rules-guard`, `rules-clause`, `pack-context`, `ship.sh` |
+| `scripts/` | `fetch-sources`, `audit-rule-coverage`, `snapshot-rules`, `rules-guard`, `rules-clause`, `ship.sh` |
 | `.githooks/` | Hook pre-commit chạy `rules-guard` |
 | `backend/`, `web/` | Bản thử nghiệm cũ (Python, React/PixiJS). Chỉ để tham khảo; không thêm tính năng |
 
@@ -101,7 +92,6 @@ npm run build                        # dựng giao diện
 npm run test:visual -w @root/client  # so ảnh ui-kit (docs/07-ui)
 npm run serve -- --host 0.0.0.0      # chỉ khi người dùng yêu cầu chạy server
 npm run ship -- "feat(engine): ..."   # rules:guard, kiểm tra, commit, push
-npm run pack:context                 # gói ngữ cảnh cho AI không đọc được repo
 ```
 
 Cần Node 22.18+ (chạy script `.ts` trực tiếp).

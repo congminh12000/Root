@@ -16,7 +16,6 @@
     "snapshot:rules": "node scripts/snapshot-rules/index.ts",
     "rules:guard": "node scripts/rules-guard/index.ts",
     "rules:clause": "node scripts/rules-clause/index.ts",
-    "pack:context": "node scripts/pack-context/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "ship": "bash scripts/ship.sh",
     "build": "npm run build -w @root/client",
