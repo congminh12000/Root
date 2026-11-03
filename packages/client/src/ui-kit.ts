@@ -101,7 +101,7 @@ const Kit = () => html`
       <${Item} label="chim"><${CardChip} card="ambush-bird#1" /><//>
       <${Item} label="tên dài"><${CardChip} card="favor-of-the-foxes#1" /><//><//><//>
 
-  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. Ambush dùng tranh indie theo chất; các lá khác dùng cảnh sinh bằng code, bản sao thứ hai lật cảnh.">
+  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. 45 lá thường dùng 34 tranh nhân vật rừng indie; bản sao cùng mẫu dùng chung tranh. Ambush giữ tranh đã duyệt; Dominance và Quest giữ cảnh riêng.">
     <${Row}>
       <${Item} label="item"><${MiniCard} card="arms-trader#1" /><//>
       <${Item} label="lâu dài, chi phí ?"><${MiniCard} card="royal-claim#1" /><//>

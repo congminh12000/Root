@@ -3,7 +3,8 @@ import { test } from 'node:test'
 import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { html } from 'htm/preact'
 import { render } from 'preact-render-to-string'
-import { cardArt, MOTIF, questArt } from '../src/ui/card-art.ts'
+import { cardArt, questArt } from '../src/ui/card-art.ts'
+import { WOODLAND_PANELS } from '../src/ui/woodland-art.ts'
 import { cardText, questText } from '../src/ui/card-text.ts'
 import { CardFace, QuestFace } from '../src/ui/card-face.ts'
 
@@ -29,15 +30,15 @@ test('every design and quest has Vietnamese effect text citing a clause', () => 
   for (const d of BASE_DECK) {
     const t = cardText(d)
     assert.ok(t.length > 20 && /§\d/.test(t) && !t.includes('undefined'), d.id)
-    if (d.kind === 'persistent' || d.kind === 'immediate') assert.ok(MOTIF[d.id], `${d.id} has a motif`)
+    if (d.kind === 'persistent' || d.kind === 'immediate') assert.ok(WOODLAND_PANELS[d.suit].includes(d.id), `${d.id} has a character illustration`)
   }
   for (const q of BASE_QUESTS) assert.match(questText(q), /§9\.5\.5/)
 })
 
-test('card scenes are seeded: the same card draws the same, its second copy differs, colours are tokens only', () => {
+test('card scenes are deterministic, physical copies share artwork, procedural colours use tokens', () => {
   for (const d of BASE_DECK) {
     assert.equal(cardArt(d, 1), cardArt(d, 1))
-    if (d.copies > 1 && d.kind !== 'ambush') assert.notEqual(cardArt(d, 1), cardArt(d, 2), d.id)
+    if (d.copies > 1) assert.equal(cardArt(d, 1), cardArt(d, 2), `${d.id}: physical copies share their illustration`)
     assert.ok(!/#[0-9a-f]{3,6}\b/i.test(cardArt(d, 1).replace(/href="#i-[a-z-]+"/g, '')), d.id)
   }
   assert.notEqual(questArt(BASE_QUESTS[0]!), questArt(BASE_QUESTS[1]!))
@@ -59,7 +60,7 @@ test('ambush cards follow the printed layout: name in the band, where to play in
   for (const svg of scenes) assert.ok(svg.includes('ambush-woodland.png') && svg.includes('<image '))
   const bird = BASE_DECK.find(d => d.id === 'ambush-bird')!
   assert.equal(cardArt(bird, 1), cardArt(bird, 2), 'both bird copies keep the approved painting')
-  for (const d of BASE_DECK.filter(c => c.kind !== 'ambush')) assert.ok(!cardArt(d).includes('<image '), d.id)
+  for (const d of BASE_DECK.filter(c => c.kind === 'dominance')) assert.ok(!cardArt(d).includes('<image '), d.id)
   assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
   assert.ok(other.includes('standard') && other.includes('cf-title'), 'ordinary cards use the requested named header')
