@@ -36,3 +36,20 @@ for (const [width, height] of [[1440, 900], [1280, 800], [1194, 834], [834, 1194
     await guide.screenshot({ path: `test-results/guide-${width}.png` })
   })
 }
+
+test('Ambush paintings load locally with the correct suit and fill the card art', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  const response = page.waitForResponse(r => /ambush-woodland.*\.png/.test(r.url()))
+  await page.goto('/ui-kit.html')
+  expect((await response).ok()).toBe(true)
+  const paintings = page.locator('.kit-ambush .cf-ambush-art')
+  await expect(paintings).toHaveCount(4)
+  expect(await paintings.evaluateAll(nodes => nodes.map(n => n.getAttribute('data-suit')))).toEqual(['bird', 'rabbit', 'fox', 'mouse'])
+  expect(await paintings.evaluateAll(nodes => new Set(nodes.map(n => n.getAttribute('viewBox'))).size)).toBe(4)
+  for (const painting of await paintings.all()) {
+    const box = await painting.boundingBox()
+    const parent = await painting.locator('..').boundingBox()
+    expect(box!.height).toBeCloseTo(parent!.height, 0)
+  }
+  await page.locator('.kit-ambush').screenshot({ path: 'test-results/ambush-four-suits.png' })
+})

@@ -34,7 +34,7 @@ test('every design and quest has Vietnamese effect text citing a clause', () => 
 test('card scenes are seeded: the same card draws the same, its second copy differs, colours are tokens only', () => {
   for (const d of BASE_DECK) {
     assert.equal(cardArt(d, 1), cardArt(d, 1))
-    if (d.copies > 1) assert.notEqual(cardArt(d, 1), cardArt(d, 2), d.id)
+    if (d.copies > 1 && d.kind !== 'ambush') assert.notEqual(cardArt(d, 1), cardArt(d, 2), d.id)
     assert.ok(!/#[0-9a-f]{3,6}\b/i.test(cardArt(d, 1).replace(/href="#i-[a-z-]+"/g, '')), d.id)
   }
   assert.notEqual(questArt(BASE_QUESTS[0]!), questArt(BASE_QUESTS[1]!))
@@ -51,9 +51,12 @@ test('ambush cards follow the printed layout: name in the band, where to play in
     const mini = render(html`<${CardFace} card=${`${d.id}#1`} size="mini" />`)
     assert.ok(mini.includes('<i>') && !mini.includes('<p>'), `${d.id} mini keeps only the italic line`)
   }
-  // The scene: an ambusher of the card's suit with a sword, a different scene for each suit.
+  // Each suit selects a different panel of the approved generated painting.
   const scenes = BASE_DECK.filter(c => c.kind === 'ambush').map(d => cardArt(d, 1))
-  for (const svg of scenes) assert.ok(svg.includes('#i-sword'))
+  for (const svg of scenes) assert.ok(svg.includes('ambush-woodland.png') && svg.includes('<image '))
+  const bird = BASE_DECK.find(d => d.id === 'ambush-bird')!
+  assert.equal(cardArt(bird, 1), cardArt(bird, 2), 'both bird copies keep the approved painting')
+  for (const d of BASE_DECK.filter(c => c.kind !== 'ambush')) assert.ok(!cardArt(d).includes('<image '), d.id)
   assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
   assert.ok(other.includes('cf-plaque') && !other.includes('cf-title'), 'other cards keep their layout')

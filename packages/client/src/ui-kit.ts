@@ -5,7 +5,7 @@ import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetail, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
-import { QuestFace } from './ui/card-face.ts'
+import { CardFace, QuestFace } from './ui/card-face.ts'
 import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
@@ -101,7 +101,7 @@ const Kit = () => html`
       <${Item} label="chim"><${CardChip} card="ambush-bird#1" /><//>
       <${Item} label="tên dài"><${CardChip} card="favor-of-the-foxes#1" /><//><//><//>
 
-  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. Tranh tự sinh: nền theo chất, vật chính theo loại lá; bản sao thứ hai lật cảnh.">
+  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. Ambush dùng tranh indie theo chất; các lá khác dùng cảnh sinh bằng code, bản sao thứ hai lật cảnh.">
     <${Row}>
       <${Item} label="item"><${MiniCard} card="arms-trader#1" /><//>
       <${Item} label="lâu dài, chi phí ?"><${MiniCard} card="royal-claim#1" /><//>
@@ -111,6 +111,10 @@ const Kit = () => html`
       <${Item} label="dùng được"><${MiniCard} card="tax-collector#1" usable /><//>
       <${Item} label="bản sao 2"><${MiniCard} card="tax-collector#2" /><//>
       <${Item} label="quest"><${QuestFace} quest="fend-off-a-bear-mouse" size="mini" /><//><//><//>
+
+  <${Section} title="Ambush — bốn chất" note="Tranh indie đã duyệt: chim, thỏ, cáo, chuột; cả hai lá chim dùng chung tranh.">
+    <div class="kit-row kit-ambush">${(['bird', 'rabbit', 'fox', 'mouse'] as const).map(suit =>
+      html`<${CardFace} card=${`ambush-${suit}#1`} size="full" />`)}</div><//>
 
   <${Section} title="Toàn bộ bộ bài" note="54 lá (mỗi bản sao một lá) và 15 quest, để duyệt tranh và tên dài.">
     <div class="kit-deck">${BASE_DECK.flatMap(d => Array.from({ length: d.copies }, (_, i) => html`<${MiniCard} card=${`${d.id}#${i + 1}`} />`))}</div>

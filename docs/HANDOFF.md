@@ -28,6 +28,10 @@ npm run typecheck && npm test && npm run audit:rules
 - Mặt lá bài: 54 lá và 15 quest vẽ bằng code (`packages/client/src/ui/card-face.ts`, `card-art.ts`, `card-text.ts`). Tên lá giữ tiếng Anh, chữ hiệu ứng tiếng Việt kèm số điều khoản.
 - Đồ hoạ: vật liệu theo vai trò ở `board/look.ts`, kết cấu sinh trong worker (`board/texture-gen.ts`), ánh sáng `board/light.ts`, hậu kỳ `map/post.ts`, mức chất lượng `map/quality.ts` (`full`/`tablet`/`low`, ép bằng `?quality=`).
 
+## Bổ sung 03/11/2026
+
+- Nhánh `feat/ambush-illustrated-backgrounds`: dùng bốn tranh Ambush đã tạo trong chat theo suit, thêm hàng xem đủ bốn lá ở UI kit. Ảnh lưu trong `packages/client/src/assets/cards/`; chưa merge.
+
 ## Còn lại
 
 | Việc | Ghi chú |

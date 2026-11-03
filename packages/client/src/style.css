@@ -167,7 +167,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardface.ambush .cf-badge { width: 3.2em; height: 3.2em; margin-top: .35em; transform: none; z-index: 2; }
 .cf-title { flex: 1; align-self: center; text-align: right; font: 2.1em/1 var(--font-display); white-space: nowrap; }
 .cardface.ambush .cf-art { inset: 13% 0 0; border-bottom: 0; background: var(--meadow); }
-.cardface.ambush .cf-art svg { height: 70%; }
+.cardface.ambush .cf-art svg { height: 100%; }
 .cardface.ambush .cf-text { inset: auto 4% 5% 4%; height: auto; min-height: 15%; padding: .5em .8em; border: 0; gap: .3em;
   background-color: var(--paper); box-shadow: inset 0 0 .7em var(--paper-shade), inset 0 -.15em 0 var(--paper-shade);
   clip-path: polygon(1.5% 4%, 12% 0, 30% 3%, 52% 0, 71% 3%, 88% 0, 98.5% 3%, 100% 22%, 98% 45%, 100% 70%, 98.5% 96%, 86% 100%, 64% 97%, 45% 100%, 24% 97%, 8% 100%, 1% 95%, 0 72%, 2% 48%, 0 24%); }
