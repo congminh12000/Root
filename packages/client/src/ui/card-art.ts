@@ -4,14 +4,15 @@ import type { IconName } from './icons.ts'
 /**
  * The picture in the middle of a card face (docs/07-ui/style-guide.md §6): a small woodland scene drawn in code, in
  * the board's style (flat colour, ink outline, our own shapes; no official art, licensing.md). The background
- * belongs to the card's suit, the subject to its kind: the item on a stand, an animal leaping out of a bush for an ambush, a banner
+ * belongs to the card's suit, the subject to its kind: the item on a stand, a banner
  * for dominance, a motif for each persistent and immediate card. Seeded by the card's id, so every browser draws the
  * same card; the second copy of a design is mirrored with its trees moved, so two copies differ.
  *
+ * Ambush uses the approved four-panel generated painting, selected by suit.
  * Returns SVG markup (viewBox 120 × 90). Colours come from token variables only; icons are `<use>` of the sprite.
  */
 
-type Subject = { kind: 'item'; item: ItemType } | { kind: 'ambush' } | { kind: 'dominance' } | { kind: 'motif'; icon: IconName; glow: boolean }
+type Subject = { kind: 'item'; item: ItemType } | { kind: 'dominance' } | { kind: 'motif'; icon: IconName; glow: boolean }
   | { kind: 'quest'; items: [ItemType, ItemType] }
 
 /** The motif of each persistent and immediate design. */
@@ -72,45 +73,15 @@ function background(suit: Suit, rand: () => number): string {
   return out.join('')
 }
 
-/** Head colour of each animal in the ambush scenes. */
-const HEAD: Record<Suit, string> = { fox: 'autumn-orange', rabbit: 'autumn-gold', mouse: 'path', bird: 'water' }
-
-/** An animal's head, our own drawing: fox ears, rabbit ears, mouse ears or a bird's crest and beak; wide startled eyes. */
-function head(kind: Suit, x: number, y: number, r: number): string {
-  const c = HEAD[kind]
-  const shape = kind === 'fox'
-    ? `<path ${st(c)} d="M${x - r} ${y - r * .2} L${x - r * .9} ${y - r * 1.4} L${x - r * .3} ${y - r * .7} H${x + r * .3} L${x + r * .9} ${y - r * 1.4} L${x + r} ${y - r * .2} L${x} ${y + r} Z"/>`
-    : kind === 'rabbit'
-      ? `<ellipse ${st(c)} cx="${x - r * .4}" cy="${y - r * 1.4}" rx="${r * .3}" ry="${r * .9}"/><ellipse ${st(c)} cx="${x + r * .4}" cy="${y - r * 1.4}" rx="${r * .3}" ry="${r * .9}"/><circle ${st(c)} cx="${x}" cy="${y}" r="${r}"/>`
-      : kind === 'mouse'
-        ? `<circle ${st(c)} cx="${x - r * .8}" cy="${y - r * .8}" r="${r * .55}"/><circle ${st(c)} cx="${x + r * .8}" cy="${y - r * .8}" r="${r * .55}"/><circle ${st(c)} cx="${x}" cy="${y}" r="${r}"/>`
-        : `<path ${st(c)} d="M${x - r * .3} ${y - r * .9} L${x - r * .1} ${y - r * 1.6} L${x + r * .25} ${y - r * .95} L${x + r * .6} ${y - r * 1.5} L${x + r * .6} ${y - r * .7} Z"/><circle ${st(c)} cx="${x}" cy="${y}" r="${r}"/>`
-  const beak = kind === 'bird' ? `<path ${st('autumn-gold')} d="M${x - r * .3} ${y + r * .15} H${x + r * .3} L${x} ${y + r * .85} Z"/>` : ''
-  const eyes = [-1, 1].map(side => `<ellipse ${st('paper-raised')} cx="${x + side * r * .4}" cy="${y - r * .15}" rx="${r * .28}" ry="${r * .34}"/><circle ${flat('ink')} cx="${x + side * r * .36}" cy="${y - r * .1}" r="${r * .13}"/>`).join('')
-  return shape + eyes + beak
+// The approved generated sheet is reused verbatim; viewBoxes exclude its cream gutters.
+// Order in the source artwork: bird, rabbit, fox, mouse. Both bird copies share the same painting.
+const ambushSheet = new URL('../assets/cards/ambush-woodland.png', import.meta.url).href
+const AMBUSH_CROP: Record<Suit, string> = {
+  bird: '10 10 522 704', rabbit: '553 10 522 704', fox: '1096 10 522 704', mouse: '1639 10 522 704',
 }
 
-/**
- * The ambush (§4.3.1): an animal of the card's suit leaps out of a bush, sword up and shield out, while two others
- * look up, startled. Our own figures; bird is the wild suit, so its onlookers are a rabbit and a mouse.
- */
-function ambushScene(suit: Suit): string {
-  const onlookers: Suit[] = suit === 'rabbit' ? ['fox', 'mouse'] : suit === 'mouse' ? ['fox', 'rabbit'] : ['rabbit', 'mouse']
-  const leaves = [[22, 16, 30], [92, 12, -20], [104, 30, 50], [16, 38, -40], [84, 40, 10], [38, 8, 70]]
-    .map(([x, y, a], i) => `<ellipse ${st(i % 2 ? 'autumn-orange' : 'autumn-gold', ';stroke-width:.8')} transform="rotate(${a} ${x} ${y})" cx="${x}" cy="${y}" rx="2.6" ry="1.3"/>`).join('')
-  const feet = suit === 'bird'
-    ? `<path ${line('autumn-gold', 1.6)} d="M55 50 L50 58 M50 58 l-3 1 M50 58 l-1 3 M50 58 l2 2.6 M66 50 L71 57 M71 57 l3 1 M71 57 l1 3 M71 57 l-2 2.6"/>`
-    : `<path ${line('ink', 2.4)} d="M55 50 L50 58 M66 50 L71 57"/><ellipse ${flat('ink')} cx="49" cy="58.5" rx="2.4" ry="1.3"/><ellipse ${flat('ink')} cx="72" cy="57.5" rx="2.4" ry="1.3"/>`
-  return `<path ${st('pine')} d="M30 82 C26 70 36 62 46 66 C50 56 70 56 74 64 C84 60 96 68 90 82 Z"/>`
-    + `<path ${line('paper-raised', 1.2)} d="M40 60 l-5 -5 M80 58 l5 -5 M60 58 v-5"/>`
-    + feet
-    + `<path ${st('pine-light')} d="M52 30 C56 27 66 27 70 31 L71 50 C64 53 57 53 51 50 Z"/><path ${line('wood', 1.4)} d="M51.5 43 C58 45.5 64 45.5 70.5 43"/>`
-    + `<path ${line('ink', 2)} d="M69 33 L77 22"/>${use('sword', 70, 4, 20)}`
-    + `<circle ${st('wood-light')} cx="50" cy="40" r="7.5"/><circle ${line('wood', 1)} cx="50" cy="40" r="4.6"/><circle ${flat('paper-raised')} cx="50" cy="40" r="1.4"/>`
-    + head(suit, 61, 22, 7.5)
-    + onlookers.map((k, i) => head(k, i === 0 ? 25 : 95, 58, 5.4)).join('')
-    + `<ellipse ${flat('ink')} cx="25" cy="62" rx="1.4" ry="1.6"/><ellipse ${flat('ink')} cx="95" cy="62" rx="1.4" ry="1.6"/>`
-    + leaves
+function ambushArt(suit: Suit): string {
+  return `<svg class="cf-scene cf-ambush-art" data-suit="${suit}" viewBox="${AMBUSH_CROP[suit]}" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><image href="${ambushSheet}" width="2172" height="724"/></svg>`
 }
 
 function subject(s: Subject, suit: Suit): string {
@@ -120,7 +91,6 @@ function subject(s: Subject, suit: Suit): string {
       return `${ground}<path ${st('rock')} d="M46 74 L49 64 H71 L74 74 Z"/>${use(s.item, 43, 30, 34)}`
     case 'motif':
       return `${ground}${s.glow ? `<circle cx="60" cy="46" r="21" ${flat('autumn-gold', .45)}/>` : ''}<path ${st('wood-light')} d="M47 74 L50 66 H70 L73 74 Z"/>${use(s.icon, 43, 30, 34)}`
-    case 'ambush': return ambushScene(suit)
     case 'dominance':
       return `<path ${st('meadow-light')} d="M30 80 C40 62 80 62 90 80 Z"/><path ${line('wood', 2.4)} d="M58 70 V18"/>`
         + `<path ${st(`suit-${suit}`)} d="M59 20 H90 L84 31 L90 42 H59 Z"/>${use('crown', 64, 22, 18, 'autumn-gold')}`
@@ -152,10 +122,10 @@ function draw(key: string, suit: Suit, copy: number, s: Subject): string {
 
 /** The scene of one physical card, e.g. "armorers#2" (the copy number picks the variant). */
 export function cardArt(d: CardDef, copy = 1): string {
+  if (d.kind === 'ambush') return ambushArt(d.suit)
   const s: Subject = d.kind === 'item' ? { kind: 'item', item: d.item! }
-    : d.kind === 'ambush' ? { kind: 'ambush' }
-      : d.kind === 'dominance' ? { kind: 'dominance' }
-        : { kind: 'motif', icon: MOTIF[d.id] ?? 'card', glow: d.kind === 'immediate' }
+    : d.kind === 'dominance' ? { kind: 'dominance' }
+      : { kind: 'motif', icon: MOTIF[d.id] ?? 'card', glow: d.kind === 'immediate' }
   return draw(`${d.id}#${copy}`, d.suit, copy, s)
 }
 

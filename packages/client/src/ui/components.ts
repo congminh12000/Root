@@ -7,6 +7,7 @@ import type { ComponentChildren } from 'preact'
 import { useEffect } from 'preact/hooks'
 import { cardDesign, cardName, FACTION_NAME, ITEM_NAME, SUIT_COLOR, SUIT_NAME } from '../names.ts'
 import type { IconName } from './icons.ts'
+import { displayCardText } from './card-text.ts'
 import { CardFace } from './card-face.ts'
 import { SuitBadge } from './suit-badge.ts'
 
@@ -50,7 +51,7 @@ export function CardDetail({ card, onClose }: { card: string; onClose?: () => vo
   return html`
     ${onClose && html`<button type="button" class="close" aria-label="Đóng" onClick=${onClose}><${Icon} name="close" /></button>`}
     <${CardFace} card=${card} size="full" />
-    <div class="note">${KIND[d.kind] ?? d.kind}</div>
+    <div class="note">${displayCardText(KIND[d.kind] ?? d.kind)}</div>
     ${d.text && html`<details class="printed"><summary>Bản in tiếng Anh</summary><p lang="en">${d.text}</p></details>`}
     <div class="note">${d.libraryId}</div>`
 }
