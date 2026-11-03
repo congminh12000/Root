@@ -39,7 +39,7 @@ for (const [width, height] of [[1440, 900], [1280, 800], [1194, 834], [834, 1194
 
 test('Ambush paintings load locally with the correct suit and fill the card art', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
-  const response = page.waitForResponse(r => /ambush-woodland.*\.png/.test(r.url()))
+  const response = page.waitForResponse(r => /ambush-woodland.*\.webp/.test(r.url()))
   await page.goto('/ui-kit.html')
   expect((await response).ok()).toBe(true)
   const paintings = page.locator('.kit-deck .cf-ambush-art')

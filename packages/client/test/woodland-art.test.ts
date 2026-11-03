@@ -17,7 +17,7 @@ test('all 45 craftable cards map to exactly 34 distinct character paintings', ()
   for (const d of ordinary) {
     const art = cardArt(d)
     assert.ok(art.includes(`data-design="${d.id}"`), d.id)
-    assert.ok(art.includes(`woodland-${d.suit}.png`), d.id)
+    assert.ok(art.includes(`woodland-${d.suit}.webp`), d.id)
     assert.ok(art.includes('clip-path=') && art.includes('preserveAspectRatio="none"'), d.id)
     for (let copy = 1; copy <= d.copies; copy++) assert.equal(cardArt(d, copy), art)
   }
@@ -25,10 +25,10 @@ test('all 45 craftable cards map to exactly 34 distinct character paintings', ()
 
 test('sheets have exact grid dimensions and every design crops a separate panel', () => {
   for (const [suit, ids] of Object.entries(WOODLAND_PANELS)) {
-    const bytes = readFileSync(new URL(`../src/assets/cards/woodland-${suit}.png`, import.meta.url))
-    assert.equal(bytes.subarray(1, 4).toString(), 'PNG')
-    assert.equal(bytes.readUInt32BE(16), 1254)
-    assert.equal(bytes.readUInt32BE(20), 1254)
+    const bytes = readFileSync(new URL(`../src/assets/cards/woodland-${suit}.webp`, import.meta.url))
+    assert.equal(bytes.subarray(8, 16).toString(), 'WEBPVP8X')
+    assert.equal(bytes.readUIntLE(24, 3) + 1, 1254)
+    assert.equal(bytes.readUIntLE(27, 3) + 1, 1254)
     const boxes = ids.map(id => {
       const d = ordinary.find(d => d.id === id)!
       const box = woodlandArt(id, d.suit).match(/viewBox="([^"]+)"/)![1]!
@@ -43,7 +43,7 @@ test('sheets have exact grid dimensions and every design crops a separate panel'
 test('special cards keep their existing art, invalid ordinary mapping fails visibly', () => {
   for (const d of BASE_DECK.filter(d => ['ambush', 'dominance'].includes(d.kind))) {
     assert.ok(!cardArt(d).includes('cf-woodland-art'))
-    assert.equal(cardArt(d).includes('ambush-woodland.png'), d.kind === 'ambush')
+    assert.equal(cardArt(d).includes('ambush-woodland.webp'), d.kind === 'ambush')
   }
   for (const q of BASE_QUESTS) assert.ok(!questArt(q).includes('cf-woodland-art'))
   assert.throws(() => woodlandArt('ambush-fox', 'fox'), /Missing woodland illustration/)

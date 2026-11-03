@@ -9,10 +9,10 @@ export const WOODLAND_PANELS: Record<CardSuit, readonly string[]> = {
 }
 
 const SHEETS = {
-  bird: new URL('../assets/cards/woodland-bird.png', import.meta.url).href,
-  fox: new URL('../assets/cards/woodland-fox.png', import.meta.url).href,
-  rabbit: new URL('../assets/cards/woodland-rabbit.png', import.meta.url).href,
-  mouse: new URL('../assets/cards/woodland-mouse.png', import.meta.url).href,
+  bird: new URL('../assets/cards/woodland-bird.webp', import.meta.url).href,
+  fox: new URL('../assets/cards/woodland-fox.webp', import.meta.url).href,
+  rabbit: new URL('../assets/cards/woodland-rabbit.webp', import.meta.url).href,
+  mouse: new URL('../assets/cards/woodland-mouse.webp', import.meta.url).href,
 }
 
 /** Generated square sheets use an exact 3×3 grid. Insets remove the thin panel separator. */
