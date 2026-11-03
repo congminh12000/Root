@@ -425,3 +425,59 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .minicard:hover .cardface::before, .minicard:focus-visible .cardface::before, .questcard:hover .cardface::before { opacity: 1; }
 .cf-plaque { background-image: var(--grain-wood), linear-gradient(var(--wood-light), var(--wood)); }
 @media (prefers-reduced-motion: reduce) { .minicard .cardface::before, .questcard .cardface::before { transition: none; } }
+
+/* Reference HUD: opponents left, notices above, own faction/hand/actions below. */
+.game-screen .hud-status { left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 360px); text-align: center; }
+.game-screen .hud-status .line { justify-content: center; }
+.game-screen .hud-factions { top: 12px; left: 12px; right: auto; transform: none; }
+.hud-player-name { grid-column: 1 / -1; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.game-screen .hud-self { top: auto; bottom: 12px; }
+.game-screen .hud-self .hud-faction { min-width: 120px; min-height: 76px; }
+.game-screen .hud-log { top: 12px; bottom: auto; left: auto; right: 142px; }
+.hud-chat-toggle { position: absolute; z-index: 8; top: 12px; right: 66px; min-height: 44px; }
+.hud-actions { position: absolute; z-index: 8; right: 12px; bottom: 12px; display: grid; gap: 6px; padding: 8px; border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); box-shadow: var(--shadow-card); }
+.hud-actions > div { display: flex; gap: 6px; }
+.hud-actions button { min-height: 44px; }
+.game-screen .hud-hand { max-width: calc(100% - 600px); }
+.hud-played { position: absolute; z-index: 7; left: 50%; top: 48%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; pointer-events: none; }
+.hud-played small { background: var(--paper-a96); padding: 3px 8px; border-radius: var(--r-sm); }
+.hud-played .minicard { width: 140px; pointer-events: auto; }
+.hud-played .cardface { width: 140px; font-size: 7px; }
+.hud-chat { display: grid; gap: 8px; }
+.chat-messages { max-height: 45dvh; overflow: auto; overflow-wrap: anywhere; }
+.chat-messages p { display: grid; gap: 4px; }
+.hud-chat form { display: flex; gap: 6px; }
+.hud-chat input { min-width: 0; flex: 1; }
+@media (max-width: 1000px) {
+  .game-screen .hud-status { top: 64px; max-width: calc(100% - 230px); }
+  .game-screen .hud-hand { max-width: calc(100% - 390px); }
+  .game-screen .hud-self .hud-faction { min-width: 90px; }
+  .hud-played { top: 42%; }
+  .hud-played .minicard, .hud-played .cardface { width: 100px; }
+}
+@media (max-width: 600px) {
+  .game-screen .hud-status { left: 108px; right: 8px; transform: none; width: auto; max-width: none; font-size: 12px; }
+  .game-screen .hud-factions { left: 8px; top: 8px; gap: 4px; }
+  .game-screen .hud-faction { min-width: 72px; min-height: 44px; }
+  .game-screen .hud-self { top: auto; bottom: 8px; }
+  .hud-actions { right: 8px; bottom: 8px; padding: 4px; }
+  .hud-actions button { padding: 4px 6px; font-size: 12px; }
+  .game-screen .hud-hand { bottom: 120px; max-width: calc(100% - 24px); }
+  .hud-played { left: auto; right: 12px; top: 175px; transform: none; }
+}
+
+.game-screen .hud-hand .cardface.full { --cf-w: 120px; }
+.game-screen .hud-hand .minicard { width: 120px; }
+.game-screen .hud-hand .hand .fan { gap: 2px; }
+.hud-played .cardface.full { --cf-w: 140px; font-size: calc(var(--cf-w) / 12); }
+@media (max-width: 1000px) { .hud-played .cardface.full { --cf-w: 100px; } }
+
+@media (max-width: 600px) {
+  .game-screen .hud-status { left: 128px; }
+  .game-screen .hud-factions:not(.hud-self) .hud-faction { width: 108px; box-sizing: border-box; }
+  .game-screen .hud-factions:not(.hud-self) .hud-player-name { max-width: 88px; }
+}
+
+.hud-actions .hud-action-types { display: flex; flex-wrap: wrap; max-width: 240px; max-height: 96px; overflow-y: auto; }
+.hud-actions .hud-action-types:empty { display: none; }
+.hud-actions .hud-action-types button { flex: 1; font-size: 12px; }

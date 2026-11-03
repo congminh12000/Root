@@ -104,14 +104,15 @@ Kế hoạch người quản lý duyệt ngày 02/11/2026. Luật không đổi;
 
 Mã ở `packages/client/src/ui/screens/hud.ts`, ghép trong `game.ts`.
 
-- **Góc trên trái:** lượt, phase, bước, đồng hồ; "Đến lượt bạn" hoặc phe đang được chờ; tên quyết định của người khác kèm điều khoản; nút "Mở lại quyết định" khi bạn gập hộp quyết định; thông báo kết nối.
-- **Góc trên phải:** nút ☰ mở menu: về sảnh, mã trận, "Về góc mặc định", "Tất cả lựa chọn (n)", "Hướng dẫn nhanh", âm thanh.
-- **Mép phải:** huy hiệu bốn phe với điểm và số lá; phe đang tới lượt có viền vàng. Chạm để mở bảng phe đó, chạm lại để đóng.
-- **Mép dưới:** dải "Bài của bạn" (viền vàng khi có lá dùng được); chạm hoặc vuốt lên để mở quạt bài.
-- **Góc dưới trái:** chip "Nhật ký · n" mở ngăn nhật ký; bấm một dòng để đánh dấu ô trên map.
-- **Một ngăn mỗi lúc.** Chạm ra ngoài hoặc Esc là đóng; chạm nút HUD khác thì chuyển ngăn.
-- "Tất cả lựa chọn" là đường dự phòng: liệt kê mọi phần tử của `legal`, gom theo loại.
-- Bong bóng hành động chung nằm giữa mép trên, giữa ô trạng thái và menu. Màn hẹp hơn 1100 px thì bong bóng xuống dưới ô trạng thái.
+- **1 — Đối thủ:** mép trên trái, theo `PlayerView.seats`, loại ghế đang xem; điểm, số lá và trạng thái kết nối. Bấm để xem bảng phe.
+- **2 — Thông báo:** giữa mép trên; lượt, phase, bước, người được chờ, đồng hồ và thông báo kết nối.
+- **3 — Settings/chat:** góc trên phải, cạnh nhật ký. Chat do server xác thực ghế; khán giả chỉ đọc; tin nhắn được lưu theo trận.
+- **4 — Phe của mình:** góc dưới trái; mở bảng phe bằng một lần bấm.
+- **5 — Lá vừa đánh:** giữa map, lấy lá gần nhất từ sự kiện công khai (craft, discard, Decree, ambush, battle card, dominance); không suy đoán từ bài úp.
+- **6 — Tay bài:** giữa mép dưới, lá rộng 120 px, cuộn ngang và bấm để đọc/dùng; màn dọc đặt phía trên điều khiển.
+- **7 — Hành động:** góc dưới phải; mở đầy đủ mọi hành động hợp lệ. Continue chỉ gửi `end-step` hoặc `marquise-end-march` có trong danh sách server. Không tự chọn thay quyết định.
+- **Undo:** server cho phép hoàn tác một hành động bàn cờ xác định, trong cùng bước và cùng người quyết định (move, build, recruit, slip). Không cho phép qua battle, turmoil, ngẫu nhiên, bài mới, lộ thông tin, interrupt, đổi bước/lượt hoặc kết thúc trận. Undo mất hiệu lực sau command kế tiếp hoặc khởi động lại server; chat không huỷ Undo. Phiên bản mạng luôn tăng để chặn command cũ.
+- **Một ngăn mỗi lúc:** chạm ra ngoài hoặc Esc để đóng. Nhật ký vẫn cho phép đánh dấu ô liên quan trên map.
 
 
 ## G5: chọn map

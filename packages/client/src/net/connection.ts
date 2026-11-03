@@ -45,7 +45,14 @@ export function connectGame(gameId: string, token: string | null) {
     socket.send(JSON.stringify({ type: 'command', actionId: `${Date.now()}-${counter++}`, expectedRevision: u.view.revision, action }))
   }
 
+  function undo() {
+    if (update.value && socket?.readyState === WebSocket.OPEN)
+      socket.send(JSON.stringify({ type: 'undo', expectedRevision: update.value.view.revision }))
+  }
+  function chat(text: string) {
+    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'chat', text }))
+  }
   open()
-  return { update, changes, notice, deadline, send, close: () => { closed = true; socket?.close() } }
+  return { update, changes, notice, deadline, send, undo, chat, close: () => { closed = true; socket?.close() } }
 }
 export type GameConnection = ReturnType<typeof connectGame>

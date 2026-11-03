@@ -13,6 +13,9 @@ export interface SavedGame {
   createdAt: string
   seed: string
   seats: { faction: FactionId; kind: 'human' | 'bot'; name: string; bot: string | null; token: string | null }[]
+  log?: LogEntry[]
+  revision?: number
+  chat?: import('./protocol.ts').ChatEntry[]
   record: GameRecord
 }
 
@@ -46,6 +49,8 @@ export class Room {
   readonly saved: SavedGame
   state: GameState
   log: LogEntry[] = []
+  private undoPoint: { state: GameState; count: number; seat: FactionId } | null = null
+  private get revision() { return this.saved.revision ?? this.state.meta.revision }
   private listeners = new Map<Listener, FactionId | null>()
   private connected = new Map<FactionId, number>()
   private botTimer: NodeJS.Timeout | null = null
@@ -67,7 +72,7 @@ export class Room {
     this.turnSeconds = opts.turnSeconds ?? 90
     this.thinker = opts.thinker ?? null
     this.state = replay(saved.record)
-    this.log = saved.record.commands.slice(-LOG_SIZE).map(({ command }, i, all) => this.entry(command.playerId, command.type, command.payload, saved.record.commands.length - all.length + i + 1))
+    this.log = saved.log ?? saved.record.commands.slice(-LOG_SIZE).map(({ command }, i, all) => this.entry(command.playerId, command.type, command.payload, saved.record.commands.length - all.length + i + 1))
   }
 
   static create(req: CreateGameRequest, persist: (g: SavedGame) => void, opts: RoomOptions = {}): Room {
@@ -128,10 +133,10 @@ export class Room {
   message(seat: FactionId | null): ServerMessage {
     return {
       type: 'update', gameId: this.id, seat,
-      view: viewFor(this.state, seat),
+      view: { ...viewFor(this.state, seat), revision: this.revision },
       legal: seat ? legalActions(this.state, seat) : [],
       seats: this.seatInfo(),
-      log: this.log,
+      log: this.log, chat: this.saved.chat ?? [], canUndo: !!seat && this.undoPoint?.seat === seat,
       deadline: this.deadline,
       now: Date.now(),
     }
@@ -139,18 +144,61 @@ export class Room {
 
   /** Applies one command for `seat`. The engine does every check; the server only supplies playerId and randomness. */
   submit(seat: FactionId, actionId: string, expectedRevision: number, action: Action): CommandResult {
+    if (this.state.meta.recentActionIds.includes(actionId)) return { ok: true, revision: this.revision, duplicate: true }
+    if (expectedRevision !== this.revision) return { ok: false, code: 'stale-revision', message: 'Trạng thái đã thay đổi' }
+    const before = this.state, revision = this.revision
     const n = this.saved.record.commands.length
     const rng = recordingRng(seededRng(`${this.saved.seed}:${n}`))
-    const command = { gameId: this.id, playerId: seat, expectedRevision, actionId, type: action.type, payload: action.payload }
+    const command = { gameId: this.id, playerId: seat, expectedRevision: this.state.meta.revision, actionId, type: action.type, payload: action.payload }
     const out = applyCommand(this.state, command, rng)
     if (!out.result.ok || out.result.duplicate) return out.result
+    // Conservative undo policy: only deterministic board actions, within the same decision/turn.
+    // No battle, turmoil, draw, reveal, setup, interrupt, or handover can be rewound.
+    const safe = new Set(['move', 'marquise-build', 'marquise-recruit', 'eyrie-move', 'eyrie-build', 'eyrie-recruit', 'vagabond-move', 'vagabond-slip'])
+    const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
+    this.undoPoint = safe.has(action.type) && before.stage === 'play' && !before.battle && !out.state.battle &&
+      !before.pending.length && !out.state.pending.length && !out.state.winner && !rng.values.length &&
+      currentActor(before) === seat && currentActor(out.state) === seat && same(before.turn, out.state.turn) &&
+      same(before.deck, out.state.deck) && same(before.hands, out.state.hands) && same(before.reveals, out.state.reveals) &&
+      same(before.factions.eyrie?.leader, out.state.factions.eyrie?.leader)
+      ? { state: before, count: n, seat } : null
     this.state = out.state
+    this.saved.revision = revision + 1
     this.saved.record.commands.push({ command, random: rng.values })
-    this.log = [...this.log, this.entry(seat, action.type, action.payload, this.state.meta.revision)].slice(-LOG_SIZE)
+    this.log = [...this.log, this.entry(seat, action.type, action.payload, this.revision)].slice(-LOG_SIZE)
+    this.saved.log = this.log
     this.persist(this.saved)
     this.scheduleBot()
     this.broadcast()
-    return out.result
+    return { ...out.result, revision: this.revision }
+  }
+
+  undo(seat: FactionId, expectedRevision: number): boolean {
+    const point = this.undoPoint
+    if (!point || point.seat !== seat || expectedRevision !== this.revision || this.closed) return false
+    const revision = this.revision + 1
+    this.state = point.state
+    this.saved.record.commands.length = point.count
+    this.saved.revision = revision
+    this.log = this.log.slice(0, -1)
+    this.undoPoint = null
+    this.saved.log = this.log
+    this.persist(this.saved)
+    this.scheduleBot()
+    this.broadcast()
+    return true
+  }
+
+  chat(seat: FactionId, text: unknown): boolean {
+    if (!this.saved.seats.some(s => s.faction === seat && s.kind === 'human') || typeof text !== 'string') return false
+    const clean = text.trim()
+    if (!clean || clean.length > 500) return false
+    const entries = this.saved.chat ?? []
+    if (entries.some(e => e.faction === seat && Date.now() - e.at < 750)) return false
+    this.saved.chat = [...entries, { faction: seat, text: clean, at: Date.now() }].slice(-100)
+    this.persist(this.saved)
+    this.broadcast()
+    return true
   }
 
   private entry(faction: string, type: string, payload: unknown, revision: number): LogEntry {
@@ -190,7 +238,7 @@ export class Room {
     } finally {
       this.thinking = false
     }
-    if (this.closed || this.state.meta.revision !== job.revision) { this.scheduleBot(); return }
+    if (this.closed || this.revision !== job.revision) { this.scheduleBot(); return }
     try {
       this.applyBot(job, index >= 0 ? job.job.legal[index]! : null)
     } catch (e) {
@@ -218,7 +266,7 @@ export class Room {
     const seat = this.saved.seats.find(s => s.faction === actor)
     if (!actor || !seat || this.state.winner) return null
     if (seat.kind !== (forHuman ? 'human' : 'bot')) return null
-    const revision = this.state.meta.revision
+    const revision = this.revision
     const job = { bot: forHuman ? TIMEOUT_BOT : seat.bot ?? DEFAULT_BOT, view: viewFor(this.state, actor), legal: legalActions(this.state, actor), seed: `${this.saved.seed}:bot:${revision}` }
     return { job, actor, forHuman, revision }
   }
