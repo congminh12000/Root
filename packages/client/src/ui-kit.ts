@@ -4,7 +4,7 @@ import type { FactionId, LastRoll } from '@root/game-engine'
 import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
-import { CardChip, CardDetail, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
+import { CardChip, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
 import { CardFace, QuestFace } from './ui/card-face.ts'
 import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
@@ -116,14 +116,15 @@ const Kit = () => html`
     <div class="kit-row kit-ambush">${(['bird', 'rabbit', 'fox', 'mouse'] as const).map(suit =>
       html`<${CardFace} card=${`ambush-${suit}#1`} size="full" />`)}</div><//>
 
-  <${Section} title="Toàn bộ bộ bài" note="54 lá (mỗi bản sao một lá) và 15 quest, để duyệt tranh và tên dài.">
-    <div class="kit-deck">${BASE_DECK.flatMap(d => Array.from({ length: d.copies }, (_, i) => html`<${MiniCard} card=${`${d.id}#${i + 1}`} />`))}</div>
-    <div class="kit-deck">${BASE_QUESTS.map(q => html`<${QuestFace} quest=${q.id} size="mini" />`)}</div><//>
-
-  <${Section} title="Chi tiết lá bài">
-    <${Row}>${['arms-trader#1', 'ambush-bird#1', 'armorers#1', 'dominance-bird#1', 'favor-of-the-foxes#1'].map(c =>
-      html`<div class="carddetail inline"><${CardDetail} card=${c} onClose=${noop} /></div>`)}
-      <div class="carddetail inline"><${QuestFace} quest="give-a-speech-fox" size="full" /></div><//><//>
+  ${([
+    ['ambush', 'Bài Ambush'], ['item', 'Bài chế tạo vật phẩm'],
+    ['persistent', 'Bài hiệu ứng lâu dài'], ['immediate', 'Bài dùng ngay'], ['dominance', 'Bài Dominance'],
+  ] as const).map(([kind, title]) => html`<${Section} title=${title}>
+    <div class="kit-deck">${BASE_DECK.filter(d => d.kind === kind).map(d => html`
+      <div class="kit-copies" role="group" aria-label=${d.name}>${Array.from({ length: d.copies }, (_, i) =>
+        html`<${MiniCard} card=${`${d.id}#${i + 1}`} />`)}</div>`)}</div><//>`)}
+  <${Section} title="Bài Quest">
+    <div class="kit-deck kit-quests">${BASE_QUESTS.map(q => html`<${QuestFace} quest=${q.id} size="mini" />`)}</div><//>
 
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>
