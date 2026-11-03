@@ -3,10 +3,12 @@ import type { LogEntry } from '../motion.ts'
 
 /** What the server pushes over the game WebSocket (docs/05-product-spec/multiplayer.md). */
 export interface Seat { faction: FactionId; kind: string; name: string; connected: boolean }
+export interface ChatEntry { faction: FactionId; text: string; at: number }
+
 export interface Update {
   type: 'update'; gameId: string; seat: FactionId | null; view: PlayerView; legal: Action[]
   seats: Seat[]
-  log: LogEntry[]
+  log: LogEntry[]; chat: ChatEntry[]; canUndo: boolean
   deadline: number | null
   now: number
 }

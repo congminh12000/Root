@@ -33,9 +33,11 @@ Khi sửa giao diện: chạy `npm run serve` trong một terminal và `npm run 
 
 | Chiều | Tin nhắn |
 |---|---|
-| server → client | `update { gameId, seat, view, legal, seats, log }`: gửi khi kết nối và sau mỗi command được chấp nhận |
+| server → client | `update { gameId, seat, view, legal, seats, log, chat, canUndo }`: gửi khi kết nối và sau mỗi command được chấp nhận |
 | server → client | `rejected { actionId, result }`: engine từ chối, kèm mã lỗi (`stale-revision`, `illegal-action`…) |
 | client → server | `command { actionId, expectedRevision, action }` |
+| client → server | `undo { expectedRevision }`: chỉ ghế sở hữu hành động gần nhất và được server cho phép |
+| client → server | `chat { text }`: ghế người, 1–500 ký tự sau trim, tối đa một tin/750 ms, lưu 100 tin gần nhất |
 
 HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ faction, kind: 'human' | 'bot', name?, bot? }] }` tạo trận, trả về 400 nếu tổ hợp phe không đủ Reach (decision 0003).
 
@@ -85,3 +87,7 @@ Giới hạn hiện tại:
 - **Tài khoản và mã hóa.** Server không có tài khoản và chạy HTTP thường, không mã hóa. Chỉ dùng trong LAN tin cậy.
 - **Đổi người giữa trận, hoàn tác, chat.**
 - **Hoạt ảnh di chuyển theo đường.** Hiện chỉ có hoạt ảnh ở ô thay đổi, chưa có quân chạy dọc đường đi hay xúc xắc lăn.
+
+### Undo theo yêu cầu HUD (03/11/2026)
+
+Đây là tiện ích thao tác của ứng dụng, không thay đổi luật Root. Server lưu điểm khôi phục của duy nhất command bàn cờ xác định gần nhất, trong cùng bước/lượt/người quyết định, chưa phát sinh thông tin mới hay interrupt. Battle (§4.3), turmoil (§7.7), rút/lộ bài và chuyển bước không được hoàn tác. Chỉ cho phép move/build/recruit/slip thuộc allowlist; những hành động khác mặc định bị khoá. Trạng thái khôi phục do engine tạo trước đó; record loại command vừa hoàn tác, vẫn replay được. `SavedGame.revision` là phiên bản mạng đơn điệu, tách khỏi số command còn trong record; server đổi phiên bản về engine khi gửi `applyCommand`. Điểm Undo không được giữ qua lần khởi động lại. Nhật ký công khai lưu phiên bản mạng để animation không lặp lại sau Undo.

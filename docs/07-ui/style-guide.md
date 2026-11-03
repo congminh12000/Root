@@ -103,9 +103,9 @@ Mọi vật 3D lấy vật liệu theo **vai trò** từ `board/look.ts` (`mat(r
 
 Màn trận chỉ có map, full màn hình (`gameplay-map-only.md`). Mọi thông tin khác là lớp nổi nhỏ ở mép, không bao giờ thành cột cố định:
 
-- **Vị trí cố định:** trạng thái ở góc trên trái, menu ☰ góc trên phải, huy hiệu phe dọc mép phải, dải "Bài của bạn" giữa mép dưới, chip nhật ký góc dưới trái. Bong bóng hành động chung ở giữa mép trên (màn hẹp: ngay dưới ô trạng thái).
+- **Vị trí cố định (ảnh mẫu người quản lý, 03/11/2026):** đối thủ dọc mép trên trái theo thứ tự ghế của engine, không gồm ghế đang xem; trạng thái giữa mép trên; settings, chat và nhật ký ở góc trên phải; phe của mình góc dưới trái; lá vừa đánh công khai giữa map; tay bài giữa mép dưới; hành động, Undo và Continue góc dưới phải. Khán giả thấy mọi phe và không có điều khiển của ghế riêng.
 - **Vẻ ngoài:** nền `paper-a96`, viền 2 px `ink`, bo `r-md`, bóng `shadow-card`; ngăn đang mở dùng `shadow-raised`. Huy hiệu phe có viền trái màu phe và icon phe (không chỉ màu); phe đang tới lượt có viền `autumn-gold`.
-- **Tay bài luôn hiện:** các lá đầy đủ ở mép dưới, không khung hay tiêu đề; toàn bộ chiều cao lá nằm trong màn hình để đọc trực tiếp. Bấm từng lá để xem chi tiết/hành động; tay bài dài cuộn ngang. Hover/focus giữ mặt lá đứng yên để đọc và chọn.
+- **Tay bài luôn hiện:** lá thu nhỏ rộng 120 px ở mép dưới, không khung hay tiêu đề; bấm để đọc đầy đủ/hành động. Tay bài dài cuộn ngang. Hover/focus giữ mặt lá đứng yên để chọn. Màn dọc đưa tay bài lên trên cụm điều khiển.
 - **Một ngăn mỗi lúc:** bảng phe / tất cả lựa chọn / hướng dẫn (phải), nhật ký (trái). Chạm ra ngoài hoặc Esc là đóng; chạm nút HUD khác thì chuyển ngăn. Ngăn cao theo nội dung, không phủ hết màn.
 - **Menu và callout gắn ô** (menu tại ô, quyết định, xúc xắc, thông tin ô) bám theo ô khi camera di chuyển, lật xuống dưới ô khi gần mép trên, và được kẹp trong màn hình.
 - **Cảm ứng:** mọi nút ≥ 44 px khi con trỏ là ngón tay; không có thao tác chỉ làm được bằng hover (thông tin ô: rê chuột hoặc nhấn giữ).

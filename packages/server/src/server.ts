@@ -104,7 +104,16 @@ export function startServer(opts: ServerOptions) {
     ws.on('message', raw => {
       let msg: ClientMessage
       try { msg = JSON.parse(String(raw)) } catch { return }
-      if (msg.type !== 'command' || !seat) return
+      if (!msg || !seat) return
+      if (msg.type === 'chat') {
+        if (!room.chat(seat, msg.text)) ws.send(JSON.stringify({ type: 'error', message: 'Tin nhắn cần 1–500 ký tự; vui lòng chờ một chút giữa hai tin.' }))
+        return
+      }
+      if (msg.type === 'undo') {
+        if (!room.undo(seat, msg.expectedRevision)) ws.send(JSON.stringify({ type: 'error', message: 'Không thể Undo hành động này.' }))
+        return
+      }
+      if (msg.type !== 'command') return
       const result = room.submit(seat, String(msg.actionId), Number(msg.expectedRevision), msg.action)
       if (!result.ok) ws.send(JSON.stringify({ type: 'rejected', actionId: msg.actionId, result }))
     })
