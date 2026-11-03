@@ -22,9 +22,9 @@ export function woodlandArt(id: string, suit: CardSuit): string {
   const cell = 418, inset = 3
   const x = (index % 3) * cell + inset, y = Math.floor(index / 3) * cell + inset, size = cell - inset * 2
   const clip = `woodland-${id}`
-  // Clip the sheet itself, so 'meet' cannot expose neighbouring panels in the side margins.
-  // Keep the complete square scene: the main character's ears, paws and props stay visible in the wide art window.
-  return `<svg class="cf-scene cf-woodland-art" data-design="${id}" data-suit="${suit}" viewBox="${x} ${y} ${size} ${size}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
+  // Keep the whole painted panel and fill the card beneath the header, including behind the text slip.
+  // A dedicated clip prevents neighbouring scenes from entering the card.
+  return `<svg class="cf-scene cf-woodland-art" data-design="${id}" data-suit="${suit}" viewBox="${x} ${y} ${size} ${size}" preserveAspectRatio="none" aria-hidden="true">`
     + `<defs><clipPath id="${clip}"><rect x="${x}" y="${y}" width="${size}" height="${size}"/></clipPath></defs>`
     + `<image href="${SHEETS[suit]}" width="1254" height="1254" clip-path="url(#${clip})"/></svg>`
 }
