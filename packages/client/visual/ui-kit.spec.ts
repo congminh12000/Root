@@ -68,15 +68,25 @@ test('card typography hides citations and uses thin borders with regular effect 
   expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(8)
 })
 
-test('all 54 deck cards expose readable effects without opening details', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 900 })
+test('UI kit groups compact cards and keeps copies together', async ({ page }) => {
+  await page.setViewportSize({ width: 1224, height: 604 })
   await page.goto('/ui-kit.html')
-  await page.evaluate(() => document.fonts.ready)
-  const cards = page.locator('.kit-deck').first().locator('.cardface')
-  await expect(cards).toHaveCount(54)
-  for (const card of await cards.all()) {
-    await expect(card.locator('.cf-text p')).toBeVisible()
-    expect(await card.locator('.cf-text').evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true)
-    expect(await card.locator('.cf-text p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14)
+  await expect(page.getByRole('heading', { name: 'Chi tiết lá bài', exact: true })).toHaveCount(0)
+  await expect(page.locator('.kit-copies .cardface')).toHaveCount(54)
+  await expect(page.locator('.kit-quests .cardface')).toHaveCount(15)
+  const ambush = await page.locator('.kit-ambush .cardface').evaluateAll(nodes => nodes.map(n => n.getBoundingClientRect().top))
+  expect(new Set(ambush).size).toBe(1)
+  for (const group of await page.locator('.kit-copies').all()) {
+    const cards = await group.locator('.minicard').evaluateAll(nodes => nodes.map(n => ({
+      id: n.getAttribute('data-card')!.split('#')[0], top: n.getBoundingClientRect().top,
+      width: n.getBoundingClientRect().width,
+    })))
+    expect(new Set(cards.map(c => c.id)).size).toBe(1)
+    expect(new Set(cards.map(c => c.top)).size).toBe(1)
+    expect(cards.every(c => c.width <= 180)).toBe(true)
   }
+  await page.setViewportSize({ width: 390, height: 900 })
+  expect(await page.locator('.kit-copies').evaluateAll(nodes => nodes.every(n => n.getBoundingClientRect().right <= 390))).toBe(true)
+  const mobileRows = await page.locator('.kit-ambush .cardface').evaluateAll(nodes => nodes.map(n => n.getBoundingClientRect().top))
+  expect(new Set(mobileRows).size).toBe(2)
 })
