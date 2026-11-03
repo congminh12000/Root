@@ -62,7 +62,7 @@ function background(suit: Suit, rand: () => number): string {
 
 // The approved generated sheet is reused verbatim; viewBoxes exclude its cream gutters.
 // Order in the source artwork: bird, rabbit, fox, mouse. Both bird copies share the same painting.
-const ambushSheet = new URL('../assets/cards/ambush-woodland.png', import.meta.url).href
+const ambushSheet = new URL('../assets/cards/ambush-woodland.webp', import.meta.url).href
 const AMBUSH_CROP: Record<Suit, string> = {
   bird: '10 10 522 704', rabbit: '553 10 522 704', fox: '1096 10 522 704', mouse: '1639 10 522 704',
 }

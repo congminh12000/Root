@@ -57,7 +57,7 @@ test('ambush cards follow the printed layout: name in the band, where to play in
   }
   // Each suit selects a different panel of the approved generated painting.
   const scenes = BASE_DECK.filter(c => c.kind === 'ambush').map(d => cardArt(d, 1))
-  for (const svg of scenes) assert.ok(svg.includes('ambush-woodland.png') && svg.includes('<image '))
+  for (const svg of scenes) assert.ok(svg.includes('ambush-woodland.webp') && svg.includes('<image '))
   const bird = BASE_DECK.find(d => d.id === 'ambush-bird')!
   assert.equal(cardArt(bird, 1), cardArt(bird, 2), 'both bird copies keep the approved painting')
   for (const d of BASE_DECK.filter(c => c.kind === 'dominance')) assert.ok(!cardArt(d).includes('<image '), d.id)

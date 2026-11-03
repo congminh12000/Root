@@ -5,7 +5,7 @@ Created with the built-in imagegen tool, using the project indie woodland palett
 ink outlines, warm flat gouache shapes and subtle paper texture.
 The owner requested this exact generated sheet be used for the Ambush backgrounds.
 
-The PNG is unchanged (2172 × 724). Panels run left to right: bird, rabbit, fox,
+The sheet keeps its original 2172 × 724 size, re-encoded as WebP (quality 0.82) for load speed. Panels run left to right: bird, rabbit, fox,
 mouse. `card-art.ts` selects panel viewBoxes excluding the cream gutters.
 One shared image request serves all suits and both bird copies.
 No official card scan is bundled. This is visual content only; rules text is unchanged.
@@ -17,12 +17,12 @@ Generated with the built-in imagegen tool on 2026-11-03 at the project owner's r
 45 physical craftable cards use 34 distinct paintings. Duplicate physical cards reuse their design's painting.
 This artwork is original, with no official scans or traced game art.
 
-- `woodland-bird.png`: 8 scenes, final square unused.
-- `woodland-fox.png`: 9 scenes.
-- `woodland-rabbit.png`: 8 scenes, final square unused.
-- `woodland-mouse.png`: 9 scenes.
+- `woodland-bird.webp`: 8 scenes, final square unused.
+- `woodland-fox.webp`: 9 scenes.
+- `woodland-rabbit.webp`: 8 scenes, final square unused.
+- `woodland-mouse.webp`: 9 scenes.
 
-Each source PNG is stored at its original generated size of 1254×1254, a 3×3 grid with 418 px cells.
+Each sheet keeps its original generated size of 1254×1254, a 3×3 grid with 418 px cells, re-encoded as WebP (quality 0.82): about 0.35 MB each instead of 3.3 MB PNG.
 `ui/woodland-art.ts` lists each cell's design in row-major order and clips 3 px inside its edges.
 SVG `preserveAspectRatio="none"` keeps the whole scene while filling the card from beneath the header to the bottom, including behind the compact text slip. Dedicated clipping keeps adjacent cells out.
 Four shared local sheets work offline and require no runtime image generation.
