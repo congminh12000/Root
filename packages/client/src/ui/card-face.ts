@@ -10,8 +10,8 @@ import type { IconName } from './icons.ts'
 
 /**
  * A card face in the layout of the printed cards (docs/07-ui/style-guide.md §6), drawn in our style: the suit band
- * with its round badge and the crafting cost, a scene in the middle (card-art.ts), a wooden plaque with what the card
- * gives, and a paper box with the name and, at full size, the effect. All deck cards show their full effect, including in the hand and decisions.
+ * with its round badge and name, a scene in the middle (card-art.ts), crafting suits on a wooden plaque,
+ * and an effect-only paper box. Special cards keep their separate layouts. All deck cards show their full effect, including in the hand and decisions.
  * Quest faces retain their compact variant.
  */
 
@@ -29,14 +29,14 @@ const PaperEdge = () => html`<svg class="cf-paper-edge" viewBox="0 0 100 100" pr
   <path class="crease" d="M2 42 L5 45 M98 31 L95 34 M94 94 L92 91 M3 75 L5 79" />
 </svg>`
 
-function Frame({ suit, cost, art, plaque, name, sub, text, size, label, paper = false }: {
-  suit: CardDef['suit']; cost: ComponentChildren; art: string; plaque: ComponentChildren; name: string; sub: string; text: string; size: 'mini' | 'full'; label: string; paper?: boolean
+function Frame({ suit, cost, art, plaque, name, sub, text, size, label, paper = false, standard = false }: {
+  suit: CardDef['suit']; cost: ComponentChildren; art: string; plaque: ComponentChildren; name: string; sub: string; text: string; size: 'mini' | 'full'; label: string; paper?: boolean; standard?: boolean
 }) {
-  return html`<div class=${`cardface ${size}`} style=${{ '--suit': `var(--suit-${suit})` }} role="img" aria-label=${label}>
-    <div class="cf-head"><span class="cf-badge"><${SuitBadge} suit=${suit} label=${SUIT_NAME[suit]} /></span><span class="cf-cost">${cost}</span></div>
+  return html`<div class=${`cardface ${size}${standard ? ' standard' : ''}`} style=${{ '--suit': `var(--suit-${suit})` }} role="img" aria-label=${label}>
+    <div class="cf-head"><span class="cf-badge"><${SuitBadge} suit=${suit} label=${SUIT_NAME[suit]} /></span>${standard ? html`<b class="cf-title">${name}</b>` : html`<span class="cf-cost">${cost}</span>`}</div>
     <div class="cf-art" dangerouslySetInnerHTML=${{ __html: art }}></div>
-    <div class="cf-plaque">${plaque}</div>
-    <div class=${`cf-text${paper ? ' cf-paper' : ''}`}>${paper && html`<${PaperEdge} />`}<b class=${`cf-name${name.length > 18 ? ' long longer' : name.length > 13 ? ' long' : ''}`}>${name}</b>${size === 'mini' ? html`<small>${sub}</small>` : html`<p>${displayCardText(text)}</p>`}</div>
+    <div class="cf-plaque">${standard ? html`<span class="cf-cost" aria-label="Điều kiện chế tạo">${cost}</span>` : plaque}</div>
+    <div class=${`cf-text${paper ? ' cf-paper' : ''}`}>${paper && html`<${PaperEdge} />`}${!standard && html`<b class=${`cf-name${name.length > 18 ? ' long longer' : name.length > 13 ? ' long' : ''}`}>${name}</b>`}${size === 'mini' ? html`<small>${sub}</small>` : html`<p>${displayCardText(text)}</p>`}</div>
   </div>`
 }
 
@@ -66,7 +66,7 @@ export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
     : html`<span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name=${PLAQUE[d.kind]} /></span>`
   const sub = d.kind === 'item' ? `${ITEM_NAME[d.item!]} · +${d.vp ?? 0}` : KIND_NAME[d.kind]
   return html`<${Frame} suit=${d.suit} cost=${d.cost.map(s => html`<${CostPip} suit=${s} />`)} art=${cardArt(d, copyOf(card))} plaque=${plaque}
-    paper=${d.kind === 'item' || d.kind === 'immediate'} name=${d.name} sub=${sub} text=${cardText(d)} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}, ${sub}`} />`
+    standard=${d.kind !== 'dominance'} paper=${d.kind === 'item' || d.kind === 'immediate'} name=${d.name} sub=${sub} text=${cardText(d)} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}, ${sub}`} />`
 }
 
 /** A Vagabond quest (§9.5.5): the two items to exhaust sit where a card's cost would be. */

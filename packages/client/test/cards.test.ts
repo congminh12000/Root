@@ -62,7 +62,7 @@ test('ambush cards follow the printed layout: name in the band, where to play in
   for (const d of BASE_DECK.filter(c => c.kind !== 'ambush')) assert.ok(!cardArt(d).includes('<image '), d.id)
   assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
-  assert.ok(other.includes('cf-plaque') && !other.includes('cf-title'), 'other cards keep their layout')
+  assert.ok(other.includes('standard') && other.includes('cf-title'), 'ordinary cards use the requested named header')
 })
 
 test('all 54 physical deck cards show the full effect even in the hand', () => {
@@ -75,4 +75,33 @@ test('all 54 physical deck cards show the full effect even in the hand', () => {
     count++
   }
   assert.equal(count, 54)
+})
+
+
+test('ordinary cards put name in header, crafting suits on plaque and only effects in text', () => {
+  for (const d of BASE_DECK.filter(d => ['item', 'immediate', 'persistent'].includes(d.kind))) {
+    const out = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
+    const header = out.match(/<div class="cf-head">(.*?)<div class="cf-art"/s)![1]!
+    const plaque = out.match(/<div class="cf-plaque">(.*?)<div class="cf-text/s)![1]!
+    const effect = out.slice(out.indexOf('<div class="cf-text'))
+    assert.ok(header.includes(`<b class="cf-title">${d.name}</b>`), d.id)
+    assert.ok(!header.includes('cf-cost'), d.id)
+    assert.equal((plaque.match(/class="cf-pip /g) ?? []).length, d.cost.length, d.id)
+    assert.ok(plaque.includes('Điều kiện chế tạo'), d.id)
+    assert.ok(!effect.includes('cf-name') && !effect.includes(d.name), d.id)
+    assert.ok(effect.includes('<p>'), d.id)
+  }
+})
+
+test('dominance and quests keep header conditions and name in the lower panel', () => {
+  for (const d of BASE_DECK.filter(d => d.kind === 'dominance')) {
+    const out = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
+    assert.ok(!out.includes(' standard'), d.id)
+    assert.match(out, /cf-head.*cf-cost.*cf-art/s, d.id)
+    assert.match(out, /cf-text.*cf-name/s, d.id)
+  }
+  const out = render(html`<${QuestFace} quest=${BASE_QUESTS[0]!.id} size="full" />`)
+  assert.ok(!out.includes(' standard'))
+  assert.match(out, /cf-head.*cf-cost.*cf-art/s)
+  assert.match(out, /cf-text.*cf-name/s)
 })
