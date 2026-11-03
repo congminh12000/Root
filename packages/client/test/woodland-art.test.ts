@@ -18,7 +18,7 @@ test('all 45 craftable cards map to exactly 34 distinct character paintings', ()
     const art = cardArt(d)
     assert.ok(art.includes(`data-design="${d.id}"`), d.id)
     assert.ok(art.includes(`woodland-${d.suit}.png`), d.id)
-    assert.ok(art.includes('clip-path=') && art.includes('xMidYMid meet'), d.id)
+    assert.ok(art.includes('clip-path=') && art.includes('preserveAspectRatio="none"'), d.id)
     for (let copy = 1; copy <= d.copies; copy++) assert.equal(cardArt(d, copy), art)
   }
 })

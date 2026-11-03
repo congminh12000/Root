@@ -22,9 +22,9 @@ This artwork is original, with no official scans or traced game art.
 - `woodland-rabbit.png`: 8 scenes, final square unused.
 - `woodland-mouse.png`: 9 scenes.
 
-Each original PNG is kept unchanged at 1254×1254, a 3×3 grid with 418 px cells.
+Each source PNG is stored at its original generated size of 1254×1254, a 3×3 grid with 418 px cells.
 `ui/woodland-art.ts` lists each cell's design in row-major order and clips 3 px inside its edges.
-SVG `meet` preserves the full scene and important ears, paws and props; clipping prevents adjacent cells from appearing in the side margins.
+SVG `preserveAspectRatio="none"` keeps the whole scene while filling the card from beneath the header to the bottom, including behind the compact text slip. Dedicated clipping keeps adjacent cells out.
 Four shared local sheets work offline and require no runtime image generation.
 
 Art direction: simple dark brown irregular ink outlines, warm flat gouache fills,
@@ -36,3 +36,12 @@ merchants, tax collectors and travelers; rabbits are friends, bakers, bankers,
 cobblers, commanders and smugglers; mice are scholars, craftsmen, merchants and scouts.
 
 Card names, crafting conditions, effects, Ambush, Dominance and Quest are unchanged.
+
+
+## Background depth revision — 2026-11-03
+
+The owner requested soft backgrounds, a little depth, full-card paintings and removal of the olive bottom band.
+The built-in imagegen editor used each existing sheet as reference, preserving the characters, actions and panel order,
+and adding low-contrast distant trees, workshop details, ground vegetation, atmospheric light and contact shadows.
+The revised output replaces each production sheet; original generations remain in the workspace's generated_images directory.
+No hand-edited raster or official art was used. Updated originals remain exact 1254×1254 three-by-three sheets.

@@ -106,3 +106,15 @@ test('dominance and quests keep header conditions and name in the lower panel', 
   assert.match(out, /cf-head.*cf-cost.*cf-art/s)
   assert.match(out, /cf-text.*cf-name/s)
 })
+
+
+test('ordinary crafting/effect slips use intrinsic content size and pack larger costs in two columns', () => {
+  for (const d of BASE_DECK.filter(d => ['item', 'persistent', 'immediate'].includes(d.kind))) {
+    const out = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
+    assert.ok(out.includes(`data-cost-count="${d.cost.length}"`), d.id)
+    assert.ok(out.includes(`--cost-columns:${d.cost.length > 2 ? 2 : 1}`), d.id)
+    assert.match(out, /cf-bottom.*cf-plaque.*cf-text/s, d.id)
+  }
+  const special = render(html`<${CardFace} card="dominance-fox#1" size="full" />`)
+  assert.ok(!special.includes('cf-bottom'))
+})
