@@ -51,6 +51,10 @@ test('ambush cards follow the printed layout: name in the band, where to play in
     const mini = render(html`<${CardFace} card=${`${d.id}#1`} size="mini" />`)
     assert.ok(mini.includes('<i>') && !mini.includes('<p>'), `${d.id} mini keeps only the italic line`)
   }
+  // The scene: an ambusher of the card's suit with a sword, a different scene for each suit.
+  const scenes = BASE_DECK.filter(c => c.kind === 'ambush').map(d => cardArt(d, 1))
+  for (const svg of scenes) assert.ok(svg.includes('#i-sword'))
+  assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
   assert.ok(other.includes('cf-plaque') && !other.includes('cf-title'), 'other cards keep their layout')
 })
