@@ -127,9 +127,9 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .minicard:hover, .minicard:focus-visible, .minicard.is-hover { transform: translateY(-14px) rotate(0deg); z-index: 2; background: none; }
 .minicard.usable { box-shadow: 0 0 0 3px var(--autumn-gold); }
 .cardface { --cf-w: 92px; position: relative; width: var(--cf-w); aspect-ratio: 63 / 88; font-size: calc(var(--cf-w) / 12); background: var(--suit); color: var(--ink);
-  border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 0 3px 0 var(--ink-a25); text-align: center; flex: none;
+  border: 1px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 0 3px 0 var(--ink-a25); text-align: center; flex: none;
   background: linear-gradient(var(--suit) 0 17%, var(--meadow) 17%); }
-.cardface.full { --cf-w: 260px; border-width: 3px; border-radius: 14px; }
+.cardface.full { --cf-w: 260px; border-width: 1.5px; border-radius: 14px; }
 .cf-head { position: absolute; inset: 0 0 auto; height: 17%; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; background: var(--suit); border-bottom: 2px solid var(--ink); z-index: 1; }
 .cf-badge { display: grid; place-items: center; width: 2.6em; height: 2.6em; transform: translateY(18%); filter: drop-shadow(0 1px 1px var(--ink-a25)); }
 .cf-badge .suit-badge { width: 100%; height: 100%; }
@@ -148,15 +148,15 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cf-plaque .icon { width: 1.35em; height: 1.35em; vertical-align: 0; }
 .cf-text { position: absolute; display: flex; flex-direction: column; justify-content: center; gap: .2em; background: var(--paper-raised); border: 1.5px solid var(--ink);
   clip-path: polygon(.5em 0, calc(100% - .5em) 0, 100% .5em, 100% calc(100% - .5em), calc(100% - .5em) 100%, .5em 100%, 0 calc(100% - .5em), 0 .5em); padding: .25em .35em; }
-.cf-name { font: 1.42em/1.05 var(--font-display); overflow-wrap: anywhere; }
+.cf-name { font: 1.28em/1.1 var(--font-display); overflow-wrap: anywhere; }
 .cardface.mini .cf-name.long { font-size: 1.12em; }
 .cardface.mini .cf-name.longer { font-size: 1em; letter-spacing: -.02em; }
-.cf-text small { font: 600 1.05em/1.1 var(--font-body); color: var(--ink-soft); }
+.cf-text small { font: 400 .95em/1.2 var(--font-body); color: var(--ink-soft); }
 .cardface.mini .cf-text { inset: auto 4% 3% 4%; height: 31%; }
 .cardface.mini .cf-plaque { left: 4%; bottom: 33%; height: 15%; padding: 0 .35em; }
 .cardface.full .cf-text { inset: auto 4% 3% 24%; height: 36%; padding: .3em .45em; }
-.cardface.full .cf-name { font-size: 1.05em; }
-.cardface.full .cf-text p { margin: 0; font: .56em/1.32 var(--font-body); text-align: left; }
+.cardface.full .cf-name { font-size: .95em; }
+.cardface.full .cf-text p { margin: 0; font: 400 .52em/1.4 var(--font-body); text-align: left; }
 .cardface.full .cf-plaque { left: 4%; bottom: 3%; width: 17%; height: 36%; flex-direction: column; font-size: .9em; }
 .cardchip-suit { display: inline-flex; margin-right: 3px; vertical-align: -3px; }
 .cardchip-suit .suit-badge { width: 16px; height: 16px; }
@@ -165,16 +165,20 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardface.ambush { background: linear-gradient(var(--suit) 0 13%, var(--meadow) 13%); }
 .cardface.ambush .cf-head { height: 13%; justify-content: flex-start; align-items: flex-start; gap: .3em; padding: 0 5% 0 4%; }
 .cardface.ambush .cf-badge { width: 3.2em; height: 3.2em; margin-top: .35em; transform: none; z-index: 2; }
-.cf-title { flex: 1; align-self: center; text-align: right; font: 2.1em/1 var(--font-display); white-space: nowrap; }
+.cf-title { flex: 1; align-self: center; text-align: right; font: 400 1.7em/1.15 var(--font-display); white-space: nowrap; }
 .cardface.ambush .cf-art { inset: 13% 0 0; border-bottom: 0; background: var(--meadow); }
 .cardface.ambush .cf-art svg { height: 100%; }
-.cardface.ambush .cf-text { inset: auto 4% 5% 4%; height: auto; min-height: 15%; padding: .5em .8em; border: 0; gap: .3em;
-  background-color: var(--paper); box-shadow: inset 0 0 .7em var(--paper-shade), inset 0 -.15em 0 var(--paper-shade);
-  clip-path: polygon(1.5% 4%, 12% 0, 30% 3%, 52% 0, 71% 3%, 88% 0, 98.5% 3%, 100% 22%, 98% 45%, 100% 70%, 98.5% 96%, 86% 100%, 64% 97%, 45% 100%, 24% 97%, 8% 100%, 1% 95%, 0 72%, 2% 48%, 0 24%); }
-.cardface.ambush .cf-text i { font: italic 1em/1.2 var(--font-body); }
-.cardface.ambush.full .cf-text { min-height: 25%; }
-.cardface.ambush.full .cf-text i { font-size: .66em; }
-.cardface.ambush.full .cf-text p { margin: 0; font: .58em/1.32 var(--font-body); text-align: center; }
+.cardface.ambush .cf-text { inset: auto 4% 5% 4%; height: auto; min-height: 15%; padding: .5em .6em; gap: .3em; }
+.cardface.ambush .cf-text i { font: italic 400 .9em/1.25 var(--font-body); }
+.cardface.ambush.full .cf-text { min-height: 22%; }
+.cardface.ambush.full .cf-text i { font-size: .6em; }
+.cardface.ambush.full .cf-text p { margin: 0; font: 400 .52em/1.4 var(--font-body); text-align: center; }
+/* A lightly yellow paper slip with small tears, an ink outline and crease marks. */
+.cardface .cf-text.cf-paper { background: none; border: 0; box-shadow: none; clip-path: none; padding: .5em .6em; }
+.cf-paper > :not(.cf-paper-edge) { position: relative; }
+.cf-paper-edge { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.cf-paper-edge path { fill: var(--paper-effect); stroke: var(--ink); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.cf-paper-edge .crease { fill: none; stroke: var(--path-edge); stroke-width: .7; }
 .carddetail .cardface { margin: 30px auto var(--sp-2); }
 .quest-row { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 4px 0; }
 .questcard { padding: 0; background: none; border: 0; box-shadow: none; border-radius: 9px; white-space: normal; font: inherit; color: inherit; }

@@ -31,6 +31,7 @@ npm run typecheck && npm test && npm run audit:rules
 ## Bổ sung 03/11/2026
 
 - Nhánh `feat/ambush-illustrated-backgrounds`: dùng bốn tranh Ambush đã tạo trong chat theo suit, thêm hàng xem đủ bốn lá ở UI kit. Ảnh lưu trong `packages/client/src/assets/cards/`; chưa merge.
+- Chỉnh card theo feedback: ẩn số điều khoản ở lớp hiển thị, giảm tiêu đề/chữ nội dung, viền mỏng 50%; giấy vàng có vết rách cho Ambush, dùng ngay và item. Nguồn luật và nội dung hiệu ứng giữ nguyên.
 
 ## Còn lại
 

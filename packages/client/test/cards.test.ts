@@ -14,10 +14,13 @@ test('every card design and quest renders at both sizes, with nothing undefined'
   for (const d of BASE_DECK) for (const size of ['mini', 'full'] as const) {
     const out = render(html`<${CardFace} card=${`${d.id}#1`} size=${size} />`)
     assert.match(out, new RegExp(d.name.replace(/[!?]/g, '.')), d.id)
+    assert.ok(!out.includes('§'), d.id)
+    assert.equal(out.includes('cf-paper-edge'), ['ambush', 'immediate', 'item'].includes(d.kind), d.id)
     assert.ok(!/undefined|NaN|\[object/.test(out), `${d.id} ${size}`)
   }
   for (const q of BASE_QUESTS) for (const size of ['mini', 'full'] as const) {
     const out = render(html`<${QuestFace} quest=${q.id} size=${size} />`)
+    assert.ok(!out.includes('§'), q.id)
     assert.ok(out.includes(q.name) && !/undefined|NaN/.test(out), `${q.id} ${size}`)
   }
 })
@@ -46,7 +49,7 @@ test('ambush cards follow the printed layout: name in the band, where to play in
     const full = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
     assert.match(full, /class="cf-head">.*<b class="cf-title">Ambush!<\/b>/s, d.id)
     assert.ok(full.includes(`<i>Có thể ambush ở ${where[d.suit]}.</i>`), d.id)
-    assert.match(full, /<p>Đầu trận đánh.*khớp ô đó \(§4\.3\.1\)\.<\/p>/, d.id)
+    assert.match(full, /<p>Đầu trận đánh.*khớp ô đó\.<\/p>/, d.id)
     assert.ok(!full.includes('cf-plaque') && !full.includes('cf-cost'), d.id)
     const mini = render(html`<${CardFace} card=${`${d.id}#1`} size="mini" />`)
     assert.ok(mini.includes('<i>') && !mini.includes('<p>'), `${d.id} mini keeps only the italic line`)

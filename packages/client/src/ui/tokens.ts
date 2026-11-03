@@ -12,6 +12,7 @@ export const color = {
   inkSoft: '#6b5d45',
   paper: '#f4ecd8',
   paperRaised: '#fffaf0',
+  paperEffect: '#ffedbc',
   paperShade: '#e8dcc0',
   meadow: '#8f9a4c',
   meadowLight: '#aeb063',

@@ -48,3 +48,6 @@ export const ambushText = (d: CardDef) => ({
 /** A quest's text (§9.5.5): the two items to exhaust, then points or cards. */
 export const questText = (q: QuestDef) =>
   `Ở ô ${SUIT_NAME[q.suit]}, úp ${ITEM_NAME[q.items[0]]} và ${ITEM_NAME[q.items[1]]}: được 1 điểm cho mỗi quest ${SUIT_NAME[q.suit]} đã xong (tính cả lá này), hoặc rút 2 lá (§9.5.5).`
+
+/** Keep source citations for audits, but omit them from player-facing card copy. */
+export const displayCardText = (text: string) => text.replace(/\s*\([^)]*§[^)]*\)/g, '')

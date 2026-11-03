@@ -53,3 +53,17 @@ test('Ambush paintings load locally with the correct suit and fill the card art'
   }
   await page.locator('.kit-ambush').screenshot({ path: 'test-results/ambush-four-suits.png' })
 })
+
+test('card typography hides citations and uses thin borders with regular effect copy', async ({ page }) => {
+  await page.goto('/ui-kit.html')
+  const card = page.locator('.kit-ambush .cardface').first()
+  await expect(card).toHaveCSS('border-top-width', '1px')
+  await expect(card.locator('.cf-title')).toHaveCSS('font-weight', '400')
+  await expect(card.locator('.cf-text p')).toHaveCSS('font-weight', '400')
+  expect((await page.locator('.cardface .cf-text').allTextContents()).join('')).not.toContain('§')
+  await expect(card.locator('.cf-paper-edge')).toBeVisible()
+  const title = await card.locator('.cf-title').boundingBox()
+  const bounds = await card.boundingBox()
+  expect(title!.y - bounds!.y).toBeGreaterThan(3)
+  expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(8)
+})
