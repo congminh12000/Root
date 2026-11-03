@@ -67,3 +67,16 @@ test('card typography hides citations and uses thin borders with regular effect 
   expect(title!.y - bounds!.y).toBeGreaterThan(3)
   expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(8)
 })
+
+test('all 54 deck cards expose readable effects without opening details', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 })
+  await page.goto('/ui-kit.html')
+  await page.evaluate(() => document.fonts.ready)
+  const cards = page.locator('.kit-deck').first().locator('.cardface')
+  await expect(cards).toHaveCount(54)
+  for (const card of await cards.all()) {
+    await expect(card.locator('.cf-text p')).toBeVisible()
+    expect(await card.locator('.cf-text').evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true)
+    expect(await card.locator('.cf-text p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14)
+  }
+})

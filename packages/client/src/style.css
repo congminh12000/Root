@@ -129,7 +129,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardface { --cf-w: 92px; position: relative; width: var(--cf-w); aspect-ratio: 63 / 88; font-size: calc(var(--cf-w) / 12); background: var(--suit); color: var(--ink);
   border: 1px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 0 3px 0 var(--ink-a25); text-align: center; flex: none;
   background: linear-gradient(var(--suit) 0 17%, var(--meadow) 17%); }
-.cardface.full { --cf-w: 260px; border-width: 1.5px; border-radius: 14px; }
+.cardface.full { --cf-w: 320px; border-width: 1.5px; border-radius: 14px; }
 .cf-head { position: absolute; inset: 0 0 auto; height: 17%; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; background: var(--suit); border-bottom: 2px solid var(--ink); z-index: 1; }
 .cf-badge { display: grid; place-items: center; width: 2.6em; height: 2.6em; transform: translateY(18%); filter: drop-shadow(0 1px 1px var(--ink-a25)); }
 .cf-badge .suit-badge { width: 100%; height: 100%; }
@@ -141,7 +141,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cf-pip.suit .suit-badge { width: 100%; height: 100%; }
 .cf-pip.item { background: var(--paper-raised); --icon-fill: var(--paper-shade); }
 .cf-art { position: absolute; inset: 17% 0 32%; border-bottom: 1.5px solid var(--ink); }
-.cardface.full .cf-art { inset: 17% 0 36%; }
+.cardface.full .cf-art { inset: 17% 0 45%; }
 .cf-art svg { display: block; width: 100%; height: 100%; }
 .cf-plaque { position: absolute; display: flex; align-items: center; justify-content: center; gap: .15em; color: var(--paper-raised); font: 1.2em/1 var(--font-display);
   background: repeating-linear-gradient(0deg, var(--wood) 0 .45em, var(--wood-light) .45em .55em); border: 1.5px solid var(--ink); border-radius: .3em; box-shadow: 0 .12em 0 var(--ink-a25); }
@@ -154,10 +154,10 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cf-text small { font: 400 .95em/1.2 var(--font-body); color: var(--ink-soft); }
 .cardface.mini .cf-text { inset: auto 4% 3% 4%; height: 31%; }
 .cardface.mini .cf-plaque { left: 4%; bottom: 33%; height: 15%; padding: 0 .35em; }
-.cardface.full .cf-text { inset: auto 4% 3% 24%; height: 36%; padding: .3em .45em; }
+.cardface.full .cf-text { inset: auto 4% 3% 24%; height: 44%; padding: .3em .45em; }
 .cardface.full .cf-name { font-size: .95em; }
-.cardface.full .cf-text p { margin: 0; font: 400 .52em/1.4 var(--font-body); text-align: left; }
-.cardface.full .cf-plaque { left: 4%; bottom: 3%; width: 17%; height: 36%; flex-direction: column; font-size: .9em; }
+.cardface.full .cf-text p { margin: 0; font: 400 .525em/1.4 var(--font-body); text-align: left; }
+.cardface.full .cf-plaque { left: 4%; bottom: 3%; width: 17%; height: 44%; flex-direction: column; font-size: .9em; }
 .cardchip-suit { display: inline-flex; margin-right: 3px; vertical-align: -3px; }
 .cardchip-suit .suit-badge { width: 16px; height: 16px; }
 /* Ambush cards (§4.3.1), like the printed ones: a narrow band with the badge hanging below it and the name, the scene
@@ -172,7 +172,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .cardface.ambush .cf-text i { font: italic 400 .9em/1.25 var(--font-body); }
 .cardface.ambush.full .cf-text { min-height: 22%; }
 .cardface.ambush.full .cf-text i { font-size: .6em; }
-.cardface.ambush.full .cf-text p { margin: 0; font: 400 .52em/1.4 var(--font-body); text-align: center; }
+.cardface.ambush.full .cf-text p { margin: 0; font: 400 .525em/1.4 var(--font-body); text-align: center; }
 /* A lightly yellow paper slip with small tears, an ink outline and crease marks. */
 .cardface .cf-text.cf-paper { background: none; border: 0; box-shadow: none; clip-path: none; padding: .5em .6em; }
 .cf-paper > :not(.cf-paper-edge) { position: relative; }
@@ -255,15 +255,15 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .hud-faction small { font-size: 11px; color: var(--ink-soft); }
 .hud-faction.turn { outline: 3px solid var(--autumn-gold); outline-offset: 1px; }
 .hud-faction[aria-pressed="true"] { background: var(--autumn-gold); }
-.hud-hand { bottom: -44px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 240px);
+.hud-hand { bottom: 8px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 240px);
   background: none; border: 0; box-shadow: none; pointer-events: none; }
 .hud-hand .hand { margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
 .hud-hand h3, .hud-hand .hand > p { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
-.hud-hand .hand .fan { min-height: 0; padding: 56px 12px 0; gap: 8px; scrollbar-width: none; pointer-events: none; }
+.hud-hand .hand .fan { min-height: 0; padding: 8px 12px; gap: 8px; scrollbar-width: none; pointer-events: none; }
 .hud-hand .fan::-webkit-scrollbar { display: none; }
 .hud-hand .hand-slot { pointer-events: auto; }
 .hud-hand .hand-slot .cardface { transform: none; }
-.hud-hand .hand-slot .minicard:focus-visible .cardface { transform: translateY(-52px); }
+.hud-hand .hand-slot .minicard:focus-visible .cardface { transform: none; }
 .hud-hand .hand-info { position: absolute; bottom: 100%; pointer-events: auto; }
 .hand .fan { justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; gap: 8px; padding: 26px 12px 12px; }
 .hand-slot { display: block; flex: none; position: relative; }
@@ -277,11 +277,11 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 @media (hover: hover) and (pointer: fine) {
   .hand-slot:hover { z-index: 2; }
   .hand-slot:hover .cardface { transform: translateY(-12px) rotate(0deg) scale(1.06); }
-  .hud-hand .hand-slot:hover .cardface { transform: translateY(-52px); }
+  .hud-hand .hand-slot:hover .cardface { transform: none; }
 }
 @media (max-width: 600px) {
   .hud-hand { max-width: calc(100% - 24px); }
-  .game-screen .hud-log, .kit-hud .hud-log { bottom: 156px; }
+  .game-screen .hud-log, .kit-hud .hud-log { bottom: 480px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hand-slot .cardface { transition: none; }
@@ -337,7 +337,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-item small { color: var(--ink-soft); font-size: var(--fs-xs); }
 .kit-icon { --icon-fill: var(--paper-raised); }
 .kit-icon .icon { width: 40px; height: 40px; }
-.kit-hud { position: relative; height: 420px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: clip; }
+.kit-hud { position: relative; height: 640px; margin: var(--sp-2) 0; background: var(--pine); border-radius: var(--r-md); overflow: clip; }
 .kit-hud.short { height: 120px; }
 .kit-deck { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: var(--sp-2) 0; }
 .kit-deck .minicard { margin: 0; }

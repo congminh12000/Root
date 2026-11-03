@@ -49,10 +49,10 @@ test('ambush cards follow the printed layout: name in the band, where to play in
     const full = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
     assert.match(full, /class="cf-head">.*<b class="cf-title">Ambush!<\/b>/s, d.id)
     assert.ok(full.includes(`<i>Có thể ambush ở ${where[d.suit]}.</i>`), d.id)
-    assert.match(full, /<p>Đầu trận đánh.*khớp ô đó\.<\/p>/, d.id)
+    assert.match(full, /<p>Đầu trận đánh.*khớp ô\.<\/p>/, d.id)
     assert.ok(!full.includes('cf-plaque') && !full.includes('cf-cost'), d.id)
     const mini = render(html`<${CardFace} card=${`${d.id}#1`} size="mini" />`)
-    assert.ok(mini.includes('<i>') && !mini.includes('<p>'), `${d.id} mini keeps only the italic line`)
+    assert.ok(mini.includes('<p>') && mini.includes('ambush full'), `${d.id} always shows the full effect`)
   }
   // Each suit selects a different panel of the approved generated painting.
   const scenes = BASE_DECK.filter(c => c.kind === 'ambush').map(d => cardArt(d, 1))
@@ -63,4 +63,16 @@ test('ambush cards follow the printed layout: name in the band, where to play in
   assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
   assert.ok(other.includes('cf-plaque') && !other.includes('cf-title'), 'other cards keep their layout')
+})
+
+test('all 54 physical deck cards show the full effect even in the hand', () => {
+  let count = 0
+  for (const d of BASE_DECK) for (let copy = 1; copy <= d.copies; copy++) {
+    const card = `${d.id}#${copy}`
+    const face = render(html`<${CardFace} card=${card} size="mini" />`)
+    assert.ok(face.includes('full'), card)
+    assert.ok(face.includes('<p>') && !face.includes('<small>'), card)
+    count++
+  }
+  assert.equal(count, 54)
 })
