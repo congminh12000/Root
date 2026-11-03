@@ -3,7 +3,7 @@ import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { cardDesign, ITEM_NAME, questDesign, SUIT_NAME } from '../names.ts'
 import { cardArt, questArt } from './card-art.ts'
-import { cardText, questText } from './card-text.ts'
+import { ambushText, cardText, questText } from './card-text.ts'
 import { Icon } from './components.ts'
 import { SuitBadge } from './suit-badge.ts'
 import type { IconName } from './icons.ts'
@@ -34,11 +34,26 @@ function Frame({ suit, cost, art, plaque, name, sub, text, size, label }: {
   </div>`
 }
 
+/**
+ * An ambush card, laid out like the printed one (§4.3.1): the name in the suit band beside the badge, the scene filling
+ * the card, and one paper box with where it can be played (italic) and, at full size, what it does. Nothing to craft,
+ * so no cost and no plaque.
+ */
+function AmbushFrame({ d, copy, size }: { d: CardDef; copy: number; size: 'mini' | 'full' }) {
+  const t = ambushText(d)
+  return html`<div class=${`cardface ambush ${size}`} style=${{ '--suit': `var(--suit-${d.suit})` }} role="img" aria-label=${`${d.name}, ${SUIT_NAME[d.suit]}, ambush`}>
+    <div class="cf-head"><span class="cf-badge"><${SuitBadge} suit=${d.suit} label=${SUIT_NAME[d.suit]} /></span><b class="cf-title">${d.name}</b></div>
+    <div class="cf-art" dangerouslySetInnerHTML=${{ __html: cardArt(d, copy) }}></div>
+    <div class="cf-text"><i>${t.where}</i>${size === 'full' ? html`<p>${t.effect}</p>` : null}</div>
+  </div>`
+}
+
 const copyOf = (card: string) => Number(card.split('#')[1] ?? 1)
 
 /** A physical card, e.g. "armorers#2". */
 export function CardFace({ card, size }: { card: string; size: 'mini' | 'full' }) {
   const d = cardDesign(card)
+  if (d.kind === 'ambush') return html`<${AmbushFrame} d=${d} copy=${copyOf(card)} size=${size} />`
   const plaque = d.kind === 'item'
     ? html`<span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name=${d.item!} /></span><b>+${d.vp ?? 0}</b>`
     : html`<span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name=${PLAQUE[d.kind]} /></span>`

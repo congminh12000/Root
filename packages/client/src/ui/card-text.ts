@@ -27,7 +27,7 @@ export function cardText(d: CardDef): string {
   const rule = KIND_RULE[d.kind]
   switch (d.kind) {
     case 'item': return `Chế tạo: nhận ${ITEM_NAME[d.item!]} và ${d.vp ?? 0} điểm, rồi bỏ lá (${rule}).`
-    case 'ambush': return `Phòng thủ ở ô ${d.suit === 'bird' ? 'bất kỳ' : SUIT_NAME[d.suit]}: gây 2 hit trước khi tung xúc xắc. Bên tấn công phá được bằng lá cùng chất (${rule}).`
+    case 'ambush': { const a = ambushText(d); return `${a.where} ${a.effect}` }
     case 'dominance': return d.suit === 'bird'
       ? `Bạn thắng nếu cai quản hai ô góc đối diện vào đầu Birdsong của bạn (${rule}).`
       : `Bạn thắng nếu cai quản ba ô ${SUIT_NAME[d.suit]} vào đầu Birdsong của bạn (${rule}).`
@@ -35,6 +35,15 @@ export function cardText(d: CardDef): string {
     case 'persistent': return `${EFFECT[d.id] ?? ''} (${rule})`
   }
 }
+
+/**
+ * An ambush card's two lines (§4.3.1), laid out like the printed card: where it can be played (bird is wild, §2.2.2),
+ * then what it does. A matching ambush is any that matches the clearing, a bird one included.
+ */
+export const ambushText = (d: CardDef) => ({
+  where: `Có thể ambush ở ${d.suit === 'bird' ? 'ô bất kỳ' : `ô ${SUIT_NAME[d.suit]}`}.`,
+  effect: `Đầu trận đánh, bên phòng thủ có thể chơi lá này để gây ngay 2 hit, rồi bỏ lá. Bị huỷ nếu bên tấn công cũng chơi một lá ambush khớp ô đó (${KIND_RULE.ambush}).`,
+})
 
 /** A quest's text (§9.5.5): the two items to exhaust, then points or cards. */
 export const questText = (q: QuestDef) =>
