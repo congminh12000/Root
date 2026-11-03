@@ -1,26 +1,13 @@
 import type { CardDef, CardSuit as Suit, ItemType, QuestDef } from '@root/game-data'
+import { woodlandArt } from './woodland-art.ts'
 import type { IconName } from './icons.ts'
 
 /**
- * The picture in the middle of a card face (docs/07-ui/style-guide.md §6): a small woodland scene drawn in code, in
- * the board's style (flat colour, ink outline, our own shapes; no official art, licensing.md). The background
- * belongs to the card's suit, the subject to its kind: the item on a stand, a banner
- * for dominance, a motif for each persistent and immediate card. Seeded by the card's id, so every browser draws the
- * same card; the second copy of a design is mirrored with its trees moved, so two copies differ.
- *
- * Ambush uses the approved four-panel generated painting, selected by suit.
- * Returns SVG markup (viewBox 120 × 90). Colours come from token variables only; icons are `<use>` of the sprite.
+ * Original generated character paintings for all 34 ordinary designs (45 physical cards).
+ * Ambush retains its approved painting; Dominance and Quest retain their procedural scenes.
+ * No official art is bundled. Every physical copy of a design shares the same illustration.
  */
-
-type Subject = { kind: 'item'; item: ItemType } | { kind: 'dominance' } | { kind: 'motif'; icon: IconName; glow: boolean }
-  | { kind: 'quest'; items: [ItemType, ItemType] }
-
-/** The motif of each persistent and immediate design. */
-export const MOTIF: Record<string, IconName> = {
-  armorers: 'shield', 'brutal-tactics': 'mace', 'royal-claim': 'throne', sappers: 'pick', 'stand-and-deliver': 'mask',
-  'tax-collector': 'scales', 'better-burrow-bank': 'chest', cobbler: 'boots', 'command-warren': 'horn', codebreakers: 'spyglass',
-  'scouting-party': 'map', 'favor-of-the-foxes': 'flame', 'favor-of-the-rabbits': 'flame', 'favor-of-the-mice': 'flame',
-}
+type Subject = { kind: 'dominance' } | { kind: 'quest'; items: [ItemType, ItemType] }
 
 const st = (fill: string, extra = '') => `style="fill:var(--${fill});stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round${extra}"`
 const flat = (fill: string, opacity = 1) => `style="fill:var(--${fill});fill-opacity:${opacity}"`
@@ -85,12 +72,7 @@ function ambushArt(suit: Suit): string {
 }
 
 function subject(s: Subject, suit: Suit): string {
-  const ground = `<ellipse ${flat('path')} cx="60" cy="74" rx="24" ry="6"/><ellipse ${line('path-edge', 1)} cx="60" cy="74" rx="24" ry="6"/>`
   switch (s.kind) {
-    case 'item':
-      return `${ground}<path ${st('rock')} d="M46 74 L49 64 H71 L74 74 Z"/>${use(s.item, 43, 30, 34)}`
-    case 'motif':
-      return `${ground}${s.glow ? `<circle cx="60" cy="46" r="21" ${flat('autumn-gold', .45)}/>` : ''}<path ${st('wood-light')} d="M47 74 L50 66 H70 L73 74 Z"/>${use(s.icon, 43, 30, 34)}`
     case 'dominance':
       return `<path ${st('meadow-light')} d="M30 80 C40 62 80 62 90 80 Z"/><path ${line('wood', 2.4)} d="M58 70 V18"/>`
         + `<path ${st(`suit-${suit}`)} d="M59 20 H90 L84 31 L90 42 H59 Z"/>${use('crown', 64, 22, 18, 'autumn-gold')}`
@@ -123,10 +105,8 @@ function draw(key: string, suit: Suit, copy: number, s: Subject): string {
 /** The scene of one physical card, e.g. "armorers#2" (the copy number picks the variant). */
 export function cardArt(d: CardDef, copy = 1): string {
   if (d.kind === 'ambush') return ambushArt(d.suit)
-  const s: Subject = d.kind === 'item' ? { kind: 'item', item: d.item! }
-    : d.kind === 'dominance' ? { kind: 'dominance' }
-      : { kind: 'motif', icon: MOTIF[d.id] ?? 'card', glow: d.kind === 'immediate' }
-  return draw(`${d.id}#${copy}`, d.suit, copy, s)
+  if (d.kind === 'item' || d.kind === 'persistent' || d.kind === 'immediate') return woodlandArt(d.id, d.suit)
+  return draw(`${d.id}#${copy}`, d.suit, copy, { kind: 'dominance' })
 }
 
 export const questArt = (q: QuestDef) => draw(`quest:${q.id}`, q.suit, 1, { kind: 'quest', items: q.items })

@@ -485,3 +485,6 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-actions .hud-action-types { display: flex; flex-wrap: wrap; max-width: 240px; max-height: 96px; overflow-y: auto; }
 .hud-actions .hud-action-types:empty { display: none; }
 .hud-actions .hud-action-types button { flex: 1; font-size: 12px; }
+
+/* Character scenes keep their full square composition inside the card art window. */
+.cf-art:has(.cf-woodland-art) { background: var(--paper); }
