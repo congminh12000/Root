@@ -51,6 +51,17 @@ Web game Root (Leder Games) chơi được trọn vẹn, đúng luật chính th
 
 ## Dùng với model khác (ChatGPT, Grok…)
 
+### Tiết kiệm ngữ cảnh và công cụ (áp dụng mỗi phiên)
+
+- Dùng hướng dẫn đã được cung cấp trong phiên; chỉ đọc lại khi thiếu, bị rút gọn hoặc file đã đổi. Khi tiếp tục việc cũ, đọc `docs/HANDOFF.md`, kiểm tra branch/status và diff liên quan trước khi sửa.
+- Khoanh vùng bằng `rg`/`rg --files`, rồi đọc đúng đoạn cần thiết. Không mặc định đọc toàn repo, toàn bộ spec, coverage hoặc lịch sử chat. Việc gameplay vẫn phải theo thứ tự nguồn và `rules:guard` ở trên.
+- Gom các lượt đọc/tìm kiếm độc lập. Đầu ra công cụ chỉ lấy trường cần dùng; giới hạn khoảng 1.000–2.000 token mỗi lượt thông thường, mở rộng khi có lý do. Không in nguyên metadata PR, danh mục công cụ hoặc log thành công dài.
+- Với test/build, lưu log dài vào file tạm, trả mã thoát và tóm tắt. Khi lỗi, đọc đoạn lỗi cùng ngữ cảnh cần thiết; không che lỗi bằng `tail` hay pipeline làm mất mã thoát.
+- Trong lúc sửa, chạy kiểm tra đúng phần bị ảnh hưởng. Cuối task chạy đủ kiểm tra bắt buộc một lượt. Chỉ chạy lại khi code, dependency, môi trường hoặc base merge thay đổi có thể làm kết quả cũ mất hiệu lực, hay còn lỗi/chưa đủ bằng chứng. Không cập nhật ảnh chuẩn chỉ để làm test qua.
+- Chỉ tải ảnh/chụp màn hình cần cho quyết định hiện tại; tái sử dụng kết quả đã xem nếu trạng thái chưa đổi. Chọn ít skill/công cụ phù hợp, tránh khảo sát thêm khi đã đủ bằng chứng hoàn thành.
+- Giữ `HANDOFF.md` ngắn: nhánh/PR, trạng thái đã xác minh, việc còn lại, kiểm tra đã chạy và bước tiếp theo. Thay thông tin cũ; không nối dài nhật ký, chép log, lặp hướng dẫn hoặc lưu token/secret. Chi tiết xem git/PR và tài liệu chuyên đề.
+- Sau khi xong một nhóm việc, cập nhật bàn giao để người dùng có thể mở chat mới trong cùng project. Không tự tạo chat, không yêu cầu đổi chat giữa việc đang làm và không hứa tránh hoàn toàn việc dùng token. Quy tắc này chỉ áp dụng trong repo; không thay đổi hạn mức tài khoản hay ngữ cảnh hệ thống của công cụ.
+
 - Công cụ đọc được repo (Codex, Cursor, Claude Code, Grok CLI…): chỉ cần trỏ vào file này; nhiều công cụ tự đọc `AGENTS.md`.
 - Chat trên web không đọc được repo: chạy `npm run pack:context` rồi đưa file `context-pack/root-context.md` (gitignored) cho model. Thêm `--full-specs` để kèm mọi spec luật, `--with <file>` để kèm file code cần sửa. Gói không chứa tài liệu chính thức của Leder; dán điều khoản cần thiết bằng `npm run rules:clause -- <số>`.
 - Model nào cũng phải qua cùng hàng rào: test, `audit:rules`, `rules:guard`. Code từ chat web phải được chạy kiểm tra trên máy trước khi commit.
