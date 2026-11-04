@@ -8,6 +8,7 @@ Root, tên phe, hình ảnh, văn bản luật và lá bài thuộc **Leder Game
 - **Chỉ dùng cá nhân / mạng LAN.** Không phát hành công khai, không đưa lên hosting công cộng, không thương mại hóa cho tới khi quyền sử dụng được làm rõ. Đây là tiêu chí bắt buộc của bản 1.0.
 - **Không commit file PDF chính thức.** `.gitignore` chặn `docs/01-official-sources/**/*.pdf`; mỗi máy tự tải bằng `npm run fetch:sources`, và checksum trong manifest đảm bảo mọi người dùng cùng một bản.
 - **Không sao chép hình ảnh chính thức** (art bàn cờ, minh họa phe, art lá bài) vào repo. Giao diện dùng hình tự vẽ hoặc tự sinh bằng code.
+- **Ngoại lệ chỉ trên máy (04/11/2026, người quản lý yêu cầu):** mặt bài in (42 mẫu bài, 15 quest, 4 leader Eyrie, 3 nhân vật Vagabond) cắt từ ảnh chụp của người quản lý để dùng cá nhân / LAN. Ảnh gốc ở `docs/01-official-sources/card-art/`, ảnh cắt ở `packages/client/src/assets/official-cards/`, cả hai bị `.gitignore` chặn; tạo lại bằng `npm run cards:crop`. Máy không có ảnh thì client dùng mặt bài tự vẽ; ảnh mốc Playwright tắt mặt bài in (`VITE_OFFICIAL_CARDS=off`) nên không chứa art chính thức.
 - Văn bản lá bài và luật chỉ được trích ngắn khi cần dẫn chứng trong đặc tả và test. Dữ liệu cấu trúc (suit, chi phí, số lượng) được ghi lại cùng nguồn.
 
 ## Việc còn mở

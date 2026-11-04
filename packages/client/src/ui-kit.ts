@@ -5,8 +5,8 @@ import { html } from 'htm/preact'
 import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
-import { QuestFace } from './ui/card-face.ts'
-import { BASE_DECK, BASE_QUESTS } from '@root/game-data'
+import { QuestFace, SetupCardFace } from './ui/card-face.ts'
+import { BASE_DECK, BASE_QUESTS, EYRIE, VAGABOND, type CardDef } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionDialog } from './ui/screens/decision.ts'
@@ -30,6 +30,19 @@ const Swatch = ({ name, value }: { name: string; value: string }) =>
   html`<figure class="swatch"><span style=${{ background: value }}></span><figcaption><b>${name}</b><br /><code>${value}</code></figcaption></figure>`
 const Row = ({ children }: { children: ComponentChildren }) => html`<div class="kit-row">${children}</div>`
 const Item = ({ label, children }: { label: string; children: ComponentChildren }) => html`<div class="kit-item">${children}<small>${label}</small></div>`
+
+/** Every card group, each physical copy in its own cell, six to a row; titles count copies and designs. */
+const DECK_GROUPS = [
+  ['ambush', 'Bài Ambush'], ['item', 'Bài chế tạo vật phẩm'], ['persistent', 'Bài hiệu ứng lâu dài'], ['immediate', 'Bài dùng ngay'], ['dominance', 'Bài Dominance'],
+] as const
+const count = (designs: CardDef[]) => designs.reduce((n, d) => n + d.copies, 0)
+const LEADERS = Object.keys(EYRIE.leaders)
+const CHARACTERS = Object.keys(VAGABOND.characters)
+const KIT_TOTAL = `Bộ bài chung ${count(BASE_DECK)} lá (${BASE_DECK.length} mẫu) · ${BASE_QUESTS.length} quest · ${LEADERS.length} leader Eyrie · ${CHARACTERS.length} nhân vật Vagabond.`
+const title = (id: string) => id[0]!.toUpperCase() + id.slice(1)
+/** A leader or character card: the printed face when present on this machine, else a placeholder with its name. */
+const SetupCell = ({ face, name }: { face: string; name: string }) => html`<div class="kit-cell">
+  ${SetupCardFace({ face, label: title(name) }) ?? html`<div class="kit-missing">${title(name)}</div>`}<small>${title(name)}</small></div>`
 
 const roll: LastRoll = { revision: 1, clearing: 4, attacker: 'marquise', defender: 'eyrie', dice: [3, 1], hits: { attacker: 3, defender: 1 } }
 const guerrilla: LastRoll = { revision: 2, clearing: 8, attacker: 'eyrie', defender: 'alliance', dice: [2, 0], hits: { attacker: 0, defender: 2 } }
@@ -101,7 +114,7 @@ const Kit = () => html`
       <${Item} label="chim"><${CardChip} card="ambush-bird#1" /><//>
       <${Item} label="tên dài"><${CardChip} card="favor-of-the-foxes#1" /><//><//><//>
 
-  <${Section} title="Mặt lá bài" note="Bố cục lá in (dải chất, huy hiệu, chi phí, tranh, tấm gỗ, khung chữ) vẽ theo style guide. 45 lá thường dùng 34 tranh nhân vật rừng indie; bản sao cùng mẫu dùng chung tranh. Ambush giữ tranh đã duyệt; Dominance và Quest giữ cảnh riêng.">
+  <${Section} title="Mặt lá bài" note="Máy có ảnh mặt bài in (npm run cards:crop, chỉ dùng cá nhân / LAN, không commit) thì mọi lá hiện đúng ảnh đó. Không có ảnh thì dùng mặt bài tự vẽ theo style guide.">
     <${Row}>
       <${Item} label="item"><${MiniCard} card="arms-trader#1" /><//>
       <${Item} label="lâu dài, chi phí ?"><${MiniCard} card="royal-claim#1" /><//>
@@ -112,15 +125,19 @@ const Kit = () => html`
       <${Item} label="bản sao 2"><${MiniCard} card="tax-collector#2" /><//>
       <${Item} label="quest"><${QuestFace} quest="fend-off-a-bear-mouse" size="mini" /><//><//><//>
 
-  ${([
-    ['ambush', 'Bài Ambush'], ['item', 'Bài chế tạo vật phẩm'],
-    ['persistent', 'Bài hiệu ứng lâu dài'], ['immediate', 'Bài dùng ngay'], ['dominance', 'Bài Dominance'],
-  ] as const).map(([kind, title]) => html`<${Section} title=${title}>
-    <div class="kit-deck">${BASE_DECK.filter(d => d.kind === kind).map(d => html`
-      <div class="kit-copies" role="group" aria-label=${d.name}>${Array.from({ length: d.copies }, (_, i) =>
-        html`<${MiniCard} card=${`${d.id}#${i + 1}`} />`)}</div>`)}</div><//>`)}
-  <${Section} title="Bài Quest">
-    <div class="kit-deck kit-quests">${BASE_QUESTS.map(q => html`<${QuestFace} quest=${q.id} size="mini" />`)}</div><//>
+  <p class="note">${KIT_TOTAL}</p>
+  ${DECK_GROUPS.map(([kind, title]) => {
+    const designs = BASE_DECK.filter(d => d.kind === kind)
+    return html`<${Section} title=${`${title} · ${count(designs)} lá, ${designs.length} mẫu`}>
+    <div class="kit-deck kit-six">${designs.flatMap(d => Array.from({ length: d.copies }, (_, i) => html`
+      <div class="kit-cell"><${MiniCard} card=${`${d.id}#${i + 1}`} /><small>${d.name}${d.copies > 1 ? ` · bản ${i + 1}/${d.copies}` : ''}</small></div>`))}</div><//>`
+  })}
+  <${Section} title=${`Bài Quest · ${BASE_QUESTS.length} lá`}>
+    <div class="kit-deck kit-quests kit-six">${BASE_QUESTS.map(q => html`<div class="kit-cell"><${QuestFace} quest=${q.id} size="mini" /><small>${q.name} · ${q.suit}</small></div>`)}</div><//>
+  <${Section} title=${`Leader Eyrie · ${LEADERS.length} lá`}>
+    <div class="kit-six">${LEADERS.map(l => html`<${SetupCell} face=${`leader-${l}`} name=${l} />`)}</div><//>
+  <${Section} title=${`Nhân vật Vagabond · ${CHARACTERS.length} lá`}>
+    <div class="kit-six">${CHARACTERS.map(c => html`<${SetupCell} face=${`character-${c}`} name=${c} />`)}</div><//>
 
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>

@@ -68,23 +68,19 @@ test('card typography hides citations and uses thin borders with regular effect 
   expect(bounds!.x + bounds!.width - title!.x - title!.width).toBeGreaterThan(bounds!.width * .025)
 })
 
-test('UI kit groups compact cards and keeps copies together', async ({ page }) => {
+test('UI kit shows every card, six to a row per group, copies side by side', async ({ page }) => {
   await page.setViewportSize({ width: 1224, height: 604 })
   await page.goto('/ui-kit.html')
   await expect(page.getByRole('heading', { name: 'Chi tiết lá bài', exact: true })).toHaveCount(0)
-  await expect(page.locator('.kit-copies .cardface')).toHaveCount(54)
-  await expect(page.locator('.kit-quests .cardface')).toHaveCount(15)
-  await expect(page.getByRole('heading', { name: 'Ambush — bốn chất', exact: true })).toHaveCount(0)
-  for (const group of await page.locator('.kit-copies').all()) {
-    const cards = await group.locator('.minicard').evaluateAll(nodes => nodes.map(n => ({
-      id: n.getAttribute('data-card')!.split('#')[0], top: n.getBoundingClientRect().top,
-      width: n.getBoundingClientRect().width,
-    })))
-    expect(new Set(cards.map(c => c.id)).size).toBe(1)
-    expect(new Set(cards.map(c => c.top)).size).toBe(1)
-    expect(cards.every(c => c.width <= 180)).toBe(true)
+  await expect(page.locator('.kit-six').locator('.kit-cell')).toHaveCount(54 + 15 + 4 + 3)
+  await expect(page.locator('.kit-quests .kit-cell')).toHaveCount(15)
+  await expect(page.getByText('Bộ bài chung 54 lá (42 mẫu) · 15 quest · 4 leader Eyrie · 3 nhân vật Vagabond.')).toHaveCount(1)
+  for (const grid of await page.locator('.kit-six').all()) {
+    expect(await grid.evaluate(n => getComputedStyle(n).gridTemplateColumns.split(' ').length)).toBe(6)
+    const ids = await grid.locator('.minicard').evaluateAll(nodes => nodes.map(n => n.getAttribute('data-card')!.split('#')[0]))
+    // Copies of a design are adjacent: each id appears in one run.
+    expect(ids.filter((id, i) => id !== ids[i - 1]).length).toBe(new Set(ids).size)
   }
   await page.setViewportSize({ width: 390, height: 900 })
-  expect(await page.locator('.kit-copies').evaluateAll(nodes => nodes.every(n => n.getBoundingClientRect().right <= 390))).toBe(true)
-
+  expect(await page.locator('.kit-six').evaluateAll(nodes => nodes.every(n => n.getBoundingClientRect().right <= 390))).toBe(true)
 })

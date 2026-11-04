@@ -116,6 +116,7 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .dialog .option small { display: block; color: inherit; opacity: .8; font-size: 11px; }
 .dialog .option.choice { display: flex; flex-direction: column; gap: 4px; width: 220px; background: var(--paper-raised); color: var(--ink); padding: var(--sp-3); }
 .dialog .option.choice b { font: var(--fs-lg) var(--font-display); }
+.dialog .option.choice .cardface { --cf-w: 150px; align-self: center; }
 .dialog .option.choice:hover { background: var(--gold-a35); }
 .dialog .option.withcard { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .dialog .option.withcard .minicard { transform: none; margin: 0; }
@@ -130,6 +131,9 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
   border: 1px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 0 3px 0 var(--ink-a25); text-align: center; flex: none;
   background: linear-gradient(var(--suit) 0 17%, var(--meadow) 17%); }
 .cardface.full { --cf-w: 320px; border-width: 1.5px; border-radius: 14px; }
+/* Printed faces (official-cards.ts) are shown as scanned: no frame of ours, the image fills the card. */
+.cardface.printed { background: none; border: 0; border-radius: 4px; }
+.cardface.printed img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .cf-head { position: absolute; inset: 0 0 auto; height: 17%; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; background: var(--suit); border-bottom: 2px solid var(--ink); z-index: 1; }
 .cf-badge { display: grid; place-items: center; width: 2.6em; height: 2.6em; transform: translateY(18%); filter: drop-shadow(0 1px 1px var(--ink-a25)); }
 .cf-badge .suit-badge { width: 100%; height: 100%; }
@@ -355,6 +359,13 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-deck { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin: var(--sp-2) 0; }
 .kit-deck .minicard { margin: 0; }
 .kit-item > .minicard .cardface.full, .kit-deck .cardface.full { --cf-w: 180px; box-sizing: border-box; }
+.kit-six { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-4) var(--sp-3); margin: var(--sp-2) 0; }
+.kit-cell { container-type: inline-size; display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.kit-cell .minicard, .kit-cell .questcard { margin: 0; }
+.kit-cell .cardface, .kit-cell .cardface.full { --cf-w: 100cqw; box-sizing: border-box; }
+.kit-cell small { font-size: var(--fs-xs); color: var(--ink-soft); overflow-wrap: anywhere; }
+.kit-cell .kit-missing { display: grid; place-items: center; aspect-ratio: 63 / 88; border: 1px dashed var(--ink); border-radius: 8px; font: var(--fs-md) var(--font-display); }
+@media (max-width: 720px) { .kit-six { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .kit-copies { display: flex; gap: var(--sp-2); max-width: 100%; overflow-x: auto; padding: var(--sp-1); }
 .kit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); align-items: start; }
 .kit-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }

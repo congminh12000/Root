@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'preact/hooks'
 import { describe, GROUP } from '../../describe.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME } from '../../names.ts'
+import { SetupCardFace } from '../card-face.ts'
 import { FactionChip, ItemIcon, MiniCard } from '../components.ts'
 
 /** Our own summaries of the leader and character cards (§7.8, §V), for choosing at setup and after Turmoil. */
@@ -25,12 +26,12 @@ function Option({ a, send }: { a: Action; send: (a: Action) => void }) {
   const p = a.payload as Record<string, unknown>
   if (a.type === 'eyrie-choose-leader') {
     const l = LEADER[p.leader as string]!
-    return html`<button class="option choice" onClick=${() => send(a)}><b>${l.name}</b>
+    return html`<button class="option choice" onClick=${() => send(a)}><${SetupCardFace} face=${`leader-${p.leader}`} label=${`Leader ${l.name}`} /><b>${l.name}</b>
       <small>Vizier ở ${EYRIE.leaders[p.leader as keyof typeof EYRIE.leaders].map(c => COLUMN[c]).join(' và ')}</small><span>${l.text}</span></button>`
   }
   if (a.type === 'vagabond-choose-character') {
     const c = CHARACTER[p.character as string]!
-    return html`<button class="option choice" onClick=${() => send(a)}><b>${c.name}</b>
+    return html`<button class="option choice" onClick=${() => send(a)}><${SetupCardFace} face=${`character-${p.character}`} label=${`Nhân vật ${c.name}`} /><b>${c.name}</b>
       <span class="items">${VAGABOND.characters[p.character as keyof typeof VAGABOND.characters].items.map(i => html`<${ItemIcon} item=${i} />`)}</span><span>${c.text}</span></button>`
   }
   const card = typeof p.card === 'string' ? p.card : typeof p.dominance === 'string' ? p.dominance : null
