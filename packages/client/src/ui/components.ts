@@ -1,7 +1,8 @@
 import { signal } from '@preact/signals'
-import type { Action, FactionId, ItemType, LastRoll } from '@root/game-engine'
+import type { Action, FactionId, ItemType, LastRoll, PlayerView } from '@root/game-engine'
 import { describe, GROUP } from '../describe.ts'
 import { actionsForCard } from '../interaction/cards.ts'
+import { craftPieces, matchCost, type CraftPiece } from '../interaction/craft.ts'
 import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect } from 'preact/hooks'
@@ -56,8 +57,35 @@ export function CardDetail({ card, onClose }: { card: string; onClose?: () => vo
     <div class="note">${d.libraryId}</div>`
 }
 
-/** The open card's panel; closes on Escape or a click outside it. With `legal`, it offers what can be done with the card. */
-export function CardDetailOverlay({ legal = [], send }: { legal?: Action[]; send?: (a: Action) => void }) {
+/** Each faction's crafting piece, by name (§6.2.1, §7.2.1, §8.2.1, §9.2.1). */
+const PIECE_NAME: Record<FactionId, string> = { marquise: 'Workshop', eyrie: 'Roost', alliance: 'Sympathy', vagabond: 'Búa' }
+const where = (p: CraftPiece) => p.clearing === null ? 'pawn' : `ô ${p.clearing + 1}`
+
+/**
+ * Crafting the open card (§4.1.1): each cost icon with the piece that pays it, and every crafting piece of the seat
+ * (lit when it pays this card, struck through once activated this turn). Whether it can be crafted now is the engine's.
+ */
+export function CraftPanel({ card, view, seat, craftable }: { card: string; view: PlayerView; seat: FactionId; craftable: boolean }) {
+  const d = cardDesign(card)
+  if (!d.cost.length || d.kind === 'ambush' || d.kind === 'dominance') return null
+  const pieces = craftPieces(view, seat)
+  const icons = matchCost(card, pieces)
+  const paying = new Set(icons.flatMap(c => (c.piece ? [c.piece] : [])))
+  const paid = icons.every(c => c.piece)
+  const name = PIECE_NAME[seat]
+  return html`<div class="craftpanel" aria-label="Chế tạo">
+    <div class="craft-cost">Chi phí: ${icons.map(c => html`<span class=${`craft-icon${c.piece ? ' paid' : ' missing'}`}>
+      <${SuitPip} suit=${c.icon} />${c.piece ? where(c.piece) : 'thiếu'}</span>`)}</div>
+    <div class="craft-pieces">${name}: ${pieces.length ? pieces.map(p => html`<span
+      class=${`craft-piece${paying.has(p) ? ' paying' : ''}${p.used ? ' used' : ''}`}
+      title=${p.used ? 'Đã kích hoạt lượt này' : paying.has(p) ? 'Dùng cho lá này' : 'Còn dùng được'}><${SuitPip} suit=${p.suit} />${where(p)}${p.used ? ' (đã dùng)' : ''}</span>`)
+      : html`<span class="note">chưa có</span>`}</div>
+    <div class="note">${craftable ? `Chế tạo được ngay${paid ? `: kích hoạt ${icons.length} ${name.toLowerCase()} sáng màu` : ''}.`
+      : paid ? 'Đủ công trình, nhưng lúc này chưa chế tạo được lá này.' : `Chưa đủ ${name.toLowerCase()} đúng chất để chế tạo.`}</div></div>`
+}
+
+/** The open card's panel; closes on Escape or a click outside it. With `legal`, it offers what can be done with the card; with `view` and `seat`, how crafting it would be paid. */
+export function CardDetailOverlay({ legal = [], send, view, seat }: { legal?: Action[]; send?: (a: Action) => void; view?: PlayerView; seat?: FactionId | null }) {
   const card = openCard.value
   useEffect(() => {
     if (!card) return
@@ -70,7 +98,9 @@ export function CardDetailOverlay({ legal = [], send }: { legal?: Action[]; send
   }, [card])
   if (!card) return null
   const uses = send ? actionsForCard(legal, card) : []
+  const mine = !!view && !!seat && view.hand.includes(card)
   return html`<div class="carddetail" role="dialog" aria-label=${cardName(card)}><${CardDetail} card=${card} onClose=${() => { openCard.value = null }} />
+    ${mine && html`<${CraftPanel} card=${card} view=${view} seat=${seat} craftable=${uses.some(a => a.type === 'craft')} />`}
     ${uses.length > 0 && html`<div class="carduses">${uses.map(a => html`<button onClick=${() => { openCard.value = null; send!(a) }}>${GROUP[a.type] ?? a.type}${describe(a) === cardName(card) ? '' : `: ${describe(a)}`}</button>`)}</div>`}</div>`
 }
 

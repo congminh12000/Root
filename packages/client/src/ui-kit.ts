@@ -158,6 +158,6 @@ const Kit = () => html`
 
   <${Section} title="Token khác">
     <p class="note">Khoảng cách ${Object.values(space).join(' / ')} px · bo góc ${Object.values(radius).join(' / ')} px · chuyển động ${Object.entries(motion).map(([k, v]) => `${k} ${v} ms`).join(', ')}</p><//>
-<${CardDetailOverlay} legal=${crafts} send=${noop} /></main>`
+<${CardDetailOverlay} legal=${crafts} send=${noop} view=${sample} seat="vagabond" /></main>`
 
 render(html`<${Kit} />`, document.getElementById('app')!)
