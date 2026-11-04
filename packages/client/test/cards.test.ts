@@ -5,7 +5,7 @@ import { html } from 'htm/preact'
 import { render } from 'preact-render-to-string'
 import { cardArt, questArt } from '../src/ui/card-art.ts'
 import { WOODLAND_PANELS } from '../src/ui/woodland-art.ts'
-import { cardText, questText } from '../src/ui/card-text.ts'
+import { cardText, questText, displayCardText } from '../src/ui/card-text.ts'
 import { CardFace, QuestFace } from '../src/ui/card-face.ts'
 
 // Card faces (docs/07-ui/style-guide.md §6): every card and quest has a face at both sizes, Vietnamese text and a
@@ -60,7 +60,6 @@ test('ambush cards follow the printed layout: name in the band, where to play in
   for (const svg of scenes) assert.ok(svg.includes('ambush-woodland.webp') && svg.includes('<image '))
   const bird = BASE_DECK.find(d => d.id === 'ambush-bird')!
   assert.equal(cardArt(bird, 1), cardArt(bird, 2), 'both bird copies keep the approved painting')
-  for (const d of BASE_DECK.filter(c => c.kind === 'dominance')) assert.ok(!cardArt(d).includes('<image '), d.id)
   assert.equal(new Set(scenes).size, scenes.length)
   const other = render(html`<${CardFace} card="armorers#1" size="full" />`)
   assert.ok(other.includes('standard') && other.includes('cf-title'), 'ordinary cards use the requested named header')
@@ -72,7 +71,7 @@ test('all 54 physical deck cards show the full effect even in the hand', () => {
     const card = `${d.id}#${copy}`
     const face = render(html`<${CardFace} card=${card} size="mini" />`)
     assert.ok(face.includes('full'), card)
-    assert.ok(face.includes('<p>') && !face.includes('<small>'), card)
+    assert.ok((d.kind === 'dominance' ? face.includes('cf-dominance-face') && face.includes('<p hidden>') : face.includes('<p>')) && !face.includes('<small>'), card)
     count++
   }
   assert.equal(count, 54)
@@ -94,13 +93,17 @@ test('ordinary cards put name in header, crafting suits on plaque and only effec
   }
 })
 
-test('dominance and quests keep header conditions and name in the lower panel', () => {
+test('dominance faces use distinct approved panels without legacy overlays; quests keep their layout', () => {
+  const panels = new Set<string>()
   for (const d of BASE_DECK.filter(d => d.kind === 'dominance')) {
     const out = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
-    assert.ok(!out.includes(' standard'), d.id)
-    assert.match(out, /cf-head.*cf-cost.*cf-art/s, d.id)
-    assert.match(out, /cf-text.*cf-name/s, d.id)
+    assert.ok(out.includes('dominance full') && out.includes('dominance-indie.png'), d.id)
+    assert.ok(out.includes(`data-suit="${d.suit}"`), d.id)
+    assert.ok(!/cf-head|cf-cost|cf-plaque|cf-text/.test(out), d.id)
+    assert.ok(out.includes(displayCardText(cardText(d))), `${d.id}: Vietnamese accessible effect`)
+    panels.add(out.match(/viewBox="([^"]+)"/)![1]!)
   }
+  assert.equal(panels.size, 4)
   const out = render(html`<${QuestFace} quest=${BASE_QUESTS[0]!.id} size="full" />`)
   assert.ok(!out.includes(' standard'))
   assert.match(out, /cf-head.*cf-cost.*cf-art/s)

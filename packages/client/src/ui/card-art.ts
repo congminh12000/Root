@@ -4,10 +4,10 @@ import type { IconName } from './icons.ts'
 
 /**
  * Original generated character paintings for all 34 ordinary designs (45 physical cards).
- * Ambush retains its approved painting; Dominance and Quest retain their procedural scenes.
+ * Ambush and Dominance use their approved generated sheets; Quest retains its procedural scenes.
  * No official art is bundled. Every physical copy of a design shares the same illustration.
  */
-type Subject = { kind: 'dominance' } | { kind: 'quest'; items: [ItemType, ItemType] }
+type Subject = { kind: 'quest'; items: [ItemType, ItemType] }
 
 const st = (fill: string, extra = '') => `style="fill:var(--${fill});stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round${extra}"`
 const flat = (fill: string, opacity = 1) => `style="fill:var(--${fill});fill-opacity:${opacity}"`
@@ -71,11 +71,18 @@ function ambushArt(suit: Suit): string {
   return `<svg class="cf-scene cf-ambush-art" data-suit="${suit}" viewBox="${AMBUSH_CROP[suit]}" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><image href="${ambushSheet}" width="2172" height="724"/></svg>`
 }
 
-function subject(s: Subject, suit: Suit): string {
+// Complete indie faces approved on 04/11/2026. Crop within each face, excluding sheet gutters.
+const dominanceSheet = new URL('../assets/cards/dominance-indie.png', import.meta.url).href
+export const DOMINANCE_CROP: Record<Suit, string> = {
+  bird: '13 15 493 684', rabbit: '524 15 493 684', fox: '1036 15 493 684', mouse: '1547 15 493 684',
+}
+
+function dominanceArt(suit: Suit): string {
+  return `<svg class="cf-dominance-art" data-suit="${suit}" viewBox="${DOMINANCE_CROP[suit]}" preserveAspectRatio="none" aria-hidden="true"><image href="${dominanceSheet}" width="2048" height="715"/></svg>`
+}
+
+function subject(s: Subject): string {
   switch (s.kind) {
-    case 'dominance':
-      return `<path ${st('meadow-light')} d="M30 80 C40 62 80 62 90 80 Z"/><path ${line('wood', 2.4)} d="M58 70 V18"/>`
-        + `<path ${st(`suit-${suit}`)} d="M59 20 H90 L84 31 L90 42 H59 Z"/>${use('crown', 64, 22, 18, 'autumn-gold')}`
     case 'quest':
       return `<path ${line('wood', 3)} d="M42 80 V40 M78 80 V40"/><path ${st('paper-shade')} d="M36 30 H84 V62 H36 Z"/>`
         + `<circle ${flat('roof-red')} cx="40" cy="34" r="1.6"/><circle ${flat('roof-red')} cx="80" cy="34" r="1.6"/>`
@@ -96,17 +103,17 @@ function draw(key: string, suit: Suit, copy: number, s: Subject): string {
   const light = `<defs><linearGradient id="cf-light" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--paper-raised);stop-opacity:.45"/>`
     + `<stop offset=".45" style="stop-color:var(--paper-raised);stop-opacity:0"/><stop offset="1" style="stop-color:var(--ink);stop-opacity:.22"/></linearGradient></defs>`
   const shadow = `<ellipse cx="62" cy="76" rx="20" ry="4.5" style="fill:var(--ink);fill-opacity:.22"/>`
-  svg = `<svg class="cf-scene" viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${light}${mirrored}${shadow}${subject(s, suit)}`
+  svg = `<svg class="cf-scene" viewBox="0 0 120 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${light}${mirrored}${shadow}${subject(s)}`
     + `<rect width="120" height="90" style="fill:url(#cf-light)"/></svg>`
   cache.set(key, svg)
   return svg
 }
 
-/** The scene of one physical card, e.g. "armorers#2" (the copy number picks the variant). */
-export function cardArt(d: CardDef, copy = 1): string {
+/** The scene of one physical card, e.g. "armorers#2"; copies share the same approved painting. */
+export function cardArt(d: CardDef, _copy = 1): string {
   if (d.kind === 'ambush') return ambushArt(d.suit)
   if (d.kind === 'item' || d.kind === 'persistent' || d.kind === 'immediate') return woodlandArt(d.id, d.suit)
-  return draw(`${d.id}#${copy}`, d.suit, copy, { kind: 'dominance' })
+  return dominanceArt(d.suit)
 }
 
 export const questArt = (q: QuestDef) => draw(`quest:${q.id}`, q.suit, 1, { kind: 'quest', items: q.items })
