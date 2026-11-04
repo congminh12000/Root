@@ -6,6 +6,7 @@ import { render, type ComponentChildren } from 'preact'
 import type { Action } from '@root/game-engine'
 import { CardChip, CardDetailOverlay, Dice, FactionChip, Icon, MiniCard, SuitPip } from './ui/components.ts'
 import { QuestFace, SetupCardFace } from './ui/card-face.ts'
+import { factionPictures } from './ui/official-factions.ts'
 import { BASE_DECK, BASE_QUESTS, EYRIE, VAGABOND, type CardDef } from '@root/game-data'
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
@@ -138,6 +139,10 @@ const Kit = () => html`
     <div class="kit-six">${LEADERS.map(l => html`<${SetupCell} face=${`leader-${l}`} name=${l} />`)}</div><//>
   <${Section} title=${`Nhân vật Vagabond · ${CHARACTERS.length} lá`}>
     <div class="kit-six">${CHARACTERS.map(c => html`<${SetupCell} face=${`character-${c}`} name=${c} />`)}</div><//>
+
+  ${FACTIONS.map(f => ({ f, pics: factionPictures(f) })).filter(x => x.pics.length).map(({ f, pics }) => html`
+  <${Section} title=${`Ảnh in phe ${f} · ${pics.length} hình`} note="Lưu từ Root Database vào docs/01-official-sources/rootdb (không commit, chỉ dùng cá nhân / LAN). Bảng phe trong trận hiện mặt trước, có nút lật mặt sau.">
+    <div class="kit-pictures">${pics.map(p => html`<figure class=${p.id.startsWith('board') || p.id === 'box-art-base-game' ? 'wide' : ''}><img src=${p.src} alt=${p.label} /><figcaption>${p.label}</figcaption></figure>`)}</div><//>`)}
 
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>

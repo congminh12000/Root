@@ -4,6 +4,7 @@ import { html } from 'htm/preact'
 import { useState } from 'preact/hooks'
 import { clearing, FACTION_NAME, ITEM_NAME, questName } from '../../names.ts'
 import { QuestFace } from '../card-face.ts'
+import { factionPicture } from '../official-factions.ts'
 import { CardChip, FactionChip, ItemIcon, SuitPip, Track, type Space } from '../components.ts'
 
 /**
@@ -42,11 +43,32 @@ function Marquise({ v }: { v: PlayerView }) {
     <div>Item đã chế tạo: <${Items} items=${m.craftedItems} /></div></div>`
 }
 
+/**
+ * The printed faction board and pieces saved on this machine (official-factions.ts), above the live state drawn
+ * from the view. Nothing here is read for rules; the board is a picture, flipped between front and back.
+ */
+function PrintedBoard({ f, pieces }: { f: FactionId; pieces: { id: 'piece-warrior' | 'piece-roost' | 'card-leader-icon' | 'card-loyal-vizier-icon'; name: string; count: number }[] }) {
+  const [back, setBack] = useState(false)
+  const front = factionPicture(f, 'board-front'), rear = factionPicture(f, 'board-back')
+  if (!front) return null
+  const shown = back && rear ? rear : front
+  const kit = pieces.flatMap(p => { const src = factionPicture(f, p.id); return src ? [{ ...p, src }] : [] })
+  return html`<figure class="printed-board">
+    <img src=${shown} alt=${`Bảng phe ${FACTION_NAME[f]}, mặt ${back ? 'sau' : 'trước'}`} />
+    <figcaption>${rear && html`<button type="button" class="secondary" aria-pressed=${back} onClick=${() => setBack(b => !b)}>${back ? 'Xem mặt trước' : 'Xem mặt sau'}</button>`}
+      ${kit.length > 0 && html`<span class="printed-kit">${kit.map(p => html`<span class="stat"><img src=${p.src} alt="" /><small>${p.name}</small><b>×${p.count}</b></span>`)}</span>`}</figcaption>
+  </figure>`
+}
+
 function Eyrie({ v }: { v: PlayerView }) {
   const e = v.factions.eyrie!
   const placed = EYRIE.roosts - e.roostsOnTrack
   const spaces: Space[] = EYRIE.roostPoints.map((p, i) => ({ bottom: `+${p}`, filled: i >= placed, current: i === placed - 1, bonus: (EYRIE.roostDrawBonusAt as readonly number[]).includes(i) }))
   return html`<div class="fboard">
+    <${PrintedBoard} f="eyrie" pieces=${[
+      { id: 'piece-warrior', name: 'Chiến binh', count: EYRIE.warriors }, { id: 'piece-roost', name: 'Roost', count: EYRIE.roosts },
+      { id: 'card-leader-icon', name: 'Leader', count: Object.keys(EYRIE.leaders).length }, { id: 'card-loyal-vizier-icon', name: 'Loyal Vizier', count: 2 },
+    ]} />
     <div class="stats"><${Stat} label="Leader" value=${e.leader ? LEADER[e.leader] : '—'} /><${Stat} label="Chiến binh trong kho" value=${e.warriorSupply} />
       <${Stat} label="Leader còn chọn được" value=${e.leadersFaceUp.map(l => LEADER[l]).join(', ') || '—'} /></div>
     <${Track} label=${html`Roost <small>${placed}/${EYRIE.roosts}</small>`} spaces=${spaces} color="var(--faction-eyrie)" />
