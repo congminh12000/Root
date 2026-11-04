@@ -5,6 +5,7 @@ import { html } from 'htm/preact'
 import { render } from 'preact-render-to-string'
 import { cardArt, questArt } from '../src/ui/card-art.ts'
 import { WOODLAND_PANELS } from '../src/ui/woodland-art.ts'
+import { QUEST_PANELS } from '../src/ui/quest-art.ts'
 import { cardText, questText, displayCardText } from '../src/ui/card-text.ts'
 import { CardFace, QuestFace } from '../src/ui/card-face.ts'
 
@@ -33,6 +34,21 @@ test('every design and quest has Vietnamese effect text citing a clause', () => 
     if (d.kind === 'persistent' || d.kind === 'immediate') assert.ok(WOODLAND_PANELS[d.suit].includes(d.id), `${d.id} has a character illustration`)
   }
   for (const q of BASE_QUESTS) assert.match(questText(q), /§9\.5\.5/)
+})
+
+test('the ten requested quests have distinct clipped paintings; remaining quests retain SVG scenes', () => {
+  const crops = new Set<string>()
+  assert.equal(QUEST_PANELS.length, 10)
+  for (const q of BASE_QUESTS) {
+    const art = questArt(q)
+    const painted = QUEST_PANELS.some(id => id === q.id)
+    assert.equal(art.includes('quest-indie.webp'), painted, q.id)
+    if (painted) {
+      assert.ok(art.includes('<clipPath') && art.includes(`data-design="${q.id}"`), q.id)
+      crops.add(art.match(/viewBox="([^"]+)"/)![1]!)
+    } else assert.ok(!art.includes('<image'), q.id)
+  }
+  assert.equal(crops.size, 10)
 })
 
 test('card scenes are deterministic, physical copies share artwork, procedural colours use tokens', () => {
