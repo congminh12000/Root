@@ -34,7 +34,7 @@ Trạng thái ngày 02/11/2026 (sau G1–G7, gameplay chỉ có map). **Xong** =
 | ★ | Di chuyển: kéo quân sang ô khác, hoặc chạm ô đi → ô đến → chip số quân | Xong | G2 |
 | ★ | Đánh: chọn ô → chọn phe bị đánh | Xong | UI-4 |
 | ★ | Xây, recruit, đặt token, spread sympathy, revolt bằng bấm ô | Xong | UI-4 |
-| ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Một phần | UI-5 |
+| ★ | Chế tạo: chọn lá trong tay, thấy công trình chế tạo dùng được | Xong | UI-5 |
 | ★ | Menu tại ô và bong bóng hành động chung trên map (thay thanh hành động) | Xong | G2 |
 | ★ | Luôn có lối xem đủ mọi hành động hợp lệ (menu ☰ → Tất cả lựa chọn) | Xong | G4 |
 | ★ | Báo khi server từ chối, mất kết nối, đang nối lại | Xong | UI-2 |
