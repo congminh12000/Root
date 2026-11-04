@@ -15,7 +15,7 @@ export function questPainting(q: QuestDef): string | undefined {
   const inset = .008, size = 1 - inset * 2
   const x = index % 5 + inset, y = Math.floor(index / 5) + inset
   const clip = `quest-${q.id}`
-  return `<svg class="cf-scene cf-quest-art" data-design="${q.id}" data-suit="${q.suit}" viewBox="${x} ${y} ${size} ${size}" preserveAspectRatio="xMidYMin slice" aria-hidden="true">`
+  return `<svg class="cf-scene cf-quest-art" data-design="${q.id}" data-suit="${q.suit}" viewBox="${x} ${y} ${size} ${size}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
     + `<defs><clipPath id="${clip}"><rect x="${x}" y="${y}" width="${size}" height="${size}"/></clipPath></defs>`
     + `<image href="${sheet}" width="5" height="2" preserveAspectRatio="none" clip-path="url(#${clip})"/></svg>`
 }

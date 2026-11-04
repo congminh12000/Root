@@ -109,7 +109,7 @@ test('ordinary cards put name in header, crafting suits on plaque and only effec
   }
 })
 
-test('dominance faces use distinct approved panels without legacy overlays; quests keep their layout', () => {
+test('dominance faces use distinct approved panels without legacy overlays; quests follow reference layout', () => {
   const panels = new Set<string>()
   for (const d of BASE_DECK.filter(d => d.kind === 'dominance')) {
     const out = render(html`<${CardFace} card=${`${d.id}#1`} size="full" />`)
@@ -122,8 +122,9 @@ test('dominance faces use distinct approved panels without legacy overlays; ques
   assert.equal(panels.size, 4)
   const out = render(html`<${QuestFace} quest=${BASE_QUESTS[0]!.id} size="full" />`)
   assert.ok(!out.includes(' standard'))
-  assert.match(out, /cf-head.*cf-cost.*cf-art/s)
-  assert.match(out, /cf-text.*cf-name/s)
+  assert.match(out, /qf-header.*Quest Card.*qf-heading.*Errand.*in a rabbit clearing\./s)
+  assert.match(out, /qf-art.*qf-claim.*qf-items.*Claim this quest.*qf-rewards/s)
+  assert.ok(!/cf-plaque|cf-text/.test(out))
 })
 
 
@@ -136,4 +137,15 @@ test('ordinary crafting/effect slips use intrinsic content size and pack larger 
   }
   const special = render(html`<${CardFace} card="dominance-fox#1" size="full" />`)
   assert.ok(!special.includes('cf-bottom'))
+})
+
+ test('quest reference faces show both requirements and both rewards at both sizes', () => {
+  for (const q of BASE_QUESTS) for (const size of ['mini', 'full'] as const) {
+    const out = render(html`<${QuestFace} quest=${q.id} size=${size} />`)
+    assert.equal((out.match(/class="qf-item"/g) ?? []).length, 2, q.id)
+    assert.equal((out.match(/class="qf-reward"/g) ?? []).length, 2, q.id)
+    assert.ok(out.includes('Draw') && out.includes('+1') && out.includes('per'), q.id)
+    assert.ok(out.includes(`in a ${q.suit} clearing.`), q.id)
+    assert.ok(out.includes(displayCardText(questText(q))), q.id)
+  }
 })

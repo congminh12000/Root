@@ -66,6 +66,6 @@ The row-major mapping lives in `ui/quest-art.ts` (`QUEST_PANELS`):
 
 Warm flat gouache, irregular brown ink, cream paper grain and soft woodland
 backgrounds match the ordinary-card paintings. Each variant has its own scene;
-characters are not mirrored. Paintings extend beneath the existing paper slip, preserving character proportions at both card sizes. SVG clips inset each panel to avoid neighbour bleed.
+characters are not mirrored. Paintings sit between the title and claim row, showing the whole scene at its original proportions. Quest faces follow the supplied reference layout: suit icons around the Quest Card header, name and clearing, artwork, overlapping item requirements beside the claim arrow, and two reward frames (Draw 2 / +1 per suited quest). SVG clips inset each panel to avoid neighbour bleed.
 Five unlisted quests keep their procedural artwork. Items, suits, rewards and
 accessible Vietnamese rules text are unchanged. All artwork works offline.
