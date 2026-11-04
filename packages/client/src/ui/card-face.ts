@@ -3,6 +3,7 @@ import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { cardDesign, ITEM_NAME, questDesign, SUIT_NAME } from '../names.ts'
 import { cardArt, questArt } from './card-art.ts'
+import { officialFace } from './official-cards.ts'
 import { ambushText, cardText, displayCardText, questText } from './card-text.ts'
 import { Icon } from './components.ts'
 import { SuitBadge } from './suit-badge.ts'
@@ -13,7 +14,18 @@ import type { IconName } from './icons.ts'
  * with its round badge and name, a scene in the middle (card-art.ts), crafting suits on a wooden plaque,
  * and an effect-only paper box. Special cards keep their separate layouts. All deck cards show their full effect, including in the hand and decisions.
  * Quest faces retain their compact variant.
+ * When the owner's printed faces are on this machine (official-cards.ts), they replace the drawn ones unchanged.
  */
+
+/** A printed face exactly as scanned; the label keeps the card's text for screen readers. */
+export const PrintedFace = ({ src, size, label }: { src: string; size: 'mini' | 'full'; label: string }) =>
+  html`<div class=${`cardface printed ${size}`} role="img" aria-label=${label}><img src=${src} alt="" draggable=${false} /></div>`
+
+/** An Eyrie leader (`leader-…`) or Vagabond character (`character-…`) card, printed face only. */
+export const SetupCardFace = ({ face, label, size = 'mini' }: { face: string; label: string; size?: 'mini' | 'full' }) => {
+  const src = officialFace(face)
+  return src ? html`<${PrintedFace} src=${src} size=${size} label=${label} />` : null
+}
 
 const KIND_NAME: Record<CardDef['kind'], string> = { item: 'item', immediate: 'dùng ngay', persistent: 'lâu dài', ambush: 'ambush', dominance: 'dominance' }
 const PLAQUE: Record<Exclude<CardDef['kind'], 'item'>, IconName> = { immediate: 'flame', persistent: 'card', ambush: 'eye', dominance: 'crown' }
@@ -62,6 +74,8 @@ const copyOf = (card: string) => Number(card.split('#')[1] ?? 1)
 export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
   const size = 'full'
   const d = cardDesign(card)
+  const printed = officialFace(d.id)
+  if (printed) return html`<${PrintedFace} src=${printed} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}. ${displayCardText(d.kind === 'ambush' ? `${ambushText(d).where} ${ambushText(d).effect}` : cardText(d))}`} />`
   if (d.kind === 'dominance') {
     const effect = displayCardText(cardText(d))
     return html`<div class="cardface dominance full" role="img" aria-label=${`${d.name}, ${SUIT_NAME[d.suit]}. ${effect}`}>
@@ -82,6 +96,8 @@ export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
 export function QuestFace({ quest, size }: { quest: string; size: 'mini' | 'full' }) {
   const q = questDesign(quest) as QuestDef
   const label = `Quest ${q.name}, ${SUIT_NAME[q.suit]}. ${displayCardText(questText(q))}`
+  const printed = officialFace(`quest-${q.id}`)
+  if (printed) return html`<${PrintedFace} src=${printed} size=${size} label=${label} />`
   return html`<div class=${`cardface quest-face ${size}`} style=${{ '--suit': `var(--suit-${q.suit})` }} role="img" aria-label=${label}>
     <div class="qf-header"><${Icon} name=${q.suit} /><span>Quest Card</span><${Icon} name=${q.suit} /></div>
     <div class="qf-heading"><b class=${q.name.length > 15 ? 'long' : ''}>${q.name}</b><i>in a ${q.suit} clearing.</i></div>

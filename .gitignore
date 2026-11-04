@@ -30,3 +30,6 @@ packages/client/test-results/
 packages/client/playwright-report/
 # Official map art kept on this machine only, as a layout reference for UI-7 (licensing.md)
 docs/01-official-sources/map-art/
+# Official card faces cut from the owner's screenshots, personal / LAN use only (licensing.md); rebuilt by npm run cards:crop
+docs/01-official-sources/card-art/
+packages/client/src/assets/official-cards/

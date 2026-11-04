@@ -16,6 +16,7 @@
     "snapshot:rules": "node scripts/snapshot-rules/index.ts",
     "rules:guard": "node scripts/rules-guard/index.ts",
     "rules:clause": "node scripts/rules-clause/index.ts",
+    "cards:crop": "node scripts/crop-official-cards/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "ship": "bash scripts/ship.sh",
     "build": "npm run build -w @root/client",
