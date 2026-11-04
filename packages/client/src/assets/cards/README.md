@@ -45,3 +45,27 @@ The built-in imagegen editor used each existing sheet as reference, preserving t
 and adding low-contrast distant trees, workshop details, ground vegetation, atmospheric light and contact shadows.
 The revised output replaces each production sheet; original generations remain in the workspace's generated_images directory.
 No hand-edited raster or official art was used. Updated originals remain exact 1254×1254 three-by-three sheets.
+
+## Quest illustrations — 2026-11-04
+
+Ten original indie woodland scenes generated with the built-in imagegen tool at
+the owner's request. No official scans or traced artwork are included.
+`quest-indie.webp` is one local 5-column × 2-row atlas, re-encoded as WebP.
+The row-major mapping lives in `ui/quest-art.ts` (`QUEST_PANELS`):
+
+1. Escort (mouse)
+2. Errand (fox)
+3. Errand (rabbit)
+4. Fend off a Bear (rabbit)
+5. Expel Bandits (mouse)
+6. Expel Bandits (rabbit)
+7. Give a Speech (rabbit)
+8. Fundraising (fox)
+9. Fend off a Bear (mouse)
+10. Guard Duty (mouse)
+
+Warm flat gouache, irregular brown ink, cream paper grain and soft woodland
+backgrounds match the ordinary-card paintings. Each variant has its own scene;
+characters are not mirrored. Paintings sit between the title and claim row, showing the whole scene at its original proportions. Quest faces follow the supplied reference layout: suit icons around the Quest Card header, name and clearing, artwork, overlapping item requirements beside the claim arrow, and two reward frames (Draw 2 / +1 per suited quest). SVG clips inset each panel to avoid neighbour bleed.
+Five unlisted quests keep their procedural artwork. Items, suits, rewards and
+accessible Vietnamese rules text are unchanged. All artwork works offline.

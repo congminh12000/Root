@@ -78,12 +78,15 @@ export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
     standard=${true} costCount=${d.cost.length} paper=${d.kind === 'item' || d.kind === 'immediate'} name=${d.name} sub=${sub} text=${cardText(d)} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}, ${sub}`} />`
 }
 
-/** A Vagabond quest (§9.5.5): the two items to exhaust sit where a card's cost would be. */
+/** Quest face follows the reference hierarchy; rules remain sourced from questText (§9.5.5). */
 export function QuestFace({ quest, size }: { quest: string; size: 'mini' | 'full' }) {
   const q = questDesign(quest) as QuestDef
-  const items = q.items.map(i => html`<span class="cf-pip item" title=${ITEM_NAME[i]}><${Icon} name=${i} /></span>`)
-  const plaque = html`<span style=${{ '--icon-fill': 'var(--autumn-gold)' }}><${Icon} name="star" /></span><span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name="card" /></span>`
-  const sub = `quest · ${q.items.map(i => ITEM_NAME[i]).join(' + ')}`
-  return html`<${Frame} suit=${q.suit} cost=${items} art=${questArt(q)} plaque=${plaque} name=${q.name} sub=${sub} text=${questText(q)} size=${size}
-    label=${`Quest ${q.name}, ${SUIT_NAME[q.suit]}, ${sub}`} />`
+  const label = `Quest ${q.name}, ${SUIT_NAME[q.suit]}. ${displayCardText(questText(q))}`
+  return html`<div class=${`cardface quest-face ${size}`} style=${{ '--suit': `var(--suit-${q.suit})` }} role="img" aria-label=${label}>
+    <div class="qf-header"><${Icon} name=${q.suit} /><span>Quest Card</span><${Icon} name=${q.suit} /></div>
+    <div class="qf-heading"><b class=${q.name.length > 15 ? 'long' : ''}>${q.name}</b><i>in a ${q.suit} clearing.</i></div>
+    <div class="qf-art" dangerouslySetInnerHTML=${{ __html: questArt(q) }}></div>
+    <div class="qf-claim"><div class="qf-items" aria-label=${q.items.map(i => ITEM_NAME[i]).join(' + ')}>${q.items.map(i => html`<span class="qf-item"><${Icon} name=${i} /></span>`)}</div><span class="qf-arrow">➜</span><span>Claim this quest<br />and pick a reward.</span></div>
+    <div class="qf-rewards"><div class="qf-reward"><span>Draw</span><span class="qf-draw"><${Icon} name="card" /><b>2</b></span></div><div class="qf-reward"><b class="qf-point">+1</b><span>per</span><span class="qf-quest-token">Q<${Icon} name=${q.suit} /></span></div></div>
+  </div>`
 }

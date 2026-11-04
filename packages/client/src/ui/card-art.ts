@@ -1,10 +1,11 @@
 import type { CardDef, CardSuit as Suit, ItemType, QuestDef } from '@root/game-data'
 import { woodlandArt } from './woodland-art.ts'
+import { questPainting } from './quest-art.ts'
 import type { IconName } from './icons.ts'
 
 /**
  * Original generated character paintings for all 34 ordinary designs (45 physical cards).
- * Ambush and Dominance use their approved generated sheets; Quest retains its procedural scenes.
+ * Ambush and Dominance use their approved generated sheets; ten Quest cards use original indie paintings; the others retain procedural scenes.
  * No official art is bundled. Every physical copy of a design shares the same illustration.
  */
 type Subject = { kind: 'quest'; items: [ItemType, ItemType] }
@@ -116,4 +117,4 @@ export function cardArt(d: CardDef, _copy = 1): string {
   return dominanceArt(d.suit)
 }
 
-export const questArt = (q: QuestDef) => draw(`quest:${q.id}`, q.suit, 1, { kind: 'quest', items: q.items })
+export const questArt = (q: QuestDef) => questPainting(q) ?? draw(`quest:${q.id}`, q.suit, 1, { kind: 'quest', items: q.items })

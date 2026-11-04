@@ -495,3 +495,30 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 /* Approved complete Dominance faces: no legacy header, plaque or effect overlay. */
 .cardface.dominance .cf-dominance-face { position: absolute; inset: 0; }
 .cf-dominance-face svg { display: block; width: 100%; height: 100%; }
+
+/* Quest reference layout, scaled identically for mini and full cards. */
+.cardface.quest-face { background: var(--paper); border-radius: .25em; font-family: var(--font-display); }
+.quest-face::after { content: ''; position: absolute; inset: 0; background: var(--grain-paper); opacity: .24; pointer-events: none; }
+.qf-header { position: absolute; inset: 0 0 auto; height: 14%; background: var(--suit); color: var(--paper-raised); display: flex; align-items: center; justify-content: space-evenly; font-size: 1.2em; }
+.qf-header .icon { width: 1em; height: 1em; --icon-fill: var(--paper-raised); }
+.qf-heading { position: absolute; inset: 16% 3% auto; display: flex; flex-direction: column; align-items: center; gap: .08em; }
+.qf-heading b { font-size: 1.65em; font-weight: 400; line-height: 1.05; white-space: nowrap; }
+.qf-heading b.long { font-size: 1.35em; }
+.qf-heading i { font-size: .92em; line-height: 1.2; }
+.qf-art { position: absolute; inset: 34% 8% 33%; overflow: hidden; }
+.qf-art svg { display: block; width: 100%; height: 100%; }
+.qf-claim { position: absolute; inset: 66% 10% auto; height: 14%; display: grid; grid-template-columns: 28% 12% 1fr; align-items: center; gap: 2%; font-size: .66em; line-height: 1.15; text-align: left; }
+.qf-items { position: relative; height: 100%; }
+.qf-item { position: absolute; width: 65%; aspect-ratio: 1; display: grid; place-items: center; background: var(--paper-raised); border: 1px solid var(--ink); border-radius: .3em; box-shadow: inset 0 -.12em .2em var(--ink-a25); }
+.qf-item:first-child { top: -12%; left: 0; }
+.qf-item:last-child { bottom: 0; right: 0; }
+.qf-item .icon { width: 85%; height: 85%; --icon-fill: var(--wood); }
+.qf-arrow { font-size: 1.8em; }
+.qf-rewards { position: absolute; inset: 82% 10% 7%; display: grid; grid-template-columns: 1fr 1fr; gap: 5%; }
+.qf-reward { border: 1px solid var(--ink); outline: 1px solid var(--ink-a25); outline-offset: .12em; border-radius: .25em; display: flex; align-items: center; justify-content: center; gap: .22em; font-size: .7em; }
+.qf-draw { position: relative; display: grid; place-items: center; width: 1.3em; height: 1.3em; transform: rotate(45deg); border: 1px solid var(--ink); background: conic-gradient(var(--suit-fox) 0 33%, var(--suit-rabbit) 0 66%, var(--suit-mouse) 0); }
+.qf-draw .icon { display: none; }
+.qf-draw b { position: absolute; font-size: 1.2em; transform: rotate(-45deg); }
+.qf-point { border: .14em double var(--meadow); border-radius: 50%; padding: .1em; font-size: 1.1em; }
+.qf-quest-token { position: relative; background: var(--suit); color: var(--paper-raised); padding: .15em .2em 0; font-size: 1.25em; line-height: 1; }
+.qf-quest-token .icon { position: absolute; width: .35em; height: .35em; top: -.12em; right: .05em; --icon-fill: var(--paper-raised); }
