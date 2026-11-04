@@ -522,3 +522,9 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .qf-point { border: .14em double var(--meadow); border-radius: 50%; padding: .1em; font-size: 1.1em; }
 .qf-quest-token { position: relative; background: var(--suit); color: var(--paper-raised); padding: .15em .2em 0; font-size: 1.25em; line-height: 1; }
 .qf-quest-token .icon { position: absolute; width: .35em; height: .35em; top: -.12em; right: .05em; --icon-fill: var(--paper-raised); }
+.craftpanel { display: grid; gap: 4px; margin-top: var(--sp-2); border-top: 2px dashed var(--ink-a25); padding-top: var(--sp-2); font-size: .9em; }
+.craftpanel .craft-cost, .craftpanel .craft-pieces { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.craft-icon, .craft-piece { display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px 1px 2px; border: 1.5px solid var(--ink-a25); border-radius: var(--r-sm); background: var(--paper); }
+.craft-icon.missing { border-style: dashed; opacity: .7; }
+.craft-icon.paid, .craft-piece.paying { border-color: var(--autumn-gold); box-shadow: 0 0 0 1px var(--autumn-gold); font-weight: 600; }
+.craft-piece.used { opacity: .55; text-decoration: line-through; }

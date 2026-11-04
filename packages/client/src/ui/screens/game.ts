@@ -7,7 +7,8 @@ import { decisionOf } from '../../interaction/decisions.ts'
 import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { connectGame } from '../../net/connection.ts'
 import type { LogEntry } from '../../motion.ts'
-import { CardDetailOverlay } from '../components.ts'
+import { craftClearings, craftPieces, matchCost } from '../../interaction/craft.ts'
+import { CardDetailOverlay, openCard } from '../components.ts'
 import { GROUP } from '../../describe.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
@@ -56,7 +57,10 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   // A decision in a clearing shows there on the map; only choices with no clearing take the middle of the screen.
   const atClearing = dialog && decision!.clearing !== null
   const centred = dialog && !atClearing
-  const highlight = preview ?? (logSelection ? logClearings(logSelection) : board.selected)
+  // An open card from the hand lights the crafting pieces that would pay for it (§4.1.1), over the chosen clearing.
+  const card = openCard.value
+  const crafting = seat && card && v.hand.includes(card) ? craftClearings(matchCost(card, craftPieces(v, seat))) : []
+  const highlight = preview ?? (logSelection ? logClearings(logSelection) : crafting.length ? crafting : board.selected)
   const pick = (c: number) => { setPreview(null); setLogSelection(null); setInspect(null); setStage(s => click(legal, s, c)) }
   // Clearing details: after the mouse rests on a clearing, or at once when a finger holds it.
   const hover = (c: number | null) => {
@@ -104,6 +108,6 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     ${drawer && seats.some(s => s.faction === drawer) && html`<${Drawer} side="right" label="Bảng phe" onClose=${close}><${FactionBoards} key=${drawer} view=${v} seat=${seat} initial=${drawer} /><//>`}
     ${centred && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${legal} send=${conn.send} onFold=${() => setFolded(true)} />`}
     <${GameResult} view=${v} />
-    <${CardDetailOverlay} legal=${legal} send=${conn.send} />
+    <${CardDetailOverlay} legal=${legal} send=${conn.send} view=${v} seat=${seat} />
   </div>`
 }
