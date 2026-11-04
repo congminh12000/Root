@@ -21,3 +21,5 @@ Their own LICENSE / NOTICE files remain authoritative and are retained in instal
 Testing/lint/build packages are development tools; consult the npm and Python lockfiles for exact versions. The application uses only locally installed fonts (Georgia, Times New Roman, Courier New) and requires no font downloads.
 
 The map background `web/src/assets/woodland-reference.png` is the exact image supplied by the user on 30 October 2026, included without pixel changes. It replaces the procedural landscape. Faction insignia and the optional game overlays are authored as code/SVG in this project. No other images, sound, typefaces or text were extracted from Root Digital or Root Database. Root and its faction names are used only in research documentation to identify the reference rules. This project has no claimed affiliation or endorsement.
+
+`packages/client/src/assets/cards/dominance-indie.png` is original AI-generated indie artwork approved by the user on 4 November 2026. Its four complete faces follow the user-supplied Dominance layout references; the woodland illustrations and mascot were redrawn for this project.

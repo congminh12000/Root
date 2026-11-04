@@ -491,3 +491,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 
 /* Original character paintings cover the card beneath the header and compact text slips. */
 .cf-art:has(.cf-woodland-art) { background: var(--paper); }
+
+/* Approved complete Dominance faces: no legacy header, plaque or effect overlay. */
+.cardface.dominance .cf-dominance-face { position: absolute; inset: 0; }
+.cf-dominance-face svg { display: block; width: 100%; height: 100%; }

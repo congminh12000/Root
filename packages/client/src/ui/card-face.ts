@@ -62,13 +62,20 @@ const copyOf = (card: string) => Number(card.split('#')[1] ?? 1)
 export function CardFace({ card }: { card: string; size: 'mini' | 'full' }) {
   const size = 'full'
   const d = cardDesign(card)
+  if (d.kind === 'dominance') {
+    const effect = displayCardText(cardText(d))
+    return html`<div class="cardface dominance full" role="img" aria-label=${`${d.name}, ${SUIT_NAME[d.suit]}. ${effect}`}>
+      <div class="cf-dominance-face" dangerouslySetInnerHTML=${{ __html: cardArt(d) }}></div>
+      <p hidden>${effect}</p>
+    </div>`
+  }
   if (d.kind === 'ambush') return html`<${AmbushFrame} d=${d} copy=${copyOf(card)} size=${size} />`
   const plaque = d.kind === 'item'
     ? html`<span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name=${d.item!} /></span><b>+${d.vp ?? 0}</b>`
     : html`<span style=${{ '--icon-fill': 'var(--paper-raised)' }}><${Icon} name=${PLAQUE[d.kind]} /></span>`
   const sub = d.kind === 'item' ? `${ITEM_NAME[d.item!]} · +${d.vp ?? 0}` : KIND_NAME[d.kind]
   return html`<${Frame} suit=${d.suit} cost=${d.cost.map(s => html`<${CostPip} suit=${s} />`)} art=${cardArt(d, copyOf(card))} plaque=${plaque}
-    standard=${d.kind !== 'dominance'} costCount=${d.cost.length} paper=${d.kind === 'item' || d.kind === 'immediate'} name=${d.name} sub=${sub} text=${cardText(d)} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}, ${sub}`} />`
+    standard=${true} costCount=${d.cost.length} paper=${d.kind === 'item' || d.kind === 'immediate'} name=${d.name} sub=${sub} text=${cardText(d)} size=${size} label=${`${d.name}, ${SUIT_NAME[d.suit]}, ${sub}`} />`
 }
 
 /** A Vagabond quest (§9.5.5): the two items to exhaust sit where a card's cost would be. */
