@@ -79,6 +79,19 @@ input[type=checkbox] { accent-color: var(--wood); width: 16px; height: 16px; }
 .boards .tabs button[aria-selected="true"] { background: var(--gold-a35); box-shadow: inset 0 -4px 0 var(--autumn-gold); }
 .fboard > * { margin: 6px 0; }
 .fboard .stats { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+/* Printed board saved locally (official-factions.ts), shown as is. */
+.printed-board { margin: 0; }
+.printed-board > img { display: block; width: 100%; height: auto; border-radius: var(--r-sm); box-shadow: 0 2px 0 var(--ink-a25); }
+.printed-board figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-top: var(--sp-2); }
+.printed-kit { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.printed-kit .stat { display: inline-flex; align-items: center; gap: 4px; }
+.printed-kit img { height: 32px; width: auto; }
+.kit-pictures { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-4) var(--sp-3); }
+.kit-pictures figure { margin: 0; display: flex; flex-direction: column; gap: var(--sp-1); min-width: 0; }
+.kit-pictures figure.wide { grid-column: span 3; }
+.kit-pictures img { width: 100%; height: auto; max-height: 260px; object-fit: contain; object-position: left top; }
+.kit-pictures figcaption { font-size: var(--fs-xs); color: var(--ink-soft); }
+@media (max-width: 720px) { .kit-pictures { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .stat { display: inline-flex; flex-direction: column; background: var(--paper); border: 2px solid var(--ink-a25); border-radius: var(--r-sm); padding: 2px var(--sp-2); }
 .stat small { color: var(--ink-soft); font-size: 11px; }
 .satchel .stat, .bases .stat { flex-direction: row; align-items: center; gap: 4px; margin-right: 4px; }

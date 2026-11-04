@@ -9,6 +9,7 @@ Root, tên phe, hình ảnh, văn bản luật và lá bài thuộc **Leder Game
 - **Không commit file PDF chính thức.** `.gitignore` chặn `docs/01-official-sources/**/*.pdf`; mỗi máy tự tải bằng `npm run fetch:sources`, và checksum trong manifest đảm bảo mọi người dùng cùng một bản.
 - **Không sao chép hình ảnh chính thức** (art bàn cờ, minh họa phe, art lá bài) vào repo. Giao diện dùng hình tự vẽ hoặc tự sinh bằng code.
 - **Ngoại lệ chỉ trên máy (04/11/2026, người quản lý yêu cầu):** mặt bài in (42 mẫu bài, 15 quest, 4 leader Eyrie, 3 nhân vật Vagabond) cắt từ ảnh chụp của người quản lý để dùng cá nhân / LAN. Ảnh gốc ở `docs/01-official-sources/card-art/`, ảnh cắt ở `packages/client/src/assets/official-cards/`, cả hai bị `.gitignore` chặn; tạo lại bằng `npm run cards:crop`. Máy không có ảnh thì client dùng mặt bài tự vẽ; ảnh mốc Playwright tắt mặt bài in (`VITE_OFFICIAL_CARDS=off`) nên không chứa art chính thức.
+- **Ảnh phe từ Root Database (04/11/2026, người quản lý yêu cầu):** thông tin và hình phe (bảng phe hai mặt, quân, icon) lưu ở `docs/01-official-sources/rootdb/<phe>/`, bị `.gitignore` chặn. Client hiện chúng trong tab Bảng phe và UI kit khi có trên máy (`ui/official-factions.ts`), cùng công tắc `VITE_OFFICIAL_CARDS=off`.
 - Văn bản lá bài và luật chỉ được trích ngắn khi cần dẫn chứng trong đặc tả và test. Dữ liệu cấu trúc (suit, chi phí, số lượng) được ghi lại cùng nguồn.
 
 ## Việc còn mở
