@@ -187,6 +187,13 @@ Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md
 - [x] **RD-M04. Bảng hành động cố định của Marquise.** 6 nút icon tự vẽ: March, Build, Recruit, Battle, lá chim, Overwork; mờ khi không dùng được; cùng chỗ mọi lượt. Giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng. Video: ảnh cắt 09:10.
 - [ ] **RD-M05. Tài nguyên của mình luôn hiện, giống Root Digital,** trong huy hiệu phe mình ở góc dưới trái (chỗ đang ghi "0 · marquise · 4 lá"): thêm cột bên phải điểm, 3 dòng icon + số: chiến binh trong kho, gỗ trong kho, số lá trên tay. Không cần mở bảng phe mới thấy. Video: ảnh cắt 09:10.
 
+### Phân công tiếp nối (Codex, 05/11/2026)
+
+- **RD-M05: dành cho Claude**, Codex không sửa tài nguyên trong huy hiệu.
+- **RD-M06: Codex đã triển khai, chờ PR/duyệt hình**, nhánh `feat/rd-m06-turn-phase`; Claude tránh làm trùng. Băng lượt tự ẩn sau 2,4 giây, dấu pha theo chủ lượt (không theo người trả lời interrupt); giữ ánh sáng map đã duyệt.
+- **RD-M07: Codex nhận tiếp** sau M06. Các mục M08–M16 chưa nhận.
+- M03 đã merge PR #48; M04 đã merge PR #49.
+
 ### Mức trung bình
 
 - [ ] **RD-M06. Báo pha và lượt.** Băng "Lượt của …" khi đổi lượt; dấu pha cạnh huy hiệu phe đang đi; cân nhắc đổi ánh sáng map theo pha nếu giữ được ≥ 55 fps và đúng style-guide. Video: 02:10, 03:23, 04:10, 10:43.
