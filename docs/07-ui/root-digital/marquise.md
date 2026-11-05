@@ -24,7 +24,7 @@ Ngày 05/11/2026. Mục đích: hiểu cách Root Digital trình bày lượt, H
 | 01:10 | "Choose another homeland clearing adjacent to your last one to place a building." Chỉ còn 2 vòng nét đứt. | Bấm clearing tiếp theo. |
 | 01:30 | "Choose 2 cards to return to the deck." Tay bài nâng lên. | Chọn 2 lá. |
 
-**Khác luật dự án:** Root Digital dùng cách chuẩn bị nâng cao có "homeland" (Rules Library A.8, mục A.8.3.I Homelands). Dự án dùng chuẩn bị tiêu chuẩn §5.1 và §6.3 (đặt keep ở góc, rồi sawmill, workshop, recruiter ở ô keep và ô kề). Bước trả 2 lá về bộ bài không có trong §5.1. **Không làm theo video.** Chỗ này chỉ học cách báo: băng chữ ra lệnh + vòng nét đứt trên ô hợp lệ.
+Root Digital chuẩn bị theo Advanced Setup của Rules Library p16: rút 5 lá (A.7), chuẩn bị phe bằng faction setup card có homeland (A.8, A.8.3.I–III), giữ 3 lá và úp 2 lá về bộ bài (A.10). Người quản lý đã chọn làm theo cách này ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)). **Chưa làm được** vì chữ trên lá setup card của Marquise không có trong nguồn (OQ-18) và chưa chốt có draft hay không (OQ-19); engine tạm giữ §5.1 và §6.3. Cách báo nên học: băng chữ ra lệnh và vòng nét đứt trên ô hợp lệ.
 
 ### Birdsong (§6.4)
 
@@ -171,45 +171,64 @@ Game mình (1440×900)
 | Lá vừa chơi | Lá to giữa map | "Bài vừa đánh ra" nổi trên map | Giống |
 | Chế tạo khi không có gì | Dừng, bắt bấm tiếp tục | Dừng ở bước "Chế tạo", bấm Continue | Giống |
 | Đồng hồ, nhật ký | Không thấy | Có | Mình có thêm (giữ) |
-| Chuẩn bị | Homeland (A.8) | Chuẩn §5.1, §6.3; bấm ô → menu "Đặt keep: ô 1" (2 bước) | Khác có chủ đích, giữ luật dự án |
+| Chuẩn bị | Advanced Setup: rút 5 giữ 3, homeland (A.7, A.8, A.10) | Chuẩn §5.1, §6.3; bấm ô → menu "Đặt keep: ô 1" (2 bước) | Khác; sẽ đổi theo decisions/0006 khi có nguồn |
 
-## 5. Thiếu sót xếp theo mức quan trọng
+## 5. Checklist thiếu sót giao diện
 
-**Cao** (ảnh hưởng tới việc chơi được, không phải trang trí):
-1. **Hiện số hành động Daylight còn lại** cạnh bảng hành động; đổi nhãn "Hành động · 63" để không trông như số hành động. Dữ liệu đã có (`actionsRemaining`).
-2. **Build bằng hộp chọn công trình** thay cho danh sách thả xuống 21 dòng: chọn ô → 3 công trình kèm điểm và giá gỗ → tuỳ chọn chọn gỗ → xác nhận. Lọc trên `legal`, không thêm luật vào client.
-3. **Băng chữ mệnh lệnh** ở giữa trên cho mọi bước của mình ("Chọn ô để xây", "Chọn số quân", "Bỏ 2 lá").
-4. **Bảng hành động cố định cho Marquise**: 6 nút icon (March, Build, Recruit, Battle, lá chim, Overwork), mờ khi không dùng được, cùng chỗ mọi lượt; giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng.
-5. **Tài nguyên của mình luôn hiện** ở dưới trái: chiến binh trong kho, gỗ trong kho, số lá.
+Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md): ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp. Đánh dấu `[x]` khi PR đã merge. Thứ tự trong từng mức chưa chốt; người quản lý sẽ chọn.
 
-**Trung bình:**
-6. Báo pha và lượt rõ hơn: băng "Lượt của …" khi đổi lượt; dấu pha cạnh huy hiệu phe đang đi; cân nhắc đổi ánh sáng map theo pha nếu không hại hiệu năng và vẫn theo style-guide.
-7. Nút lớn đổi theo ngữ cảnh: Tiếp tục / Sang Evening / Huỷ.
-8. Battle: làm tối phần map còn lại, hiện hai phe đối đầu, hit và hit thêm.
-9. Băng sự kiện cho Revolt, Outrage, Coalition, Turmoil (kèm lý do decree hỏng), điểm roost.
-10. Evening: hoạt ảnh lá rút vào tay, đếm "Bỏ N lá" giảm dần.
-11. Toast khi lá dominance thành available.
-12. Đối thủ: decree thu nhỏ của Eyrie, quan hệ Vagabond với mình ngay trên huy hiệu.
-13. Lá persistent dùng được (Codebreakers…) có lối bấm riêng, không chỉ nằm trong bảng phe.
+### Mức cao: ảnh hưởng tới việc chơi được
 
-**Thấp:**
-14. Icon "+1 gỗ" bật lên tại ô ở Birdsong.
-15. Bảng phe dạng phủ màn với mũi tên lật phe (ngăn kéo hiện tại đã đủ dùng).
-16. Icon tự lưu.
+- [ ] **RD-M01. Số hành động Daylight còn lại.** Hiện cạnh bảng hành động (§6.5: 3 + một mỗi lá chim). Đổi nhãn "Hành động · 63" để không trông như số hành động. Dữ liệu đã có: `actionsRemaining` trong `PlayerView`. Video: 02:50, 28:36–28:50.
+- [ ] **RD-M02. Hộp Build.** Chọn ô → 3 công trình kèm điểm và giá gỗ → tuỳ chọn chọn gỗ → xác nhận (§6.5.4). Thay danh sách thả xuống 21 dòng. Lọc trên `legal`. Video: 02:50.
+- [ ] **RD-M03. Băng chữ mệnh lệnh** ở giữa trên cho mọi bước của mình ("Chọn ô để xây", "Chọn số quân", "Bỏ 2 lá"). Video: khắp video.
+- [ ] **RD-M04. Bảng hành động cố định của Marquise.** 6 nút icon tự vẽ: March, Build, Recruit, Battle, lá chim, Overwork; mờ khi không dùng được; cùng chỗ mọi lượt. Giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng. Video: ảnh cắt 09:10.
+- [ ] **RD-M05. Tài nguyên của mình luôn hiện** ở dưới trái: chiến binh trong kho, gỗ trong kho, số lá. Video: ảnh cắt 09:10.
 
-## 6. Khác luật và điểm chưa rõ
+### Mức trung bình
 
-| Điểm | Root Digital | Luật p16 / dự án | Xử lý |
-|---|---|---|---|
-| Chuẩn bị | Homeland, "adjacent to your last one", trả 2 lá về bộ bài (00:10–01:30) | §5.1, §6.3; homeland là A.8 (cách chuẩn bị nâng cao) | Giữ §5.1/§6.3. Không làm theo video. |
-| Field Hospitals | Chữ trên bảng phe: "When a warrior dies…" (06:25) | §6.2.3: khi chiến binh Marquise bị loại khỏi một ô, trả một lá cùng chất ô đó để đưa chúng về ô keep | Theo §6.2.3; chữ của Digital chỉ là tóm tắt. |
-| Recruit, Overwork | Không thấy trong ảnh đã cắt | §6.5.3, §6.5.5 | Chưa rõ cách Digital trình bày; cần cắt thêm nếu có mốc. |
-| Chọn phe bị đánh | Không thấy (mỗi trận chỉ có một kẻ địch) | §4.3 | Chưa rõ. |
-| Nút cuộn giấy, vương miện (trên phải) | Không được mở | — | Chưa rõ chức năng. |
-| Tab thứ hai trên bảng phe | Không được mở (06:25) | — | Chưa rõ. |
-| Kết thúc ván | Alliance thắng ở 31:14, không thấy bảng điểm | §3 | Chưa rõ thắng bằng điểm hay dominance. |
-| Màu dải dưới ô | Dải màu dưới hình thoi chất có vẻ báo phe cai quản (ảnh cắt 15:38) | — | Chưa rõ. |
+- [ ] **RD-M06. Báo pha và lượt.** Băng "Lượt của …" khi đổi lượt; dấu pha cạnh huy hiệu phe đang đi; cân nhắc đổi ánh sáng map theo pha nếu giữ được ≥ 55 fps và đúng style-guide. Video: 02:10, 03:23, 04:10, 10:43.
+- [ ] **RD-M07. Nút lớn đổi theo ngữ cảnh:** Tiếp tục / Sang Evening / Huỷ. Video: 05:10, 09:30, 10:55.
+- [ ] **RD-M08. Battle:** làm tối phần map còn lại, hiện hai phe đối đầu, hit và hit thêm. Video: 15:38, 28:50.
+- [ ] **RD-M09. Băng sự kiện** cho Revolt, Outrage, Coalition, Turmoil (kèm lý do decree hỏng), điểm roost. Video: 04:06, 11:48, 14:30, 15:10, 18:35.
+- [ ] **RD-M10. Evening:** hoạt ảnh lá rút vào tay; "Bỏ N lá" đếm giảm. Video: 10:43–10:55.
+- [ ] **RD-M11. Báo lá dominance available** (§3.3.3) bằng thông báo nhỏ. Video: 10:52.
+- [ ] **RD-M12. Đối thủ:** decree thu nhỏ của Eyrie, quan hệ Vagabond với mình ngay trên huy hiệu. Video: ảnh cắt 04:50.
+- [ ] **RD-M13. Lá persistent dùng được** (Codebreakers…) có lối bấm riêng, không chỉ nằm trong bảng phe. Video: 16:28–16:39.
 
-## 7. Việc tiếp theo đề xuất
+### Mức thấp
 
-Các mục 1–5 ở mục 5 nên làm thành một mốc giao diện riêng, mỗi mục một PR theo quy trình [README.md §3](../README.md) (ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp). Chưa sửa code ở bước này.
+- [ ] **RD-M14.** Icon "+1 gỗ" bật lên tại ô ở Birdsong. Video: 04:10, 12:50.
+- [ ] **RD-M15.** Bảng phe phủ màn, có mũi tên lật sang phe khác (ngăn kéo hiện tại đã đủ dùng). Video: 06:25–07:02.
+- [ ] **RD-M16.** Icon báo đang tự lưu. Video: 10:52.
+
+## 6. Checklist khác luật và điểm chưa rõ
+
+Mỗi mục cần được xử lý (làm, quyết định, hoặc tìm nguồn) trước khi đánh dấu xong.
+
+### Khác luật
+
+- [ ] **RD-L01. Chuẩn bị trận theo Advanced Setup có homeland.** Root Digital: homeland, "adjacent to your last one", rút 5 giữ 3 (00:10–01:30). Rules Library p16: A.7, A.8, A.8.3.I–III, A.10. Người quản lý đã chọn làm theo ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)).
+  - [ ] Có chữ lá faction setup card của 4 phe (OQ-18).
+  - [ ] Chốt có dùng draft A.8.1–A.8.2 hay không (OQ-19).
+  - [ ] Engine, test, `rule-coverage.yaml`, giao diện chọn homeland và chọn 3 lá giữ lại.
+- [x] **RD-L02. Field Hospitals.** Chữ Root Digital "When a warrior dies…" (06:25) chỉ là tóm tắt. Theo §6.2.3: chiến binh Marquise bị loại khỏi một ô thì trả một lá cùng chất ô đó để đưa chúng về ô keep. Engine đã đúng; không cần làm gì.
+
+### Chưa rõ (cần thêm mốc video hoặc nguồn)
+
+- [ ] **RD-Q01.** Root Digital trình bày Recruit (§6.5.3) thế nào. Chưa thấy trong ảnh đã cắt.
+- [ ] **RD-Q02.** Root Digital trình bày Overwork (§6.5.5) thế nào. Chưa thấy.
+- [ ] **RD-Q03.** Chọn phe bị đánh (§4.3) khi ô có nhiều kẻ địch. Chưa thấy.
+- [ ] **RD-Q04.** Hai nút cuộn giấy và vương miện ở góc trên phải làm gì. Không được mở (ảnh cắt 10:52).
+- [ ] **RD-Q05.** Tab thứ hai (mặt trời/mặt trăng) trên bảng phe. Không được mở (06:25).
+- [ ] **RD-Q06.** Màn kết thúc: Alliance thắng bằng điểm hay dominance, có bảng điểm không. Video dừng ở 31:16.
+- [ ] **RD-Q07.** Dải màu dưới hình thoi chất có phải báo phe cai quản không (ảnh cắt 15:38).
+- [ ] **RD-Q08.** Cách báo khi hết gỗ trong kho ở Birdsong (§6.4). Chưa thấy.
+
+Cách đóng RD-Q01–Q08: người quản lý ghi mốc vào `docs/01-official-sources/root-digital/notes.md` (không commit), hoặc quay thêm đoạn có các tình huống đó.
+
+## 7. Việc tiếp theo
+
+1. Người quản lý chọn thứ tự cho mục 5 và 6.
+2. Làm từng mục theo thứ tự đã chọn, mỗi mục một chat, một nhánh, một PR. Chưa sửa code ở bước phân tích này.
+3. PR này (#44) chỉ merge khi người quản lý duyệt hết.

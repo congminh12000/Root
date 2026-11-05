@@ -6,7 +6,8 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 
 | ID | Vấn đề | Chặn phần nào | Cần nguồn |
 |---|---|---|---|
-| — | Không còn vấn đề mở. | | |
+| OQ-18 | Chữ trên faction setup card (Marauder/Homeland) của Marquise, Eyrie, Woodland Alliance, Vagabond: chọn homeland nào, đặt quân và công trình gì, ràng buộc khoảng cách. Rules Library p16 A.8.3 chỉ dẫn tới lá. | Advanced Setup ([decisions/0006](decisions/0006-advanced-setup-homelands.md)) | Ảnh hoặc PDF chính thức của 4 lá setup card |
+| OQ-19 | Advanced Setup có dùng draft (A.8.1–A.8.2) không, hay gán phe ở lobby rồi chỉ chuẩn bị theo setup card. Draft có thể xung đột với decisions/0003 (Reach). | Advanced Setup | Quyết định của người quản lý |
 
 ## Đã đóng
 
