@@ -8,7 +8,7 @@ import { color } from './tokens.ts'
 export type IconName =
   | 'marquise' | 'eyrie' | 'alliance' | 'vagabond'
   | 'fox' | 'rabbit' | 'mouse' | 'bird'
-  | 'close' | 'dice' | 'clock' | 'star' | 'card' | 'sun' | 'moon' | 'heart'
+  | 'close' | 'dice' | 'clock' | 'star' | 'card' | 'sun' | 'moon' | 'heart' | 'save'
   | 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
   | 'saw' | 'wood' | 'crown' | 'eye' | 'flame' | 'shield' | 'pick' | 'mace' | 'throne' | 'scales' | 'chest' | 'horn' | 'spyglass' | 'map' | 'mask'
 
@@ -54,6 +54,7 @@ const SHAPES: Record<IconName, string> = {
   coin: `<circle ${F} cx="12" cy="12" r="8.5"/><circle ${LINE} cx="12" cy="12" r="5"/>`,
   bag: `<path ${F} d="M9 4.5 H15 L13.5 8 C18 9 20 13 19.5 16.5 C19 19.5 16.5 20.5 12 20.5 C7.5 20.5 5 19.5 4.5 16.5 C4 13 6 9 10.5 8 Z"/><path ${LINE} d="M9.5 8 H14.5"/>`,
   // Card kinds and card motifs (card faces, docs/07-ui/style-guide.md §6): our own drawings.
+  save: `<path ${F} d="M4.5 4.5 H16.5 L19.5 7.5 V19.5 H4.5 Z"/><path ${F} d="M8 4.5 H15 V9 H8 Z"/><path ${F} d="M7.5 13 H16.5 V19.5 H7.5 Z"/>`,
   heart: `<path ${F} d="M12 20 C5 15 3 11.5 3 8.5 A4.5 4.5 0 0 1 12 6.5 A4.5 4.5 0 0 1 21 8.5 C21 11.5 19 15 12 20 Z"/>`,
   saw: `<path ${F} d="M3 9 H21 V13 L19.5 15.5 L18 13 L16.5 15.5 L15 13 L13.5 15.5 L12 13 L10.5 15.5 L9 13 L7.5 15.5 L6 13 L4.5 15.5 L3 13 Z"/><path ${F} d="M3 5.5 H8 V9 H3 Z"/>`,
   // A cut log seen from its end: the Marquise's wood token.

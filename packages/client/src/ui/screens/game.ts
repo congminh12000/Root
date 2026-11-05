@@ -18,8 +18,8 @@ import { GROUP } from '../../describe.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
 import { DecisionCallout, DecisionDialog } from './decision.ts'
-import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, HudToast, HudPlayArea, type DrawerId } from './hud.ts'
-import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
+import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, HudToast, HudPlayArea, SaveMark, type DrawerId } from './hud.ts'
+import { MapDice, MapInfo, MapOverlay, MapPops } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
 import { liveScene, setLiveScene } from '../../map/live.ts'
@@ -101,6 +101,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     <${TurnNotice} view=${v} />
     <${EventNotice} changes=${conn.changes.value} />
     <${HudToast} changes=${conn.changes.value} />
+    ${seat && html`<${SaveMark} revision=${v.revision} />`}
     ${seat && html`<${HudPlayArea} view=${v} seat=${seat} legal=${all} />`}
     <${MapView} map=${mapChoice.value} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
       draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
@@ -111,6 +112,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
         ${legal.length > 0 && !atClearing && html`<${MapOverlay} project=${project} view=${v} legal=${legal} stage=${stage} setStage=${setStage}
           send=${conn.send} onPreview=${setPreview} onPick=${pick} bubble=${false} />`}
         ${atClearing && project(decision!.clearing!) && html`<${DecisionCallout} decision=${decision!} view=${v} legal=${all} send=${conn.send} at=${project(decision!.clearing!)!} />`}
+        <${MapPops} project=${project} changes=${conn.changes.value} />
         <${MapDice} project=${project} changes=${conn.changes.value} below=${atClearing ? decision!.clearing : null} />
         ${inspect !== null && !(stage.kind === 'at' && stage.clearing === inspect) && html`<${MapInfo} project=${project} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}`} />
     ${prompt && html`<${MapPrompt} text=${prompt} onCancel=${focus ? () => { setFocus(null); setStage(IDLE) } : undefined} />`}
