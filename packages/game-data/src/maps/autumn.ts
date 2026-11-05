@@ -39,6 +39,8 @@ export const AUTUMN: MapDef = {
     [8, 5, 10, 9],
   ],
   corners: { topLeft: 0, topRight: 2, bottomLeft: 8, bottomRight: 11 },
+  // Outer loop 1–2–3–8–12–11–10–9–5–1 (ids + 1) along the paths above; 4, 6 and 7 are inside (OQ-20).
+  edge: [0, 1, 2, 4, 7, 8, 9, 10, 11],
   // §5.1.5 and the supply printed on the map: two rows of bag, boots, crossbow|hammer, sword, tea, coin.
   itemSupply: { bag: 2, boots: 2, crossbow: 1, hammer: 1, sword: 2, tea: 2, coin: 2 },
 }

@@ -71,6 +71,11 @@ export interface MapDef {
   forests: number[][]
   /** Corner clearings for setup (§6.3.2, §7.3.2) and bird dominance (§3.3.1.II). */
   corners: { topLeft: number; topRight: number; bottomLeft: number; bottomRight: number }
+  /**
+   * Clearings on the map edge: "the single closed loop of clearings and paths that define the map boundary" (G.15).
+   * Used by Advanced Setup homelands (Eyrie setup card, docs/03-data-spec/setup-cards.md).
+   */
+  edge: number[]
   /** Items placed beside the map in setup (§5.1.5). */
   itemSupply: Partial<Record<ItemType, number>>
   evidence: Evidence
