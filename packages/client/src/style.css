@@ -679,3 +679,17 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .save-mark .icon { width: 18px; height: 18px; }
 @keyframes fade-out { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .save-mark { animation: none; } }
+
+/* ── Opening: map fades in, then the starting hands are dealt from the right (RD opening) ── */
+.game-screen .game-map { opacity: 0; }
+.game-screen .game-map.ready { opacity: 1; animation: map-enter 1100ms ease-out both; }
+@keyframes map-enter { from { opacity: 0; filter: brightness(0.55); } to { opacity: 1; filter: none; } }
+.deal-layer { position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+.deal-card { position: fixed; left: 0; top: 0; will-change: transform, opacity; filter: drop-shadow(0 6px 6px var(--ink-a25)); }
+.deal-card.own .cardface.full { --cf-w: 120px; font-size: calc(var(--cf-w) / 12); }
+.deal-back { display: block; width: 64px; aspect-ratio: 63 / 88; box-sizing: border-box; border: 2px solid var(--ink); border-radius: var(--r-sm);
+  background: repeating-linear-gradient(45deg, var(--wood) 0 6px, var(--wood-light) 6px 12px); box-shadow: inset 0 0 0 3px var(--paper-raised); }
+.hand-slot.deal-wait { visibility: hidden; }
+.hand-slot.deal-land .cardface { animation: deal-land 380ms cubic-bezier(.34,1.56,.64,1); }
+@keyframes deal-land { from { transform: translateY(calc(var(--drop) - 18px)) rotate(var(--turn)) scale(1.08); } }
+@media (prefers-reduced-motion: reduce) { .game-screen .game-map.ready { animation-duration: 1ms; } .hand-slot.deal-land .cardface { animation: none; } }
