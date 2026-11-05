@@ -1,3 +1,4 @@
+import { ContextButton } from './context-button.ts'
 import { PhaseMark, turnOwner } from './turn-phase.ts'
 import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
@@ -127,9 +128,10 @@ export function ActionSun({ left }: { left: number }) {
     <${Icon} name="sun" /><b key=${left}>${left}</b></div>`
 }
 
-export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = null }: {
+export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = null, view, onCancel }: {
   legal: Action[]; canUndo: boolean; undo: () => void; send: (a: Action) => void; onOpen: (type?: string) => void
   /** Marquise Daylight actions left, shown as a sun over the panel; null hides it. */
+  view?: PlayerView | undefined; onCancel?: (() => void) | undefined
   actionsLeft?: number | null
 }) {
   const next = legal.find(a => a.type === 'end-step' || a.type === 'marquise-end-march')
@@ -141,7 +143,7 @@ export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = n
         onClick=${() => { const only = legal.find(a => a.type === b.type); if (b.mode === 'send' && only) send(only); else onOpen(b.type) }}><${Icon} name=${b.icon} />${b.type === 'marquise-spend-bird' ? html`<small>+1</small>` : ''}</button>`)}</div>`}
     <div class="hud-action-types">${[...new Set(legal.filter(a => a !== next && !(actionsLeft !== null && MARQUISE_BUTTON_TYPES.has(a.type))).map(a => a.type))].map(type => html`<button class="secondary" onClick=${() => onOpen(type)}>${GROUP[type] ?? type}</button>`)}</div>
     <div><button class="secondary" disabled=${!canUndo} title=${canUndo ? 'Hoàn tác hành động trước' : 'Không có hành động có thể hoàn tác; battle, turmoil và thông tin mới không thể Undo'} onClick=${undo}>↶ Undo</button>
-    <button disabled=${!next} title=${next ? 'Qua bước tiếp theo' : 'Hoàn thành quyết định hiện tại trước'} onClick=${() => next && send(next)}>Continue ▷</button></div></section>`
+    <${ContextButton} legal=${legal} view=${view} send=${send} onCancel=${onCancel} /></div></section>`
 }
 
 /** RD-M03: the order for this seat at the top middle (interaction/prompt.ts); Esc or "Thôi" leaves a mode like Build. */

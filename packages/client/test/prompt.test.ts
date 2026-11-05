@@ -31,7 +31,7 @@ test('Advanced Setup: the first homeland pick is named in the banner', () => {
   assert.ok(actor === 'marquise' ? text.startsWith('Chọn 3 ô homeland') : text.startsWith('Chọn homeland ở mép bản đồ'), text)
 })
 
-test('the Build prompt, a chosen clearing and a lone Continue each get their own order', () => {
+test('the Build prompt, a chosen clearing and a lone Tiếp tục each get their own order', () => {
   const s = game()
   const actor = s.pending.at(-1)!.player
   const v: PlayerView = { ...viewFor(s, actor), pending: [] }
@@ -40,7 +40,7 @@ test('the Build prompt, a chosen clearing and a lone Continue each get their own
   assert.equal(promptFor({ view: v, legal: some, seat: actor, stage: IDLE, focus: 'battle', decision: null }), 'Chọn ô để đánh')
   assert.equal(promptFor({ view: v, legal: some, seat: actor, stage: IDLE, focus: 'move', decision: null }), 'Chọn ô có chiến binh để March, rồi ô đến')
   assert.equal(promptFor({ view: v, legal: some, seat: actor, stage: { kind: 'at', clearing: 2 }, focus: null, decision: null }), 'Chọn việc làm ở ô 3')
-  assert.equal(promptFor({ view: v, legal: [{ type: 'end-step', payload: {} }], seat: actor, stage: IDLE, focus: null, decision: null }), 'Bấm Continue để sang bước tiếp theo')
+  assert.equal(promptFor({ view: v, legal: [{ type: 'end-step', payload: {} }], seat: actor, stage: IDLE, focus: null, decision: null }), 'Bấm Tiếp tục để sang bước tiếp theo')
 })
 
 test('Marquise Daylight actions: the banner counts the actions left', () => {

@@ -177,7 +177,7 @@ Game mình (1440×900)
 
 Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md): ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp. Đánh dấu `[x]` khi PR đã merge.
 
-**Người quản lý duyệt ngày 05/11/2026:** làm toàn bộ RD-M01 đến M16, theo số mục; RD-M02 (hộp Xây) và RD-M05 (tài nguyên) làm giống Root Digital. RD-M01 xong (PR #46); RD-M02 ở nhánh `feat/rd-m02-build-box`.
+**Người quản lý duyệt ngày 05/11/2026:** làm toàn bộ RD-M01 đến M16, theo số mục; RD-M02 (hộp Xây) và RD-M05 (tài nguyên) làm giống Root Digital. RD-M01–M04 đã merge (PR #46–#49); trạng thái tiếp nối ở mục phân công bên dưới.
 
 ### Mức cao: ảnh hưởng tới việc chơi được
 
@@ -190,9 +190,10 @@ Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md
 ### Phân công tiếp nối (Codex, 05/11/2026)
 
 - **RD-M05: dành cho Claude**, Codex không sửa tài nguyên trong huy hiệu.
-- **RD-M06: Codex đã triển khai, chờ PR/duyệt hình**, nhánh `feat/rd-m06-turn-phase`; Claude tránh làm trùng. Băng lượt tự ẩn sau 2,4 giây, dấu pha theo chủ lượt (không theo người trả lời interrupt); giữ ánh sáng map đã duyệt.
-- **RD-M07: Codex nhận tiếp** sau M06. Các mục M08–M16 chưa nhận.
-- M03 đã merge PR #48; M04 đã merge PR #49.
+- **RD-M06: Codex đã triển khai, PR [#50](https://github.com/congminh12000/Root/pull/50), chờ duyệt hình**, nhánh `feat/rd-m06-turn-phase`; Claude tránh làm trùng. Băng lượt tự ẩn sau 2,4 giây, dấu pha theo chủ lượt (không theo người trả lời interrupt); giữ ánh sáng map đã duyệt.
+- **RD-M07: Codex đã triển khai, chờ PR/duyệt hình**, nhánh `feat/rd-m07-context-button`, PR nối tiếp M06. Nút Tiếp tục / Sang Evening / Huỷ; Dừng March giữ riêng. Huỷ và Esc chỉ bỏ lựa chọn cục bộ; nút chuyển bước chỉ gửi phần tử `legal` do server cấp. Tablet dọc: dải bài nằm giữa huy hiệu mình và bảng hành động, không che nút.
+- **RD-M08–M16: chưa nhận**. Claude có thể tiếp tục từ M08; đọc hai PR của Codex trước khi sửa HUD để giữ phần M06/M07.
+- Cả M06/M07 vẫn để `[ ]` tới khi PR đã merge, đúng quy trình; không làm lại vì thấy checkbox chưa đánh dấu.
 
 ### Mức trung bình
 

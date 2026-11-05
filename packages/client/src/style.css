@@ -601,6 +601,17 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .phase-mark { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-sm); color: var(--ink); background: var(--paper-raised); border-radius: var(--r-sm); padding: 2px 4px; }
 .hud-faction .phase-mark { grid-column: 1 / -1; justify-content: center; }
 .phase-mark .icon { width: 18px; height: 18px; }
+
+/* RD-M07: one stable, large keyboard/touch target; cancellation only clears local selection. */
+.hud-actions .context-action { display: block; width: 100%; min-height: 48px; margin-top: var(--sp-2); font-size: var(--fs-md); }
+.game-screen .hud-actions { z-index: 9; }
+@media (min-width: 601px) and (max-width: 1000px) {
+  /* Keep the scrollable hand between the own badge and action panel in tablet portrait. */
+  .game-screen .hud-hand { left: 144px; right: 284px; transform: none; width: auto; max-width: none; }
+}
+@media (max-width: 1000px) {
+  .game-screen .map-prompt { top: 144px; }
+}
 /* RD-M05: the seat's supplies, always on its own badge (Root Digital's bottom-left panel). */
 .hud-self .hud-faction { grid-template-columns: auto auto auto; }
 .hud-faction .hud-res { grid-column: 3; grid-row: 1 / span 2; display: grid; gap: 2px; padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--ink-a25); }
