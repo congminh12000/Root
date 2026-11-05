@@ -6,7 +6,8 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 
 | ID | Vấn đề | Chặn phần nào | Cần nguồn |
 |---|---|---|---|
-| — | Không còn vấn đề mở. | | |
+| OQ-20 | Ô mép bản đồ Autumn (G.15) cho homeland của Eyrie: đề xuất 1, 2, 3, 5, 8, 9, 10, 11, 12 (vòng 1–2–3–8–12–11–10–9–5–1); ô trong 4, 6, 7. | Advanced Setup của Eyrie | Người quản lý xác nhận trên ảnh bàn cờ (SRC-013) |
+| OQ-21 | Vagabond Advanced Setup ghi "assigned character card" (chia kèm khi draft, A.8.2.III). Không draft thì đề xuất giữ cách người chơi tự chọn nhân vật. | Advanced Setup của Vagabond | Quyết định của người quản lý |
 
 ## Đã đóng
 
@@ -23,3 +24,5 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 | OQ-08 | Bắt buộc tổng Reach (§5.2) cho mọi trận, người chơi thật lẫn bot. Xem [decisions/0003-enforce-reach.md](decisions/0003-enforce-reach.md). | Người quản lý dự án |
 | OQ-10, 11, 13–17 | Phán quyết cho 7 trường hợp Law không nói rõ (Scouting Party, Foil Ambush, A New Roost, Humiliate, Despot, Outrage khi Vagabond kéo quân Allied, Refresh item hỏng). Xem [decisions/0004-unclear-rulings.md](decisions/0004-unclear-rulings.md). | Người quản lý dự án |
 | OQ-02 | So Rules Library p16 với PDF 13/10/2025: nội dung trùng; chỉ khác chữ ở §4.2 và G.4. p16 thành nguồn chính. Xem [decisions/0005-rules-library-primary.md](decisions/0005-rules-library-primary.md). | SRC-004, SRC-001 |
+| OQ-19 | Không dùng draft (A.8.1–A.8.2): người chơi chọn phe ở sảnh như hiện nay, rồi chuẩn bị theo setup card. Quyết định 0003 (Reach) giữ nguyên. Xem [decisions/0006](decisions/0006-advanced-setup-homelands.md). | Người quản lý dự án, 05/11/2026 |
+| OQ-18 | Đủ chữ 4 lá faction setup card (Marquise, Eyrie, Woodland Alliance, Vagabond), chép ở [../03-data-spec/setup-cards.md](../03-data-spec/setup-cards.md). Hai điểm chờ duyệt tách thành OQ-20 và OQ-21. | SRC-014 đến SRC-017 |

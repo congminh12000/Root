@@ -35,3 +35,7 @@ docs/01-official-sources/card-art/
 packages/client/src/assets/official-cards/
 # Faction pages saved from Root Database, personal / LAN use only (licensing.md)
 docs/01-official-sources/rootdb/
+# Root Digital (Steam) gameplay recordings and notes kept on this machine only, as a UX reference (licensing.md)
+docs/01-official-sources/root-digital/
+# Faction setup cards (Advanced Setup) photographed by the owner, personal / LAN use only (licensing.md)
+docs/01-official-sources/setup-cards/
