@@ -568,3 +568,18 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--sp-3); }
 .kit-actions figure { margin: 0; }
 .kit-hud.actions { height: 310px; } /* room for the sun above the tallest panel */
+
+/* RD-M02: the Marquise Build box at a clearing (Root Digital's layout, our own look) and the "choose a clearing" prompt. */
+.build-box { margin-top: 6px; display: grid; gap: 6px; }
+.build-cols { display: grid; grid-template-columns: repeat(3, minmax(84px, 1fr)); gap: 6px; }
+.build-col { display: grid; justify-items: center; gap: 2px; min-height: 112px; padding: 6px 4px; border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper); color: var(--ink); font: var(--fs-sm) var(--font-body); }
+.build-col b { font-family: var(--font-display); font-size: var(--fs-md); }
+.build-col .build-pic .icon { width: 34px; height: 34px; }
+.build-col .build-vp { display: inline-flex; align-items: center; gap: 2px; font-weight: 600; --icon-fill: var(--autumn-gold); }
+.build-col .build-vp .icon { width: 16px; height: 16px; }
+.build-col .build-wood { padding: 1px 6px; border-radius: var(--r-sm); background: var(--wood); color: var(--paper); font-weight: 600; }
+.build-col:hover, .build-col:focus-visible, .build-col.on { box-shadow: 0 0 0 2px var(--autumn-gold); }
+.build-own { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); }
+.map-prompt { position: absolute; z-index: 9; top: 84px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); font: var(--fs-md) var(--font-display); box-shadow: var(--shadow-card); }
+@media (max-width: 600px) { .build-col { min-height: 96px; } .map-prompt { top: 72px; font-size: var(--fs-sm); } }
+.map-menu.kit-static { position: static; transform: none; }

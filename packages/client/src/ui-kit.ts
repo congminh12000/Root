@@ -12,6 +12,7 @@ import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionDialog } from './ui/screens/decision.ts'
 import { HandStrip, HudActions, HudFactions, HudStatus, HudSun } from './ui/screens/hud.ts'
+import { BuildBox } from './ui/screens/build-box.ts'
 import type { Decision } from './interaction/decisions.ts'
 import { Hand } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
@@ -49,6 +50,20 @@ const roll: LastRoll = { revision: 1, clearing: 4, attacker: 'marquise', defende
 const guerrilla: LastRoll = { revision: 2, clearing: 8, attacker: 'eyrie', defender: 'alliance', dice: [2, 0], hits: { attacker: 0, defender: 2 } }
 const noop = () => {}
 const sample = sampleView('vagabond')
+// RD-M02 sample: the Marquise with one sawmill, two workshops and one recruiter on the map, building at clearing 5.
+const buildView = (() => {
+  const v = sampleView('marquise')
+  const m = v.factions.marquise
+  return m ? { ...v, factions: { ...v.factions, marquise: { ...m, buildingsOnTrack: { sawmill: 5, workshop: 4, recruiter: 5 } } } } : v
+})()
+const builds = [
+  { type: 'marquise-build', payload: { building: 'workshop', clearing: 4, wood: [4, 4] } },
+  { type: 'marquise-build', payload: { building: 'sawmill', clearing: 4, wood: [4] } },
+  { type: 'marquise-build', payload: { building: 'sawmill', clearing: 4, wood: [0] } },
+  { type: 'marquise-build', payload: { building: 'sawmill', clearing: 4, wood: [5] } },
+  { type: 'marquise-build', payload: { building: 'recruiter', clearing: 4, wood: [0] } },
+  { type: 'marquise-build', payload: { building: 'recruiter', clearing: 4, wood: [4] } },
+] as Extract<Action, { type: 'marquise-build' }>[]
 const seats = (['marquise', 'eyrie', 'alliance', 'vagabond'] as FactionId[]).map((f, i) => ({ faction: f, kind: i ? 'bot' : 'human', name: 'Minh', connected: true }))
 const decisions: [Decision, Action[]][] = [
   [{ player: 'eyrie', kind: 'setup', title: 'Eyrie Dynasties: chọn leader đầu tiên', rule: '§7.3.3', dialog: true, clearing: null },
@@ -166,6 +181,13 @@ const Kit = () => html`
       ${([['Đầu Daylight', 3, legal], ['Sau một lá chim', 4, legal], ['Còn 1', 1, legal], ['Hết hành động', 0, [{ type: 'end-step', payload: {} }] as Action[]], ['Không phải Daylight của Marquise', null, crafts]] as const).map(([name, left, l]) => html`
       <figure><div class="kit-hud actions"><${HudActions} actionsLeft=${left} legal=${l} canUndo=${left === 1} undo=${noop} send=${noop} onOpen=${noop} /></div><figcaption>${name}</figcaption></figure>`)}
       <figure><div class="kit-hud actions"><${HudSun} left=${2} /></div><figcaption>Khán giả</figcaption></figure>
+    </div><//>
+
+  <${Section} title="Hộp Xây tại ô" note="RD-M02: bấm Xây rồi chọn ô, hoặc chọn ô trước; mỗi cột một công trình với điểm được và gỗ tốn (§6.5.4), bấm là xây, gỗ lấy theo cách gợi ý. Tích Tự chọn gỗ để chọn gỗ lấy từ ô nào. Mọi nút là một phần tử của legal.">
+    <div class="kit-actions">
+      <figure><section class="map-menu kit-static" aria-label="Ô 5"><header><b>Ô 5</b></header><${BuildBox} view=${buildView} legal=${builds} clearing=${4} send=${noop} onPreview=${noop} /></section><figcaption>Ba công trình xây được</figcaption></figure>
+      <figure><section class="map-menu kit-static" aria-label="Ô 5"><header><b>Ô 5</b></header><${BuildBox} view=${buildView} legal=${builds} clearing=${4} send=${noop} onPreview=${noop} ownWood opened="sawmill" /></section><figcaption>Tự chọn gỗ cho Sawmill</figcaption></figure>
+      <figure><section class="map-menu kit-static" aria-label="Ô 5"><header><b>Ô 5</b></header><${BuildBox} view=${buildView} legal=${builds.filter(a => a.payload.building === 'recruiter')} clearing=${4} send=${noop} onPreview=${noop} /></section><figcaption>Chỉ còn Recruiter đủ gỗ</figcaption></figure>
     </div><//>
 
   <${Section} title="Tất cả lựa chọn" note="Ngăn dự phòng mở từ menu ☰: mọi hành động hợp lệ, gom theo loại.">

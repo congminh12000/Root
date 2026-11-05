@@ -7,6 +7,7 @@ import { generalActions, IDLE, viewOf, warriorCounts, type Stage } from '../../i
 import { SUIT_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
 import { Dice, FactionChip, SuitPip } from '../components.ts'
+import { BuildBox } from './build-box.ts'
 import { ClearingInfo } from './clearing-info.ts'
 import type { Project } from './map-view.ts'
 
@@ -64,6 +65,8 @@ function ClearingMenu({ project, view: v, legal, stage, setStage, send, onPrevie
   const at = project(anchor)
   if (!at) return null
   const def = AUTUMN.clearings[anchor]!, lord = v.rulers[anchor]
+  // Marquise builds fold into the Build box (RD-M02); everything else stays a plain list.
+  const others = b.here.filter(a => a.type !== 'marquise-build')
   const below = at[1] < 260, x = Math.min(Math.max(at[0], 190), innerWidth - 190)
   return html`<section class=${`map-menu${below ? ' below' : ''}`} style=${{ left: `${x}px`, top: `${at[1]}px` }} role="dialog" aria-label=${`Ô ${anchor + 1}`}>
     <header><b>${stage.kind === 'at' ? `Ô ${anchor + 1}` : `Ô ${stage.from + 1} → ô ${stage.to + 1}`}</b> <${SuitPip} suit=${def.suit} />
@@ -74,7 +77,8 @@ function ClearingMenu({ project, view: v, legal, stage, setStage, send, onPrevie
           ${chosen && html`<${Act} a=${chosen} send=${send} onPreview=${onPreview} primary text=${`${label(chosen)} · Enter`} />`}`
       : html`<div class="acts">${b.along.map(a => html`<${Act} a=${a} send=${send} onPreview=${onPreview} primary />`)}</div>`)}
     ${stage.kind === 'at' && b.destinations.length > 0 && html`<p class="hint">Di chuyển: kéo quân sang ô khác, hoặc chạm ô đến (${b.destinations.map(d => `ô ${d + 1}`).join(', ')}).</p>`}
-    ${stage.kind === 'at' && b.here.length > 0 && html`<div class="acts">${b.here.map(a => html`<${Act} a=${a} send=${send} onPreview=${onPreview} primary=${b.here.length === 1} />`)}</div>`}
+    ${stage.kind === 'at' && others.length > 0 && html`<div class="acts">${others.map(a => html`<${Act} a=${a} send=${send} onPreview=${onPreview} primary=${b.here.length === 1} />`)}</div>`}
+    ${stage.kind === 'at' && others.length < b.here.length && html`<${BuildBox} view=${v} legal=${b.here} clearing=${anchor} send=${send} onPreview=${onPreview} />`}
   </section>`
 }
 
