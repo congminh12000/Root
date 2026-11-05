@@ -39,7 +39,7 @@ Khi sửa giao diện: chạy `npm run serve` trong một terminal và `npm run 
 | client → server | `undo { expectedRevision }`: chỉ ghế sở hữu hành động gần nhất và được server cho phép |
 | client → server | `chat { text }`: ghế người, 1–500 ký tự sau trim, tối đa một tin/750 ms, lưu 100 tin gần nhất |
 
-HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ faction, kind: 'human' | 'bot', name?, bot? }] }` tạo trận, trả về 400 nếu tổ hợp phe không đủ Reach (decision 0003).
+HTTP: `GET /api/games` trả danh sách trận. `POST /api/games { seats: [{ faction, kind: 'human' | 'bot', name?, bot? }] }` tạo trận, trả về 400 nếu tổ hợp phe không đủ Reach (decision 0003). `DELETE /api/games?scope=finished|all` xoá các trận đã kết thúc hoặc mọi trận, cả trong bộ nhớ lẫn file trong thư mục dữ liệu, trả `{ deleted: [id] }`; thiếu hoặc sai `scope` thì 400. Trận bị xoá dừng bot và đồng hồ, người chơi và khán giả đang kết nối nhận `error` rồi bị ngắt với mã đóng WebSocket 4404; trình duyệt thấy mã này thì thôi nối lại (mở trận không tồn tại cũng nhận mã này). Không hoàn tác được; sảnh hỏi xác nhận trước. Cùng hàng rào với các API khác: mật khẩu phòng nếu có, và server chỉ nghe `127.0.0.1` trừ khi chạy `--host 0.0.0.0`. Server không trả header CORS nên trang web lạ không gọi được `DELETE` từ trình duyệt.
 
 ## Thời hạn và mật khẩu (quyết định của người quản lý, 31/10/2026)
 

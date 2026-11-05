@@ -5,6 +5,7 @@ import { FACTION_NAME } from '../../names.ts'
 import { api, roomKey, setRoomKey } from '../../net/api.ts'
 import { FactionChip } from '../components.ts'
 import { MapPicker } from '../../map/choice.ts'
+import { clearPrompt, type ClearScope } from './clear-games.ts'
 
 interface Summary { id: string; createdAt: string; seats: { faction: FactionId; kind: string; name: string; connected: boolean }[]; turn: number; winner: FactionId[] | null }
 interface SeatForm { use: boolean; kind: 'human' | 'bot'; name: string; bot: string }
@@ -23,6 +24,7 @@ export function Lobby() {
   const [needKey, setNeedKey] = useState(false)
   const [key, setKey] = useState(roomKey())
   const [keySaved, setKeySaved] = useState(false)
+  const [cleared, setCleared] = useState('')
 
   const edit = (f: FactionId, patch: Partial<SeatForm>) => setSeats(s => ({ ...s, [f]: { ...s[f], ...patch } }))
 
@@ -37,6 +39,17 @@ export function Lobby() {
     const out = await res.json()
     if (!res.ok) { setError(out.error ?? 'Không tạo được trận'); setCreated(null); return }
     setError(''); setCreated(out as Created); void listGames()
+  }
+
+  /** Deletes games on the server after the person confirms; cannot be undone (multiplayer.md). */
+  async function clear(scope: ClearScope) {
+    if (!Array.isArray(games)) return
+    const prompt = clearPrompt(games, scope)
+    if (!prompt || !confirm(prompt)) return
+    const res = await api(`/api/games?scope=${scope}`, { method: 'DELETE' })
+    const out = await res.json()
+    setCleared(res.ok ? `Đã xoá ${(out as { deleted: string[] }).deleted.length} trận.` : out.error ?? 'Không xoá được')
+    void listGames()
   }
 
   useEffect(() => {
@@ -80,6 +93,10 @@ export function Lobby() {
         ${games === null ? 'Đang tải…' : games === 'locked' ? html`<p class="error">Cần mật khẩu phòng.</p>` : games.length === 0 ? html`<p>Chưa có trận nào.</p>` : html`<ul>
           ${games.map(g => html`<li key=${g.id}><a href=${`?game=${g.id}`}>${g.id}</a> — lượt ${g.turn} — ${g.seats.map(s => `${FACTION_NAME[s.faction]} (${s.kind === 'bot' ? 'bot' : s.name})`).join(', ')}
             ${g.winner && html` — <b>thắng: ${g.winner.map(f => FACTION_NAME[f]).join(' + ')}</b>`}</li>`)}</ul>`}
+        ${Array.isArray(games) && html`<p>
+          <button class="secondary" disabled=${!clearPrompt(games, 'finished')} onClick=${() => clear('finished')}>Xoá trận đã kết thúc</button>
+          ${' '}<button class="secondary" disabled=${!clearPrompt(games, 'all')} onClick=${() => clear('all')}>Xoá tất cả</button>
+          ${cleared && html` <span role="status">${cleared}</span>`}</p>`}
       </section>
     </main>`
 }

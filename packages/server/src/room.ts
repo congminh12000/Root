@@ -145,6 +145,7 @@ export class Room {
 
   /** Applies one command for `seat`. The engine does every check; the server only supplies playerId and randomness. */
   submit(seat: FactionId, actionId: string, expectedRevision: number, action: Action): CommandResult {
+    if (this.closed) return { ok: false, code: 'game-over', message: 'Trận đã đóng' }
     if (this.state.meta.recentActionIds.includes(actionId)) return { ok: true, revision: this.revision, duplicate: true }
     if (expectedRevision !== this.revision) return { ok: false, code: 'stale-revision', message: 'Trạng thái đã thay đổi' }
     const before = this.state, revision = this.revision
@@ -191,6 +192,7 @@ export class Room {
   }
 
   chat(seat: FactionId, text: unknown): boolean {
+    if (this.closed) return false
     if (!this.saved.seats.some(s => s.faction === seat && s.kind === 'human') || typeof text !== 'string') return false
     const clean = text.trim()
     if (!clean || clean.length > 500) return false

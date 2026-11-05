@@ -4,9 +4,10 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
 import { WebSocket } from 'ws'
-import type { CreateGameResponse, ServerMessage } from '../src/protocol.ts'
+import { GAME_GONE, type CreateGameResponse, type ServerMessage } from '../src/protocol.ts'
 import { Room, type SavedGame } from '../src/room.ts'
 import { startServer } from '../src/server.ts'
+import { Store } from '../src/store.ts'
 import { currentActor, legalActions } from '@root/game-engine'
 
 const allBots = { seats: (['marquise', 'eyrie', 'alliance', 'vagabond'] as const).map(faction => ({ faction, kind: 'bot' as const, bot: 'simple' })) }
@@ -156,4 +157,62 @@ test('room password guards listing, creating and watching; seat links still work
   } finally {
     await server.close()
   }
+})
+
+test('DELETE /api/games: finished games only, then all; open sockets are told and closed; files go; a restart loads nothing', async () => {
+  const dataDir = mkdtempSync(join(tmpdir(), 'root-server-'))
+  const finished = Room.create(allBots, new Store(dataDir).save, { botDelayMs: 0 })
+  for (let i = 0; i < 5000 && finished.botStep(); i++);
+  assert.ok(finished.state.winner)
+  const server = startServer({ port: 0, host: '127.0.0.1', dataDir, botDelayMs: 0, turnSeconds: 0, password: 'lan-key' })
+  await new Promise(r => server.http.once('listening', r))
+  const base = `http://127.0.0.1:${(server.http.address() as { port: number }).port}`
+  const headers = { 'x-room-key': 'lan-key', 'content-type': 'application/json' }
+  const list = async () => ((await (await fetch(`${base}/api/games`, { headers })).json()) as { id: string }[]).map(g => g.id)
+  try {
+    const res = await fetch(`${base}/api/games`, { method: 'POST', headers, body: JSON.stringify({ seats: [{ faction: 'marquise', kind: 'human', name: 'An' }, { faction: 'eyrie', kind: 'bot', bot: 'random' }] }) })
+    const live = (await res.json()) as CreateGameResponse
+    const token = live.links.find(l => l.faction === 'marquise')!.token!
+    assert.deepEqual((await list()).sort(), [finished.id, live.id].sort())
+
+    // Invalid: no password, or no/unknown scope. Nothing is deleted.
+    assert.equal((await fetch(`${base}/api/games?scope=all`, { method: 'DELETE' })).status, 401)
+    assert.equal((await fetch(`${base}/api/games`, { method: 'DELETE', headers })).status, 400)
+    assert.equal((await fetch(`${base}/api/games?scope=everything`, { method: 'DELETE', headers })).status, 400)
+    assert.equal((await list()).length, 2)
+
+    // Finished only: the running game and its file stay.
+    const one = await fetch(`${base}/api/games?scope=finished`, { method: 'DELETE', headers })
+    assert.equal(one.status, 200)
+    assert.deepEqual(await one.json(), { deleted: [finished.id] })
+    assert.deepEqual(await list(), [live.id])
+    assert.deepEqual(readdirSync(dataDir), [`${live.id}.json`])
+
+    // All, while a player is connected: they get an error, the socket closes, and the game no longer accepts commands.
+    const ws = new WebSocket(`${base.replace('http', 'ws')}/ws?game=${live.id}&token=${token}`)
+    const messages: ServerMessage[] = []
+    ws.on('message', raw => messages.push(JSON.parse(String(raw))))
+    const closed = new Promise<number>(r => ws.once('close', code => r(code)))
+    await new Promise<void>(r => { const t = setInterval(() => { if (messages.some(m => m.type === 'update')) { clearInterval(t); r() } }, 10) })
+    const room = server.rooms.get(live.id)!
+    const all = await fetch(`${base}/api/games?scope=all`, { method: 'DELETE', headers })
+    assert.deepEqual(await all.json(), { deleted: [live.id] })
+    assert.equal(await closed, GAME_GONE, 'browsers stop reconnecting on this code')
+    assert.ok(messages.some(m => m.type === 'error' && m.message.includes('xoá')))
+    const update = messages.find(m => m.type === 'update')!
+    assert.ok(update.type === 'update')
+    const late = room.submit('marquise', 'late', update.view.revision, update.legal[0] ?? { type: 'pass', payload: {} } as never)
+    assert.equal(late.ok, false)
+    assert.deepEqual(await list(), [])
+    assert.deepEqual(readdirSync(dataDir), [])
+    const gone = new WebSocket(`${base.replace('http', 'ws')}/ws?game=${live.id}&token=${token}`)
+    assert.equal(await new Promise<number>(r => gone.once('close', code => r(code))), GAME_GONE)
+    assert.equal((await fetch(`${base}/api/games?scope=all`, { method: 'DELETE', headers }).then(r => r.json()) as { deleted: string[] }).deleted.length, 0)
+  } finally {
+    await server.close()
+  }
+  const again = startServer({ port: 0, host: '127.0.0.1', dataDir, botDelayMs: 0 })
+  await new Promise(r => again.http.once('listening', r))
+  assert.equal(again.rooms.size, 0)
+  await again.close()
 })
