@@ -6,7 +6,7 @@
 ## Quyết định
 
 - Baseline là **SRC-001**, `Root_Base_Law_Oct_2025.pdf`, sha256 `d32c8c06…c045`. Trong code, `rulesVersion = "law-2025-10-13"`.
-- Phạm vi bản 1.0: chương 1–9, Standard Setup (§5.1), bản đồ Autumn (§M.1), nhân vật Vagabond Thief/Tinker/Ranger (§V.1–V.3) và thành phần bộ cơ bản (§C.1). Advanced Setup (App. A), expansion, hireling và landmark nằm ngoài phạm vi.
+- Phạm vi bản 1.0: chương 1–9, Standard Setup (§5.1), bản đồ Autumn (§M.1), nhân vật Vagabond Thief/Tinker/Ranger (§V.1–V.3) và thành phần bộ cơ bản (§C.1). Expansion, hireling và landmark nằm ngoài phạm vi. Advanced Setup (mục A) được đưa vào phạm vi bởi [0006](0006-advanced-setup-homelands.md).
 - ID luật là `ROOT-<số điều khoản>` (vd. `ROOT-4.2.1`). Số điều khoản lấy trực tiếp từ PDF nên truy ngược được ngay, không cần bảng tra riêng.
 - Không trộn luật từ bản in khác. Bản Law 2024-09-05 và 2022-06-10 vẫn có trên trang Resources nhưng không dùng.
 

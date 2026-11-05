@@ -1,6 +1,6 @@
 # Setup (Law chương 5, C.1)
 
-Bản 1.0 chỉ dùng Standard Setup. Advanced Setup (App. A) nằm ngoài phạm vi (decisions/0002).
+Engine có hai cách: Standard Setup (§5.1) và Advanced Setup (mục A) với faction setup card và homeland. Sản phẩm (server, sảnh) dùng **Advanced Setup** (decisions/0006); `createGame` mặc định Standard để giữ test và các trận đã lưu (`options.setup`). Chữ 4 lá setup card: [../03-data-spec/setup-cards.md](../03-data-spec/setup-cards.md).
 
 ### ROOT-5.1 Standard Setup
 Gồm 7 bước theo thứ tự; engine chạy chúng trong `createGame(options, rng)`.
@@ -62,3 +62,54 @@ Nhóm C.1.1–C.1.5. Không có hành vi riêng; dùng để kiểm tra dữ li�
 
 ### ROOT-C.1.5 Other
 - Bàn cờ (bản đồ Autumn), 2 xúc xắc và 4 faction board.
+
+
+## ROOT-A Advanced Setup (mục A, decisions/0006)
+
+Bật bằng `createGame({ ..., setup: 'advanced' })`; lưu ở `state.setupMode`. Chỉ dùng các bước trong phạm vi: A.4, A.7, A.8 (không draft), A.9, A.10.
+
+**Ngoài phạm vi:** ROOT-A.1 (bản đồ biến thể; Autumn giữ chất in sẵn), ROOT-A.2 (bộ bài khác), ROOT-A.3 (Rootbotics), ROOT-A.5 (landmark), ROOT-A.6 (hireling), ROOT-A.8.1 và ROOT-A.8.2 (draft; phe chọn ở sảnh, OQ-19).
+
+### ROOT-A.4 Step 4: Seat Players
+- Như §5.1.1: thứ tự ngồi và người đi đầu ngẫu nhiên.
+
+### ROOT-A.7 Step 7: Draw Five Cards
+- 2 người thì bỏ 4 lá dominance (như §5.1.3). Xáo deck, mỗi người rút **5** lá.
+- Test: 4 người, mỗi tay 5 lá sau khi tạo trận.
+
+### ROOT-A.8 Step 8: Set Up Factions
+- Không draft (ROOT-A.8.1, ROOT-A.8.2 bỏ qua, OQ-19): phe chọn ở sảnh, quyết định 0003 (Reach) giữ nguyên. Vagabond chọn nhân vật như hiện nay (OQ-21); nếu sau này có chế độ chia phe ngẫu nhiên thì nhân vật cũng chia ngẫu nhiên.
+
+#### ROOT-A.8.3 Step 3: Choose Factions
+- **Thứ tự:** bắt đầu từ người **cuối** trong thứ tự lượt, đi ngược chiều kim đồng hồ: `seats[n-1]`, `seats[n-2]`, …, `seats[0]`. Mỗi phe chuẩn bị xong mới tới phe sau.
+
+#### ROOT-A.8.3.I Homelands
+- `state.homelands[f]` ghi homeland của từng phe, công khai. Không chọn ô đã là homeland của phe khác, hoặc ô không đặt đủ quân của bước chuẩn bị (ví dụ thiếu slot trống cho công trình, hoặc ô có keep của Marquise với phe khác, §6.2.2).
+
+#### ROOT-A.8.3.II Enemy Homeland Adjacency
+- khoảng cách tới homeland địch tính bằng số path ít nhất. "2+ clearings between" là khoảng cách ≥ 3; "not adjacent" là ≥ 2. Không có ô thoả mức đòi hỏi thì hạ một mức (≥ 3 → ≥ 2 → bất kỳ).
+- **Mép bản đồ (G.15):** `MapDef.edge`; Autumn: ô 1, 2, 3, 5, 8, 9, 10, 11, 12 (OQ-20).
+
+#### Marquise (SRC-014)
+1. Chọn 3 homeland, mỗi lần một ô (`choose-homeland`). Ô thứ hai và thứ ba phải kề một homeland đã chọn, nên 3 ô nối liền. Mỗi homeland cần ≥ 1 slot trống. Chỉ cho chọn ô mà sau đó vẫn chọn đủ được 3 ô.
+2. Tự động: 2 chiến binh ở mỗi homeland, 1 ở mọi clearing khác (kể cả homeland phe khác).
+3. Keep ở một homeland (`marquise-place-keep`), ưu tiên ô không kề homeland địch. Rồi sawmill, workshop, recruiter, mỗi cái ở một homeland khác nhau (`marquise-place-building`).
+4. Track công trình như §6.3.5.
+
+#### Eyrie (SRC-015)
+1. Chọn homeland trên mép bản đồ, khoảng cách ≥ 3 tới mọi homeland địch (hạ mức theo A.8.3.II). Cần slot trống và đặt được quân (`eyrie-place-roost`: 6 chiến binh và 1 roost ở đó).
+2. Leader và vizier như §7.3.3–§7.3.4; track roost như §7.3.5.
+
+#### Woodland Alliance (SRC-016)
+- Như §8.3 (rút 3 supporter, track sympathy, base). Không có homeland.
+
+#### Vagabond (SRC-017)
+- Như §9.3: chọn nhân vật, đặt pawn ở rừng, 3 quest, item "R" dưới ruin, item "S", quan hệ Indifferent với mọi phe khác. Không có homeland.
+
+### ROOT-A.9 Step 9: Place Score Markers
+- Điểm mọi phe bằng 0 (như §5.1.2).
+
+### ROOT-A.10 Step 10: Choose Starting Hands
+- Sau khi mọi phe chuẩn bị xong, theo thứ tự lượt, mỗi người trả **2** lá về đầu deck, từng lá một (`return-card`), giữ 3 lá. Xong cả bàn thì xáo deck.
+- Lá trả về là thông tin ẩn: log chỉ ghi loại hành động (server `PUBLIC_DETAIL` không có `return-card`).
+- Test: sau setup mỗi tay 3 lá; deck đủ số lá; trả lá không có trong tay bị từ chối.

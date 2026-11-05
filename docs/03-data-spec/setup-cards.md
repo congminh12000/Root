@@ -47,7 +47,7 @@ Lá ghi: militant (có thanh kiếm), Reach 7 (khớp §5.2).
 
 **Khác §7.3:** homeland ở bất kỳ ô mép nào đủ xa homeland địch, không bắt buộc ở góc hay góc đối diện.
 
-**Mép bản đồ Autumn (G.15: "the single closed loop of clearings and paths that define the map boundary"):** theo bảng nối ở [autumn.md](autumn.md), vòng ngoài là 1–2–3–8–12–11–10–9–5–1, nên ô mép là **1, 2, 3, 5, 8, 9, 10, 11, 12**; ô trong là 4, 6, 7. **Chờ người quản lý xác nhận trên ảnh bàn cờ (OQ-20)** trước khi đưa vào `packages/game-data`.
+**Mép bản đồ Autumn (G.15: "the single closed loop of clearings and paths that define the map boundary"):** theo bảng nối ở [autumn.md](autumn.md), vòng ngoài là 1–2–3–8–12–11–10–9–5–1, nên ô mép là **1, 2, 3, 5, 8, 9, 10, 11, 12**; ô trong là 4, 6, 7. Người quản lý đồng ý (OQ-20); dữ liệu ở `AUTUMN.edge`, test kiểm rằng đây đúng là vòng path chỉ giáp một rừng.
 
 ## Woodland Alliance
 
@@ -70,7 +70,7 @@ Lá ghi: insurgent, Reach 5/2 (5 cho Vagabond thứ nhất, 2 cho Vagabond thứ
 | 1st | "Put your **pawn** in any forest." | Như §9.3.2. |
 | 2nd | "Shuffle the quest deck. Draw 3 **quests** to deal out nearby." | Như §9.3.3. |
 | 3rd | "Put the 4 "R" items under the ruins randomly, unless a non-Vagabond has done so." | Như §9.3.4. |
-| 4th | "Put your assigned **character card** in your Character Card slot. Put the listed "S" items in your Satchel and on their matching tracks, as needed." | Như §9.3.1 và §9.3.5. "Assigned" là nhân vật chia kèm lá khi draft (A.8.2.III); dự án không draft (OQ-19), nên đề xuất người chơi tự chọn nhân vật như hiện nay. **Chờ duyệt (OQ-21).** |
+| 4th | "Put your assigned **character card** in your Character Card slot. Put the listed "S" items in your Satchel and on their matching tracks, as needed." | Như §9.3.1 và §9.3.5. "Assigned" là nhân vật chia kèm lá khi draft (A.8.2.III); dự án không draft (OQ-19), nên sảnh cho chọn phe thì người chơi chọn nhân vật; khi có chế độ chia phe ngẫu nhiên thì nhân vật cũng ngẫu nhiên (OQ-21). |
 | 5th | "Put **relationship markers** for non-Vagabond factions in play on the Indifferent space of Relationships *(after setup)*." | Như §9.3.6, làm sau khi mọi phe chuẩn bị xong. |
 
 **Khác §9.3:** chỉ khác thứ tự và cách có nhân vật.

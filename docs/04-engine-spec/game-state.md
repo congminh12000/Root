@@ -14,6 +14,7 @@ Mỗi trường có comment dẫn điều khoản Law. Trường dựa trên suy
 - **Toàn vẹn.** Command được áp dụng trọn vẹn hoặc bị từ chối; `meta.revision` tăng một mỗi lần áp dụng. Command có `expectedRevision` khác bị trả `stale-revision`. `actionId` trùng lặp chỉ áp dụng một lần.
 - **Tất định.** Engine là hàm thuần `(state, command, rng) → state`. Kết quả ngẫu nhiên (xúc xắc, xáo bài, rút ngẫu nhiên của Thief) được ghi vào event log, nên replay không cần seed. Seed chỉ nằm trên server.
 - **Quyết định xen ngang.** `pending` là một stack. Người đang được hỏi có thể khác người đang tới lượt (ambush §4.3.1, field hospital §6.2.3, outrage §8.2.6, chọn thứ tự mất quân §4.3.6). Khi stack còn phần tử, chỉ người ở đỉnh stack được gửi command.
+- **Cách chuẩn bị.** `setupMode` là `'advanced'` khi trận dùng Advanced Setup (mục A, decisions/0006); không có thì là Standard Setup (§5.1), nên trận cũ vẫn replay đúng. `homelands` ghi homeland của từng phe (A.8.3.I), công khai trong `PlayerView`.
 - **Định danh bài.** Mỗi lá vật lý có `CardId` riêng; văn bản và suit lấy từ `game-data` theo định nghĩa. Bài trùng tên vẫn là các lá khác nhau.
 - **Gắn phiên bản.** `meta.rulesVersion` và `meta.dataVersion` đi theo trận từ đầu tới cuối.
 
