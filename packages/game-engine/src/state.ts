@@ -208,6 +208,10 @@ export interface GameState {
   }
   /** Factions are still setting up (§5.1.7) until every setup decision is answered. */
   stage: 'setup' | 'play'
+  /** How the game was set up: Advanced Setup with faction setup cards (App. A, decisions/0006); absent means Standard Setup (§5.1). */
+  setupMode?: 'standard' | 'advanced'
+  /** Homeland clearings chosen in Advanced Setup (A.8.3.I), by faction. Public. */
+  homelands?: Partial<Record<FactionId, ClearingId[]>>
   /** Clockwise seating order (§1.4.1); seats[0] is the starting player (§5.1.1). */
   seats: Seat[]
   turn: { seat: number; phase: Phase; step: string; number: number }

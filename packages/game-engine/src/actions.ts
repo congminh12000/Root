@@ -13,6 +13,9 @@ export type Action =
   | { type: 'eyrie-choose-leader'; payload: { leader: EyrieLeader } }
   | { type: 'vagabond-choose-character'; payload: { character: VagabondCharacter } }
   | { type: 'vagabond-place-pawn'; payload: { forest: ForestId } }
+  // Advanced Setup (App. A): a Marquise homeland (A.8.3.I, setup card) and a card put back on the deck (A.10)
+  | { type: 'choose-homeland'; payload: { clearing: ClearingId } }
+  | { type: 'return-card'; payload: { card: CardId } }
   // Battle decisions (§4.3)
   | { type: 'play-ambush'; payload: { card: CardId } }
   | { type: 'decline-ambush'; payload: Record<string, never> }

@@ -3,7 +3,7 @@
 # Vòng đời status: xem docs/06-qa/test-matrix.md. Kiểm tra: npm run audit:rules
 document: SRC-001
 version: "2025-10-13"
-scope: "Chương 1–9, C.1, M.1, V.1–V.3"
+scope: "Chương 1–9, C.1, M.1, V.1–V.3, A (Advanced Setup, decisions/0006)"
 rules:
   - rule_id: ROOT-1.1
     title: "Rules Conflicts"
@@ -1836,3 +1836,149 @@ rules:
     implementation: [packages/game-engine/src/factions/vagabond.ts]
     tests: [packages/game-engine/test/vagabond.test.ts]
     review: {rules_verified: true, implementation_verified: true}
+  - rule_id: ROOT-A
+    title: "Advanced Setup"
+    section: "A"
+    page: 22
+    group: true
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/setup.ts, packages/game-engine/src/create.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.1
+    title: "Step 1: Choose and Set up Map"
+    section: "A.1"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.2
+    title: "Step 2: Choose Deck"
+    section: "A.2"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.3
+    title: "Step 3: Set Up Bots"
+    section: "A.3"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.4
+    title: "Step 4: Seat Players"
+    section: "A.4"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/create.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.5
+    title: "Step 5: Set up Landmarks"
+    section: "A.5"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.6
+    title: "Step 6: Set up Hirelings"
+    section: "A.6"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.7
+    title: "Step 7: Draw Five Cards"
+    section: "A.7"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/create.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.8
+    title: "Step 8: Set Up Factions"
+    section: "A.8"
+    page: 23
+    group: true
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/setup.ts, packages/game-engine/src/create.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.8.1
+    title: "Step 1: Create Draft Pool"
+    section: "A.8.1"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.8.2
+    title: "Step 2: Deal Setup Cards"
+    section: "A.8.2"
+    page: 23
+    status: out_of_scope
+    spec: docs/02-rules-spec/setup.md
+    implementation: []
+    tests: []
+    review: {rules_verified: false, implementation_verified: false}
+  - rule_id: ROOT-A.8.3
+    title: "Step 3: Choose Factions"
+    section: "A.8.3"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.8.3.I
+    title: "Homelands"
+    section: "A.8.3.I"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/factions/eyrie.ts, packages/game-engine/src/board.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.8.3.II
+    title: "Enemy Homeland Adjacency"
+    section: "A.8.3.II"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/factions/eyrie.ts, packages/game-engine/src/factions/marquise.ts, packages/game-engine/src/board.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.9
+    title: "Step 9: Place Score Markers"
+    section: "A.9"
+    page: 23
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/create.ts]
+    tests: [packages/game-engine/test/engine.test.ts]
+    review: {rules_verified: true, implementation_verified: false}
+  - rule_id: ROOT-A.10
+    title: "Step 10: Choose Starting Hands"
+    section: "A.10"
+    page: 24
+    status: implemented
+    spec: docs/02-rules-spec/setup.md
+    implementation: [packages/game-engine/src/setup.ts]
+    tests: [packages/game-engine/test/advanced-setup.test.ts]
+    review: {rules_verified: true, implementation_verified: false}

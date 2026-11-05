@@ -1,10 +1,11 @@
 import { MIN_REACH, REACH } from '@root/game-data'
 import type { Action } from './actions.ts'
 import { ALLIANCE_SETUP } from './factions/alliance.ts'
-import { EYRIE_SETUP } from './factions/eyrie.ts'
-import { MARQUISE_SETUP } from './factions/marquise.ts'
+import { EYRIE_ADVANCED_SETUP, EYRIE_SETUP } from './factions/eyrie.ts'
+import { MARQUISE_ADVANCED_SETUP, MARQUISE_SETUP } from './factions/marquise.ts'
 import { VAGABOND_SETUP } from './factions/vagabond.ts'
-import type { Rng } from './rng.ts'
+import { shuffle, type Rng } from './rng.ts'
+import type { SetupStep } from './setup-step.ts'
 import type { FactionId, GameState } from './state.ts'
 
 /**
@@ -17,13 +18,7 @@ export function factionMixAllowed(factions: readonly FactionId[]): boolean {
   return total >= MIN_REACH[factions.length]!
 }
 
-/**
- * One step of a faction's setup. A step either runs on its own (`auto`) or waits for the faction to pick one of
- * `options`; `apply` returns true once the step is finished (Marquise buildings take three picks).
- */
-export type SetupStep =
-  | { id: string; auto: (state: GameState, rng: Rng) => void }
-  | { id: string; options: (state: GameState) => Action[]; apply: (state: GameState, action: Action) => boolean }
+export type { SetupStep } from './setup-step.ts'
 
 /** Setup order A–D printed on the faction boards (§5.1.7), not turn order. */
 export const SETUP_ORDER: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
@@ -32,16 +27,57 @@ const STEPS: Record<FactionId, SetupStep[]> = {
   marquise: MARQUISE_SETUP, eyrie: EYRIE_SETUP, alliance: ALLIANCE_SETUP, vagabond: VAGABOND_SETUP,
 }
 
+/**
+ * Advanced Setup (App. A, decisions/0006): each faction follows its setup card (docs/03-data-spec/setup-cards.md).
+ * The Woodland Alliance and Vagabond cards hold the same steps as §8.3 and §9.3.
+ */
+const ADVANCED_STEPS: Record<FactionId, SetupStep[]> = {
+  marquise: MARQUISE_ADVANCED_SETUP, eyrie: EYRIE_ADVANCED_SETUP, alliance: ALLIANCE_SETUP, vagabond: VAGABOND_SETUP,
+}
+
+/** A.10 Choose Starting Hands: keep three of five, putting the others face down on the deck one at a time. */
+const KEEP = 3
+const COMMON_STEPS: SetupStep[] = [
+  {
+    id: 'A.10',
+    options: state => {
+      const top = state.pending.at(-1)!
+      const hand = state.hands[top.player] ?? []
+      return hand.length > KEEP ? hand.map((card): Action => ({ type: 'return-card', payload: { card } })) : []
+    },
+    apply: (state, action) => {
+      if (action.type !== 'return-card') return false
+      const f = state.pending.at(-1)!.player
+      state.hands[f] = state.hands[f]!.filter(c => c !== action.payload.card)
+      state.deck.unshift(action.payload.card)
+      return state.hands[f]!.length <= KEEP
+    },
+  },
+  { id: 'A.10-shuffle', auto: (state, rng) => { state.deck = shuffle(state.deck, rng) } },
+]
+
 export function setupStep(faction: FactionId, id: string): SetupStep {
-  const step = STEPS[faction].find(s => s.id === id)
+  const step = [...COMMON_STEPS, ...STEPS[faction], ...ADVANCED_STEPS[faction]].find(s => s.id === id)
   if (!step) throw new Error(`unknown setup step ${faction}/${id}`)
   return step
 }
 
 /** Queue every setup step on the pending stack, first step on top. */
 export function queueSetup(state: GameState) {
+  const entry = (player: FactionId, step: string) => ({ kind: 'setup' as const, player, step })
+  if (state.setupMode === 'advanced') {
+    // A.8.3: from the last player in turn order, counterclockwise; then A.10 in turn order and one shuffle.
+    const order = [...state.seats].reverse().map(s => s.faction)
+    const steps = [
+      ...order.flatMap(f => ADVANCED_STEPS[f].map(s => entry(f, s.id))),
+      ...state.seats.map(s => entry(s.faction, 'A.10')),
+      entry(state.seats[0]!.faction, 'A.10-shuffle'),
+    ]
+    state.pending = steps.reverse()
+    return
+  }
   const order = SETUP_ORDER.filter(f => state.seats.some(s => s.faction === f))
-  const steps = order.flatMap(f => STEPS[f].map(s => ({ kind: 'setup' as const, player: f, step: s.id })))
+  const steps = order.flatMap(f => STEPS[f].map(s => entry(f, s.id)))
   state.pending = steps.reverse()
 }
 

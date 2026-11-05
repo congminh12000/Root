@@ -1,14 +1,14 @@
 import { MARQUISE } from '@root/game-data'
 import type { Action } from '../actions.ts'
 import { battleTargets, startBattle } from '../battle.ts'
-import { adjacent, canPlaceIn, corners, drawCards, mapOf, oppositeCorner, openSlots, placeInSlot, placeWarriors } from '../board.ts'
+import { adjacent, canPlaceIn, corners, drawCards, enemyHomelands, mapOf, oppositeCorner, openSlots, placeInSlot, placeWarriors } from '../board.ts'
 import { requireDiscardDown } from '../common.ts'
 import { craftActions, performCraft } from '../craft.ts'
 import { moveOptions, moveWarriors } from '../move.ts'
 import { choices } from '../removal.ts'
 import type { Rng } from '../rng.ts'
 import { award, discardCard, isBird, matchesSuit, rules, suitOf, takeFromHand } from '../rules.ts'
-import type { SetupStep } from '../setup.ts'
+import { applyOf, type SetupStep } from '../setup-step.ts'
 import type { ClearingId, GameState, MarquiseBuilding, MarquiseState } from '../state.ts'
 import type { TurnStep } from '../turn.ts'
 
@@ -64,6 +64,68 @@ export const MARQUISE_SETUP: SetupStep[] = [
       // §6.3.5 Fill Buildings Tracks: the remaining five of each type stay on the track, leftmost space empty.
       return BUILDINGS.every(b => board.buildingsOnTrack[b] < MARQUISE.buildingsPerType)
     },
+  },
+]
+
+/**
+ * Advanced Setup with the Marquise faction setup card (A.8.3, SRC-014, docs/03-data-spec/setup-cards.md):
+ * 1st three connected homelands; 2nd two warriors in each homeland, one everywhere else; 3rd the keep in a homeland
+ * not adjacent to an enemy homeland if able, then one sawmill, workshop and recruiter, each in a different homeland;
+ * 4th the Buildings track as in §6.3.5.
+ */
+export const MARQUISE_ADVANCED_SETUP: SetupStep[] = [
+  MARQUISE_SETUP[0]!,
+  {
+    id: 'A.8-marquise-homelands',
+    options: state => {
+      const map = mapOf(state)
+      const mine = state.homelands?.marquise ?? []
+      // A homeland needs an open slot for its building and cannot be an enemy homeland (A.8.3.I).
+      const taken = enemyHomelands(state, 'marquise')
+      const eligible = (c: ClearingId) => !mine.includes(c) && !taken.includes(c) && openSlots(state, c) > 0
+      const touches = (set: ClearingId[], c: ClearingId) => !set.length || adjacent(map, c).some(n => set.includes(n))
+      // Only offer a clearing that still leaves a way to finish three connected homelands.
+      const canGrow = (set: ClearingId[]): boolean => set.length === 3
+        || map.clearings.some(({ id }) => !set.includes(id) && eligible(id) && touches(set, id) && canGrow([...set, id]))
+      return map.clearings.map(c => c.id)
+        .filter(c => eligible(c) && touches(mine, c) && canGrow([...mine, c]))
+        .map((clearing): Action => ({ type: 'choose-homeland', payload: { clearing } }))
+    },
+    apply: (state, action) => {
+      if (action.type !== 'choose-homeland') return false
+      const homelands = (state.homelands ??= {})
+      homelands.marquise = [...(homelands.marquise ?? []), action.payload.clearing]
+      return homelands.marquise.length === 3
+    },
+  },
+  {
+    id: 'A.8-marquise-garrison',
+    auto: state => {
+      const mine = state.homelands!.marquise!
+      for (const c of mapOf(state).clearings) placeWarriors(state, 'marquise', c.id, mine.includes(c.id) ? 2 : 1)
+    },
+  },
+  {
+    id: 'A.8-marquise-keep',
+    options: state => {
+      const map = mapOf(state)
+      const mine = state.homelands!.marquise!
+      const taken = enemyHomelands(state, 'marquise')
+      const apart = mine.filter(c => !adjacent(map, c).some(n => taken.includes(n)))
+      return (apart.length ? apart : mine).map((clearing): Action => ({ type: 'marquise-place-keep', payload: { clearing } }))
+    },
+    apply: (state, action) => applyOf(MARQUISE_SETUP[1]!)(state, action), // same as §6.3.2
+  },
+  {
+    id: 'A.8-marquise-buildings',
+    options: state => {
+      const board = state.factions.marquise!
+      const used = (c: ClearingId) => state.map.clearings[c]!.slots.some(s => s?.kind === 'building' && s.faction === 'marquise')
+      const where = state.homelands!.marquise!.filter(c => !used(c) && openSlots(state, c) > 0)
+      return BUILDINGS.filter(b => board.buildingsOnTrack[b] === MARQUISE.buildingsPerType)
+        .flatMap(building => where.map((clearing): Action => ({ type: 'marquise-place-building', payload: { building, clearing } })))
+    },
+    apply: (state, action) => applyOf(MARQUISE_SETUP[3]!)(state, action), // same as §6.3.4–6.3.5
   },
 ]
 

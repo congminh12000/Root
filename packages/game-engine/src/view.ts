@@ -33,6 +33,9 @@ export interface PlayerView {
   waitingOn: FactionId[]
   /** Public game structure, so a bot can rebuild a full state from what it sees (packages/bots). */
   stage: GameState['stage']
+  /** Advanced Setup and the homelands chosen so far (App. A); public. */
+  setupMode: GameState['setupMode']
+  homelands: NonNullable<GameState['homelands']>
   seats: { faction: FactionId; kind: 'human' | 'bot' }[]
   battle: GameState['battle']
   /** Who rules each clearing, by clearing id (§2.5, §7.2.2); public, so interfaces need not repeat the rule. */
@@ -88,6 +91,8 @@ export function viewFor(state: GameState, self: FactionId | null): PlayerView {
     winner: copy(state.winner),
     revealed: self ? copy(state.reveals.filter(r => r.to === self)) : [],
     stage: state.stage,
+    setupMode: state.setupMode,
+    homelands: copy(state.homelands ?? {}),
     seats: state.seats.map(s => ({ faction: s.faction, kind: s.controller.kind })),
     battle: copy(state.battle),
     rulers: state.map.clearings.map((_, c) => ruler(state, c)),
