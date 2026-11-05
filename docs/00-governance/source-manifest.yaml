@@ -165,4 +165,36 @@ sources:
     notes: >-
       Ảnh 671×761 do người quản lý dự án gửi ngày 05/11/2026, chữ đọc rõ. Art của Leder nên chỉ lưu trên máy ở
       docs/01-official-sources/setup-cards/ (không commit). Chép nguyên văn ở docs/03-data-spec/setup-cards.md.
-      Còn thiếu lá của Eyrie, Woodland Alliance, Vagabond (OQ-18).
+
+  - id: SRC-015
+    title: Lá faction setup card Eyrie Dynasties (Advanced Setup)
+    priority: reference
+    role: Chữ chuẩn bị của Eyrie Dynasties khi dùng Advanced Setup (Rules Library p16 A.8.3)
+    sha256: 044bb8fa4ba4e0526d7e010a9db3d605c3fa4ad992946589dc83c2b19ceb6910
+    retrieved: "2026-11-05"
+    verification: verified
+    notes: >-
+      Ảnh 828×783 do người quản lý dự án gửi ngày 05/11/2026, chữ đọc rõ. Art của Leder nên chỉ lưu trên máy ở
+      docs/01-official-sources/setup-cards/eyrie-advanced-setup.jpg (không commit). Chép nguyên văn ở docs/03-data-spec/setup-cards.md.
+
+  - id: SRC-016
+    title: Lá faction setup card Woodland Alliance (Advanced Setup)
+    priority: reference
+    role: Chữ chuẩn bị của Woodland Alliance khi dùng Advanced Setup (Rules Library p16 A.8.3)
+    sha256: c9761f418e1d139658e21b34c79c05b8b395277e6a3cd8f9f023a087358abd78
+    retrieved: "2026-11-05"
+    verification: verified
+    notes: >-
+      Ảnh 828×794 do người quản lý dự án gửi ngày 05/11/2026, chữ đọc rõ. Art của Leder nên chỉ lưu trên máy ở
+      docs/01-official-sources/setup-cards/alliance-advanced-setup.jpg (không commit). Chép nguyên văn ở docs/03-data-spec/setup-cards.md.
+
+  - id: SRC-017
+    title: Lá faction setup card Vagabond (Advanced Setup)
+    priority: reference
+    role: Chữ chuẩn bị của Vagabond khi dùng Advanced Setup (Rules Library p16 A.8.3)
+    sha256: cc7cfd4037607183d2d2a7dcffbb12ffe156ed8790c8a3a326341eae43a633c3
+    retrieved: "2026-11-05"
+    verification: verified
+    notes: >-
+      Ảnh 828×626 do người quản lý dự án gửi ngày 05/11/2026, chữ đọc rõ. Art của Leder nên chỉ lưu trên máy ở
+      docs/01-official-sources/setup-cards/vagabond-advanced-setup.jpg (không commit). Chép nguyên văn ở docs/03-data-spec/setup-cards.md.
