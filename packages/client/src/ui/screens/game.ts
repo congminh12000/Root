@@ -6,6 +6,7 @@ import { GameResult, GameLog, QuickGuide, logClearings } from './finish.ts'
 import { decisionOf } from '../../interaction/decisions.ts'
 import { marquiseActionsLeft } from '../../interaction/actions-left.ts'
 import { buildClearings } from '../../interaction/build.ts'
+import { MAP_FOCUS } from '../../interaction/marquise-actions.ts'
 import { promptFor } from '../../interaction/prompt.ts'
 import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { connectGame } from '../../net/connection.ts'
@@ -40,7 +41,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   /** The one HUD drawer open, if any (hud.ts). */
   const [actionFilter, setActionFilter] = useState<string | null>(null)
   /** RD-M02: after "Xây" in the action panel, the map offers only the clearings where the Marquise can build. */
-  const [focus, setFocus] = useState<'marquise-build' | null>(null)
+  const [focus, setFocus] = useState<string | null>(null)
   const [drawer, setDrawer] = useState<DrawerId | null>(null)
   const close = useCallback(() => setDrawer(null), [])
   const toggle = (d: DrawerId) => setDrawer(o => (o === d ? null : d))
@@ -84,9 +85,10 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
 
   // "Xây" in the action panel: light the clearings where the Marquise can build (RD-M02); with one, open its Build box.
   const open = (type?: string) => {
-    if (type === 'marquise-build') {
-      const where = buildClearings(all)
-      setDrawer(null); setFocus('marquise-build'); setInspect(null)
+    if (type && MAP_FOCUS.has(type)) {
+      // RD-M04: March, Build, Battle and Overwork are picked on the map, which then offers only that action.
+      const where = type === 'marquise-build' ? buildClearings(all) : []
+      setDrawer(null); setFocus(type); setInspect(null)
       setStage(where.length === 1 ? { kind: 'at', clearing: where[0]! } : IDLE)
       return
     }

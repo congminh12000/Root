@@ -13,7 +13,7 @@ export function promptFor({ view: v, legal, seat, stage, focus, decision }: {
   view: PlayerView; legal: Action[]; seat: FactionId | null; stage: Stage; focus: string | null; decision: Decision | null
 }): string | null {
   if (!seat || v.winner || v.waitingOn[0] !== seat || !legal.length) return null
-  if (focus === 'marquise-build') return 'Chọn ô để xây'
+  if (focus && FOCUS_PROMPT[focus]) return FOCUS_PROMPT[focus]!
   if (decision && decision.player === seat) return sentence(withoutName(decision.title, seat))
   if (stage.kind === 'path') {
     const counts = warriorCounts(viewOf(legal, stage).along)
@@ -38,6 +38,11 @@ function withoutName(title: string, seat: FactionId): string {
   if (title.startsWith(`${name}: `)) return title.slice(name.length + 2)
   if (title.startsWith(`${name} `)) return title.slice(name.length + 1)
   return title
+}
+
+/** After an action button (RD-M04), what to pick on the map. */
+const FOCUS_PROMPT: Record<string, string> = {
+  'marquise-build': 'Chọn ô để xây', move: 'Chọn ô có chiến binh để March, rồi ô đến', battle: 'Chọn ô để đánh', 'marquise-overwork': 'Chọn sawmill để Overwork',
 }
 
 const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)

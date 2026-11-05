@@ -567,7 +567,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 @media (prefers-reduced-motion: reduce) { .action-sun b { animation: none; } }
 .kit-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--sp-3); }
 .kit-actions figure { margin: 0; }
-.kit-hud.actions { height: 310px; } /* room for the sun above the tallest panel */
+.kit-hud.actions { height: 370px; } /* room for the sun above the tallest panel */
 
 /* RD-M02: the Marquise Build box at a clearing (Root Digital's layout, our own look) and the "choose a clearing" prompt. */
 .build-box { margin-top: 6px; display: grid; gap: 6px; }
@@ -586,3 +586,10 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .map-prompt button { margin-right: -8px; }
 .kit-hud.prompt { height: 64px; }
 .kit-hud.prompt .map-prompt { top: 10px; }
+
+/* RD-M04: the Marquise's six fixed action buttons (Root Digital's layout, our own icons). */
+.hud-actions .hud-marquise { display: grid; grid-template-columns: repeat(3, 52px); gap: 6px; justify-content: start; }
+.hud-marquise button { position: relative; display: grid; place-items: center; width: 52px; height: 52px; min-height: 52px; padding: 0; }
+.hud-marquise button .icon { width: 30px; height: 30px; }
+.hud-marquise button small { position: absolute; right: 3px; bottom: 1px; font-weight: 700; font-size: var(--fs-xs); }
+.hud-marquise button:disabled { opacity: .4; }
