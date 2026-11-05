@@ -8,6 +8,7 @@ import { GROUP } from '../../describe.ts'
 import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
 import { ownResources } from '../../interaction/resources.ts'
 import { decreeCounts, relationshipWith } from '../../interaction/opponents.ts'
+import { OWN_PANEL } from '../faction-art.ts'
 import { usableCards } from '../../interaction/cards.ts'
 import { newPlayed, playedCards, PLAYED_FADE_MS, PLAYED_HOLD_MS, type PlayedCard } from '../../interaction/played.ts'
 import { Hand } from './hand.ts'
@@ -70,7 +71,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
   const waiting = v.waitingOn[0]
   const ordered = v.seats.map(s => seats.find(info => info.faction === s.faction)).filter((s): s is Seat => !!s)
   const visible = ordered.filter(s => own ? s.faction === seat : s.faction !== seat)
-  return html`<nav class=${own ? 'hud-factions hud-self' : 'hud-factions'} aria-label=${own ? 'Phe của bạn' : 'Thứ tự lượt chơi'}>${visible.map(s => html`
+  return html`<nav class=${own ? 'hud-factions hud-self' : 'hud-factions'} aria-label=${own ? 'Phe của bạn' : 'Thứ tự lượt chơi'}>${visible.map(s => own && OWN_PANEL[s.faction] ? html`<${ArtPanel} key=${s.faction} view=${v} seat=${s} waiting=${waiting} changes=${changes} open=${open} onOpen=${onOpen} />` : html`
     <button key=${s.faction} data-faction=${s.faction} class=${`hud-faction${s.faction === waiting ? ' turn' : ''}${s.faction === seat ? ' me' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})` }}
       aria-pressed=${open === s.faction} aria-label=${`${FACTION_NAME[s.faction]}: ${v.score[s.faction] ?? 'dominance'} điểm, ${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ', vắng' : ''}`}
       onClick=${() => onOpen(s.faction)}>
@@ -82,6 +83,23 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
       ${!own && s.faction === 'vagabond' && relationshipWith(v, seat) && html`<span class=${`relation${relationshipWith(v, seat)!.hostile ? ' hostile' : ''}`} title="Quan hệ của Vagabond với bạn"><${Icon} name="heart" />${relationshipWith(v, seat)!.text}</span>`}
       ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
     </button>`)}</nav>`
+}
+
+/** Your own faction as its painted panel: score in the laurel, each supply count beside its painted icon. No name: it is you. */
+function ArtPanel({ view: v, seat: s, waiting, changes, open, onOpen }: {
+  view: PlayerView; seat: Seat; waiting: FactionId | undefined; changes: Changes; open: DrawerId | null; onOpen: (f: FactionId) => void
+}) {
+  const art = OWN_PANEL[s.faction]!
+  const res = ownResources(v, s.faction)
+  const scored = changes.scored.includes(s.faction)
+  return html`<button data-faction=${s.faction} class=${`hud-faction art-panel me${s.faction === waiting ? ' turn' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})` }}
+    aria-pressed=${open === s.faction} aria-label=${`${FACTION_NAME[s.faction]}: ${v.score[s.faction] ?? 'dominance'} điểm, ${res.map(r => `${r.label} ${r.value}`).join(', ')}${s.kind === 'human' && !s.connected ? ', vắng' : ''}`}
+    onClick=${() => onOpen(s.faction)}>
+    <img class="panel-art" src=${art.src} alt="" draggable=${false} />
+    ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
+    <b key=${scored ? `${s.faction}-${changes.seq}` : s.faction} class=${`panel-score${scored ? ' bump' : ''}`}>${v.score[s.faction] ?? 'D'}</b>
+    ${res.map(r => art.rows.indexOf(r.icon) >= 0 && html`<b class="panel-num" style=${{ '--row': art.rows.indexOf(r.icon) }} title=${r.label}>${r.value}</b>`)}
+  </button>`
 }
 
 /** Bottom: cards stay visible and open their own detail/actions directly. */

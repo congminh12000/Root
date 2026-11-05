@@ -15,8 +15,8 @@ test('opponents follow engine seat order and own faction appears separately', ()
   const opponents = view.seats.filter(s => s.faction !== 'marquise')
   for (let i = 1; i < opponents.length; i++) assert.ok(out.indexOf(`player-${opponents[i-1]!.faction}`) < out.indexOf(`player-${opponents[i]!.faction}`))
   const own = render(html`<${HudFactions} ...${props} own />`)
-  assert.ok(own.includes('player-marquise'))
-  assert.ok(!own.includes('player-eyrie'))
+  assert.ok(own.includes('data-faction="marquise"'))
+  assert.ok(!own.includes('data-faction="eyrie"'))
 })
 
 test('played cards already in the log on mount are not replayed', () => {
@@ -61,4 +61,21 @@ test('chat escapes text and spectators cannot send', () => {
   assert.ok(!out.includes('<script>'))
   assert.ok(out.includes('&lt;script'))
   assert.match(out, /input[^>]*disabled/)
+})
+
+test('your own Marquise badge is the painted panel: score in the laurel, each count by its painted icon', () => {
+  const view = sampleView('marquise')
+  const seats = view.seats.map(s => ({ ...s, name: `player-${s.faction}`, connected: true }))
+  const own = render(html`<${HudFactions} view=${view} seats=${seats} seat=${'marquise'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} own />`)
+  assert.ok(own.includes('art-panel') && own.includes('marquise-panel.webp'))
+  assert.ok(own.includes(`class="panel-score">${view.score.marquise}</b>`))
+  const m = view.factions.marquise!
+  for (const [row, value] of [[0, m.warriorSupply], [1, m.woodSupply], [2, view.handCounts.marquise ?? 0]] as const)
+    assert.ok(own.includes(`--row:${row}`) && own.includes(`>${value}</b>`), `row ${row}`)
+  assert.ok(!own.includes('player-marquise'), 'no name on your own painted panel')
+  // Opponents keep the plain badge, and other factions' own badge too until they get a painting.
+  const opp = render(html`<${HudFactions} view=${view} seats=${seats} seat=${'marquise'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} />`)
+  assert.ok(!opp.includes('art-panel'))
+  const eyrie = sampleView('eyrie')
+  assert.ok(!render(html`<${HudFactions} view=${eyrie} seats=${eyrie.seats.map(s => ({ ...s, name: s.faction, connected: true }))} seat=${'eyrie'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} own />`).includes('art-panel'))
 })
