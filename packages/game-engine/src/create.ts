@@ -12,13 +12,16 @@ export interface GameOptions {
   mapId?: string
   /** In any order; seating and the starting player are randomised (§5.1.1). */
   players: { playerId: string; faction: FactionId; controller: Seat['controller'] }[]
+  /** Standard Setup (§5.1, default) or Advanced Setup with faction setup cards (App. A, decisions/0006). */
+  setup?: 'standard' | 'advanced'
 }
 
-/** Standard Setup (§5.1). Returns a game waiting on the first faction setup choice (§5.1.7). */
+/** Standard Setup (§5.1) or Advanced Setup (App. A). Returns a game waiting on the first faction setup choice. */
 export function createGame(options: GameOptions, rng: Rng): GameState {
   const factions = options.players.map(p => p.faction)
   if (!factionMixAllowed(factions)) throw new Error(`faction mix not allowed (decision 0003): ${factions.join(', ')}`)
   if (new Set(options.players.map(p => p.playerId)).size !== options.players.length) throw new Error('duplicate playerId')
+  const advanced = options.setup === 'advanced'
   const mapId = options.mapId ?? 'autumn'
   const map = MAPS[mapId]
   if (!map) throw new Error(`unknown map ${mapId}`)
@@ -34,6 +37,7 @@ export function createGame(options: GameOptions, rng: Rng): GameState {
   const state: GameState = {
     meta: { gameId: options.gameId, rulesVersion: RULES_VERSION, dataVersion: DATA_VERSION, revision: 0, recentActionIds: [] },
     stage: 'setup',
+    ...(advanced ? { setupMode: 'advanced' as const, homelands: {} } : {}),
     seats,
     turn: { seat: 0, phase: 'birdsong', step: 'setup', number: 0 },
     map: {
@@ -59,7 +63,7 @@ export function createGame(options: GameOptions, rng: Rng): GameState {
   for (const seat of seats) {
     state.score[seat.faction] = 0
     state.playAreas[seat.faction] = []
-    state.hands[seat.faction] = drawCards(state, 3, rng) // §5.1.3, in seating order
+    state.hands[seat.faction] = drawCards(state, advanced ? 5 : 3, rng) // §5.1.3 or A.7, in seating order
   }
   queueSetup(state) // §5.1.7
   advanceSetup(state, rng)

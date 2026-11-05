@@ -24,7 +24,7 @@ Ngày 05/11/2026. Mục đích: hiểu cách Root Digital trình bày lượt, H
 | 01:10 | "Choose another homeland clearing adjacent to your last one to place a building." Chỉ còn 2 vòng nét đứt. | Bấm clearing tiếp theo. |
 | 01:30 | "Choose 2 cards to return to the deck." Tay bài nâng lên. | Chọn 2 lá. |
 
-Root Digital chuẩn bị theo Advanced Setup của Rules Library p16: rút 5 lá (A.7), chuẩn bị phe bằng faction setup card có homeland (A.8, A.8.3.I–III), giữ 3 lá và úp 2 lá về bộ bài (A.10). Người quản lý đã chọn làm theo cách này ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)). Đã có chữ cả 4 lá setup card ([setup-cards.md](../../03-data-spec/setup-cards.md)); phe chọn ở sảnh, không draft (OQ-19). **Chưa làm vào engine**: chờ OQ-20, OQ-21 và một task riêng; engine tạm giữ §5.1 và §6.3. Cách báo nên học: băng chữ ra lệnh và vòng nét đứt trên ô hợp lệ.
+Root Digital chuẩn bị theo Advanced Setup của Rules Library p16: rút 5 lá (A.7), chuẩn bị phe bằng faction setup card có homeland (A.8, A.8.3.I–III), giữ 3 lá và úp 2 lá về bộ bài (A.10). Người quản lý đã chọn làm theo cách này ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)). Đã có chữ cả 4 lá setup card ([setup-cards.md](../../03-data-spec/setup-cards.md)); phe chọn ở sảnh, không draft (OQ-19). Đã làm vào engine (nhánh `feat/advanced-setup`); trận mới trên server dùng cách này. Cách báo nên học: băng chữ ra lệnh và vòng nét đứt trên ô hợp lệ.
 
 ### Birdsong (§6.4)
 
@@ -210,14 +210,14 @@ Mỗi mục cần được xử lý (làm, quyết định, hoặc tìm nguồn)
 
 ### Khác luật
 
-- [ ] **RD-L01. Chuẩn bị trận theo Advanced Setup có homeland.** Root Digital: homeland, "adjacent to your last one", rút 5 giữ 3 (00:10–01:30). Rules Library p16: A.7, A.8, A.8.3.I–III, A.10. Người quản lý đã chọn làm theo ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)).
+- [x] **RD-L01. Chuẩn bị trận theo Advanced Setup có homeland.** Root Digital: homeland, "adjacent to your last one", rút 5 giữ 3 (00:10–01:30). Rules Library p16: A.7, A.8, A.8.3.I–III, A.10. Người quản lý đã chọn làm theo ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)).
   - [x] Lá setup card Marquise (SRC-014, [setup-cards.md](../../03-data-spec/setup-cards.md)).
   - [x] Lá setup card Eyrie, Woodland Alliance, Vagabond (SRC-015 đến SRC-017; OQ-18 đã đóng).
   - [x] Không dùng draft; chọn phe ở sảnh (OQ-19 đã đóng).
   - [x] Thứ tự chuẩn bị theo A.8.3 (người cuối trong thứ tự lượt chuẩn bị trước) và hai cách hiểu của lá Marquise đã duyệt.
-  - [ ] Xác nhận ô mép bản đồ Autumn cho homeland Eyrie (OQ-20).
-  - [ ] Chốt nhân vật Vagabond tự chọn hay chia ngẫu nhiên (OQ-21).
-  - [ ] Engine, test, `rule-coverage.yaml`, giao diện chọn homeland và chọn 3 lá giữ lại (một task riêng, đổi cả 4 phe một lần).
+  - [x] Ô mép bản đồ Autumn cho homeland Eyrie: 1, 2, 3, 5, 8, 9, 10, 11, 12 (OQ-20).
+  - [x] Nhân vật Vagabond: chọn khi sảnh cho chọn phe, ngẫu nhiên khi chia phe ngẫu nhiên (OQ-21).
+  - [x] Engine, test, `rule-coverage.yaml`, giao diện chọn homeland và chọn 3 lá giữ lại (nhánh `feat/advanced-setup`).
 - [x] **RD-L02. Field Hospitals.** Chữ Root Digital "When a warrior dies…" (06:25) chỉ là tóm tắt. Theo §6.2.3: chiến binh Marquise bị loại khỏi một ô thì trả một lá cùng chất ô đó để đưa chúng về ô keep. Engine đã đúng; không cần làm gì.
 
 ### Chưa rõ (cần thêm mốc video hoặc nguồn)
@@ -235,6 +235,6 @@ Cách đóng RD-Q01–Q08: người quản lý ghi mốc vào `docs/01-official-
 
 ## 7. Việc tiếp theo
 
-1. Người quản lý trả lời OQ-20 và OQ-21.
+1. Người quản lý duyệt PR Advanced Setup.
 2. Làm từng mục theo số thứ tự, mỗi mục một chat, một nhánh, một PR. Chưa sửa code ở bước phân tích này.
 3. PR này (#44) chỉ merge khi người quản lý duyệt hết.

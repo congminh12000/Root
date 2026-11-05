@@ -19,6 +19,11 @@ const at = (c: number) => `ô ${c + 1}`
 const SETUP: Record<string, string> = {
   '6.3.2': 'đặt Keep vào một ô góc', '6.3.4': 'đặt sawmill, workshop, recruiter ở ô Keep hoặc ô kề', '7.3.2': 'đặt roost và 6 chiến binh vào một ô góc',
   '7.3.3': 'chọn leader đầu tiên', '9.3.1': 'chọn nhân vật', '9.3.2': 'đặt pawn vào một rừng',
+  // Advanced Setup (App. A, setup cards in docs/03-data-spec/setup-cards.md)
+  'A.8-marquise-homelands': 'chọn 3 ô homeland nối liền nhau', 'A.8-marquise-keep': 'đặt Keep vào một homeland, xa homeland phe khác nếu được',
+  'A.8-marquise-buildings': 'đặt sawmill, workshop, recruiter, mỗi cái ở một homeland khác nhau',
+  'A.8-eyrie-homeland': 'chọn homeland ở mép bản đồ, cách homeland phe khác ít nhất 2 ô; đặt roost và 6 chiến binh',
+  'A.10': 'trả 2 lá về deck, giữ 3 lá',
 }
 
 /**
@@ -46,6 +51,6 @@ export function decisionOf(v: PlayerView, legal: Action[]): Decision | null {
     case 'outrage': return d('outrage', `Outrage: ${name} đưa Woodland Alliance một lá cùng chất ${at(p.clearing)}, hoặc cho xem bài nếu không có`, '§8.2.6')
     case 'discard-supporters': return d('discard-supporters', `${name} bỏ supporter cho tới khi còn ${p.to}`, '§8.2.3.I, §8.2.4')
     case 'discard-down': return d('discard-down', `${name} bỏ bài cho tới khi còn ${p.to} lá`, '§6.6, §7.6.2, §8.6.2, §9.6.3')
-    case 'setup': return d('setup', `${name}: ${SETUP[p.step] ?? 'setup'}`, `§${p.step}`)
+    case 'setup': return d('setup', `${name}: ${SETUP[p.step] ?? 'setup'}`, `§${p.step.split('-')[0]}`)
   }
 }

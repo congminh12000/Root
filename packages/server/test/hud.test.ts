@@ -45,9 +45,10 @@ test('undo restores board and replay, increases revision, rejects stale/wrong-se
 test('setup and advancing to the next step cannot be undone', () => {
   const r = room()
   try {
-    const m = r.message('marquise'); assert.ok(m.type === 'update')
-    assert.ok(r.submit('marquise', 'setup', m.view.revision, m.legal[0]!).ok)
-    assert.equal(r.undo('marquise', 1), false)
+    const first = currentActor(r.state)! // whoever sets up first (A.8.3)
+    const m = r.message(first); assert.ok(m.type === 'update')
+    assert.ok(r.submit(first, 'setup', m.view.revision, m.legal[0]!).ok)
+    assert.equal(r.undo(first, 1), false)
     const { actor } = reversible(r)
     const u = r.message(actor); assert.ok(u.type === 'update')
     const next = u.legal.find(a => a.type === 'end-step'); assert.ok(next)

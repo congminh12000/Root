@@ -45,6 +45,8 @@ export function determinize(view: PlayerView, rng: Rng): GameState {
   return {
     meta: { gameId: view.gameId, rulesVersion: RULES_VERSION, dataVersion: DATA_VERSION, revision: view.revision, recentActionIds: [] },
     stage: view.stage,
+    ...(view.setupMode ? { setupMode: view.setupMode } : {}),
+    homelands: copy(view.homelands ?? {}),
     seats: view.seats.map(s => ({ faction: s.faction, playerId: s.faction, controller: { kind: 'bot', profile: 'sample' } })),
     turn: { ...view.turn },
     map: { id: view.map.id, clearings },

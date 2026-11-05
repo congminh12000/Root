@@ -1,13 +1,13 @@
 import { EYRIE, type EyrieLeaderId } from '@root/game-data'
 import type { Action } from '../actions.ts'
 import { battleTargets, startBattle } from '../battle.ts'
-import { canPlaceIn, corners, drawCards, mapOf, oppositeCorner, openSlots, placeInSlot, placeWarriors } from '../board.ts'
+import { canPlaceIn, corners, distances, drawCards, enemyHomelands, mapOf, oppositeCorner, openSlots, placeInSlot, placeWarriors } from '../board.ts'
 import { requireDiscardDown } from '../common.ts'
 import { craftActions, performCraft } from '../craft.ts'
 import { moveOptions, moveWarriors } from '../move.ts'
 import type { Rng } from '../rng.ts'
 import { award, cardDef, discardCard, isBird, rules, suitOf, takeFromHand } from '../rules.ts'
-import type { SetupStep } from '../setup.ts'
+import { applyOf, type SetupStep } from '../setup-step.ts'
 import type { CardSuit, ClearingId, DecreeCard, DecreeColumn, EyrieState, GameState } from '../state.ts'
 import { goto, type TurnStep } from '../turn.ts'
 
@@ -62,6 +62,33 @@ export const EYRIE_SETUP: SetupStep[] = [
       return true
     },
   },
+]
+
+/**
+ * Advanced Setup with the Eyrie faction setup card (A.8.3, SRC-015, docs/03-data-spec/setup-cards.md): a homeland
+ * on the map edge (G.15) with 2+ clearings between it and enemy homelands, 6 warriors and a roost there; then the
+ * leader, viziers and Roosts track as in §7.3.3–7.3.5.
+ */
+export const EYRIE_ADVANCED_SETUP: SetupStep[] = [
+  EYRIE_SETUP[0]!,
+  {
+    id: 'A.8-eyrie-homeland',
+    options: state => {
+      const map = mapOf(state)
+      const taken = enemyHomelands(state, 'eyrie')
+      const far = distances(map, taken)
+      const ok = map.edge.filter(c => !taken.includes(c) && openSlots(state, c) > 0 && canPlaceIn(state, 'eyrie', c))
+      // A.8.3.II: two or more clearings between (distance 3+); failing that, not adjacent (2+); failing that, any.
+      const tier = [3, 2, 1].map(min => ok.filter(c => far[c]! >= min)).find(cs => cs.length) ?? []
+      return tier.map((clearing): Action => ({ type: 'eyrie-place-roost', payload: { clearing } }))
+    },
+    apply: (state, action) => {
+      if (action.type !== 'eyrie-place-roost') return false
+      ;(state.homelands ??= {}).eyrie = [action.payload.clearing]
+      return applyOf(EYRIE_SETUP[1]!)(state, action) // roost and 6 warriors, as §7.3.2
+    },
+  },
+  EYRIE_SETUP[2]!,
 ]
 
 // ── Turn (§7.4–7.7) ────────────────────────────────────────────────────────────

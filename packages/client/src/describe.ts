@@ -11,6 +11,7 @@ export const GROUP: Record<string, string> = {
   'eyrie-recruit': 'Decree: Recruit', 'eyrie-move': 'Decree: Move', 'eyrie-battle': 'Decree: Battle', 'eyrie-build': 'Decree: Build',
   'alliance-revolt': 'Revolt', 'alliance-spread': 'Lan sympathy', 'alliance-mobilize': 'Mobilize', 'alliance-train': 'Train',
   'alliance-recruit': 'Recruit', 'alliance-organize': 'Organize',
+  'choose-homeland': 'Chọn homeland', 'return-card': 'Trả lá về deck (giữ 3 lá)',
   'vagabond-choose-character': 'Chọn nhân vật', 'vagabond-place-pawn': 'Đặt pawn', 'vagabond-refresh': 'Refresh', 'vagabond-slip': 'Slip',
   'vagabond-move': 'Di chuyển', 'vagabond-battle': 'Đánh', 'vagabond-explore': 'Khám phá ruin', 'vagabond-aid': 'Aid', 'vagabond-quest': 'Quest',
   'vagabond-strike': 'Strike', 'vagabond-repair': 'Sửa item', 'vagabond-steal': 'Steal', 'vagabond-day-labor': 'Day Labor', 'vagabond-hideout': 'Hideout',
@@ -35,12 +36,12 @@ export function describe(a: Action): string {
     case 'craft': return cardName(a.payload.card)
     case 'battle': return `${clearing(a.payload.clearing)}, đánh ${FACTION_NAME[a.payload.defender]}`
     case 'move': return `${warriors(a.payload.warriors)} từ ${clearing(a.payload.from)} sang ${clearing(a.payload.to)}`
-    case 'marquise-place-keep': case 'eyrie-place-roost': case 'eyrie-new-roost': return clearing(a.payload.clearing)
+    case 'marquise-place-keep': case 'eyrie-place-roost': case 'eyrie-new-roost': case 'choose-homeland': return clearing(a.payload.clearing)
     case 'marquise-place-building': return `${BUILDING[a.payload.building]} ở ${clearing(a.payload.clearing)}`
     case 'marquise-place-wood': return list(a.payload.clearings)
     case 'marquise-spend-bird': case 'discard-card': case 'field-hospital': case 'play-ambush': case 'use-battle-card':
     case 'outrage-give': case 'discard-supporter': case 'alliance-mobilize': case 'alliance-train': case 'activate-dominance':
-    case 'vagabond-day-labor': case 'royal-claim':
+    case 'vagabond-day-labor': case 'royal-claim': case 'return-card':
       return cardName(a.payload.card)
     case 'marquise-recruit': return list(a.payload.clearings)
     case 'marquise-build': return `${BUILDING[a.payload.building]} ở ${clearing(a.payload.clearing)}, gỗ từ ${list(a.payload.wood)}`

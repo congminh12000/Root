@@ -22,6 +22,22 @@ export function oppositeCorner(map: MapDef, c: ClearingId): ClearingId {
   throw new Error(`clearing ${c} is not a corner`)
 }
 
+/** Fewest paths from any of `from` to each clearing; Infinity when `from` is empty (A.8.3.II). */
+export function distances(map: MapDef, from: ClearingId[]): number[] {
+  const d: number[] = map.clearings.map(() => Infinity)
+  const queue = [...from]
+  for (const c of from) d[c] = 0
+  while (queue.length) {
+    const c = queue.shift()!
+    for (const n of adjacent(map, c)) if (d[n] === Infinity) { d[n] = d[c]! + 1; queue.push(n) }
+  }
+  return d
+}
+
+/** Homelands other factions have chosen so far (A.8.3.I). */
+export const enemyHomelands = (state: GameState, faction: FactionId): ClearingId[] =>
+  Object.entries(state.homelands ?? {}).flatMap(([f, cs]) => (f === faction ? [] : cs ?? []))
+
 export const openSlots = (state: GameState, c: ClearingId) => state.map.clearings[c]!.slots.filter(s => s === null).length
 
 /** The keep forbids other players from placing pieces in its clearing (§6.2.2). */

@@ -96,6 +96,25 @@ test('Autumn: corners are distinct and the opposite pairs are not adjacent (§3.
   assert.ok(!adjacent(topLeft, bottomRight) && !adjacent(topRight, bottomLeft))
 })
 
+test('Autumn map edge (G.15) is the closed loop of rim paths, the ones that border a single forest', () => {
+  const key = (a: number, b: number) => `${Math.min(a, b)}-${Math.max(a, b)}`
+  const uses = new Map<string, number>()
+  for (const ring of AUTUMN.forests) ring.forEach((c, i) => { const k = key(c, ring[(i + 1) % ring.length]!); uses.set(k, (uses.get(k) ?? 0) + 1) })
+  const rim = AUTUMN.paths.filter(([a, b]) => uses.get(key(a, b)) === 1)
+  const onRim = [...new Set(rim.flat())].sort((x, y) => x - y)
+  assert.deepEqual(onRim, [...AUTUMN.edge].sort((x, y) => x - y))
+  // A single closed loop: every edge clearing has exactly two rim paths, and walking them visits all of them.
+  for (const c of onRim) assert.equal(rim.filter(p => p.includes(c)).length, 2, `clearing ${c + 1}`)
+  const seen = new Set([onRim[0]!])
+  for (let at = onRim[0]!, prev = -1; ;) {
+    const next = rim.find(p => p.includes(at) && !p.includes(prev))!.find(c => c !== at)!
+    if (next === onRim[0]) break
+    seen.add(next); prev = at; at = next
+  }
+  assert.equal(seen.size, onRim.length)
+  assert.deepEqual(AUTUMN.edge.map(c => c + 1), [1, 2, 3, 5, 8, 9, 10, 11, 12])
+})
+
 test('Autumn item supply matches §5.1.5', () => {
   assert.deepEqual(AUTUMN.itemSupply, { bag: 2, boots: 2, crossbow: 1, hammer: 1, sword: 2, tea: 2, coin: 2 })
 })
