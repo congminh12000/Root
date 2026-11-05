@@ -177,12 +177,12 @@ Game mình (1440×900)
 
 Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md): ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp. Đánh dấu `[x]` khi PR đã merge.
 
-**Người quản lý duyệt ngày 05/11/2026:** làm toàn bộ RD-M01 đến M16, theo số mục; RD-M02 (hộp Xây) và RD-M05 (tài nguyên) làm giống Root Digital. RD-M01 đang làm ở một phiên riêng.
+**Người quản lý duyệt ngày 05/11/2026:** làm toàn bộ RD-M01 đến M16, theo số mục; RD-M02 (hộp Xây) và RD-M05 (tài nguyên) làm giống Root Digital. RD-M01 xong (PR #46); RD-M02 ở nhánh `feat/rd-m02-build-box`.
 
 ### Mức cao: ảnh hưởng tới việc chơi được
 
-- [ ] **RD-M01. Số hành động Daylight còn lại.** Hiện cạnh bảng hành động (§6.5: 3 + một mỗi lá chim). Đổi nhãn "Hành động · 63" để không trông như số hành động. Dữ liệu đã có: `actionsRemaining` trong `PlayerView`. Video: 02:50, 28:36–28:50.
-- [ ] **RD-M02. Hộp Build, giống Root Digital.** Hiện giờ bấm "Xây" thì hiện một ô chọn dài 21 dòng, mỗi dòng ghép sẵn ô, loại công trình và chỗ lấy gỗ, ví dụ "sawmill ở ô 2, gỗ từ ô 1"; người chơi phải đọc từng dòng. Root Digital làm 3 bước: bấm ô trên map → hộp nhỏ hiện 3 hình công trình, dưới mỗi hình ghi điểm được và số gỗ tốn → bấm một hình là xây; gỗ tự lấy, ai muốn chọn gỗ từ ô nào thì tích thêm ô "chọn gỗ" (§6.5.4). Lọc trên `legal`. Video: 02:50.
+- [x] **RD-M01. Số hành động Daylight còn lại.** Hiện cạnh bảng hành động (§6.5: 3 + một mỗi lá chim). Đổi nhãn "Hành động · 63" để không trông như số hành động. Dữ liệu đã có: `actionsRemaining` trong `PlayerView`. Video: 02:50, 28:36–28:50.
+- [x] **RD-M02. Hộp Build, giống Root Digital.** Hiện giờ bấm "Xây" thì hiện một ô chọn dài 21 dòng, mỗi dòng ghép sẵn ô, loại công trình và chỗ lấy gỗ, ví dụ "sawmill ở ô 2, gỗ từ ô 1"; người chơi phải đọc từng dòng. Root Digital làm 3 bước: bấm ô trên map → hộp nhỏ hiện 3 hình công trình, dưới mỗi hình ghi điểm được và số gỗ tốn → bấm một hình là xây; gỗ tự lấy, ai muốn chọn gỗ từ ô nào thì tích thêm ô "chọn gỗ" (§6.5.4). Lọc trên `legal`. Video: 02:50.
 - [ ] **RD-M03. Băng chữ mệnh lệnh** ở giữa trên cho mọi bước của mình ("Chọn ô để xây", "Chọn số quân", "Bỏ 2 lá"). Video: khắp video.
 - [ ] **RD-M04. Bảng hành động cố định của Marquise.** 6 nút icon tự vẽ: March, Build, Recruit, Battle, lá chim, Overwork; mờ khi không dùng được; cùng chỗ mọi lượt. Giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng. Video: ảnh cắt 09:10.
 - [ ] **RD-M05. Tài nguyên của mình luôn hiện, giống Root Digital,** trong huy hiệu phe mình ở góc dưới trái (chỗ đang ghi "0 · marquise · 4 lá"): thêm cột bên phải điểm, 3 dòng icon + số: chiến binh trong kho, gỗ trong kho, số lá trên tay. Không cần mở bảng phe mới thấy. Video: ảnh cắt 09:10.

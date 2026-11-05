@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GameResult, GameLog, QuickGuide, logClearings } from './finish.ts'
 import { decisionOf } from '../../interaction/decisions.ts'
 import { marquiseActionsLeft } from '../../interaction/actions-left.ts'
+import { buildClearings } from '../../interaction/build.ts'
 import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { connectGame } from '../../net/connection.ts'
 import type { LogEntry } from '../../motion.ts'
@@ -37,6 +38,8 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const [folded, setFolded] = useState(false)
   /** The one HUD drawer open, if any (hud.ts). */
   const [actionFilter, setActionFilter] = useState<string | null>(null)
+  /** RD-M02: after "Xây" in the action panel, the map offers only the clearings where the Marquise can build. */
+  const [focus, setFocus] = useState<'marquise-build' | null>(null)
   const [drawer, setDrawer] = useState<DrawerId | null>(null)
   const close = useCallback(() => setDrawer(null), [])
   const toggle = (d: DrawerId) => setDrawer(o => (o === d ? null : d))
@@ -47,13 +50,22 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     setPreview(null)
     setLogSelection(null)
     setFolded(false)
+    setFocus(null)
     if (u) setStage(s => stillValid(u.legal, s.kind === 'path' ? { kind: 'at', clearing: s.from } : s))
   }, [u?.view.revision])
+  useEffect(() => {
+    if (!focus) return
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFocus(null); setStage(IDLE) } }
+    document.addEventListener('keydown', key)
+    return () => document.removeEventListener('keydown', key)
+  }, [focus])
   if (!u) return html`<p class="loading">Đang kết nối trận ${gameId}… ${conn.notice.value}</p>`
-  const { view: v, legal, seats, seat } = u
+  const { view: v, legal: all, seats, seat } = u
+  // The map and its menus work on `legal`; the action panel and dialogs keep every choice in `all`.
+  const legal = focus ? all.filter(a => a.type === focus) : all
   const board = viewOf(legal, stage)
-  const decision = decisionOf(v, legal)
-  const mine = !!decision && decision.player === seat && legal.length > 0
+  const decision = decisionOf(v, all)
+  const mine = !!decision && decision.player === seat && all.length > 0
   const dialog = mine && decision!.dialog
   // A decision in a clearing shows there on the map; only choices with no clearing take the middle of the screen.
   const atClearing = dialog && decision!.clearing !== null
@@ -69,6 +81,16 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     hoverTimer.current = window.setTimeout(() => setInspect(c), c === null ? 200 : 450)
   }
 
+  // "Xây" in the action panel: light the clearings where the Marquise can build (RD-M02); with one, open its Build box.
+  const open = (type?: string) => {
+    if (type === 'marquise-build') {
+      const where = buildClearings(all)
+      setDrawer(null); setFocus('marquise-build'); setInspect(null)
+      setStage(where.length === 1 ? { kind: 'at', clearing: where[0]! } : IDLE)
+      return
+    }
+    setFocus(null); setActionFilter(type ?? null); setDrawer('all')
+  }
   const logPick = (l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }
 
   return html`<div class="game-screen">
@@ -80,9 +102,10 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       overlay=${(project: Project) => html`
         ${legal.length > 0 && !atClearing && html`<${MapOverlay} project=${project} view=${v} legal=${legal} stage=${stage} setStage=${setStage}
           send=${conn.send} onPreview=${setPreview} onPick=${pick} bubble=${false} />`}
-        ${atClearing && project(decision!.clearing!) && html`<${DecisionCallout} decision=${decision!} view=${v} legal=${legal} send=${conn.send} at=${project(decision!.clearing!)!} />`}
+        ${atClearing && project(decision!.clearing!) && html`<${DecisionCallout} decision=${decision!} view=${v} legal=${all} send=${conn.send} at=${project(decision!.clearing!)!} />`}
         <${MapDice} project=${project} changes=${conn.changes.value} below=${atClearing ? decision!.clearing : null} />
         ${inspect !== null && !(stage.kind === 'at' && stage.clearing === inspect) && html`<${MapInfo} project=${project} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}`} />
+    ${focus && html`<div class="map-prompt" role="status">Chọn ô để xây <button class="secondary" onClick=${() => { setFocus(null); setStage(IDLE) }}>Thôi (Esc)</button></div>`}
     <${HudStatus} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value} decision=${decision} mine=${mine}
       onReopen=${centred && folded ? () => setFolded(false) : undefined} />
     <button class="secondary hud-chat-toggle" aria-label="Chat" aria-pressed=${drawer === 'chat'} onClick=${() => toggle('chat')}>Chat</button>
@@ -90,7 +113,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       <a role="menuitem" href="./">← Về sảnh</a>
       <span class="note">Trận <b>${u.gameId}</b></span>
       <button role="menuitem" class="secondary" data-close onClick=${() => setCameraHome(n => n + 1)}>Về góc mặc định</button>
-      ${legal.length > 0 && html`<button role="menuitem" class="secondary" data-close onClick=${() => { setActionFilter(null); setDrawer('all') }}>Tất cả lựa chọn (${legal.length})</button>`}
+      ${all.length > 0 && html`<button role="menuitem" class="secondary" data-close onClick=${() => { setActionFilter(null); setDrawer('all') }}>Tất cả lựa chọn (${all.length})</button>`}
       <button role="menuitem" class="secondary" data-close onClick=${() => setDrawer('guide')}>Hướng dẫn nhanh</button>
       <${SoundToggle} revision=${v.revision} />
       <button role="menuitemcheckbox" class="secondary" aria-checked=${liveScene.value} onClick=${() => setLiveScene(!liveScene.value)}>Cảnh động: ${liveScene.value ? 'bật' : 'tắt'}</button>
@@ -98,17 +121,18 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     <//>
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
     ${seat && html`<${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} own />`}
-    <${HudPlayed} log=${u.log} />
-    ${seat ? html`<${HudActions} actionsLeft=${marquiseActionsLeft(v)} legal=${legal} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${(type?: string) => { setActionFilter(type ?? null); setDrawer('all') }} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
+    // The last played card sits mid-screen; it steps aside while a clearing menu or the Build prompt is open (RD-M02).
+    ${stage.kind === 'idle' && !focus && html`<${HudPlayed} log=${u.log} />`}
+    ${seat ? html`<${HudActions} actionsLeft=${marquiseActionsLeft(v)} legal=${all} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${open} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
     ${drawer === 'chat' && html`<${Drawer} side="right" label="Chat" onClose=${close}><${HudChat} entries=${u.chat ?? []} enabled=${!!seat} send=${conn.chat} /><//>`}
-    ${seat && html`<${HandStrip} view=${v} legal=${legal} seat=${seat} />`}
+    ${seat && html`<${HandStrip} view=${v} legal=${all} seat=${seat} />`}
     <button class="secondary hud-log" aria-pressed=${drawer === 'log'} onClick=${() => toggle('log')}>Nhật ký${u.log.length ? ` · ${u.log.length}` : ''}</button>
     ${drawer === 'log' && html`<${Drawer} side="left" label="Nhật ký" onClose=${close}><${GameLog} log=${u.log} selected=${logSelection?.revision ?? null} onSelect=${logPick} /><//>`}
-    ${drawer === 'all' && legal.length > 0 && html`<${Drawer} side="right" label="Tất cả lựa chọn" onClose=${close}><section class="card"><h3>${actionFilter ? GROUP[actionFilter] ?? actionFilter : 'Tất cả lựa chọn'} <small class="note">${legal.length}</small></h3><${FullList} key=${actionFilter ?? 'all'} legal=${actionFilter ? legal.filter(a => a.type === actionFilter) : legal} onPreview=${setPreview} send=${(a: Action) => { close(); conn.send(a) }} /></section><//>`}
+    ${drawer === 'all' && all.length > 0 && html`<${Drawer} side="right" label="Tất cả lựa chọn" onClose=${close}><section class="card"><h3>${actionFilter ? GROUP[actionFilter] ?? actionFilter : 'Tất cả lựa chọn'} <small class="note">${all.length}</small></h3><${FullList} key=${actionFilter ?? 'all'} legal=${actionFilter ? all.filter(a => a.type === actionFilter) : all} onPreview=${setPreview} send=${(a: Action) => { close(); conn.send(a) }} /></section><//>`}
     ${drawer === 'guide' && html`<${Drawer} side="right" label="Hướng dẫn nhanh" onClose=${close}><${QuickGuide} /><//>`}
     ${drawer && seats.some(s => s.faction === drawer) && html`<${Drawer} side="right" label="Bảng phe" onClose=${close}><${FactionBoards} key=${drawer} view=${v} seat=${seat} initial=${drawer} /><//>`}
-    ${centred && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${legal} send=${conn.send} onFold=${() => setFolded(true)} />`}
+    ${centred && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${all} send=${conn.send} onFold=${() => setFolded(true)} />`}
     <${GameResult} view=${v} />
-    <${CardDetailOverlay} legal=${legal} send=${conn.send} view=${v} seat=${seat} />
+    <${CardDetailOverlay} legal=${all} send=${conn.send} view=${v} seat=${seat} />
   </div>`
 }
