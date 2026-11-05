@@ -8,3 +8,6 @@ import type { FactionId } from '@root/game-engine'
 export const OWN_PANEL: Partial<Record<FactionId, { src: string; rows: readonly string[] }>> = {
   marquise: { src: new URL('../assets/factions/marquise-panel.webp', import.meta.url).href, rows: ['marquise', 'wood', 'card'] },
 }
+
+/** Owner-supplied opponent portrait; the laurel carries the live score. */
+export const ALLIANCE_OPPONENT_ART = new URL('../assets/factions/alliance-opponent.png', import.meta.url).href

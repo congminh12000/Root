@@ -79,3 +79,19 @@ test('your own Marquise badge is the painted panel: score in the laurel, each co
   const eyrie = sampleView('eyrie')
   assert.ok(!render(html`<${HudFactions} view=${eyrie} seats=${eyrie.seats.map(s => ({ ...s, name: s.faction, connected: true }))} seat=${'eyrie'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} own />`).includes('art-panel'))
 })
+
+test('Alliance opponent portrait carries the live score and keeps public details', () => {
+  const view = sampleView('marquise')
+  view.score.alliance = 23
+  const seats = view.seats.map(s => ({ ...s, name: s.faction, connected: true }))
+  const props = { view, seats, seat: 'marquise', changes: NO_CHANGES, open: 'alliance', onOpen: () => {} }
+  const out = render(html`<${HudFactions} ...${props} />`)
+  assert.ok(out.includes('alliance-opponent.png'))
+  assert.ok(out.includes('class="opponent-score">23</b>'))
+  assert.ok(out.includes(`Woodland Alliance: 23 điểm, ${view.handCounts.alliance} lá`))
+  assert.ok(out.includes('aria-pressed="true"'))
+  const own = render(html`<${HudFactions} ...${props} seat=${'alliance'} own />`)
+  assert.ok(!own.includes('alliance-opponent.png'))
+  const others = render(html`<${HudFactions} ...${props} seat=${'alliance'} />`)
+  assert.ok(!others.includes('opponent-score'))
+})
