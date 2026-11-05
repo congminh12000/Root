@@ -717,21 +717,23 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 @media (max-width: 600px) { .hud-self .hud-faction.art-panel { width: 150px; min-width: 0; } }
 @media (prefers-reduced-motion: reduce) { .art-panel .panel-score.bump { animation: none; } }
 
-/* Alliance opponent: supplied green portrait, live score in its laurel. */
-.game-screen .hud-factions:not(.hud-self) .hud-faction.alliance-portrait {
+/* Opponent portraits supplied by the owner, live score in each painted laurel. */
+.game-screen .hud-factions:not(.hud-self) .hud-faction.opponent-portrait {
   position: relative; display: flex; flex-direction: column; gap: 0; width: 150px; min-width: 0; min-height: 0;
   padding: 0 0 4px; border: 0; border-radius: 0; background: none; box-shadow: none; container-type: inline-size;
 }
-.alliance-portrait .opponent-art { width: 100%; display: block; pointer-events: none; }
-.hud-faction.alliance-portrait .opponent-score {
-  position: absolute; left: 22%; top: 75.4cqw; transform: translate(-50%, -50%);
+.opponent-portrait .opponent-art { width: 100%; display: block; pointer-events: none; }
+.hud-faction.opponent-portrait .opponent-score {
+  position: absolute; left: var(--score-x); top: var(--score-y); transform: translate(-50%, -50%);
   font-size: 19cqw; color: var(--ink); font-variant-numeric: tabular-nums;
 }
-.alliance-portrait .opponent-score.bump { animation: panel-bump var(--motion-bump) ease-out; }
-.alliance-portrait .phase-mark { position: absolute; top: 10%; right: 0; }
-.game-screen .hud-faction.alliance-portrait.turn,
-.game-screen .hud-faction.alliance-portrait[aria-pressed="true"] {
+.opponent-portrait .opponent-score.bump { animation: panel-bump var(--motion-bump) ease-out; }
+.opponent-portrait .phase-mark { position: absolute; top: 10%; right: 0; }
+.game-screen .hud-faction.opponent-portrait.turn,
+.game-screen .hud-faction.opponent-portrait[aria-pressed="true"] {
   outline: none; filter: drop-shadow(0 0 2px var(--paper)) drop-shadow(0 0 4px var(--autumn-gold));
 }
-@media (max-width: 600px) { .game-screen .hud-factions:not(.hud-self) .hud-faction.alliance-portrait { width: 108px; } }
-@media (prefers-reduced-motion: reduce) { .alliance-portrait .opponent-score.bump { animation: none; } }
+@media (max-width: 600px) { .game-screen .hud-factions:not(.hud-self) .hud-faction.opponent-portrait { width: 108px; } }
+@media (prefers-reduced-motion: reduce) { .opponent-portrait .opponent-score.bump { animation: none; } }
+
+.opponent-portrait .relation { background: var(--paper); border-radius: var(--r-sm); padding: 2px 5px; }

@@ -96,5 +96,31 @@ test('Alliance opponent portrait carries the live score without name or hand cou
   const own = render(html`<${HudFactions} ...${props} seat=${'alliance'} own />`)
   assert.ok(!own.includes('alliance-opponent.png'))
   const others = render(html`<${HudFactions} ...${props} seat=${'alliance'} />`)
-  assert.ok(!others.includes('opponent-score'))
+  assert.ok(!others.includes('alliance-opponent.png'))
+})
+
+
+test('Vagabond opponents use the chosen character portrait and live laurel score', () => {
+  const view = sampleView('marquise')
+  const seats = view.seats.map(s => ({ ...s, name: s.faction, connected: true }))
+  view.score.vagabond = 16
+  for (const character of ['ranger', 'tinker', 'thief', null] as const) {
+    view.factions.vagabond!.character = character
+    const props = { view, seats, seat: 'marquise', changes: NO_CHANGES, open: 'vagabond', onOpen: () => {} }
+    const out = render(html`<${HudFactions} ...${props} />`)
+    const badge = out.match(/<button[^>]*data-faction="vagabond"[\s\S]*?<\/button>/)![0]
+    const painted = character === 'ranger' || character === 'tinker'
+    assert.equal(badge.includes('opponent-portrait'), painted)
+    assert.equal(badge.includes('hud-player-name'), !painted)
+    assert.equal(badge.includes('<small>'), !painted)
+    assert.ok(badge.includes('aria-pressed="true"'))
+    assert.ok(badge.includes('class="relation'))
+    if (painted) {
+      assert.ok(badge.includes(`vagabond-${character}-opponent.png`))
+      assert.ok(badge.includes('class="opponent-score">16</b>'))
+      assert.ok(!badge.includes(`vagabond-${character === 'ranger' ? 'tinker' : 'ranger'}-opponent.png`))
+    }
+    const own = render(html`<${HudFactions} ...${props} seat=${'vagabond'} own />`)
+    assert.ok(!own.includes('opponent-art'))
+  }
 })

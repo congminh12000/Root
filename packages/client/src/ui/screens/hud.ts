@@ -8,7 +8,7 @@ import { GROUP } from '../../describe.ts'
 import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
 import { ownResources } from '../../interaction/resources.ts'
 import { decreeCounts, relationshipWith } from '../../interaction/opponents.ts'
-import { ALLIANCE_OPPONENT_ART, OWN_PANEL } from '../faction-art.ts'
+import { opponentPortrait, OWN_PANEL } from '../faction-art.ts'
 import { usableCards } from '../../interaction/cards.ts'
 import { newPlayed, playedCards, PLAYED_FADE_MS, PLAYED_HOLD_MS, type PlayedCard } from '../../interaction/played.ts'
 import { Hand } from './hand.ts'
@@ -71,18 +71,20 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
   const waiting = v.waitingOn[0]
   const ordered = v.seats.map(s => seats.find(info => info.faction === s.faction)).filter((s): s is Seat => !!s)
   const visible = ordered.filter(s => own ? s.faction === seat : s.faction !== seat)
-  return html`<nav class=${own ? 'hud-factions hud-self' : 'hud-factions'} aria-label=${own ? 'Phe của bạn' : 'Thứ tự lượt chơi'}>${visible.map(s => own && OWN_PANEL[s.faction] ? html`<${ArtPanel} key=${s.faction} view=${v} seat=${s} waiting=${waiting} changes=${changes} open=${open} onOpen=${onOpen} />` : html`
-    <button key=${s.faction} data-faction=${s.faction} class=${`hud-faction${!own && s.faction === 'alliance' ? ' alliance-portrait' : ''}${s.faction === waiting ? ' turn' : ''}${s.faction === seat ? ' me' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})` }}
+  return html`<nav class=${own ? 'hud-factions hud-self' : 'hud-factions'} aria-label=${own ? 'Phe của bạn' : 'Thứ tự lượt chơi'}>${visible.map(s => {
+    const portrait = own ? null : opponentPortrait(v, s.faction)
+    return own && OWN_PANEL[s.faction] ? html`<${ArtPanel} key=${s.faction} view=${v} seat=${s} waiting=${waiting} changes=${changes} open=${open} onOpen=${onOpen} />` : html`
+    <button key=${s.faction} data-faction=${s.faction} class=${`hud-faction${portrait ? ' opponent-portrait' : ''}${s.faction === waiting ? ' turn' : ''}${s.faction === seat ? ' me' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})`, '--score-x': portrait?.x, '--score-y': portrait?.y }}
       aria-pressed=${open === s.faction} aria-label=${`${FACTION_NAME[s.faction]}: ${v.score[s.faction] ?? 'dominance'} điểm, ${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ', vắng' : ''}`}
       onClick=${() => onOpen(s.faction)}>
-      ${!own && s.faction === 'alliance' ? html`<img class="opponent-art" src=${ALLIANCE_OPPONENT_ART} alt="" draggable=${false} />` : html`<span class="badge"><${Icon} name=${s.faction} /></span>`}
+      ${portrait ? html`<img class="opponent-art" src=${portrait.src} alt="" draggable=${false} />` : html`<span class="badge"><${Icon} name=${s.faction} /></span>`}
       ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
-      <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${`${!own && s.faction === 'alliance' ? 'opponent-score' : ''}${changes.scored.includes(s.faction) ? ' bump' : ''}`}>${v.score[s.faction] ?? 'D'}</b>
-      ${(own || s.faction !== 'alliance') && html`<span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>`}
+      <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${`${portrait ? 'opponent-score' : ''}${changes.scored.includes(s.faction) ? ' bump' : ''}`}>${v.score[s.faction] ?? 'D'}</b>
+      ${!portrait && html`<span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>`}
       ${!own && s.faction === 'eyrie' && decreeCounts(v) && html`<span class="decree-mini" aria-label="Decree">${decreeCounts(v)!.map(d => html`<span title=${`${d.label}: ${d.count} lá`}><${Icon} name=${d.icon} /><b>${d.count}</b></span>`)}</span>`}
       ${!own && s.faction === 'vagabond' && relationshipWith(v, seat) && html`<span class=${`relation${relationshipWith(v, seat)!.hostile ? ' hostile' : ''}`} title="Quan hệ của Vagabond với bạn"><${Icon} name="heart" />${relationshipWith(v, seat)!.text}</span>`}
       ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
-    </button>`)}</nav>`
+    </button>`})}</nav>`
 }
 
 /** Your own faction as its painted panel: score in the laurel, each supply count beside its painted icon. No name: it is you. */

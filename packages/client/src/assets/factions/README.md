@@ -11,3 +11,10 @@ supply, cards in hand. `ui/faction-art.ts` lists that order; the HUD writes the 
 `alliance-opponent.png`: owner-supplied green fox portrait (2026-11-05) for the Woodland Alliance opponent badge.
 Resized from 1289 × 1220 to 520 × 492, with transparency preserved. The live score is centred in the gold
 laurel (22% across, 79.7% down); player name and hand count are omitted below the portrait.
+
+
+`vagabond-ranger-opponent.png` and `vagabond-tinker-opponent.png`: owner-supplied wolf and woodland character
+portraits (2026-11-05), respectively. Resized from 1269 × 1240 to 520 × 508 with alpha preserved.
+The public Vagabond character selects the painting; Thief and an unselected character keep the plain badge.
+Each laurel holds the current score. Painted portraits omit the player name and hand-count text but retain
+Vagabond's public relationship with the viewer below the image.
