@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks'
-import { TurnBanner, PhaseMark, TurnNotice } from './ui/screens/turn-phase.ts'
+import { TurnBanner, PhaseMark, TurnNotice, EventBanner } from './ui/screens/turn-phase.ts'
 import { GameResult, GameLog, QuickGuide } from './ui/screens/finish.ts'
 import './ui/setup.ts'
 import type { FactionId, LastRoll } from '@root/game-engine'
@@ -211,6 +211,9 @@ const Kit = () => html`
       <figure><div class="kit-hud actions"><${HudActions} actionsLeft=${left} legal=${l} canUndo=${left === 1} undo=${noop} send=${noop} onOpen=${noop} /></div><figcaption>${name}</figcaption></figure>`)}
       <figure><div class="kit-hud actions"><${HudSun} left=${2} /></div><figcaption>Khán giả</figcaption></figure>
     </div><//>
+
+  <${Section} title="Băng sự kiện" note="RD-M09: Revolt, Outrage, Coalition, Dominance, Turmoil hiện giữa màn hình một lúc (interaction/events.ts), màu theo phe.">
+    ${([['alliance', 'Revolt', 'ở ô 6'], ['alliance', 'Outrage!', ''], ['vagabond', 'Coalition', ''], ['eyrie', 'Turmoil', 'Eyrie không thực hiện được Decree']] as const).map(([faction, title, note], i) => html`<div class="kit-hud event"><${EventBanner} event=${{ key: String(i), faction, title, ...(note ? { note } : {}) }} /></div>`)}<//>
 
   <${Section} title="Băng chữ ra lệnh" note="RD-M03: giữa mép trên, chỉ hiện cho người đang được hỏi; nói việc cần làm ngay bây giờ (interaction/prompt.ts). Chế độ như Xây có nút Thôi.">
     ${['Chọn 3 ô homeland nối liền nhau', 'Chọn một hành động (còn 2)', 'Chọn số chiến binh đi từ ô 1 sang ô 5, rồi bấm Enter', 'Trả 2 lá về deck, giữ 3 lá', 'Có thể chơi Ambush ở ô 6'].map(text => html`<div class="kit-hud prompt"><${MapPrompt} text=${text} /></div>`)}

@@ -6,7 +6,7 @@ import { clearingsOf, describe, GROUP } from '../../describe.ts'
 import { generalActions, IDLE, viewOf, warriorCounts, type Stage } from '../../interaction/select.ts'
 import { SUIT_NAME } from '../../names.ts'
 import type { Changes } from '../../net/changes.ts'
-import { Dice, FactionChip, SuitPip } from '../components.ts'
+import { Dice, FactionChip, Icon, SuitPip } from '../components.ts'
 import { BuildBox } from './build-box.ts'
 import { ClearingInfo } from './clearing-info.ts'
 import type { Project } from './map-view.ts'
@@ -121,7 +121,12 @@ export function MapDice({ project, changes, below }: { project: Project; changes
   if (!roll || !at) return null
   // Keyed by revision so two rolls in a row both replay their entry animation.
   // Below the clearing when a decision callout already sits above it.
-  return html`<div class=${`dice map-dice${below === roll.clearing ? ' below' : ''}`} key=${roll.revision} role="status" style=${{ left: `${Math.min(Math.max(at[0], 236), innerWidth - 236)}px`, top: `${at[1]}px` }}><${Dice} roll=${roll} /></div>`
+  // RD-M08: the rest of the map dims around the clearing of battle, and the two sides face off over the dice.
+  return html`<div class="battle-spot" key=${`spot-${roll.revision}`} aria-hidden="true" style=${{ '--x': `${at[0]}px`, '--y': `${at[1]}px` }}></div>
+    <div class=${`dice map-dice${below === roll.clearing ? ' below' : ''}`} key=${roll.revision} role="status" style=${{ left: `${Math.min(Math.max(at[0], 236), innerWidth - 236)}px`, top: `${at[1]}px` }}>
+    <div class="vs"><span class="side" style=${{ '--chip': `var(--faction-${roll.attacker})` }}><${Icon} name=${roll.attacker} /><b>${roll.hits.attacker}</b></span>
+      <span class="vs-word">VS</span><span class="side" style=${{ '--chip': `var(--faction-${roll.defender})` }}><b>${roll.hits.defender}</b><${Icon} name=${roll.defender} /></span></div>
+    <${Dice} roll=${roll} /></div>`
 }
 
 /** What is in a clearing, next to it on the map (hover with a mouse, hold with a finger). */

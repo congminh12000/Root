@@ -1,11 +1,12 @@
 import type { FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { freshRoll, travelsSince, type Travel } from '../motion.ts'
 import type { Update } from './types.ts'
+import { eventsSince, type GameEvent } from '../interaction/events.ts'
 
 /** What one update changed, to animate once: clearings, scores, moves along paths and a fresh battle roll. */
-export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null }
+export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null; events: GameEvent[] }
 
-export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null }
+export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null, events: [] }
 
 /** `seq` grows with every update, so a view that re-renders for another reason does not replay the animations. */
 export function changesBetween(prev: Update | null, next: Update, seq: number): Changes {
@@ -16,6 +17,7 @@ export function changesBetween(prev: Update | null, next: Update, seq: number): 
     scored: (Object.keys(next.view.score) as FactionId[]).filter(f => next.view.score[f] !== prev.view.score[f]),
     travels: travelsSince(prev.view, next.log),
     roll: freshRoll(prev.view, next.view),
+    events: eventsSince(prev.view, next.view, next.log),
   }
 }
 
