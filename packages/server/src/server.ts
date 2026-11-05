@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { extname, join, normalize } from 'node:path'
 import { factionMixAllowed, type FactionId } from '@root/game-engine'
 import { WebSocketServer, type WebSocket } from 'ws'
-import type { ClientMessage, CreateGameRequest, CreateGameResponse } from './protocol.ts'
+import { GAME_GONE, type ClearGamesResponse, type ClientMessage, type CreateGameRequest, type CreateGameResponse } from './protocol.ts'
 import { Room, type RoomOptions } from './room.ts'
 import { Store } from './store.ts'
 
@@ -30,6 +30,8 @@ const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javas
 export function startServer(opts: ServerOptions) {
   const store = new Store(opts.dataDir)
   const rooms = new Map<string, Room>()
+  /** Open WebSockets per game, so deleting a game can close them. */
+  const sockets = new Map<string, Set<WebSocket>>()
   const roomOpts: RoomOptions = { ...(opts.botDelayMs !== undefined && { botDelayMs: opts.botDelayMs }), ...(opts.turnSeconds !== undefined && { turnSeconds: opts.turnSeconds }) }
   const maxGames = opts.maxGames ?? 20
   for (const saved of store.loadAll()) {
@@ -41,6 +43,25 @@ export function startServer(opts: ServerOptions) {
     if (!opts.password) return true
     const a = Buffer.from(key ?? ''), b = Buffer.from(opts.password)
     return a.length === b.length && timingSafeEqual(a, b)
+  }
+
+  /**
+   * Deletes finished games, or every game. A deleted game stops its bots and clock, its players and spectators get an
+   * error and are disconnected, and its file is removed. Cannot be undone; the lobby asks first.
+   */
+  function clearGames(scope: string): string[] {
+    const doomed = [...rooms.values()].filter(r => scope === 'all' || !!r.state.winner)
+    for (const room of doomed) {
+      room.close()
+      rooms.delete(room.id)
+      for (const ws of sockets.get(room.id) ?? []) {
+        ws.send(JSON.stringify({ type: 'error', message: 'Trận này đã bị xoá khỏi máy chủ.' }))
+        ws.close(GAME_GONE, 'game deleted')
+      }
+      sockets.delete(room.id)
+      store.remove(room.id)
+    }
+    return doomed.map(r => r.id)
   }
 
   const json = (res: ServerResponse, code: number, body: unknown) => {
@@ -76,6 +97,12 @@ export function startServer(opts: ServerOptions) {
         const out: CreateGameResponse = { id: room.id, links: room.saved.seats.map(s => ({ faction: s.faction, token: s.token })) }
         return json(res, 201, out)
       }
+      if (url.pathname === '/api/games' && req.method === 'DELETE') {
+        const scope = url.searchParams.get('scope')
+        if (scope !== 'finished' && scope !== 'all') return json(res, 400, { error: 'scope must be finished or all' })
+        const out: ClearGamesResponse = { deleted: clearGames(scope) }
+        return json(res, 200, out)
+      }
       if (opts.staticDir && req.method === 'GET') {
         const path = normalize(join(opts.staticDir, url.pathname === '/' ? 'index.html' : url.pathname))
         if (path.startsWith(normalize(opts.staticDir)) && existsSync(path) && statSync(path).isFile()) {
@@ -95,12 +122,14 @@ export function startServer(opts: ServerOptions) {
   wss.on('connection', (ws: WebSocket, req) => {
     const url = new URL(req.url ?? '/', 'http://local')
     const room = rooms.get(url.searchParams.get('game') ?? '')
-    if (!room) { ws.send(JSON.stringify({ type: 'error', message: 'no such game' })); ws.close(); return }
+    if (!room) { ws.send(JSON.stringify({ type: 'error', message: 'Không có trận này trên máy chủ (có thể đã bị xoá).' })); ws.close(GAME_GONE, 'no such game'); return }
     const token = url.searchParams.get('token')
     const seat = room.seatFor(token)
     if (token && !seat) { ws.send(JSON.stringify({ type: 'error', message: 'unknown seat token' })); ws.close(); return }
     if (!seat && !keyOk(url.searchParams.get('key'))) { ws.send(JSON.stringify({ type: 'error', message: 'room password required to watch' })); ws.close(); return }
     const unsubscribe = room.subscribe(seat, msg => ws.send(JSON.stringify(msg)))
+    const open = sockets.get(room.id) ?? new Set<WebSocket>()
+    sockets.set(room.id, open.add(ws))
     ws.on('message', raw => {
       let msg: ClientMessage
       try { msg = JSON.parse(String(raw)) } catch { return }
@@ -117,7 +146,7 @@ export function startServer(opts: ServerOptions) {
       const result = room.submit(seat, String(msg.actionId), Number(msg.expectedRevision), msg.action)
       if (!result.ok) ws.send(JSON.stringify({ type: 'rejected', actionId: msg.actionId, result }))
     })
-    ws.on('close', unsubscribe)
+    ws.on('close', () => { unsubscribe(); open.delete(ws) })
   })
 
   http.listen(opts.port, opts.host)

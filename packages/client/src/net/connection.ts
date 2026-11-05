@@ -2,7 +2,7 @@ import { batch, signal } from '@preact/signals'
 import type { Action } from '@root/game-engine'
 import { roomKey } from './api.ts'
 import { changesBetween, NO_CHANGES, type Changes } from './changes.ts'
-import type { Message, Update } from './types.ts'
+import { GAME_GONE, type Message, type Update } from './types.ts'
 
 /**
  * One game's WebSocket as signals: the latest update, what it changed, a notice line and the local deadline.
@@ -32,8 +32,9 @@ export function connectGame(gameId: string, token: string | null) {
         })
       } else notice.value = msg.type === 'rejected' ? `Máy chủ từ chối: ${msg.result.code}` : msg.message
     }
-    socket.onclose = () => {
+    socket.onclose = ev => {
       if (closed) return
+      if (ev.code === GAME_GONE) { closed = true; notice.value = 'Trận này không còn trên máy chủ (đã bị xoá).'; return }
       notice.value = 'Mất kết nối, đang nối lại…'
       setTimeout(open, 1500)
     }

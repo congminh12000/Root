@@ -46,3 +46,13 @@ export interface CreateGameResponse {
   id: string
   links: { faction: FactionId; token: string | null }[]
 }
+
+/** WebSocket close code when the game does not exist (never did, or was deleted): the browser stops reconnecting. */
+export const GAME_GONE = 4404
+
+/** `DELETE /api/games?scope=finished|all`: which games to delete. */
+export type ClearScope = 'finished' | 'all'
+
+export interface ClearGamesResponse {
+  deleted: string[]
+}

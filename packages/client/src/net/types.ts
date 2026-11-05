@@ -12,4 +12,7 @@ export interface Update {
   deadline: number | null
   now: number
 }
+/** Server closes with this code when the game does not exist or was deleted (multiplayer.md); do not reconnect. */
+export const GAME_GONE = 4404
+
 export type Message = Update | { type: 'rejected'; actionId: string; result: { code: string; message: string } } | { type: 'error'; message: string }

@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { SavedGame } from './room.ts'
 
@@ -11,6 +11,13 @@ export class Store {
     const file = join(this.dir, `${g.id}.json`)
     writeFileSync(`${file}.tmp`, JSON.stringify(g))
     renameSync(`${file}.tmp`, file)
+  }
+
+  /** Deletes one game's file (and a leftover temp file). Ids come from loaded games only, never from the request. */
+  remove(id: string) {
+    const file = join(this.dir, `${id}.json`)
+    rmSync(file, { force: true })
+    rmSync(`${file}.tmp`, { force: true })
   }
 
   loadAll(): SavedGame[] {
