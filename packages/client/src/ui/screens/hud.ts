@@ -3,6 +3,7 @@ import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { GROUP } from '../../describe.ts'
+import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
 import { Hand } from './hand.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME, PHASE_NAME, STEP_NAME } from '../../names.ts'
@@ -131,7 +132,10 @@ export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = n
   return html`<section class="hud-actions" aria-label="Hành động của phe">
     ${actionsLeft !== null && html`<${ActionSun} left=${actionsLeft} />`}
     <button class="secondary" disabled=${!legal.length} aria-label=${`Xem ${legal.length} lựa chọn hợp lệ`} onClick=${() => onOpen()}>Lựa chọn · ${legal.length}</button>
-    <div class="hud-action-types">${[...new Set(legal.filter(a => a !== next).map(a => a.type))].map(type => html`<button class="secondary" onClick=${() => onOpen(type)}>${GROUP[type] ?? type}</button>`)}</div>
+    ${actionsLeft !== null && html`<div class="hud-marquise" role="group" aria-label="Hành động Marquise">${marquiseButtons(legal).map(b => html`<button class="secondary"
+        disabled=${!b.enabled} aria-label=${b.label} title=${b.label} data-type=${b.type}
+        onClick=${() => { const only = legal.find(a => a.type === b.type); if (b.mode === 'send' && only) send(only); else onOpen(b.type) }}><${Icon} name=${b.icon} />${b.type === 'marquise-spend-bird' ? html`<small>+1</small>` : ''}</button>`)}</div>`}
+    <div class="hud-action-types">${[...new Set(legal.filter(a => a !== next && !(actionsLeft !== null && MARQUISE_BUTTON_TYPES.has(a.type))).map(a => a.type))].map(type => html`<button class="secondary" onClick=${() => onOpen(type)}>${GROUP[type] ?? type}</button>`)}</div>
     <div><button class="secondary" disabled=${!canUndo} title=${canUndo ? 'Hoàn tác hành động trước' : 'Không có hành động có thể hoàn tác; battle, turmoil và thông tin mới không thể Undo'} onClick=${undo}>↶ Undo</button>
     <button disabled=${!next} title=${next ? 'Qua bước tiếp theo' : 'Hoàn thành quyết định hiện tại trước'} onClick=${() => next && send(next)}>Continue ▷</button></div></section>`
 }
