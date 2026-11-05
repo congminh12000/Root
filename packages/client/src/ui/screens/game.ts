@@ -18,7 +18,7 @@ import { GROUP } from '../../describe.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
 import { DecisionCallout, DecisionDialog } from './decision.ts'
-import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, type DrawerId } from './hud.ts'
+import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, HudToast, HudPlayArea, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
@@ -100,6 +100,8 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   return html`<div class="game-screen">
     <${TurnNotice} view=${v} />
     <${EventNotice} changes=${conn.changes.value} />
+    <${HudToast} changes=${conn.changes.value} />
+    ${seat && html`<${HudPlayArea} view=${v} seat=${seat} legal=${all} />`}
     <${MapView} map=${mapChoice.value} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
       draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
       onDrag=${(from: number, to: number) => { setPreview(null); setStage(click(legal, click(legal, IDLE, from), to)) }}

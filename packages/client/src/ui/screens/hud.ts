@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { GROUP } from '../../describe.ts'
 import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
 import { ownResources } from '../../interaction/resources.ts'
+import { decreeCounts, relationshipWith } from '../../interaction/opponents.ts'
+import { usableCards } from '../../interaction/cards.ts'
 import { Hand } from './hand.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME, PHASE_NAME, STEP_NAME } from '../../names.ts'
@@ -75,6 +77,8 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
       ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
       <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${changes.scored.includes(s.faction) ? 'bump' : ''}>${v.score[s.faction] ?? 'D'}</b>
       <span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>
+      ${!own && s.faction === 'eyrie' && decreeCounts(v) && html`<span class="decree-mini" aria-label="Decree">${decreeCounts(v)!.map(d => html`<span title=${`${d.label}: ${d.count} lá`}><${Icon} name=${d.icon} /><b>${d.count}</b></span>`)}</span>`}
+      ${!own && s.faction === 'vagabond' && relationshipWith(v, seat) && html`<span class=${`relation${relationshipWith(v, seat)!.hostile ? ' hostile' : ''}`} title="Quan hệ của Vagabond với bạn"><${Icon} name="heart" />${relationshipWith(v, seat)!.text}</span>`}
       ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
     </button>`)}</nav>`
 }
@@ -165,4 +169,25 @@ export function HudChat({ entries, enabled, send }: { entries: import('../../net
     <form onSubmit=${(e: Event) => { e.preventDefault(); if (text.trim()) { send(text.trim()); setText('') } }}>
     <input aria-label="Tin nhắn" placeholder=${enabled ? 'Nhập tin nhắn…' : 'Khán giả chỉ đọc chat'} maxLength=${500} disabled=${!enabled} value=${text} onInput=${(e: Event) => setText((e.target as HTMLInputElement).value)} />
     <button disabled=${!enabled || !text.trim()}>Gửi</button></form></section>`
+}
+
+/** RD-M11: a small notice at the top right for a few seconds (a dominance card became available). */
+export function HudToast({ changes }: { changes: Changes }) {
+  const [toast, setToast] = useState<{ key: string; text: string } | null>(null)
+  useEffect(() => {
+    const last = changes.toasts[changes.toasts.length - 1]
+    if (!last) return
+    setToast(last)
+    const id = setTimeout(() => setToast(null), 4500)
+    return () => clearTimeout(id)
+  }, [changes.seq])
+  return toast ? html`<div class="hud-toast" key=${toast.key} role="status" aria-live="polite"><${Icon} name="crown" />${toast.text}</div>` : null
+}
+
+/** RD-M13: the seat's own persistent cards at the right edge; lit when one can be used now, a click opens its uses. */
+export function HudPlayArea({ view: v, seat, legal }: { view: PlayerView; seat: FactionId; legal: Action[] }) {
+  const cards = v.playAreas[seat] ?? []
+  if (!cards.length) return null
+  const usable = usableCards(legal, cards)
+  return html`<section class="hud-playarea" aria-label="Lá đã chế tạo">${cards.map(c => html`<${MiniCard} key=${c} card=${c} usable=${usable.has(c)} />`)}</section>`
 }

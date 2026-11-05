@@ -637,3 +637,23 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .map-dice .vs { flex-basis: 100%; }
 .kit-hud.event { height: 110px; }
 .kit-hud.event .event-banner { top: 50%; transform: translate(-50%, -50%); }
+
+/* RD-M10: a card drawn into the hand slides up into place (keyed by card, so only new cards move). */
+.hud-hand .hand-slot { animation: draw-in var(--motion-bump) ease-out; }
+@keyframes draw-in { from { transform: translateY(36px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hud-hand .hand-slot { animation: none; } }
+/* RD-M11: a small notice at the top right. */
+.hud-toast { position: absolute; z-index: 11; top: 64px; right: var(--sp-3); display: flex; align-items: center; gap: 6px; max-width: min(360px, 80vw); padding: 6px 12px;
+  border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); box-shadow: var(--shadow-card); font-size: var(--fs-sm); --icon-fill: var(--autumn-gold); }
+.hud-toast .icon { width: 20px; height: 20px; flex-shrink: 0; }
+/* RD-M12: Eyrie Decree counts and the Vagabond's relationship on opponents' badges. */
+.hud-faction .decree-mini, .hud-faction .relation { grid-column: 1 / -1; display: flex; gap: 6px; font-size: var(--fs-xs); }
+.hud-faction .decree-mini span { display: inline-flex; align-items: center; gap: 1px; }
+.hud-faction .decree-mini .icon, .hud-faction .relation .icon { width: 14px; height: 14px; }
+.hud-faction .relation { align-items: center; gap: 3px; --icon-fill: var(--autumn-orange); }
+.hud-faction .relation.hostile { font-weight: 700; }
+/* RD-M13: own persistent cards at the right edge, lit when usable. */
+.hud-playarea { position: absolute; z-index: 8; right: var(--sp-3); top: 38%; display: grid; gap: 6px; }
+.hud-playarea .minicard { width: 64px; }
+.hud-playarea .minicard .cardface { width: 64px; font-size: 4px; }
+@media (max-width: 600px) { .hud-playarea { top: 30%; } .hud-playarea .minicard, .hud-playarea .minicard .cardface { width: 48px; } }
