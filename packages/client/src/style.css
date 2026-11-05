@@ -593,3 +593,10 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-marquise button .icon { width: 30px; height: 30px; }
 .hud-marquise button small { position: absolute; right: 3px; bottom: 1px; font-weight: 700; font-size: var(--fs-xs); }
 .hud-marquise button:disabled { opacity: .4; }
+
+/* RD-M05: the seat's supplies, always on its own badge (Root Digital's bottom-left panel). */
+.hud-self .hud-faction { grid-template-columns: auto auto auto; }
+.hud-faction .hud-res { grid-column: 3; grid-row: 1 / span 2; display: grid; gap: 2px; padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--ink-a25); }
+.hud-faction .hud-res span { display: grid; grid-template-columns: 18px auto; align-items: center; gap: 4px; }
+.hud-faction .hud-res .icon { width: 18px; height: 18px; }
+.hud-faction .hud-res b { font: var(--fs-sm) var(--font-body); font-weight: 700; font-variant-numeric: tabular-nums; }
