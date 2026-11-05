@@ -30,3 +30,21 @@ export function TurnNotice({ view }: { view: PlayerView }) {
   }, [key])
   return owner && visible === key ? html`<${TurnBanner} key=${key} faction=${owner} number=${view.turn.number} />` : null
 }
+
+/** RD-M09: the newest faction event (Revolt, Outrage, Coalition, Dominance, Turmoil) as a banner for a moment. */
+export function EventNotice({ changes }: { changes: import('../../net/changes.ts').Changes }) {
+  const [event, setEvent] = useState<import('../../interaction/events.ts').GameEvent | null>(null)
+  useEffect(() => {
+    const last = changes.events[changes.events.length - 1]
+    if (!last) return
+    setEvent(last)
+    const timer = setTimeout(() => setEvent(null), 2600)
+    return () => clearTimeout(timer)
+  }, [changes.seq])
+  return event ? html`<${EventBanner} key=${event.key} event=${event} />` : null
+}
+
+export function EventBanner({ event }: { event: import('../../interaction/events.ts').GameEvent }) {
+  return html`<aside class="turn-banner event-banner" role="status" aria-live="polite" style=${{ '--chip': `var(--faction-${event.faction})` }}>
+    <${Icon} name=${event.faction} /><span><b>${event.title}</b><small>${FACTION_NAME[event.faction]}${event.note ? ` · ${event.note}` : ''}</small></span></aside>`
+}

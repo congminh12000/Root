@@ -618,3 +618,22 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-faction .hud-res span { display: grid; grid-template-columns: 18px auto; align-items: center; gap: 4px; }
 .hud-faction .hud-res .icon { width: 18px; height: 18px; }
 .hud-faction .hud-res b { font: var(--fs-sm) var(--font-body); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* RD-M08: battle spotlight and face-off over the dice. */
+.battle-spot { position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: radial-gradient(circle at var(--x) var(--y), transparent 0 90px, color-mix(in srgb, var(--ink) 45%, transparent) 230px);
+  animation: spot-fade 3.5s ease-out forwards; }
+@keyframes spot-fade { 0% { opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
+.map-dice .vs { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 4px; }
+.map-dice .vs .side { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: var(--r-pill); background: var(--chip); color: var(--paper); }
+.map-dice .vs .side .icon { width: 22px; height: 22px; }
+.map-dice .vs b { font: var(--fs-lg) var(--font-display); }
+.map-dice .vs-word { font: var(--fs-md) var(--font-display); }
+@media (prefers-reduced-motion: reduce) { .battle-spot { animation: none; opacity: .8; } }
+/* RD-M09: faction event banner, the turn banner in the faction's colour. */
+.event-banner { top: 34%; border-color: var(--chip); }
+.event-banner b { font: var(--fs-xl) var(--font-display); }
+.map-dice.dice { flex-wrap: wrap; justify-content: center; }
+.map-dice .vs { flex-basis: 100%; }
+.kit-hud.event { height: 110px; }
+.kit-hud.event .event-banner { top: 50%; transform: translate(-50%, -50%); }
