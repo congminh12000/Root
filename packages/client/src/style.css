@@ -580,6 +580,9 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .build-col .build-wood { padding: 1px 6px; border-radius: var(--r-sm); background: var(--wood); color: var(--paper); font-weight: 600; }
 .build-col:hover, .build-col:focus-visible, .build-col.on { box-shadow: 0 0 0 2px var(--autumn-gold); }
 .build-own { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); }
-.map-prompt { position: absolute; z-index: 9; top: 84px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); font: var(--fs-md) var(--font-display); box-shadow: var(--shadow-card); }
+.map-prompt { position: absolute; z-index: 9; top: 84px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; width: max-content; max-width: min(640px, 92vw); text-align: center; padding: 6px 14px; border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); font: var(--fs-md) var(--font-display); box-shadow: var(--shadow-card); }
 @media (max-width: 600px) { .build-col { min-height: 96px; } .map-prompt { top: 72px; font-size: var(--fs-sm); } }
 .map-menu.kit-static { position: static; transform: none; }
+.map-prompt button { margin-right: -8px; }
+.kit-hud.prompt { height: 64px; }
+.kit-hud.prompt .map-prompt { top: 10px; }

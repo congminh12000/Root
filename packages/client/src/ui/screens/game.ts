@@ -6,6 +6,7 @@ import { GameResult, GameLog, QuickGuide, logClearings } from './finish.ts'
 import { decisionOf } from '../../interaction/decisions.ts'
 import { marquiseActionsLeft } from '../../interaction/actions-left.ts'
 import { buildClearings } from '../../interaction/build.ts'
+import { promptFor } from '../../interaction/prompt.ts'
 import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { connectGame } from '../../net/connection.ts'
 import type { LogEntry } from '../../motion.ts'
@@ -15,7 +16,7 @@ import { GROUP } from '../../describe.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
 import { DecisionCallout, DecisionDialog } from './decision.ts'
-import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, type DrawerId } from './hud.ts'
+import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
@@ -91,6 +92,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     }
     setFocus(null); setActionFilter(type ?? null); setDrawer('all')
   }
+  const prompt = promptFor({ view: v, legal: all, seat, stage, focus, decision })
   const logPick = (l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }
 
   return html`<div class="game-screen">
@@ -105,7 +107,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
         ${atClearing && project(decision!.clearing!) && html`<${DecisionCallout} decision=${decision!} view=${v} legal=${all} send=${conn.send} at=${project(decision!.clearing!)!} />`}
         <${MapDice} project=${project} changes=${conn.changes.value} below=${atClearing ? decision!.clearing : null} />
         ${inspect !== null && !(stage.kind === 'at' && stage.clearing === inspect) && html`<${MapInfo} project=${project} view=${v} clearing=${inspect} onClose=${() => setInspect(null)} />`}`} />
-    ${focus && html`<div class="map-prompt" role="status">Chọn ô để xây <button class="secondary" onClick=${() => { setFocus(null); setStage(IDLE) }}>Thôi (Esc)</button></div>`}
+    ${prompt && html`<${MapPrompt} text=${prompt} onCancel=${focus ? () => { setFocus(null); setStage(IDLE) } : undefined} />`}
     <${HudStatus} view=${v} seat=${seat} deadline=${conn.deadline.value} notice=${conn.notice.value} decision=${decision} mine=${mine}
       onReopen=${centred && folded ? () => setFolded(false) : undefined} />
     <button class="secondary hud-chat-toggle" aria-label="Chat" aria-pressed=${drawer === 'chat'} onClick=${() => toggle('chat')}>Chat</button>
