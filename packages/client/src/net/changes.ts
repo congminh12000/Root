@@ -1,12 +1,13 @@
 import type { FactionId, LastRoll, PlayerView } from '@root/game-engine'
 import { freshRoll, travelsSince, type Travel } from '../motion.ts'
 import type { Update } from './types.ts'
-import { eventsSince, type GameEvent } from '../interaction/events.ts'
+import { eventsSince, toastsSince, type GameEvent, type Toast } from '../interaction/events.ts'
+import { cardName } from '../names.ts'
 
 /** What one update changed, to animate once: clearings, scores, moves along paths and a fresh battle roll. */
-export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null; events: GameEvent[] }
+export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null; events: GameEvent[]; toasts: Toast[] }
 
-export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null, events: [] }
+export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null, events: [], toasts: [] }
 
 /** `seq` grows with every update, so a view that re-renders for another reason does not replay the animations. */
 export function changesBetween(prev: Update | null, next: Update, seq: number): Changes {
@@ -18,6 +19,7 @@ export function changesBetween(prev: Update | null, next: Update, seq: number): 
     travels: travelsSince(prev.view, next.log),
     roll: freshRoll(prev.view, next.view),
     events: eventsSince(prev.view, next.view, next.log),
+    toasts: toastsSince(prev.view, next.view, cardName),
   }
 }
 

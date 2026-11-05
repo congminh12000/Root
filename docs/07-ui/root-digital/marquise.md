@@ -201,10 +201,10 @@ Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md
 - [x] **RD-M07. Nút lớn đổi theo ngữ cảnh:** Tiếp tục / Sang Evening / Huỷ. Video: 05:10, 09:30, 10:55.
 - [x] **RD-M08. Battle:** làm tối phần map còn lại, hiện hai phe đối đầu, hit và hit thêm. Video: 15:38, 28:50.
 - [x] **RD-M09. Băng sự kiện** cho Revolt, Outrage, Coalition, Turmoil (kèm lý do decree hỏng), điểm roost. Video: 04:06, 11:48, 14:30, 15:10, 18:35.
-- [ ] **RD-M10. Evening:** hoạt ảnh lá rút vào tay; "Bỏ N lá" đếm giảm. Video: 10:43–10:55.
-- [ ] **RD-M11. Báo lá dominance available** (§3.3.3) bằng thông báo nhỏ. Video: 10:52.
-- [ ] **RD-M12. Đối thủ:** decree thu nhỏ của Eyrie, quan hệ Vagabond với mình ngay trên huy hiệu. Video: ảnh cắt 04:50.
-- [ ] **RD-M13. Lá persistent dùng được** (Codebreakers…) có lối bấm riêng, không chỉ nằm trong bảng phe. Video: 16:28–16:39.
+- [x] **RD-M10. Evening:** hoạt ảnh lá rút vào tay; "Bỏ N lá" đếm giảm. Video: 10:43–10:55.
+- [x] **RD-M11. Báo lá dominance available** (§3.3.3) bằng thông báo nhỏ. Video: 10:52.
+- [x] **RD-M12. Đối thủ:** decree thu nhỏ của Eyrie, quan hệ Vagabond với mình ngay trên huy hiệu. Video: ảnh cắt 04:50.
+- [x] **RD-M13. Lá persistent dùng được** (Codebreakers…) có lối bấm riêng, không chỉ nằm trong bảng phe. Video: 16:28–16:39.
 
 ### Mức thấp
 

@@ -30,3 +30,11 @@ export function eventsSince(prev: PlayerView, next: PlayerView, log: LogEntry[])
     out.push({ key: `${next.revision}:turmoil`, faction: 'eyrie', title: 'Turmoil', note: 'Eyrie không thực hiện được Decree' })
   return out
 }
+
+/** RD-M11: a small notice when a dominance card becomes available to take (§3.3.3), like "Dominance Card Available!". */
+export interface Toast { key: string; text: string }
+
+export function toastsSince(prev: PlayerView, next: PlayerView, name: (card: string) => string): Toast[] {
+  return next.availableDominance.filter(c => !prev.availableDominance.includes(c))
+    .map(c => ({ key: `${next.revision}:${c}`, text: `Có thể lấy ${name(c)}: trả một lá cùng chất (§3.3.4)` }))
+}

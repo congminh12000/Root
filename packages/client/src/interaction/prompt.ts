@@ -15,6 +15,9 @@ export function promptFor({ view: v, legal, seat, stage, focus, decision }: {
 }): string | null {
   if (!seat || v.winner || v.waitingOn[0] !== seat || !legal.length) return null
   if (focus && FOCUS_PROMPT[focus]) return FOCUS_PROMPT[focus]!
+  // RD-M10: the Evening discard counts down, like Root Digital's "Discard 2 cards." → "Discard 1 cards."
+  const top = v.pending[v.pending.length - 1]
+  if (top?.kind === 'discard-down' && top.player === seat) { const n = v.hand.length - top.to; return n > 0 ? `Bỏ ${n} lá (giữ ${top.to})` : 'Không cần bỏ thêm lá' }
   if (decision && decision.player === seat) return sentence(withoutName(decision.title, seat))
   if (stage.kind === 'path') {
     const counts = warriorCounts(viewOf(legal, stage).along)
