@@ -11,7 +11,7 @@ import { BASE_DECK, BASE_QUESTS, EYRIE, VAGABOND, type CardDef } from '@root/gam
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionDialog } from './ui/screens/decision.ts'
-import { HandStrip, HudFactions, HudStatus } from './ui/screens/hud.ts'
+import { HandStrip, HudActions, HudFactions, HudStatus, HudSun } from './ui/screens/hud.ts'
 import type { Decision } from './interaction/decisions.ts'
 import { Hand } from './ui/screens/hand.ts'
 import { sampleView } from './dev/sample.ts'
@@ -160,6 +160,13 @@ const Kit = () => html`
     <${GameLog} log=${[{ revision: 3, faction: 'marquise', type: 'move', detail: { from: 0, to: 4, warriors: 2 } }]} selected=${3} onSelect=${noop} />
     <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
     <p class="error">Không tạo được trận</p><//>
+
+  <${Section} title="Bảng hành động góc dưới phải" note="RD-M01: mặt trời ghi số hành động Daylight còn lại của Marquise (§6.5: ba, thêm một mỗi lá chim), lấy từ bảng Marquise trong PlayerView. Nút Lựa chọn đếm số lựa chọn hợp lệ, không phải số hành động.">
+    <div class="kit-actions">
+      ${([['Đầu Daylight', 3, legal], ['Sau một lá chim', 4, legal], ['Còn 1', 1, legal], ['Hết hành động', 0, [{ type: 'end-step', payload: {} }] as Action[]], ['Không phải Daylight của Marquise', null, crafts]] as const).map(([name, left, l]) => html`
+      <figure><div class="kit-hud actions"><${HudActions} actionsLeft=${left} legal=${l} canUndo=${left === 1} undo=${noop} send=${noop} onOpen=${noop} /></div><figcaption>${name}</figcaption></figure>`)}
+      <figure><div class="kit-hud actions"><${HudSun} left=${2} /></div><figcaption>Khán giả</figcaption></figure>
+    </div><//>
 
   <${Section} title="Tất cả lựa chọn" note="Ngăn dự phòng mở từ menu ☰: mọi hành động hợp lệ, gom theo loại.">
     <div class="kit-grid two"><section class="card"><h3>Tất cả lựa chọn</h3><${FullList} legal=${legal} onPreview=${noop} send=${noop} /></section></div><//>
