@@ -552,3 +552,19 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .craft-icon.missing { border-style: dashed; opacity: .7; }
 .craft-icon.paid, .craft-piece.paying { border-color: var(--autumn-gold); box-shadow: 0 0 0 1px var(--autumn-gold); font-weight: 600; }
 .craft-piece.used { opacity: .55; text-decoration: line-through; }
+
+/* RD-M01: Marquise Daylight actions left, a numbered sun over the action panel (Root Digital's layout, our own icon). */
+.action-sun { --icon-fill: var(--autumn-gold); position: relative; display: grid; place-items: center; width: 60px; height: 60px; filter: drop-shadow(0 2px 1px var(--ink-a25)); }
+.action-sun .icon { position: absolute; inset: 0; width: 100%; height: 100%; }
+.action-sun b { position: relative; font-family: var(--font-display); font-size: 28px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; animation: bump var(--motion-bump) ease-out; }
+.hud-actions .action-sun { display: grid; position: absolute; top: -46px; right: 10px; } /* beats .hud-actions > div { display: flex } */
+.hud-sun { position: absolute; z-index: 8; right: 12px; bottom: 12px; }
+@media (max-width: 600px) {
+  .action-sun { width: 48px; height: 48px; }
+  .action-sun b { font-size: 20px; }
+  .hud-actions .action-sun { top: -38px; }
+}
+@media (prefers-reduced-motion: reduce) { .action-sun b { animation: none; } }
+.kit-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--sp-3); }
+.kit-actions figure { margin: 0; }
+.kit-hud.actions { height: 310px; } /* room for the sun above the tallest panel */

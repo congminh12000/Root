@@ -4,6 +4,7 @@ import { html } from 'htm/preact'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { GameResult, GameLog, QuickGuide, logClearings } from './finish.ts'
 import { decisionOf } from '../../interaction/decisions.ts'
+import { marquiseActionsLeft } from '../../interaction/actions-left.ts'
 import { click, destinations, IDLE, startClearings, stillValid, viewOf, type Stage } from '../../interaction/select.ts'
 import { connectGame } from '../../net/connection.ts'
 import type { LogEntry } from '../../motion.ts'
@@ -13,7 +14,7 @@ import { GROUP } from '../../describe.ts'
 import { FullList } from './action-bar.ts'
 import { FactionBoards } from './boards.ts'
 import { DecisionCallout, DecisionDialog } from './decision.ts'
-import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, type DrawerId } from './hud.ts'
+import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
@@ -98,7 +99,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
     ${seat && html`<${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} own />`}
     <${HudPlayed} log=${u.log} />
-    ${seat && html`<${HudActions} legal=${legal} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${(type?: string) => { setActionFilter(type ?? null); setDrawer('all') }} />`}
+    ${seat ? html`<${HudActions} actionsLeft=${marquiseActionsLeft(v)} legal=${legal} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${(type?: string) => { setActionFilter(type ?? null); setDrawer('all') }} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
     ${drawer === 'chat' && html`<${Drawer} side="right" label="Chat" onClose=${close}><${HudChat} entries=${u.chat ?? []} enabled=${!!seat} send=${conn.chat} /><//>`}
     ${seat && html`<${HandStrip} view=${v} legal=${legal} seat=${seat} />`}
     <button class="secondary hud-log" aria-pressed=${drawer === 'log'} onClick=${() => toggle('log')}>Nhật ký${u.log.length ? ` · ${u.log.length}` : ''}</button>

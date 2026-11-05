@@ -112,13 +112,33 @@ export function HudPlayed({ log }: { log: import('../../motion.ts').LogEntry[] }
   return html`<section class="hud-played" aria-label="Bài vừa đánh ra"><small>Bài vừa đánh ra</small><${MiniCard} card=${card} /></section>`
 }
 
-export function HudActions({ legal, canUndo, undo, send, onOpen }: { legal: Action[]; canUndo: boolean; undo: () => void; send: (a: Action) => void; onOpen: (type?: string) => void }) {
+/**
+ * Marquise Daylight actions still to take (ROOT-6.5), as a numbered sun like Root Digital's. The number comes from
+ * `marquiseActionsLeft` (interaction/actions-left.ts); `key` restarts the bump each time it changes.
+ */
+export function ActionSun({ left }: { left: number }) {
+  const label = `Marquise còn ${left} hành động Daylight`
+  return html`<div class="action-sun" role="status" aria-label=${label} title=${label}>
+    <${Icon} name="sun" /><b key=${left}>${left}</b></div>`
+}
+
+export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = null }: {
+  legal: Action[]; canUndo: boolean; undo: () => void; send: (a: Action) => void; onOpen: (type?: string) => void
+  /** Marquise Daylight actions left, shown as a sun over the panel; null hides it. */
+  actionsLeft?: number | null
+}) {
   const next = legal.find(a => a.type === 'end-step' || a.type === 'marquise-end-march')
   return html`<section class="hud-actions" aria-label="Hành động của phe">
-    <button class="secondary" disabled=${!legal.length} onClick=${() => onOpen()}>Hành động · ${legal.length}</button>
+    ${actionsLeft !== null && html`<${ActionSun} left=${actionsLeft} />`}
+    <button class="secondary" disabled=${!legal.length} aria-label=${`Xem ${legal.length} lựa chọn hợp lệ`} onClick=${() => onOpen()}>Lựa chọn · ${legal.length}</button>
     <div class="hud-action-types">${[...new Set(legal.filter(a => a !== next).map(a => a.type))].map(type => html`<button class="secondary" onClick=${() => onOpen(type)}>${GROUP[type] ?? type}</button>`)}</div>
     <div><button class="secondary" disabled=${!canUndo} title=${canUndo ? 'Hoàn tác hành động trước' : 'Không có hành động có thể hoàn tác; battle, turmoil và thông tin mới không thể Undo'} onClick=${undo}>↶ Undo</button>
     <button disabled=${!next} title=${next ? 'Qua bước tiếp theo' : 'Hoàn thành quyết định hiện tại trước'} onClick=${() => next && send(next)}>Continue ▷</button></div></section>`
+}
+
+/** A spectator has no action panel, so the sun stands alone in its corner. */
+export function HudSun({ left }: { left: number | null }) {
+  return left === null ? null : html`<div class="hud-sun"><${ActionSun} left=${left} /></div>`
 }
 
 export function HudChat({ entries, enabled, send }: { entries: import('../../net/types.ts').ChatEntry[]; enabled: boolean; send: (text: string) => void }) {

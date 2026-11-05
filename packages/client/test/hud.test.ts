@@ -4,7 +4,7 @@ import { html } from 'htm/preact'
 import { render } from 'preact-render-to-string'
 import { sampleView } from '../src/dev/sample.ts'
 import { NO_CHANGES } from '../src/net/changes.ts'
-import { HudFactions, HudPlayed, HudActions, HudChat } from '../src/ui/screens/hud.ts'
+import { HudFactions, HudPlayed, HudActions, HudChat, HudSun } from '../src/ui/screens/hud.ts'
 
 test('opponents follow engine seat order and own faction appears separately', () => {
   const view = sampleView('marquise')
@@ -33,6 +33,22 @@ test('undo and continue require server permission and a legal step', () => {
   assert.equal((out.match(/disabled/g) ?? []).length, 3)
   const active = render(html`<${HudActions} legal=${[{ type: 'end-step', payload: {} }]} canUndo undo=${() => {}} send=${() => {}} onOpen=${() => {}} />`)
   assert.ok(!active.includes('disabled'))
+})
+
+test('action panel counts legal choices as choices, not as actions, and shows the Marquise sun only when given', () => {
+  const legal = [{ type: 'end-step', payload: {} }, { type: 'marquise-recruit', payload: { clearings: [1] } }]
+  const plain = render(html`<${HudActions} legal=${legal} canUndo=${false} undo=${() => {}} send=${() => {}} onOpen=${() => {}} />`)
+  assert.ok(plain.includes('Lựa chọn · 2'))
+  assert.ok(plain.includes('aria-label="Xem 2 lựa chọn hợp lệ"'))
+  assert.ok(!plain.includes('Hành động · '))
+  assert.ok(!plain.includes('action-sun'))
+  const sun = render(html`<${HudActions} actionsLeft=${2} legal=${legal} canUndo=${false} undo=${() => {}} send=${() => {}} onOpen=${() => {}} />`)
+  assert.ok(sun.includes('class="action-sun"'))
+  assert.ok(sun.includes('aria-label="Marquise còn 2 hành động Daylight"'))
+  assert.ok(sun.includes('<b>2</b>'))
+  assert.ok(render(html`<${HudActions} actionsLeft=${0} legal=${[]} canUndo=${false} undo=${() => {}} send=${() => {}} onOpen=${() => {}} />`).includes('còn 0 hành động'))
+  assert.equal(render(html`<${HudSun} left=${null} />`), '')
+  assert.ok(render(html`<${HudSun} left=${4} />`).includes('<b>4</b>'))
 })
 
 test('chat escapes text and spectators cannot send', () => {
