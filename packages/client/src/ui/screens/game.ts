@@ -21,6 +21,7 @@ import { DecisionCallout, DecisionDialog } from './decision.ts'
 import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, HudToast, HudPlayArea, SaveMark, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay, MapPops } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
+import { OpeningDeal } from './deal.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
 import { liveScene, setLiveScene } from '../../map/live.ts'
 
@@ -44,6 +45,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   /** RD-M02: after "Xây" in the action panel, the map offers only the clearings where the Marquise can build. */
   const [focus, setFocus] = useState<string | null>(null)
   const [drawer, setDrawer] = useState<DrawerId | null>(null)
+  const [mapReady, setMapReady] = useState(false)
   const close = useCallback(() => setDrawer(null), [])
   const toggle = (d: DrawerId) => setDrawer(o => (o === d ? null : d))
 
@@ -107,7 +109,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
       draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
       onDrag=${(from: number, to: number) => { setPreview(null); setStage(click(legal, click(legal, IDLE, from), to)) }}
       onDragOver=${(from: number, to: number | null) => setPreview(to === null ? [from] : [from, to])}
-      onHover=${hover} onHold=${(c: number) => { clearTimeout(hoverTimer.current); setInspect(c) }}
+      onReady=${() => setMapReady(true)} onHover=${hover} onHold=${(c: number) => { clearTimeout(hoverTimer.current); setInspect(c) }}
       overlay=${(project: Project) => html`
         ${legal.length > 0 && !atClearing && html`<${MapOverlay} project=${project} view=${v} legal=${legal} stage=${stage} setStage=${setStage}
           send=${conn.send} onPreview=${setPreview} onPick=${pick} bubble=${false} />`}
@@ -131,7 +133,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     <//>
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
     ${seat && html`<${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} own />`}
-    // The last played card sits mid-screen; it steps aside while a clearing menu or the Build prompt is open (RD-M02).
+    <!-- The last played card sits mid-screen; it steps aside while a clearing menu or the Build prompt is open (RD-M02). -->
     <${HudPlayed} log=${u.log} hidden=${stage.kind !== 'idle' || !!focus} />
     ${seat ? html`<${HudActions} view=${v} onCancel=${focus || stage.kind !== 'idle' ? () => { setFocus(null); setStage(IDLE) } : undefined} actionsLeft=${marquiseActionsLeft(v)} legal=${all} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${open} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
     ${drawer === 'chat' && html`<${Drawer} side="right" label="Chat" onClose=${close}><${HudChat} entries=${u.chat ?? []} enabled=${!!seat} send=${conn.chat} /><//>`}
@@ -142,6 +144,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     ${drawer === 'guide' && html`<${Drawer} side="right" label="Hướng dẫn nhanh" onClose=${close}><${QuickGuide} /><//>`}
     ${drawer && seats.some(s => s.faction === drawer) && html`<${Drawer} side="right" label="Bảng phe" onClose=${close}><${FactionBoards} key=${drawer} view=${v} seat=${seat} initial=${drawer} /><//>`}
     ${centred && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${all} send=${conn.send} onFold=${() => setFolded(true)} />`}
+    <${OpeningDeal} gameId=${u.gameId} view=${v} seat=${seat} start=${mapReady} />
     <${GameResult} view=${v} />
     <${CardDetailOverlay} legal=${all} send=${conn.send} view=${v} seat=${seat} />
   </div>`
