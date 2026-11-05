@@ -19,13 +19,18 @@ test('opponents follow engine seat order and own faction appears separately', ()
   assert.ok(!own.includes('player-eyrie'))
 })
 
-test('last played card uses only public card events', () => {
+test('played cards already in the log on mount are not replayed', () => {
   assert.equal(render(html`<${HudPlayed} log=${[{ type: 'alliance-mobilize', revision: 1, faction: 'alliance' }]} />`), '')
-  const out = render(html`<${HudPlayed} log=${[
+  assert.equal(render(html`<${HudPlayed} log=${[
     { type: 'craft', revision: 1, faction: 'marquise', detail: { card: 'tax-collector#1' } },
-    { type: 'move', revision: 2, faction: 'marquise', detail: { from: 1, to: 2 } },
-  ]} />`)
-  assert.ok(out.includes('data-card="tax-collector#1"'))
+  ]} />`), '')
+})
+
+test('faction badges carry their faction so a played card can fly out of them', () => {
+  const view = sampleView('marquise')
+  const seats = view.seats.map(s => ({ ...s, name: s.faction, connected: true }))
+  const out = render(html`<${HudFactions} view=${view} seats=${seats} seat=${'marquise'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} />`)
+  for (const s of view.seats.filter(s => s.faction !== 'marquise')) assert.ok(out.includes(`data-faction="${s.faction}"`))
 })
 
 test('undo and continue require server permission and a legal step', () => {

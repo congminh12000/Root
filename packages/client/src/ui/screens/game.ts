@@ -132,7 +132,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     <${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} />
     ${seat && html`<${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} own />`}
     // The last played card sits mid-screen; it steps aside while a clearing menu or the Build prompt is open (RD-M02).
-    ${stage.kind === 'idle' && !focus && html`<${HudPlayed} log=${u.log} />`}
+    <${HudPlayed} log=${u.log} hidden=${stage.kind !== 'idle' || !!focus} />
     ${seat ? html`<${HudActions} view=${v} onCancel=${focus || stage.kind !== 'idle' ? () => { setFocus(null); setStage(IDLE) } : undefined} actionsLeft=${marquiseActionsLeft(v)} legal=${all} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${open} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
     ${drawer === 'chat' && html`<${Drawer} side="right" label="Chat" onClose=${close}><${HudChat} entries=${u.chat ?? []} enabled=${!!seat} send=${conn.chat} /><//>`}
     ${seat && html`<${HandStrip} view=${v} legal=${all} seat=${seat} />`}

@@ -455,6 +455,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
   background: linear-gradient(115deg, transparent 35%, var(--white-a30) 48%, transparent 60%); transition: opacity 160ms; }
 .minicard:hover .cardface::before, .minicard:focus-visible .cardface::before, .questcard:hover .cardface::before { opacity: 1; }
 .cf-plaque { background-image: var(--grain-wood), linear-gradient(var(--wood-light), var(--wood)); }
+@media (prefers-reduced-motion: reduce) { .hud-played-card.leaving { animation-duration: 150ms; } }
 @media (prefers-reduced-motion: reduce) { .minicard .cardface::before, .questcard .cardface::before { transition: none; } }
 
 /* Reference HUD: opponents left, notices above, own faction/hand/actions below. */
@@ -471,7 +472,11 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-actions button { min-height: 44px; }
 .game-screen .hud-hand { max-width: calc(100% - 600px); }
 .hud-played { position: absolute; z-index: 7; left: 50%; top: 48%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; pointer-events: none; }
-.hud-played small { background: var(--paper-a96); padding: 3px 8px; border-radius: var(--r-sm); }
+.hud-played[hidden] { display: none; }
+.hud-played-card { grid-area: 1 / 1; display: grid; justify-items: center; gap: 4px; will-change: transform, opacity; }
+.hud-played-card.leaving { animation: hud-played-fade 450ms ease-out forwards; }
+@keyframes hud-played-fade { to { opacity: 0; transform: translateY(-8px) scale(0.97); } }
+.hud-played small { background: var(--paper-a96); padding: 3px 8px; border-radius: var(--r-sm); border-left: 4px solid var(--chip, var(--ink)); }
 .hud-played .minicard { width: 140px; pointer-events: auto; }
 .hud-played .cardface { width: 140px; font-size: 7px; }
 .hud-chat { display: grid; gap: 8px; }

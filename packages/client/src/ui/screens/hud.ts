@@ -3,12 +3,13 @@ import { PhaseMark, turnOwner } from './turn-phase.ts'
 import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import { GROUP } from '../../describe.ts'
 import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
 import { ownResources } from '../../interaction/resources.ts'
 import { decreeCounts, relationshipWith } from '../../interaction/opponents.ts'
 import { usableCards } from '../../interaction/cards.ts'
+import { newPlayed, playedCards, PLAYED_FADE_MS, PLAYED_HOLD_MS, type PlayedCard } from '../../interaction/played.ts'
 import { Hand } from './hand.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME, PHASE_NAME, STEP_NAME } from '../../names.ts'
@@ -70,7 +71,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
   const ordered = v.seats.map(s => seats.find(info => info.faction === s.faction)).filter((s): s is Seat => !!s)
   const visible = ordered.filter(s => own ? s.faction === seat : s.faction !== seat)
   return html`<nav class=${own ? 'hud-factions hud-self' : 'hud-factions'} aria-label=${own ? 'Phe của bạn' : 'Thứ tự lượt chơi'}>${visible.map(s => html`
-    <button key=${s.faction} class=${`hud-faction${s.faction === waiting ? ' turn' : ''}${s.faction === seat ? ' me' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})` }}
+    <button key=${s.faction} data-faction=${s.faction} class=${`hud-faction${s.faction === waiting ? ' turn' : ''}${s.faction === seat ? ' me' : ''}`} style=${{ '--chip': `var(--faction-${s.faction})` }}
       aria-pressed=${open === s.faction} aria-label=${`${FACTION_NAME[s.faction]}: ${v.score[s.faction] ?? 'dominance'} điểm, ${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ', vắng' : ''}`}
       onClick=${() => onOpen(s.faction)}>
       <span class="badge"><${Icon} name=${s.faction} /></span>
@@ -114,12 +115,60 @@ function useOutside(box: { current: Element | null }, active: boolean, close: ()
   }, [active, close])
 }
 
-/** The last publicly played card, taken only from public log payloads. */
-export function HudPlayed({ log }: { log: import('../../motion.ts').LogEntry[] }) {
-  const entry = [...log].reverse().find(e => ['craft', 'discard-card', 'eyrie-add-card', 'play-ambush', 'use-battle-card', 'activate-dominance'].includes(e.type) && typeof (e.detail as { card?: unknown } | undefined)?.card === 'string')
-  if (!entry) return null
-  const card = (entry.detail as { card: string }).card
-  return html`<section class="hud-played" aria-label="Bài vừa đánh ra"><small>Bài vừa đánh ra</small><${MiniCard} card=${card} /></section>`
+/**
+ * Cards a faction just played, from public log payloads only. Each flies out of that faction's panel to the middle,
+ * holds PLAYED_HOLD_MS, then fades; a card played sooner waits its turn in a queue. Cards already in the log when
+ * this mounts are not replayed. `hidden` keeps the queue running while another overlay owns the middle.
+ */
+export function HudPlayed({ log, hidden = false }: { log: import('../../motion.ts').LogEntry[]; hidden?: boolean }) {
+  const known = useRef<Set<string> | null>(null)
+  if (!known.current) known.current = new Set(playedCards(log).map(p => p.key))
+  const [queue, setQueue] = useState<PlayedCard[]>([])
+  const [active, setActive] = useState<PlayedCard | null>(null)
+  const [leaving, setLeaving] = useState<PlayedCard | null>(null)
+  useEffect(() => {
+    const fresh = newPlayed(log, known.current!)
+    if (fresh.length) setQueue(q => [...q, ...fresh])
+  }, [log])
+  useEffect(() => {
+    if (active || !queue.length) return
+    setActive(queue[0]!)
+    setQueue(queue.slice(1))
+  }, [active, queue])
+  useEffect(() => {
+    if (!active) return
+    const t = setTimeout(() => { setLeaving(active); setActive(null) }, PLAYED_FLY_MS + PLAYED_HOLD_MS)
+    return () => clearTimeout(t)
+  }, [active])
+  useEffect(() => {
+    if (!leaving) return
+    const t = setTimeout(() => setLeaving(null), PLAYED_FADE_MS)
+    return () => clearTimeout(t)
+  }, [leaving])
+  if (!active && !leaving) return null
+  return html`<section class="hud-played" aria-label="Bài vừa đánh ra" hidden=${hidden}>
+    ${leaving && html`<${PlayedCardView} key=${leaving.key} played=${leaving} leaving=${true} />`}
+    ${active && html`<${PlayedCardView} key=${active.key} played=${active} leaving=${false} />`}</section>`
+}
+
+const PLAYED_FLY_MS = 420
+
+function PlayedCardView({ played, leaving }: { played: PlayedCard; leaving: boolean }) {
+  const box = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const el = box.current
+    if (!el || leaving || typeof el.animate !== 'function') return
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    const from = document.querySelector(`.hud-faction[data-faction="${played.faction}"]`)?.getBoundingClientRect()
+    const to = el.getBoundingClientRect()
+    const start = from && !reduce
+      ? `translate(${from.left + from.width / 2 - (to.left + to.width / 2)}px, ${from.top + from.height / 2 - (to.top + to.height / 2)}px) scale(0.25)`
+      : 'scale(0.96)'
+    el.animate([{ transform: start, opacity: 0.4 }, { transform: 'none', opacity: 1 }],
+      { duration: reduce ? 150 : PLAYED_FLY_MS, easing: 'cubic-bezier(.2,.8,.2,1)' })
+  }, [])
+  return html`<div class="hud-played-card${leaving ? ' leaving' : ''}" ref=${box} style=${{ '--chip': `var(--faction-${played.faction})` }}>
+    <small>${FACTION_NAME[played.faction]} vừa đánh ra</small><${MiniCard} card=${played.card} /></div>`
 }
 
 /**
