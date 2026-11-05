@@ -191,3 +191,16 @@ export function HudPlayArea({ view: v, seat, legal }: { view: PlayerView; seat: 
   const usable = usableCards(legal, cards)
   return html`<section class="hud-playarea" aria-label="Lá đã chế tạo">${cards.map(c => html`<${MiniCard} key=${c} card=${c} usable=${usable.has(c)} />`)}</section>`
 }
+
+/** RD-M16: the server saves the game after every accepted command (packages/server room.ts); a small mark says so. */
+export function SaveMark({ revision }: { revision: number }) {
+  const [shown, setShown] = useState(false)
+  const first = useRef(true)
+  useEffect(() => {
+    if (first.current) { first.current = false; return }
+    setShown(true)
+    const id = setTimeout(() => setShown(false), 1400)
+    return () => clearTimeout(id)
+  }, [revision])
+  return shown ? html`<div class="save-mark" role="status" aria-label="Đã lưu trận"><${Icon} name="save" /></div>` : null
+}

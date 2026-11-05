@@ -208,9 +208,9 @@ Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md
 
 ### Mức thấp
 
-- [ ] **RD-M14.** Icon "+1 gỗ" bật lên tại ô ở Birdsong. Video: 04:10, 12:50.
-- [ ] **RD-M15.** Bảng phe phủ màn, có mũi tên lật sang phe khác (ngăn kéo hiện tại đã đủ dùng). Video: 06:25–07:02.
-- [ ] **RD-M16.** Icon báo đang tự lưu. Video: 10:52.
+- [x] **RD-M14.** Icon "+1 gỗ" bật lên tại ô ở Birdsong. Video: 04:10, 12:50.
+- [x] **RD-M15.** Bảng phe phủ màn, có mũi tên lật sang phe khác (ngăn kéo hiện tại đã đủ dùng). Video: 06:25–07:02.
+- [x] **RD-M16.** Icon báo đang tự lưu. Video: 10:52.
 
 ## 6. Checklist khác luật và điểm chưa rõ
 
@@ -243,6 +243,6 @@ Cách đóng RD-Q01–Q08: người quản lý ghi mốc vào `docs/01-official-
 
 ## 7. Việc tiếp theo
 
-1. Người quản lý duyệt PR Advanced Setup.
+1. RD-M01 → RD-M16 và RD-L01, RD-L02 đã xong (PR #44 → #55). Còn RD-Q01 → Q08: cần thêm mốc video.
 2. Làm từng mục theo số thứ tự, mỗi mục một chat, một nhánh, một PR. Chưa sửa code ở bước phân tích này.
 3. PR này (#44) chỉ merge khi người quản lý duyệt hết.

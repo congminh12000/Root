@@ -130,7 +130,12 @@ export function FactionBoards({ view: v, seat, initial }: { view: PlayerView; se
   const [tab, setTab] = useState<FactionId | 'shared'>(initial ?? order[0] ?? 'shared')
   const ready = tab === 'shared' || !!v.factions[tab]
   const Board = tab === 'shared' ? Shared : BOARD[tab]
-  return html`<section class="card boards"><h3>Bảng phe</h3>
+  // RD-M15: step through the boards with arrows or ← →, like Root Digital's board viewer.
+  const all: (FactionId | 'shared')[] = [...order, 'shared']
+  const step = (d: number) => setTab(t => all[(all.indexOf(t) + d + all.length) % all.length]!)
+  const key = (e: KeyboardEvent) => { if (e.key === 'ArrowLeft') { step(-1); e.preventDefault() } if (e.key === 'ArrowRight') { step(1); e.preventDefault() } }
+  return html`<section class="card boards" onKeyDown=${key}><h3 class="boards-head"><button class="secondary" aria-label="Bảng trước (←)" onClick=${() => step(-1)}>‹</button>
+    <span>Bảng phe</span><button class="secondary" aria-label="Bảng sau (→)" onClick=${() => step(1)}>›</button></h3>
     <div class="tabs" role="tablist">${order.map(f => html`<button role="tab" class="secondary" aria-selected=${tab === f} onClick=${() => setTab(f)}><${Chip} f=${f} /></button>`)}
       <button role="tab" class="secondary" aria-selected=${tab === 'shared'} onClick=${() => setTab('shared')}>Chung</button></div>
     <div role="tabpanel" aria-label=${tab === 'shared' ? 'Chung' : FACTION_NAME[tab]}>${ready ? html`<${Board} v=${v} />` : html`<p class="note">Phe này chưa tới lượt setup.</p>`}</div></section>`

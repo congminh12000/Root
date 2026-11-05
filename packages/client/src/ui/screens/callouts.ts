@@ -137,3 +137,15 @@ export function MapInfo({ project, view, clearing, onClose }: { project: Project
   return html`<div class=${`map-info${right ? '' : ' left'}`} style=${{ left: `${at[0]}px`, top: `${Math.min(Math.max(at[1], 250), innerHeight - 160)}px` }}>
     <${ClearingInfo} view=${view} clearing=${clearing} onClose=${onClose} /></div>`
 }
+
+/** RD-M14: "+1" with a wood icon over each clearing that just got wood, for a moment. */
+export function MapPops({ project, changes }: { project: Project; changes: Changes }) {
+  const [pops, setPops] = useState<{ key: string; clearing: number; gained: number }[]>([])
+  useEffect(() => {
+    if (!changes.wood.length) return
+    setPops(changes.wood.map(w => ({ ...w, key: `${changes.seq}-${w.clearing}` })))
+    const id = setTimeout(() => setPops([]), 1600)
+    return () => clearTimeout(id)
+  }, [changes.seq])
+  return html`${pops.map(p => { const at = project(p.clearing); return at && html`<span class="map-pop" key=${p.key} aria-hidden="true" style=${{ left: `${at[0]}px`, top: `${at[1]}px` }}>+${p.gained}<${Icon} name="wood" /></span>` })}`
+}

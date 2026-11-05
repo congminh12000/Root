@@ -643,7 +643,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 @keyframes draw-in { from { transform: translateY(36px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .hud-hand .hand-slot { animation: none; } }
 /* RD-M11: a small notice at the top right. */
-.hud-toast { position: absolute; z-index: 11; top: 64px; right: var(--sp-3); display: flex; align-items: center; gap: 6px; max-width: min(360px, 80vw); padding: 6px 12px;
+.hud-toast { position: absolute; z-index: 11; top: 100px; right: var(--sp-3); display: flex; align-items: center; gap: 6px; max-width: min(360px, 80vw); padding: 6px 12px;
   border: 2px solid var(--ink); border-radius: var(--r-md); background: var(--paper-a96); box-shadow: var(--shadow-card); font-size: var(--fs-sm); --icon-fill: var(--autumn-gold); }
 .hud-toast .icon { width: 20px; height: 20px; flex-shrink: 0; }
 /* RD-M12: Eyrie Decree counts and the Vagabond's relationship on opponents' badges. */
@@ -657,3 +657,20 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-playarea .minicard { width: 64px; }
 .hud-playarea .minicard .cardface { width: 64px; font-size: 4px; }
 @media (max-width: 600px) { .hud-playarea { top: 30%; } .hud-playarea .minicard, .hud-playarea .minicard .cardface { width: 48px; } }
+
+/* RD-M14: "+1 wood" pops over clearings. */
+.map-pop { position: absolute; transform: translate(-50%, -100%); display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px; border-radius: var(--r-pill);
+  background: var(--paper-a96); border: 1.5px solid var(--ink); font: var(--fs-md) var(--font-display); pointer-events: none; animation: pop-up 1.6s ease-out forwards; }
+.map-pop .icon { width: 18px; height: 18px; }
+@keyframes pop-up { 0% { opacity: 0; margin-top: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; margin-top: -28px; } }
+@media (prefers-reduced-motion: reduce) { .map-pop { animation: none; } }
+/* RD-M15: arrows to step through faction boards. */
+.boards-head { display: flex; align-items: center; gap: 8px; }
+.boards-head span { flex: 1; text-align: center; }
+.boards-head button { min-width: 44px; min-height: 44px; font-size: var(--fs-lg); }
+/* RD-M16: a small "saved" mark under the top-right menu. */
+.save-mark { position: absolute; z-index: 11; top: 64px; right: var(--sp-3); width: 28px; height: 28px; display: grid; place-items: center; border-radius: var(--r-sm);
+  background: var(--paper-a96); border: 1.5px solid var(--ink); animation: fade-out 1.4s ease-in forwards; }
+.save-mark .icon { width: 18px; height: 18px; }
+@keyframes fade-out { 0%, 60% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .save-mark { animation: none; } }
