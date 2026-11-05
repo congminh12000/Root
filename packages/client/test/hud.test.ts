@@ -15,8 +15,8 @@ test('opponents follow engine seat order and own faction appears separately', ()
   const opponents = view.seats.filter(s => s.faction !== 'marquise')
   for (let i = 1; i < opponents.length; i++) assert.ok(out.indexOf(`player-${opponents[i-1]!.faction}`) < out.indexOf(`player-${opponents[i]!.faction}`))
   const own = render(html`<${HudFactions} ...${props} own />`)
-  assert.ok(own.includes('player-marquise'))
-  assert.ok(!own.includes('player-eyrie'))
+  assert.ok(own.includes('data-faction="marquise"'))
+  assert.ok(!own.includes('data-faction="eyrie"'))
 })
 
 test('played cards already in the log on mount are not replayed', () => {
@@ -72,7 +72,7 @@ test('your own Marquise badge is the painted panel: score in the laurel, each co
   const m = view.factions.marquise!
   for (const [row, value] of [[0, m.warriorSupply], [1, m.woodSupply], [2, view.handCounts.marquise ?? 0]] as const)
     assert.ok(own.includes(`--row:${row}`) && own.includes(`>${value}</b>`), `row ${row}`)
-  assert.ok(own.includes('player-marquise'))
+  assert.ok(!own.includes('player-marquise'), 'no name on your own painted panel')
   // Opponents keep the plain badge, and other factions' own badge too until they get a painting.
   const opp = render(html`<${HudFactions} view=${view} seats=${seats} seat=${'marquise'} changes=${NO_CHANGES} open=${null} onOpen=${() => {}} />`)
   assert.ok(!opp.includes('art-panel'))

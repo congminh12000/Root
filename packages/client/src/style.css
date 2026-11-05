@@ -371,6 +371,7 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .kit-hud.short { height: 120px; }
 .kit-hud .hud-self { top: auto; bottom: 12px; left: 12px; right: auto; transform: none; }
 .kit-hud .hud-hand { max-width: calc(100% - 600px); }
+.kit-hud .hud-log { top: 12px; bottom: auto; left: auto; right: 142px; } /* as in the game, clear of your badge */
 .kit-deck { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin: var(--sp-2) 0; }
 .kit-deck .minicard { margin: 0; }
 .kit-item > .minicard .cardface.full, .kit-deck .cardface.full { --cf-w: 180px; box-sizing: border-box; }
@@ -711,8 +712,6 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 /* Painted icons sit 68% across at 28.7%, 51.9% and 74.1% down; each count goes just right of its icon. */
 .art-panel .panel-num { left: 82%; top: calc(28.7% + var(--row) * 22.7%); font-size: 11cqw; color: var(--paper);
   text-shadow: 0 0 2px var(--ink), 0 2px 0 var(--ink), 2px 0 0 var(--ink), -2px 0 0 var(--ink), 0 -2px 0 var(--ink); }
-.art-panel .hud-player-name { position: absolute; left: 58%; right: 8%; bottom: 5%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;
-  font-size: 5cqw; font-weight: 600; color: var(--paper); text-shadow: 0 1px 0 var(--ink), 0 0 2px var(--ink); }
 .art-panel .phase-mark { position: absolute; left: 50%; top: 0; transform: translate(-50%, -45%); box-shadow: var(--shadow-card); border: 1px solid var(--ink); white-space: nowrap; }
 @media (max-width: 1000px) { .hud-self .hud-faction.art-panel { width: 190px; min-width: 0; } }
 @media (max-width: 600px) { .hud-self .hud-faction.art-panel { width: 150px; min-width: 0; } }

@@ -85,7 +85,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
     </button>`)}</nav>`
 }
 
-/** Your own faction as its painted panel: score in the laurel, each supply count beside its painted icon. */
+/** Your own faction as its painted panel: score in the laurel, each supply count beside its painted icon. No name: it is you. */
 function ArtPanel({ view: v, seat: s, waiting, changes, open, onOpen }: {
   view: PlayerView; seat: Seat; waiting: FactionId | undefined; changes: Changes; open: DrawerId | null; onOpen: (f: FactionId) => void
 }) {
@@ -99,7 +99,6 @@ function ArtPanel({ view: v, seat: s, waiting, changes, open, onOpen }: {
     ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
     <b key=${scored ? `${s.faction}-${changes.seq}` : s.faction} class=${`panel-score${scored ? ' bump' : ''}`}>${v.score[s.faction] ?? 'D'}</b>
     ${res.map(r => art.rows.indexOf(r.icon) >= 0 && html`<b class="panel-num" style=${{ '--row': art.rows.indexOf(r.icon) }} title=${r.label}>${r.value}</b>`)}
-    <span class="hud-player-name">${s.name}${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</span>
   </button>`
 }
 
