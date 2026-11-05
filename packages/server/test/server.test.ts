@@ -7,7 +7,7 @@ import { WebSocket } from 'ws'
 import type { CreateGameResponse, ServerMessage } from '../src/protocol.ts'
 import { Room, type SavedGame } from '../src/room.ts'
 import { startServer } from '../src/server.ts'
-import { legalActions } from '@root/game-engine'
+import { currentActor, legalActions } from '@root/game-engine'
 
 const allBots = { seats: (['marquise', 'eyrie', 'alliance', 'vagabond'] as const).map(faction => ({ faction, kind: 'bot' as const, bot: 'simple' })) }
 
@@ -29,20 +29,22 @@ test('seat tokens map to seats; spectators see no hand and no legal actions; bot
   const spectator = room.message(null)
   assert.ok(spectator.type === 'update' && spectator.view.hand.length === 0 && spectator.legal.length === 0)
   const own = room.message('marquise')
-  assert.ok(own.type === 'update' && own.view.hand.length === 3)
+  assert.ok(own.type === 'update' && own.view.hand.length === 5) // Advanced Setup draws five (A.7, decisions/0006)
 })
 
 test('a command from the wrong seat or with a stale revision is rejected and changes nothing', () => {
   const room = Room.create({ seats: [{ faction: 'marquise', kind: 'human' }, { faction: 'eyrie', kind: 'human' }] }, () => {}, { botDelayMs: 0, turnSeconds: 0 })
   const before = room.state
-  const legal = room.message('marquise')
+  const first = currentActor(room.state)! // Advanced Setup starts with the last seat in turn order (A.8.3)
+  const other = first === 'marquise' ? 'eyrie' : 'marquise'
+  const legal = room.message(first)
   assert.ok(legal.type === 'update' && legal.legal.length > 0)
-  const wrong = room.submit('eyrie', 'x1', 0, legal.legal[0]!)
+  const wrong = room.submit(other, 'x1', 0, legal.legal[0]!)
   assert.equal(wrong.ok, false)
-  const stale = room.submit('marquise', 'x2', 99, legal.legal[0]!)
+  const stale = room.submit(first, 'x2', 99, legal.legal[0]!)
   assert.ok(!stale.ok && stale.code === 'stale-revision')
   assert.equal(room.state, before)
-  assert.ok(room.submit('marquise', 'x3', 0, legal.legal[0]!).ok)
+  assert.ok(room.submit(first, 'x3', 0, legal.legal[0]!).ok)
   assert.equal(room.saved.record.commands.length, 1)
   room.close()
 })
@@ -80,8 +82,9 @@ test('a timeout decision that arrives after the human already acted is dropped',
   const unsubscribe = room.subscribe(null, () => {})
   await new Promise(r => setTimeout(r, 60)) // the clock ran out; the stand-in bot is thinking
   const revision = room.state.meta.revision
-  const own = legalActions(room.state, 'marquise')[0]!
-  assert.ok(room.submit('marquise', 'human-1', revision, own).ok)
+  const first = currentActor(room.state)! // Advanced Setup starts with the last seat in turn order (A.8.3)
+  const own = legalActions(room.state, first)[0]!
+  assert.ok(room.submit(first, 'human-1', revision, own).ok)
   release()
   await new Promise(r => setTimeout(r, 20))
   unsubscribe()

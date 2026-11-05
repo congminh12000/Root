@@ -85,6 +85,7 @@ export class Room {
     }))
     const options = {
       gameId: id,
+      setup: 'advanced' as const, // decisions/0006: Advanced Setup with faction setup cards; older saves replay as Standard
       players: seats.map(s => ({
         playerId: s.faction, faction: s.faction,
         controller: s.kind === 'human' ? { kind: 'human' as const, userId: s.name } : { kind: 'bot' as const, profile: s.bot! },
