@@ -594,6 +594,13 @@ button.secondary[aria-pressed="true"] { background: var(--wood); color: var(--pa
 .hud-marquise button small { position: absolute; right: 3px; bottom: 1px; font-weight: 700; font-size: var(--fs-xs); }
 .hud-marquise button:disabled { opacity: .4; }
 
+/* RD-M06: paper turn announcement; phase belongs to the turn owner, including during interrupts. */
+.turn-banner { position: absolute; z-index: 12; top: 22%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--sp-3); width: max-content; max-width: calc(100% - 32px); box-sizing: border-box; padding: var(--sp-3) var(--sp-4); background: var(--paper-raised); border: 2px solid var(--ink); border-radius: var(--r-md); box-shadow: var(--shadow-card); pointer-events: none; font-size: var(--fs-lg); }
+.turn-banner > .icon { width: 36px; height: 36px; flex-shrink: 0; }
+.turn-banner small { display: block; font-size: var(--fs-sm); color: var(--ink-soft); }
+.phase-mark { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-sm); color: var(--ink); background: var(--paper-raised); border-radius: var(--r-sm); padding: 2px 4px; }
+.hud-faction .phase-mark { grid-column: 1 / -1; justify-content: center; }
+.phase-mark .icon { width: 18px; height: 18px; }
 /* RD-M05: the seat's supplies, always on its own badge (Root Digital's bottom-left panel). */
 .hud-self .hud-faction { grid-template-columns: auto auto auto; }
 .hud-faction .hud-res { grid-column: 3; grid-row: 1 / span 2; display: grid; gap: 2px; padding-left: 8px; margin-left: 2px; border-left: 1px solid var(--ink-a25); }

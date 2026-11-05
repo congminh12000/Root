@@ -8,7 +8,7 @@ import { color } from './tokens.ts'
 export type IconName =
   | 'marquise' | 'eyrie' | 'alliance' | 'vagabond'
   | 'fox' | 'rabbit' | 'mouse' | 'bird'
-  | 'close' | 'dice' | 'clock' | 'star' | 'card' | 'sun'
+  | 'close' | 'dice' | 'clock' | 'star' | 'card' | 'sun' | 'moon'
   | 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
   | 'saw' | 'wood' | 'crown' | 'eye' | 'flame' | 'shield' | 'pick' | 'mace' | 'throne' | 'scales' | 'chest' | 'horn' | 'spyglass' | 'map' | 'mask'
 
@@ -40,6 +40,7 @@ const SHAPES: Record<IconName, string> = {
   dice: `<rect ${F} x="4" y="4" width="16" height="16" rx="3.5"/><circle ${INK} cx="9" cy="9" r="1.4"/><circle ${INK} cx="15" cy="15" r="1.4"/><circle ${INK} cx="12" cy="12" r="1.4"/>`,
   clock: `<circle ${F} cx="12" cy="12" r="8.5"/><path ${LINE} d="M12 7.5 V12 L15 14"/>`,
   star: `<path ${F} d="M12 3 L14.6 8.6 L20.6 9.3 L16.1 13.4 L17.4 19.4 L12 16.4 L6.6 19.4 L7.9 13.4 L3.4 9.3 L9.4 8.6 Z"/>`,
+  moon: `<path ${F} d="M16 3 A9 9 0 1 0 21 16 A10 10 0 0 1 16 3 Z"/>`,
   // Daylight sun: eight short rays round a disc, for the Marquise actions-left badge (Root Digital shows a numbered sun).
   sun: `<path ${F} d="M12 1.5 L13.6 5 H10.4 Z M12 22.5 L13.6 19 H10.4 Z M1.5 12 L5 10.4 V13.6 Z M22.5 12 L19 10.4 V13.6 Z M4.6 4.6 L8.2 6 L6 8.2 Z M19.4 19.4 L15.8 18 L18 15.8 Z M19.4 4.6 L18 8.2 L15.8 6 Z M4.6 19.4 L6 15.8 L8.2 18 Z"/><circle ${F} cx="12" cy="12" r="6.2"/>`,
   card: `<rect ${F} x="6" y="3" width="12" height="18" rx="2"/><path ${LINE} d="M9 8 H15 M9 11.5 H15 M9 15 H13"/>`,

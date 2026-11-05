@@ -1,3 +1,5 @@
+import { useState } from 'preact/hooks'
+import { TurnBanner, PhaseMark, TurnNotice } from './ui/screens/turn-phase.ts'
 import { GameResult, GameLog, QuickGuide } from './ui/screens/finish.ts'
 import './ui/setup.ts'
 import type { FactionId, LastRoll } from '@root/game-engine'
@@ -24,6 +26,14 @@ import { color, factionColor, font, fontSize, motion, radius, space, suitColor }
  * ui-kit.html: every shared piece in every state, from the real components and the real tokens (docs/07-ui/README.md
  * §3). Build a component here first, then use it in the game. Playwright screenshots this page (visual/).
  */
+
+function TurnDemo() {
+  const [view, setView] = useState(() => ({ ...sampleView('marquise'), stage: 'setup' as 'setup' | 'play' }))
+  return html`<div data-turn-demo><div class="kit-hud short"><${TurnNotice} view=${view} /></div>
+    <button onClick=${() => setView(v => ({ ...v, stage: 'play', turn: { ...v.turn, number: v.turn.number + 1, seat: (v.turn.seat + 1) % v.seats.length } }))}>Lượt kế (thử)</button>
+    <button onClick=${() => setView(v => ({ ...v, turn: { ...v.turn, phase: v.turn.phase === 'daylight' ? 'evening' : 'daylight' } }))}>Đổi pha (thử)</button>
+    <button onClick=${() => setView(v => ({ ...v, waitingOn: ['vagabond'] }))}>Đổi người trả lời (thử)</button></div>`
+}
 
 const FACTIONS: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
 const Section = ({ title, note, children }: { title: string; note?: string; children: ComponentChildren }) =>
@@ -176,6 +186,10 @@ const Kit = () => html`
     <${GameLog} log=${[{ revision: 3, faction: 'marquise', type: 'move', detail: { from: 0, to: 4, warriors: 2 } }]} selected=${3} onSelect=${noop} />
     <${GameLog} log=${[]} selected=${null} onSelect=${noop} /><${QuickGuide} />
     <p class="error">Không tạo được trận</p><//>
+
+  <${Section} title="RD-M06 · Lượt và pha" note="Chỉ đổi lượt mới hiện băng; pha luôn nằm cạnh huy hiệu người đang đi.">
+    <div class="kit-hud short"><${TurnBanner} faction="alliance" number=${12} /></div>
+    <${TurnDemo} /><${Row}>${(['birdsong', 'daylight', 'evening'] as const).map(phase => html`<${PhaseMark} phase=${phase} />`)}<//><//>
 
   <${Section} title="Bảng hành động góc dưới phải" note="RD-M01: mặt trời ghi số hành động Daylight còn lại của Marquise (§6.5: ba, thêm một mỗi lá chim), lấy từ bảng Marquise trong PlayerView. Nút Lựa chọn đếm số lựa chọn hợp lệ, không phải số hành động.">
     <div class="kit-actions">

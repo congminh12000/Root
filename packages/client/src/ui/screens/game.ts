@@ -1,3 +1,4 @@
+import { TurnNotice } from './turn-phase.ts'
 import { SoundToggle } from './sound.ts'
 import type { Action } from '@root/game-engine'
 import { html } from 'htm/preact'
@@ -98,6 +99,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
   const logPick = (l: LogEntry) => { setLogSelection(logSelection?.revision === l.revision ? null : l); setPreview(null) }
 
   return html`<div class="game-screen">
+    <${TurnNotice} view=${v} />
     <${MapView} map=${mapChoice.value} view=${v} highlight=${highlight} targets=${board.targets} changes=${conn.changes.value} onPick=${pick} cameraHome=${cameraHome}
       draggable=${startClearings(legal).filter(c => destinations(legal, c).length > 0)}
       onDrag=${(from: number, to: number) => { setPreview(null); setStage(click(legal, click(legal, IDLE, from), to)) }}

@@ -1,3 +1,4 @@
+import { PhaseMark, turnOwner } from './turn-phase.ts'
 import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { html } from 'htm/preact'
 import type { ComponentChildren } from 'preact'
@@ -70,6 +71,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
       aria-pressed=${open === s.faction} aria-label=${`${FACTION_NAME[s.faction]}: ${v.score[s.faction] ?? 'dominance'} điểm, ${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ', vắng' : ''}`}
       onClick=${() => onOpen(s.faction)}>
       <span class="badge"><${Icon} name=${s.faction} /></span>
+      ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
       <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${changes.scored.includes(s.faction) ? 'bump' : ''}>${v.score[s.faction] ?? 'D'}</b>
       <span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>
       ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
