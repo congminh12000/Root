@@ -10,4 +10,4 @@ supply, cards in hand. `ui/faction-art.ts` lists that order; the HUD writes the 
 
 `alliance-opponent.png`: owner-supplied green fox portrait (2026-11-05) for the Woodland Alliance opponent badge.
 Resized from 1289 × 1220 to 520 × 492, with transparency preserved. The live score is centred in the gold
-laurel (22% across, 79.7% down); player name and public hand count remain below the portrait.
+laurel (22% across, 79.7% down); player name and hand count are omitted below the portrait.

@@ -78,7 +78,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
       ${!own && s.faction === 'alliance' ? html`<img class="opponent-art" src=${ALLIANCE_OPPONENT_ART} alt="" draggable=${false} />` : html`<span class="badge"><${Icon} name=${s.faction} /></span>`}
       ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
       <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${`${!own && s.faction === 'alliance' ? 'opponent-score' : ''}${changes.scored.includes(s.faction) ? ' bump' : ''}`}>${v.score[s.faction] ?? 'D'}</b>
-      <span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>
+      ${(own || s.faction !== 'alliance') && html`<span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>`}
       ${!own && s.faction === 'eyrie' && decreeCounts(v) && html`<span class="decree-mini" aria-label="Decree">${decreeCounts(v)!.map(d => html`<span title=${`${d.label}: ${d.count} lá`}><${Icon} name=${d.icon} /><b>${d.count}</b></span>`)}</span>`}
       ${!own && s.faction === 'vagabond' && relationshipWith(v, seat) && html`<span class=${`relation${relationshipWith(v, seat)!.hostile ? ' hostile' : ''}`} title="Quan hệ của Vagabond với bạn"><${Icon} name="heart" />${relationshipWith(v, seat)!.text}</span>`}
       ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
