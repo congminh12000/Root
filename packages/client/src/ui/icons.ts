@@ -10,7 +10,7 @@ export type IconName =
   | 'fox' | 'rabbit' | 'mouse' | 'bird'
   | 'close' | 'dice' | 'clock' | 'star' | 'card' | 'sun' | 'moon'
   | 'boots' | 'sword' | 'crossbow' | 'torch' | 'hammer' | 'tea' | 'coin' | 'bag'
-  | 'saw' | 'crown' | 'eye' | 'flame' | 'shield' | 'pick' | 'mace' | 'throne' | 'scales' | 'chest' | 'horn' | 'spyglass' | 'map' | 'mask'
+  | 'saw' | 'wood' | 'crown' | 'eye' | 'flame' | 'shield' | 'pick' | 'mace' | 'throne' | 'scales' | 'chest' | 'horn' | 'spyglass' | 'map' | 'mask'
 
 const F = 'style="fill:var(--icon-fill,currentColor);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round"'
 const INK = 'style="fill:var(--ink)"'
@@ -55,6 +55,8 @@ const SHAPES: Record<IconName, string> = {
   bag: `<path ${F} d="M9 4.5 H15 L13.5 8 C18 9 20 13 19.5 16.5 C19 19.5 16.5 20.5 12 20.5 C7.5 20.5 5 19.5 4.5 16.5 C4 13 6 9 10.5 8 Z"/><path ${LINE} d="M9.5 8 H14.5"/>`,
   // Card kinds and card motifs (card faces, docs/07-ui/style-guide.md §6): our own drawings.
   saw: `<path ${F} d="M3 9 H21 V13 L19.5 15.5 L18 13 L16.5 15.5 L15 13 L13.5 15.5 L12 13 L10.5 15.5 L9 13 L7.5 15.5 L6 13 L4.5 15.5 L3 13 Z"/><path ${F} d="M3 5.5 H8 V9 H3 Z"/>`,
+  // A cut log seen from its end: the Marquise's wood token.
+  wood: `<path ${F} d="M5 8 H17 A4 4 0 0 1 17 16 H5 A4 4 0 0 1 5 8 Z"/><circle ${F} cx="17" cy="12" r="4"/><circle ${INK} cx="17" cy="12" r="1.2"/>`,
   crown: `<path ${F} d="M3.5 8 L8 12 L12 5 L16 12 L20.5 8 L19 18.5 H5 Z"/><path ${LINE} d="M5.5 15.5 H18.5"/>`,
   eye: `<path ${F} d="M2.5 12 C6 6.5 18 6.5 21.5 12 C18 17.5 6 17.5 2.5 12 Z"/><circle ${INK} cx="12" cy="12" r="2.8"/>`,
   flame: `<path ${FLAME} d="M12 2.5 C17 7 19.5 11 18 15.5 C17 18.5 14.8 20.5 12 20.5 C9.2 20.5 7 18.5 6 15.5 C5 12.5 7 10 8.5 9 C8.8 11 9.8 12 11 12.3 C10 9 10.5 5.5 12 2.5 Z"/>`,

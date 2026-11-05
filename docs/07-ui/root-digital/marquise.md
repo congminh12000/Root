@@ -185,7 +185,7 @@ Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md
 - [x] **RD-M02. Hộp Build, giống Root Digital.** Hiện giờ bấm "Xây" thì hiện một ô chọn dài 21 dòng, mỗi dòng ghép sẵn ô, loại công trình và chỗ lấy gỗ, ví dụ "sawmill ở ô 2, gỗ từ ô 1"; người chơi phải đọc từng dòng. Root Digital làm 3 bước: bấm ô trên map → hộp nhỏ hiện 3 hình công trình, dưới mỗi hình ghi điểm được và số gỗ tốn → bấm một hình là xây; gỗ tự lấy, ai muốn chọn gỗ từ ô nào thì tích thêm ô "chọn gỗ" (§6.5.4). Lọc trên `legal`. Video: 02:50.
 - [x] **RD-M03. Băng chữ mệnh lệnh** ở giữa trên cho mọi bước của mình ("Chọn ô để xây", "Chọn số quân", "Bỏ 2 lá"). Video: khắp video.
 - [x] **RD-M04. Bảng hành động cố định của Marquise.** 6 nút icon tự vẽ: March, Build, Recruit, Battle, lá chim, Overwork; mờ khi không dùng được; cùng chỗ mọi lượt. Giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng. Video: ảnh cắt 09:10.
-- [ ] **RD-M05. Tài nguyên của mình luôn hiện, giống Root Digital,** trong huy hiệu phe mình ở góc dưới trái (chỗ đang ghi "0 · marquise · 4 lá"): thêm cột bên phải điểm, 3 dòng icon + số: chiến binh trong kho, gỗ trong kho, số lá trên tay. Không cần mở bảng phe mới thấy. Video: ảnh cắt 09:10.
+- [x] **RD-M05. Tài nguyên của mình luôn hiện, giống Root Digital,** trong huy hiệu phe mình ở góc dưới trái (chỗ đang ghi "0 · marquise · 4 lá"): thêm cột bên phải điểm, 3 dòng icon + số: chiến binh trong kho, gỗ trong kho, số lá trên tay. Không cần mở bảng phe mới thấy. Video: ảnh cắt 09:10.
 
 ### Phân công tiếp nối (Codex, 05/11/2026)
 
