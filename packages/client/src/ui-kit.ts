@@ -35,6 +35,18 @@ function TurnDemo() {
     <button onClick=${() => setView(v => ({ ...v, waitingOn: ['vagabond'] }))}>Đổi người trả lời (thử)</button></div>`
 }
 
+function ContextDemo() {
+  const [mode, setMode] = useState('evening')
+  const [sent, setSent] = useState(0)
+  const sample = sampleView('marquise')
+  const view = { ...sample, stage: 'play' as const, turn: { ...sample.turn, seat: sample.seats.findIndex(s => s.faction === 'marquise'), phase: 'daylight' as const, step: mode === 'continue' ? 'craft' : 'actions' } }
+  const legal: Action[] = mode === 'blocked' ? [] : mode === 'march' ? [{ type: 'marquise-end-march', payload: {} }] : [{ type: 'end-step', payload: {} }]
+  return html`<div data-context-demo><label>Ngữ cảnh nút chính <select aria-label="Ngữ cảnh nút chính" value=${mode} onChange=${(e: Event) => setMode((e.target as HTMLSelectElement).value)}>
+    <option value="evening">Kết thúc Daylight</option><option value="continue">Tiếp tục bước</option><option value="cancel">Đang chọn ô</option><option value="march">Dừng March</option><option value="blocked">Đang chờ quyết định</option></select></label>
+    <p data-sent>Đã gửi: ${sent}</p><div class="kit-hud actions"><${HudActions} view=${view} actionsLeft=${mode === 'continue' ? null : 2} legal=${legal} canUndo=${false} undo=${noop}
+      send=${() => setSent(n => n + 1)} onOpen=${noop} onCancel=${mode === 'cancel' ? () => setMode('evening') : undefined} /></div></div>`
+}
+
 const FACTIONS: FactionId[] = ['marquise', 'eyrie', 'alliance', 'vagabond']
 const Section = ({ title, note, children }: { title: string; note?: string; children: ComponentChildren }) =>
   html`<section class="card kit"><h2>${title}</h2>${note && html`<p class="note">${note}</p>`}${children}</section>`
@@ -189,6 +201,8 @@ const Kit = () => html`
   <${Section} title="RD-M06 · Lượt và pha" note="Chỉ đổi lượt mới hiện băng; pha luôn nằm cạnh huy hiệu người đang đi.">
     <div class="kit-hud short"><${TurnBanner} faction="alliance" number=${12} /></div>
     <${TurnDemo} /><${Row}>${(['birdsong', 'daylight', 'evening'] as const).map(phase => html`<${PhaseMark} phase=${phase} />`)}<//><//>
+
+  <${Section} title="RD-M07 · Nút theo ngữ cảnh" note="Huỷ chỉ bỏ lựa chọn trên bản đồ; Sang Evening và Tiếp tục gửi đúng phần tử legal. Không có bước hợp lệ thì nút bị khoá."><${ContextDemo} /><//>
 
   <${Section} title="Bảng hành động góc dưới phải" note="RD-M01: mặt trời ghi số hành động Daylight còn lại của Marquise (§6.5: ba, thêm một mỗi lá chim), lấy từ bảng Marquise trong PlayerView. Nút Lựa chọn đếm số lựa chọn hợp lệ, không phải số hành động.">
     <div class="kit-actions">

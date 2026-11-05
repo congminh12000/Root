@@ -2,6 +2,7 @@ import type { Action, FactionId, PlayerView } from '@root/game-engine'
 import { FACTION_NAME, STEP_NAME } from '../names.ts'
 import type { Decision } from './decisions.ts'
 import { warriorCounts, viewOf, type Stage } from './select.ts'
+import { contextAction } from './context-action.ts'
 import { marquiseActionsLeft } from './actions-left.ts'
 
 /**
@@ -21,13 +22,13 @@ export function promptFor({ view: v, legal, seat, stage, focus, decision }: {
   }
   if (stage.kind === 'at') return `Chọn việc làm ở ô ${stage.clearing + 1}`
   const types = new Set(legal.map(a => a.type))
-  if (types.size === 1 && types.has('end-step')) return 'Bấm Continue để sang bước tiếp theo'
+  if (types.size === 1 && types.has('end-step')) return contextAction(legal, v).label === 'Sang Evening' ? 'Bấm Sang Evening để kết thúc Daylight' : 'Bấm Tiếp tục để sang bước tiếp theo'
   if (types.has('marquise-end-march')) return 'Đi nước thứ hai của March, hoặc dừng March'
   const step = v.turn.step
-  if (step === 'craft') return 'Chế tạo: chọn lá trên tay, hoặc bấm Continue'
+  if (step === 'craft') return 'Chế tạo: chọn lá trên tay, hoặc bấm Tiếp tục'
   const left = marquiseActionsLeft(v)
-  if (left !== null) return left > 0 ? `Chọn một hành động (còn ${left})` : 'Hết hành động: bấm Continue sang Evening'
-  if (step === 'add-to-decree') return 'Thêm lá vào Decree, hoặc bấm Continue'
+  if (left !== null) return left > 0 ? `Chọn một hành động (còn ${left})` : 'Hết hành động: bấm Sang Evening'
+  if (step === 'add-to-decree') return 'Thêm lá vào Decree, hoặc bấm Tiếp tục'
   if (step === 'decree') return 'Thực hiện Decree theo thứ tự từ trái sang phải'
   return `${STEP_NAME[step] ?? step}: chọn trên bản đồ hoặc ở bảng hành động`
 }

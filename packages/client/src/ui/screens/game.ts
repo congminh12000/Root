@@ -57,11 +57,10 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     if (u) setStage(s => stillValid(u.legal, s.kind === 'path' ? { kind: 'at', clearing: s.from } : s))
   }, [u?.view.revision])
   useEffect(() => {
-    if (!focus) return
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { setFocus(null); setStage(IDLE) } }
     document.addEventListener('keydown', key)
     return () => document.removeEventListener('keydown', key)
-  }, [focus])
+  }, [])
   if (!u) return html`<p class="loading">Đang kết nối trận ${gameId}… ${conn.notice.value}</p>`
   const { view: v, legal: all, seats, seat } = u
   // The map and its menus work on `legal`; the action panel and dialogs keep every choice in `all`.
@@ -129,7 +128,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     ${seat && html`<${HudFactions} view=${v} seats=${seats} seat=${seat} changes=${conn.changes.value} open=${drawer} onOpen=${toggle} own />`}
     // The last played card sits mid-screen; it steps aside while a clearing menu or the Build prompt is open (RD-M02).
     ${stage.kind === 'idle' && !focus && html`<${HudPlayed} log=${u.log} />`}
-    ${seat ? html`<${HudActions} actionsLeft=${marquiseActionsLeft(v)} legal=${all} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${open} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
+    ${seat ? html`<${HudActions} view=${v} onCancel=${focus || stage.kind !== 'idle' ? () => { setFocus(null); setStage(IDLE) } : undefined} actionsLeft=${marquiseActionsLeft(v)} legal=${all} canUndo=${u.canUndo} undo=${conn.undo} send=${conn.send} onOpen=${open} />` : html`<${HudSun} left=${marquiseActionsLeft(v)} />`}
     ${drawer === 'chat' && html`<${Drawer} side="right" label="Chat" onClose=${close}><${HudChat} entries=${u.chat ?? []} enabled=${!!seat} send=${conn.chat} /><//>`}
     ${seat && html`<${HandStrip} view=${v} legal=${all} seat=${seat} />`}
     <button class="secondary hud-log" aria-pressed=${drawer === 'log'} onClick=${() => toggle('log')}>Nhật ký${u.log.length ? ` · ${u.log.length}` : ''}</button>
