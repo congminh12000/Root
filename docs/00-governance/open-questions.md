@@ -6,8 +6,7 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 
 | ID | Vấn đề | Chặn phần nào | Cần nguồn |
 |---|---|---|---|
-| OQ-18 | Chữ trên faction setup card (Marauder/Homeland) của Marquise, Eyrie, Woodland Alliance, Vagabond: chọn homeland nào, đặt quân và công trình gì, ràng buộc khoảng cách. Rules Library p16 A.8.3 chỉ dẫn tới lá. | Advanced Setup ([decisions/0006](decisions/0006-advanced-setup-homelands.md)) | Ảnh hoặc PDF chính thức của 4 lá setup card |
-| OQ-19 | Advanced Setup có dùng draft (A.8.1–A.8.2) không, hay gán phe ở lobby rồi chỉ chuẩn bị theo setup card. Draft có thể xung đột với decisions/0003 (Reach). | Advanced Setup | Quyết định của người quản lý |
+| OQ-18 | Chữ trên faction setup card của Eyrie, Woodland Alliance, Vagabond: chọn homeland nào, đặt quân và công trình gì, ràng buộc khoảng cách. Marquise đã có (SRC-014, [../03-data-spec/setup-cards.md](../03-data-spec/setup-cards.md)). | Advanced Setup ([decisions/0006](decisions/0006-advanced-setup-homelands.md)) | Ảnh 3 lá setup card còn lại |
 
 ## Đã đóng
 
@@ -24,3 +23,4 @@ Mỗi mục chặn phần gameplay liên quan cho tới khi đóng. Đóng một
 | OQ-08 | Bắt buộc tổng Reach (§5.2) cho mọi trận, người chơi thật lẫn bot. Xem [decisions/0003-enforce-reach.md](decisions/0003-enforce-reach.md). | Người quản lý dự án |
 | OQ-10, 11, 13–17 | Phán quyết cho 7 trường hợp Law không nói rõ (Scouting Party, Foil Ambush, A New Roost, Humiliate, Despot, Outrage khi Vagabond kéo quân Allied, Refresh item hỏng). Xem [decisions/0004-unclear-rulings.md](decisions/0004-unclear-rulings.md). | Người quản lý dự án |
 | OQ-02 | So Rules Library p16 với PDF 13/10/2025: nội dung trùng; chỉ khác chữ ở §4.2 và G.4. p16 thành nguồn chính. Xem [decisions/0005-rules-library-primary.md](decisions/0005-rules-library-primary.md). | SRC-004, SRC-001 |
+| OQ-19 | Không dùng draft (A.8.1–A.8.2): người chơi chọn phe ở sảnh như hiện nay, rồi chuẩn bị theo setup card. Quyết định 0003 (Reach) giữ nguyên. Xem [decisions/0006](decisions/0006-advanced-setup-homelands.md). | Người quản lý dự án, 05/11/2026 |

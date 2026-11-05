@@ -154,3 +154,15 @@ sources:
       Ảnh 800×732 do người quản lý dự án cung cấp, không có quân cờ che. Art của Leder nên không lưu vào repo.
       Đếm ô slot của cả 12 clearing: 1, 2, 2, 2, 2, 2, 3, 2, 1, 2, 2, 1 (tổng 22), khớp packages/game-data/src/maps/autumn.ts.
 
+
+  - id: SRC-014
+    title: Lá faction setup card Marquise de Cat (Advanced Setup)
+    priority: reference
+    role: Chữ chuẩn bị của Marquise khi dùng Advanced Setup (Rules Library p16 A.8.3)
+    sha256: dae4c1d2c0294b22903e956fdba4680c8a4d1f5b28f97de62a2ff448f582ae44
+    retrieved: "2026-11-05"
+    verification: verified
+    notes: >-
+      Ảnh 671×761 do người quản lý dự án gửi ngày 05/11/2026, chữ đọc rõ. Art của Leder nên chỉ lưu trên máy ở
+      docs/01-official-sources/setup-cards/ (không commit). Chép nguyên văn ở docs/03-data-spec/setup-cards.md.
+      Còn thiếu lá của Eyrie, Woodland Alliance, Vagabond (OQ-18).

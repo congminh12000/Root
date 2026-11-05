@@ -24,7 +24,7 @@ Ngày 05/11/2026. Mục đích: hiểu cách Root Digital trình bày lượt, H
 | 01:10 | "Choose another homeland clearing adjacent to your last one to place a building." Chỉ còn 2 vòng nét đứt. | Bấm clearing tiếp theo. |
 | 01:30 | "Choose 2 cards to return to the deck." Tay bài nâng lên. | Chọn 2 lá. |
 
-Root Digital chuẩn bị theo Advanced Setup của Rules Library p16: rút 5 lá (A.7), chuẩn bị phe bằng faction setup card có homeland (A.8, A.8.3.I–III), giữ 3 lá và úp 2 lá về bộ bài (A.10). Người quản lý đã chọn làm theo cách này ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)). **Chưa làm được** vì chữ trên lá setup card của Marquise không có trong nguồn (OQ-18) và chưa chốt có draft hay không (OQ-19); engine tạm giữ §5.1 và §6.3. Cách báo nên học: băng chữ ra lệnh và vòng nét đứt trên ô hợp lệ.
+Root Digital chuẩn bị theo Advanced Setup của Rules Library p16: rút 5 lá (A.7), chuẩn bị phe bằng faction setup card có homeland (A.8, A.8.3.I–III), giữ 3 lá và úp 2 lá về bộ bài (A.10). Người quản lý đã chọn làm theo cách này ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)). Lá setup card Marquise đã có ([setup-cards.md](../../03-data-spec/setup-cards.md)); phe chọn ở sảnh, không draft (OQ-19 đã đóng). **Chưa làm được** vì còn thiếu lá của 3 phe kia (OQ-18); engine tạm giữ §5.1 và §6.3. Cách báo nên học: băng chữ ra lệnh và vòng nét đứt trên ô hợp lệ.
 
 ### Birdsong (§6.4)
 
@@ -175,15 +175,17 @@ Game mình (1440×900)
 
 ## 5. Checklist thiếu sót giao diện
 
-Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md): ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp. Đánh dấu `[x]` khi PR đã merge. Thứ tự trong từng mức chưa chốt; người quản lý sẽ chọn.
+Mỗi mục một nhánh, một PR, theo quy trình [README.md §3](../README.md): ui-kit trước, rồi nối vào trận, Playwright, ảnh chụp. Đánh dấu `[x]` khi PR đã merge.
+
+**Người quản lý duyệt ngày 05/11/2026:** làm RD-M01, M03, M04, M05 và toàn bộ RD-M06 đến M16. RD-M02 chờ trả lời sau khi giải thích lại. Thứ tự làm: theo số mục.
 
 ### Mức cao: ảnh hưởng tới việc chơi được
 
 - [ ] **RD-M01. Số hành động Daylight còn lại.** Hiện cạnh bảng hành động (§6.5: 3 + một mỗi lá chim). Đổi nhãn "Hành động · 63" để không trông như số hành động. Dữ liệu đã có: `actionsRemaining` trong `PlayerView`. Video: 02:50, 28:36–28:50.
-- [ ] **RD-M02. Hộp Build.** Chọn ô → 3 công trình kèm điểm và giá gỗ → tuỳ chọn chọn gỗ → xác nhận (§6.5.4). Thay danh sách thả xuống 21 dòng. Lọc trên `legal`. Video: 02:50.
+- [ ] **RD-M02. Hộp Build (chờ người quản lý trả lời).** Hiện giờ bấm "Xây" thì hiện một ô chọn dài 21 dòng, mỗi dòng ghép sẵn ô, loại công trình và chỗ lấy gỗ, ví dụ "sawmill ở ô 2, gỗ từ ô 1"; người chơi phải đọc từng dòng. Root Digital làm 3 bước: bấm ô trên map → hộp nhỏ hiện 3 hình công trình, dưới mỗi hình ghi điểm được và số gỗ tốn → bấm một hình là xây; gỗ tự lấy, ai muốn chọn gỗ từ ô nào thì tích thêm ô "chọn gỗ" (§6.5.4). Lọc trên `legal`. Video: 02:50.
 - [ ] **RD-M03. Băng chữ mệnh lệnh** ở giữa trên cho mọi bước của mình ("Chọn ô để xây", "Chọn số quân", "Bỏ 2 lá"). Video: khắp video.
 - [ ] **RD-M04. Bảng hành động cố định của Marquise.** 6 nút icon tự vẽ: March, Build, Recruit, Battle, lá chim, Overwork; mờ khi không dùng được; cùng chỗ mọi lượt. Giữ menu ☰ → Tất cả lựa chọn làm lối dự phòng. Video: ảnh cắt 09:10.
-- [ ] **RD-M05. Tài nguyên của mình luôn hiện** ở dưới trái: chiến binh trong kho, gỗ trong kho, số lá. Video: ảnh cắt 09:10.
+- [ ] **RD-M05. Tài nguyên của mình luôn hiện** trong huy hiệu phe mình ở góc dưới trái (chỗ đang ghi "0 · marquise · 4 lá"): thêm cột bên phải điểm, 3 dòng icon + số: chiến binh trong kho, gỗ trong kho, số lá trên tay. Không cần mở bảng phe mới thấy. Video: ảnh cắt 09:10.
 
 ### Mức trung bình
 
@@ -209,8 +211,10 @@ Mỗi mục cần được xử lý (làm, quyết định, hoặc tìm nguồn)
 ### Khác luật
 
 - [ ] **RD-L01. Chuẩn bị trận theo Advanced Setup có homeland.** Root Digital: homeland, "adjacent to your last one", rút 5 giữ 3 (00:10–01:30). Rules Library p16: A.7, A.8, A.8.3.I–III, A.10. Người quản lý đã chọn làm theo ([decisions/0006](../../00-governance/decisions/0006-advanced-setup-homelands.md)).
-  - [ ] Có chữ lá faction setup card của 4 phe (OQ-18).
-  - [ ] Chốt có dùng draft A.8.1–A.8.2 hay không (OQ-19).
+  - [x] Lá setup card Marquise (SRC-014, [setup-cards.md](../../03-data-spec/setup-cards.md)).
+  - [ ] Lá setup card Eyrie, Woodland Alliance, Vagabond (OQ-18). A.8 buộc cả bàn cùng một cách chuẩn bị, nên phải đủ 4 lá mới làm.
+  - [x] Không dùng draft; chọn phe ở sảnh (OQ-19 đã đóng).
+  - [ ] Duyệt thứ tự chuẩn bị theo A.8.3 và hai cách hiểu ghi trong setup-cards.md.
   - [ ] Engine, test, `rule-coverage.yaml`, giao diện chọn homeland và chọn 3 lá giữ lại.
 - [x] **RD-L02. Field Hospitals.** Chữ Root Digital "When a warrior dies…" (06:25) chỉ là tóm tắt. Theo §6.2.3: chiến binh Marquise bị loại khỏi một ô thì trả một lá cùng chất ô đó để đưa chúng về ô keep. Engine đã đúng; không cần làm gì.
 
@@ -229,6 +233,6 @@ Cách đóng RD-Q01–Q08: người quản lý ghi mốc vào `docs/01-official-
 
 ## 7. Việc tiếp theo
 
-1. Người quản lý chọn thứ tự cho mục 5 và 6.
-2. Làm từng mục theo thứ tự đã chọn, mỗi mục một chat, một nhánh, một PR. Chưa sửa code ở bước phân tích này.
+1. Người quản lý trả lời RD-M02 và gửi 3 lá setup card còn lại.
+2. Làm từng mục theo số thứ tự, mỗi mục một chat, một nhánh, một PR. Chưa sửa code ở bước phân tích này.
 3. PR này (#44) chỉ merge khi người quản lý duyệt hết.
