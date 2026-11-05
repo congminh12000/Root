@@ -21,7 +21,7 @@ import { DecisionCallout, DecisionDialog } from './decision.ts'
 import { Drawer, HandStrip, HudFactions, HudMenu, HudStatus, HudPlayed, HudActions, HudChat, HudSun, MapPrompt, HudToast, HudPlayArea, SaveMark, type DrawerId } from './hud.ts'
 import { MapDice, MapInfo, MapOverlay, MapPops } from './callouts.ts'
 import { MapView, type Project } from './map-view.ts'
-import { OpeningDeal } from './deal.ts'
+import { CardFlights } from './deal.ts'
 import { MapPicker, mapChoice } from '../../map/choice.ts'
 import { liveScene, setLiveScene } from '../../map/live.ts'
 
@@ -144,7 +144,7 @@ export function Game({ gameId, token }: { gameId: string; token: string | null }
     ${drawer === 'guide' && html`<${Drawer} side="right" label="Hướng dẫn nhanh" onClose=${close}><${QuickGuide} /><//>`}
     ${drawer && seats.some(s => s.faction === drawer) && html`<${Drawer} side="right" label="Bảng phe" onClose=${close}><${FactionBoards} key=${drawer} view=${v} seat=${seat} initial=${drawer} /><//>`}
     ${centred && !folded && html`<${DecisionDialog} decision=${decision!} view=${v} legal=${all} send=${conn.send} onFold=${() => setFolded(true)} />`}
-    <${OpeningDeal} gameId=${u.gameId} view=${v} seat=${seat} start=${mapReady} />
+    <${CardFlights} gameId=${u.gameId} view=${v} seat=${seat} start=${mapReady} changes=${conn.changes.value} />
     <${GameResult} view=${v} />
     <${CardDetailOverlay} legal=${all} send=${conn.send} view=${v} seat=${seat} />
   </div>`
