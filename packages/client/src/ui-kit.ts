@@ -184,10 +184,11 @@ const Kit = () => html`
   <${Section} title="Xúc xắc">
     <${Row}><div class="dice inline"><${Dice} roll=${roll} /></div><div class="dice inline"><${Dice} roll=${guerrilla} /></div><//><//>
 
-  <${Section} title="HUD nổi trên map" note="Góc trạng thái (của mình, của người khác), menu, huy hiệu phe, dải bài, chip nhật ký.">
+  <${Section} title="HUD nổi trên map" note="Góc trạng thái (của mình, của người khác), menu, huy hiệu phe, dải bài, chip nhật ký. RD-M05: huy hiệu phe mình ở góc dưới trái luôn ghi chiến binh, gỗ, số lá.">
     <div class="kit-hud">
       <${HudStatus} view=${{ ...sample, waitingOn: ['marquise'] }} seat="marquise" deadline=${null} notice="Máy chủ từ chối: stale-revision" decision=${null} mine=${false} onReopen=${noop} />
       <${HudFactions} view=${sample} seats=${seats} seat="marquise" changes=${NO_CHANGES} open="eyrie" onOpen=${noop} />
+      <${HudFactions} view=${sample} seats=${seats} seat="marquise" changes=${NO_CHANGES} open=${null} onOpen=${noop} own />
       <${HandStrip} view=${sample} legal=${crafts} seat="vagabond" />
       <button class="secondary hud-log">Nhật ký · 12</button>
     </div>

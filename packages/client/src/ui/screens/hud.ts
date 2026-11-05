@@ -6,6 +6,7 @@ import type { ComponentChildren } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { GROUP } from '../../describe.ts'
 import { MARQUISE_BUTTON_TYPES, marquiseButtons } from '../../interaction/marquise-actions.ts'
+import { ownResources } from '../../interaction/resources.ts'
 import { Hand } from './hand.ts'
 import type { Decision } from '../../interaction/decisions.ts'
 import { FACTION_NAME, PHASE_NAME, STEP_NAME } from '../../names.ts'
@@ -74,6 +75,7 @@ export function HudFactions({ view: v, seats, seat, changes, open, onOpen, own =
       ${turnOwner(v) === s.faction && html`<${PhaseMark} phase=${v.turn.phase} />`}
       <b key=${changes.scored.includes(s.faction) ? `${s.faction}-${changes.seq}` : s.faction} class=${changes.scored.includes(s.faction) ? 'bump' : ''}>${v.score[s.faction] ?? 'D'}</b>
       <span class="hud-player-name">${s.name}</span><small>${v.handCounts[s.faction] ?? 0} lá${s.kind === 'human' && !s.connected ? ' · vắng' : ''}</small>
+      ${own && html`<span class="hud-res" role="list" aria-label="Tài nguyên">${ownResources(v, s.faction).map(r => html`<span role="listitem" title=${r.label} aria-label=${`${r.label}: ${r.value}`}><${Icon} name=${r.icon} /><b>${r.value}</b></span>`)}</span>`}
     </button>`)}</nav>`
 }
 
