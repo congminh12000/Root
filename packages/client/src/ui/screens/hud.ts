@@ -136,6 +136,11 @@ export function HudActions({ legal, canUndo, undo, send, onOpen, actionsLeft = n
     <button disabled=${!next} title=${next ? 'Qua bước tiếp theo' : 'Hoàn thành quyết định hiện tại trước'} onClick=${() => next && send(next)}>Continue ▷</button></div></section>`
 }
 
+/** RD-M03: the order for this seat at the top middle (interaction/prompt.ts); Esc or "Thôi" leaves a mode like Build. */
+export function MapPrompt({ text, onCancel }: { text: string; onCancel?: (() => void) | undefined }) {
+  return html`<div class="map-prompt" role="status" aria-live="polite">${text}${onCancel && html` <button class="secondary" onClick=${onCancel}>Thôi (Esc)</button>`}</div>`
+}
+
 /** A spectator has no action panel, so the sun stands alone in its corner. */
 export function HudSun({ left }: { left: number | null }) {
   return left === null ? null : html`<div class="hud-sun"><${ActionSun} left=${left} /></div>`

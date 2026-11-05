@@ -11,7 +11,7 @@ import { BASE_DECK, BASE_QUESTS, EYRIE, VAGABOND, type CardDef } from '@root/gam
 import { FullList } from './ui/screens/action-bar.ts'
 import { FactionBoards } from './ui/screens/boards.ts'
 import { DecisionDialog } from './ui/screens/decision.ts'
-import { HandStrip, HudActions, HudFactions, HudStatus, HudSun } from './ui/screens/hud.ts'
+import { HandStrip, HudActions, HudFactions, HudStatus, HudSun, MapPrompt } from './ui/screens/hud.ts'
 import { BuildBox } from './ui/screens/build-box.ts'
 import type { Decision } from './interaction/decisions.ts'
 import { Hand } from './ui/screens/hand.ts'
@@ -182,6 +182,10 @@ const Kit = () => html`
       <figure><div class="kit-hud actions"><${HudActions} actionsLeft=${left} legal=${l} canUndo=${left === 1} undo=${noop} send=${noop} onOpen=${noop} /></div><figcaption>${name}</figcaption></figure>`)}
       <figure><div class="kit-hud actions"><${HudSun} left=${2} /></div><figcaption>Khán giả</figcaption></figure>
     </div><//>
+
+  <${Section} title="Băng chữ ra lệnh" note="RD-M03: giữa mép trên, chỉ hiện cho người đang được hỏi; nói việc cần làm ngay bây giờ (interaction/prompt.ts). Chế độ như Xây có nút Thôi.">
+    ${['Chọn 3 ô homeland nối liền nhau', 'Chọn một hành động (còn 2)', 'Chọn số chiến binh đi từ ô 1 sang ô 5, rồi bấm Enter', 'Trả 2 lá về deck, giữ 3 lá', 'Có thể chơi Ambush ở ô 6'].map(text => html`<div class="kit-hud prompt"><${MapPrompt} text=${text} /></div>`)}
+    <div class="kit-hud prompt"><${MapPrompt} text="Chọn ô để xây" onCancel=${noop} /></div><//>
 
   <${Section} title="Hộp Xây tại ô" note="RD-M02: bấm Xây rồi chọn ô, hoặc chọn ô trước; mỗi cột một công trình với điểm được và gỗ tốn (§6.5.4), bấm là xây, gỗ lấy theo cách gợi ý. Tích Tự chọn gỗ để chọn gỗ lấy từ ô nào. Mọi nút là một phần tử của legal.">
     <div class="kit-actions">
