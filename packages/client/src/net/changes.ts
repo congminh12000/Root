@@ -3,11 +3,12 @@ import { freshRoll, travelsSince, type Travel } from '../motion.ts'
 import type { Update } from './types.ts'
 import { eventsSince, toastsSince, type GameEvent, type Toast } from '../interaction/events.ts'
 import { cardName } from '../names.ts'
+import { drawsBetween, type Draw } from '../interaction/deal.ts'
 
 /** What one update changed, to animate once: clearings, scores, moves along paths and a fresh battle roll. */
-export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null; events: GameEvent[]; toasts: Toast[]; wood: { clearing: number; gained: number }[] }
+export interface Changes { seq: number; changed: number[]; scored: FactionId[]; travels: Travel[]; roll: LastRoll | null; events: GameEvent[]; toasts: Toast[]; wood: { clearing: number; gained: number }[]; draws: Draw[] }
 
-export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null, events: [], toasts: [], wood: [] }
+export const NO_CHANGES: Changes = { seq: 0, changed: [], scored: [], travels: [], roll: null, events: [], toasts: [], wood: [], draws: [] }
 
 /** `seq` grows with every update, so a view that re-renders for another reason does not replay the animations. */
 export function changesBetween(prev: Update | null, next: Update, seq: number): Changes {
@@ -21,6 +22,7 @@ export function changesBetween(prev: Update | null, next: Update, seq: number): 
     events: eventsSince(prev.view, next.view, next.log),
     toasts: toastsSince(prev.view, next.view, cardName),
     wood: woodGains(prev.view, next.view),
+    draws: drawsBetween(prev.view, next.view),
   }
 }
 
